@@ -1,0 +1,58 @@
+From purplerain@secbsd.org Sun Apr 30 00:00:00 UTC 2023
+Return-Path: root
+Date: Apr 30 00:00:00 UTC 2023
+From: purplerain@secbsd.org (Purple Rain)
+To: root
+Subject: Welcome to SecBSD 1.3!
+
+This message attempts to describe the most basic initial questions that a
+system administrator of an SecBSD box might have.  You are urged to save
+this message for later reference.
+
+For more information on how to set up your SecBSD system, refer to the
+"afterboot" man page (i.e. after you exit the mail subsystem, type
+"man afterboot").  If you are not familiar with how to read man pages, type
+"man man" at a shell prompt and read the entire thing.  Pay specific
+attention to the "man -k keyword" option, which will permit you to find the
+man page you are looking for more easily; for instance, "man -k ethernet".
+The GNU "info" subsystem is also installed with further documentation
+resources: to read info pages type "info".  (The info subsystem behaves like
+the popular emacs editor.)
+
+Again, PLEASE READ THE MANUAL PAGES.  OpenBSD developers have spent countless
+hours improving them so that they are clear and precise.
+
+Several popular binary packages (pre-compiled applications) are
+available from mirror sites.  Mirror selection is usually automatic
+during install/upgrade -- a mirror URL from https://www.secbsd.org/mirrors.html
+is stored into the file /etc/installurl.  Installation of packages is
+as simple as:
+
+ # pkg_add -v metasploit-framework
+
+Significant efforts were made to centralize all system configuration in the
+/etc directory.  You should be able to find each of the configuration files
+you seek there, lightly documented.  In particular, much of the configuration
+has been centralized in the file /etc/rc.conf.  You should not need to ever
+edit the file /etc/rc.   The files /etc/rc.securelevel and /etc/rc.local exist
+for this purpose; the first is run before the system has gone into secure
+mode; the second is run afterwards (if in doubt, add your tools to rc.local).
+
+Please refer to our web pages for any other questions you might have.
+	https://www.SecBSD.org
+Please pay special attention to the Frequently Asked Questions section at
+	https://www.SecBSD.org/faq.html
+
+SecBSD is free software.  You can do with it as you like, subject to very few
+conditions (described at www.SecBSD.org/policy.html).  But free software isn't
+written without money.  Network links, hardware costs, release engineering and
+testing work all take money and significant effort on the part of those who
+have made this SecBSD release what it is.  Please reward the developers who
+have made SecBSD what it is, and thus make it possible for this wonderful
+process to continue.  For more information on how you can help, please see
+www.SecBSD.org/sponsors.html to see a list of those who have donated
+list of those who have donated money, equipment, or other resources to ensure
+money, equipment, or other resources to ensure SecBSD continues.
+
+(If you wish to save it, use the "x" command.)
+

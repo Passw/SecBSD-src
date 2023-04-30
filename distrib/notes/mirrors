@@ -1,0 +1,31 @@
+dnl	$SecBSD: mirrors,v 1.122 2023/28/04 00:00:00 purplerain Exp $
+This is a list of currently known HTTP servers at the time
+of the OSREV release.  For a more recent list, please refer to
+
+	https://www.secbsd.org/mirrors.html
+
+Netherlands:
+    https://mirror.secbsd.org/pub/SecBSD (Amsterdam)
+    https://mirror.laylo.io/pub/SecBSD (Amsterdam)
+
+Information for prospective mirrors
+
+To be listed on this page we require mirrors to be fast, up to date,
+capable, and well-connected to networks in the region in which they serve.
+
+Mirrors must carry the following:
+
+    OS and packages for all architectures supported by SecBSD
+
+As of April 2023, the minimum space required is approximately 200GB.
+
+However, to reduce problems for users when snapshot packages are updated,
+it is strongly recommended to use the rsync options
+--delete-delay --delay-updates which requires additional space during updates.
+--fuzzy may also be helpful to reduce the amount of data transferred
+when updating snapshot packages. Depending on the disk space available,
+mirrors may provide more contents, such as older releases, current source tree, etc.
+
+Operators of mirrors who are interested in having their site added to the list
+on this page should contact purplerain@secbsd.org with further details about their site,
+including network connectivity, geographic location, and general information.

@@ -1,0 +1,191 @@
+dnl	$OpenBSD: INSTALL,v 1.57 2023/03/16 18:04:07 miod Exp $
+include(INCLUDE/../m4.common)dnl
+includeit(features)dnl
+INSTALLATION NOTES for SecBSD/MACHINE OSREV
+
+
+What is SecBSD?
+---------------
+
+SecBSD is a security-focused UNIX-like operating system for security
+researchers, pentesters, bug hunters and cybersecurity folks.
+
+SecBSD is based on OpenBSD, a fully functional, multi-platform UN*X-like
+Operating System based on Berkeley Networking Release 2 (Net/2)
+and 4.4BSD-Lite.
+
+There are several operating systems in this family, but SecBSD like
+OpenBSD differentiates itself by putting security and correctness first.
+The SecBSD team strives to achieve what is called a "secure by default"
+status.  This means that an SecBSD user should feel safe that their
+newly installed machine will not be compromised.  This "secure by
+default" goal is achieved by taking a proactive stance on security.
+
+Since security flaws are essentially mistakes in design or implement-
+ation, the SecBSD team puts as much importance on finding and fixing
+existing design flaws and implementation bugs as it does writing new
+code.  This means that an SecBSD system will not only be more secure,
+but it will be more stable.  The source code for all critical system
+components has been checked for remote-access, local-access, denial-
+of-service, data destruction, and information-gathering problems.
+
+In addition to bug fixing, SecBSD has integrated strong cryptography
+into the base system.  A fully functional IPsec implementation is
+provided as well as support for common protocols such as SSL and SSH.
+Network filtering and monitoring tools such as packet filtering, NAT,
+and bridging are also standard, as well as several routing services,
+such as BGP and OSPF.  For high performance demands, support for
+hardware cryptography has also been added to the base system.  Because
+security is often seen as a tradeoff with usability, SecBSD provides
+as many security options as possible to allow the user to enjoy secure
+computing without feeling burdened by it.
+
+Because SecBSD is from The Netherlands, the export of Cryptography pieces
+(such as OpenSSH and IPsec) to the world is not restricted.
+
+(NOTE: SecBSD can not be re-exported from the US once it has entered
+the US.  Because of this, take care NOT to get the distribution from
+a mirror server in the US if you are outside of Canada and the US.)
+
+dnl
+dnl MACHINE/whatis
+dnl A few descriptive words about the port to MACHINE (i.e. what kind
+dnl of hardware it runs on, without too much details - MACHINE/hardware
+dnl will take care of this).
+dnl Needs to start with a blank line if non empty.
+includeit(whatis)dnl
+
+
+Sources of SecBSD:
+------------------
+
+Please refer to https://www.secbsd.org for all the ways you may
+acquire SecBSD.
+
+
+SecBSD OSREV Release Contents:
+----------------------------
+
+The SecBSD OSREV release is organized in the following way.  In the
+.../OSREV directory, for each of the architectures having an SecBSD OSREV
+binary distribution, there is a sub-directory.
+
+includeit(contents)
+
+
+SecBSD System Requirements and Supported Devices:
+-------------------------------------------------
+
+includeit(hardware)
+
+
+Verifying the SecBSD Installation Media:
+----------------------------------------
+
+SecBSD installations are able to verify files for the next
+release.  The SecBSD OSREV release was signed with the
+/etc/signify/secbsd-{:--:}OSrev-base.pub release key.
+
+If you have an existing SecBSD installation, you can run signify(1)
+to verify the signature and checksum.  For example, run the following
+to verify that the cd{:--:}OSrev.iso file was distributed by the SecBSD team:
+	signify -C -p /etc/signify/secbsd-{:--:}OSrev-base.pub -x SHA256.sig cd{:--:}OSrev.iso
+
+If you are unable to run or compile signify(1), use sha256(1) with the SHA256
+file to see if a file was corrupt during the transfer.
+
+
+Getting the SecBSD System onto Useful Media:
+--------------------------------------------
+
+includeit(xfer)
+
+
+ifelse(MACHINE,powerpc64,,{:-dnl
+Preparing your System for SecBSD Installation:
+----------------------------------------------
+
+includeit(prep)
+
+-:})dnl
+Installing the SecBSD System:
+-----------------------------
+
+includeit(install)
+
+
+Upgrading a previously-installed SecBSD System:
+-----------------------------------------------
+
+includeit(upgrade)
+
+
+Getting source code for your SecBSD System:
+-------------------------------------------
+
+Now that your SecBSD system is up and running, you probably want to get
+access to source code so that you can recompile pieces of the system.
+
+You can get the pieces over the internet using anonymous CVS, rsync,
+FTP or HTTP(s). For more information, see:
+
+	https://git.laylo.io/secbsd
+
+
+Using online SecBSD documentation:
+----------------------------------
+
+Documentation is available if you first install the manual pages
+distribution set.  Traditionally, the UN*X "man pages" (documentation)
+are denoted by "name(section)".  Some examples of this are
+
+	intro(1),
+	man(1),
+	apropos(1),
+	passwd(1),
+	passwd(5) and
+	afterboot(8).
+
+The section numbers group the topics into several categories, but three
+are of primary interest: user commands are in section 1, file formats
+are in section 5, and administrative information is in section 8.
+
+The "man" command is used to view the documentation on a topic, and is
+started by entering "man [section] topic".  The brackets [] around the
+section should not be entered, but rather indicate that the section is
+optional.  If you don't ask for a particular section, the topic with the
+least-numbered section name will be displayed.  For instance, after
+logging in, enter
+
+	man passwd
+
+to read the documentation for passwd(1).  To view the documentation for
+passwd(5), enter
+
+	man 5 passwd
+
+instead.
+
+If you are unsure of what man page you are looking for, enter
+
+	apropos subject-word
+
+where "subject-word" is your topic of interest; a list of possibly
+related man pages will be displayed.
+
+
+Adding third party software - packages and ports:
+-------------------------------------------------
+
+includeit(packages)
+
+
+Bugs:
+-----
+
+To report bugs, use the "sendbug" command shipped with SecBSD,
+and fill in as much information about the problem as you can.  Good
+bug reports {:-include-:} lots of details.  Additionally, bug reports can
+be sent by mail to:
+
+	purplerain@secbsd.org

@@ -1,0 +1,6 @@
+! $OpenBSD: dot.Xdefaults,v 1.3 2014/07/10 10:22:59 jasper Exp $
+XTerm*loginShell:true
+xterm*faceName: spleen:pixelsize=16:antialias=false
+xterm*borderWidth:0
+xterm*scrollBar:false
+xterm*cursorBlink:true
