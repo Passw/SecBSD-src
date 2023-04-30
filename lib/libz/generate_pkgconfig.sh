@@ -64,7 +64,7 @@ includedir=\${prefix}/include
 Name: zlib
 Description: zlib compression library
 Version: ${lib_version}
-Requires: 
+Requires:
 Libs: -L\${libdir} -lz
 Cflags: -I\${includedir}
 __EOF__

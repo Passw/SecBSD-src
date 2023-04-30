@@ -1,6 +1,6 @@
 /*	$OpenBSD: ieeefp.h,v 1.4 2009/09/27 21:23:55 martynas Exp $	*/
 
-/* 
+/*
  * Written by J.T. Conklin, Apr 6, 1995
  * Public domain.
  */

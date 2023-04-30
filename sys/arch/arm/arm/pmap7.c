@@ -711,7 +711,7 @@ pmap_free_l2_ptp(pt_entry_t *l2)
  * bucket/page table in place.
  *
  * Note that if a new L2 bucket/page was allocated, the caller *must*
- * increment the bucket occupancy counter appropriately *before* 
+ * increment the bucket occupancy counter appropriately *before*
  * releasing the pmap's lock to ensure no other thread or cpu deallocates
  * the bucket/page in the meantime.
  */

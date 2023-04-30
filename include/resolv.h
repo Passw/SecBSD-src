@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 1995, 1996, 1997, and 1998 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -15,7 +15,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,7 @@
  * -
  * Copyright (c) 1983, 1987, 1989, 1993
  *    The Regents of the University of California.  All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -46,7 +46,7 @@
  * 3. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -60,14 +60,14 @@
  * SUCH DAMAGE.
  * -
  * Portions Copyright (c) 1993 by Digital Equipment Corporation.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies, and that
  * the name of Digital Equipment Corporation not be used in advertising or
  * publicity pertaining to distribution of the document or software without
  * specific, written prior permission.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND DIGITAL EQUIPMENT CORP. DISCLAIMS ALL
  * WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS.   IN NO EVENT SHALL DIGITAL EQUIPMENT
@@ -282,7 +282,7 @@ int			res_dnok(const char *);
 const char *		sym_ntos(const struct res_sym *, int, int *);
 int			b64_ntop(unsigned char const *, size_t, char *, size_t);
 int			b64_pton(char const *, unsigned char *, size_t);
-int			dn_skipname(const unsigned char *, 
+int			dn_skipname(const unsigned char *,
 			    const unsigned char *);
 void			putlong(u_int32_t, unsigned char *);
 void			putshort(u_int16_t, unsigned char *);
@@ -290,7 +290,7 @@ const char *		p_class(int);
 const char *		p_type(int);
 int			dn_comp(const char *, unsigned char *, int,
 			    unsigned char **, unsigned char **);
-int			dn_expand(const unsigned char *, const unsigned char *, 
+int			dn_expand(const unsigned char *, const unsigned char *,
 			    const unsigned char *, char *, int);
 int			res_init(void);
 unsigned int		res_randomid(void);
@@ -301,12 +301,12 @@ int			res_search(const char *, int, int, unsigned char *, int)
 int			res_querydomain(const char *, const char *, int, int,
 			    unsigned char *, int)
 			__attribute__((__bounded__(__string__,5,6)));
-int			res_mkquery(int, const char *, int, int, 
-			    const unsigned char *, int, const unsigned char *, 
+int			res_mkquery(int, const char *, int, int,
+			    const unsigned char *, int, const unsigned char *,
 			    unsigned char *, int)
 			__attribute__((__bounded__(__string__,5,6)))
 			__attribute__((__bounded__(__string__,8,9)));
-int			res_send(const unsigned char *, int, unsigned char *, 
+int			res_send(const unsigned char *, int, unsigned char *,
 			    int)
 			__attribute__((__bounded__(__string__,3,4)));
 __END_DECLS

@@ -101,7 +101,7 @@ dlopen(const char *libname, int flags)
 		object->obj_flags |= DF_1_NODELETE;
 		object->nodelete = 1;
 	}
-	
+
 	_dl_link_dlopen(object);
 
 	if (OBJECT_REF_CNT(object) > 1) {

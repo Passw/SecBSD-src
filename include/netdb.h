@@ -210,7 +210,7 @@ struct addrinfo {
 	char *ai_canonname;	/* canonical name for service location (iff req) */
 	struct addrinfo *ai_next; /* pointer to next in list */
 };
- 
+
 #if __BSD_VISIBLE
 /*
  * Flags for getrrsetbyname()

@@ -72,5 +72,5 @@ extern   int optopt;
 extern   int optreset;
 #endif
 __END_DECLS
- 
+
 #endif /* !_GETOPT_H_ */

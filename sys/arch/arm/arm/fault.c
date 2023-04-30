@@ -360,7 +360,7 @@ data_abort_handler(trapframe_t *tf)
 		    p->p_ucred ? (int)p->p_ucred->cr_uid : -1);
 		sd.signo = SIGKILL;
 		sd.code = 0;
-	} else if (error == EACCES) 
+	} else if (error == EACCES)
 		sd.code = SEGV_ACCERR;
 	else if (error == EIO) {
 		sd.signo = SIGBUS;

@@ -282,7 +282,7 @@ sub check_ksh {
 	# is particularly important, so make sure we are really there.
 	chdir '/root';
 
-	# A good .kshrc will not have a umask or path, 
+	# A good .kshrc will not have a umask or path,
 	# that being set in .profile; check anyway.
 	foreach my $filename (@list) {
 		next unless -s $filename;

@@ -166,7 +166,7 @@ _do_fini(void)
 			__cxa_finalize(__dso_handle);
 
 		/*
-		 * since the _init() function sets up the destructors to 
+		 * since the _init() function sets up the destructors to
 		 * be called by atexit, do not call the destructors here.
 		 */
 		__dtors();

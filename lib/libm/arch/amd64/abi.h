@@ -22,7 +22,7 @@
 
 #define XMM_ONE_ARG_DOUBLE_PROLOGUE \
 	movsd	%xmm0, ARG_DOUBLE_ONE
-	
+
 #define XMM_TWO_ARG_DOUBLE_PROLOGUE \
 	movsd	%xmm0, ARG_DOUBLE_ONE ; \
 	movsd	%xmm1, ARG_DOUBLE_TWO

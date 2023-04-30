@@ -846,7 +846,7 @@ apldchidev_wait(struct apldchidev_softc *sc)
 		}
 		return;
 	}
-	
+
 	while (sc->sc_busy) {
 		error = tsleep_nsec(sc, PZERO, "apldcwt", SEC_TO_NSEC(1));
 		if (error == EWOULDBLOCK)

@@ -16,5 +16,5 @@ ENTRY(cosf)
 	fcos
 	XMM_FLOAT_EPILOGUE
 	RETGUARD_CHECK(cosf, r11)
-	ret	
+	ret
 END_STD(cosf)

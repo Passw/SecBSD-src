@@ -37,7 +37,7 @@
 #define I		_Complex_I
 
 __BEGIN_DECLS
-/* 
+/*
  * Double versions of C99 functions
  */
 double complex cacos(double complex);
@@ -63,7 +63,7 @@ double complex conj(double complex);
 double complex cproj(double complex);
 double creal(double complex);
 
-/* 
+/*
  * Float versions of C99 functions
  */
 float complex cacosf(float complex);
@@ -89,7 +89,7 @@ float complex conjf(float complex);
 float complex cprojf(float complex);
 float crealf(float complex);
 
-/* 
+/*
  * Long double versions of C99 functions
  */
 long double complex cacosl(long double complex);

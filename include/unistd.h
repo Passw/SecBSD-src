@@ -329,10 +329,10 @@ int	 chown(const char *, uid_t, gid_t);
 int	 close(int);
 int	 dup(int);
 int	 dup2(int, int);
-int	 execl(const char *, const char *, ...) 
+int	 execl(const char *, const char *, ...)
 	    __attribute__((__sentinel__));
 int	 execle(const char *, const char *, ...);
-int	 execlp(const char *, const char *, ...) 
+int	 execlp(const char *, const char *, ...)
 	    __attribute__((__sentinel__));
 int	 execv(const char *, char *const *);
 int	 execve(const char *, char *const *, char *const *);

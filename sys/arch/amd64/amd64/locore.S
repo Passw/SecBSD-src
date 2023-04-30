@@ -994,7 +994,7 @@ END(intr_fast_exit)
  * FPU/"extended CPU state" handling
  * 	int xrstor_user(sfp, mask)
  *		load given state, returns 0/1 if okay/it trapped
- *	void fpusave(sfp) 
+ *	void fpusave(sfp)
  *		save current state, but retain it in the FPU
  *	void fpusavereset(sfp)
  *		save current state and reset FPU to initial/kernel state

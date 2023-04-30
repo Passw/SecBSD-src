@@ -36,7 +36,7 @@
  * which can be done with just one conditional branch. If x is
  * inside this range, we use fyl2xp1. Outside of this range,
  * the use of fyl2x is accurate enough.
- * 
+ *
  */
 
 ENTRY(log1pf)

@@ -13,7 +13,7 @@ ENTRY(floorf)
 	fstcw	-8(%rsp)
 	movw	-8(%rsp),%dx
 	orw	$0x0400,%dx
-	andw	$0xf7ff,%dx  
+	andw	$0xf7ff,%dx
 	movw	%dx,-12(%rsp)
 	fldcw	-12(%rsp)
 	flds	-4(%rsp)

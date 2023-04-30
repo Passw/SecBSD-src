@@ -16,20 +16,20 @@
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
  *  This product includes software developed by Chris Provenzano.
- * 4. The name of Chris Provenzano may not be used to endorse or promote 
+ * 4. The name of Chris Provenzano may not be used to endorse or promote
  *	  products derived from this software without specific prior written
  *	  permission.
  *
  * THIS SOFTWARE IS PROVIDED BY CHRIS PROVENZANO ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL CHRIS PROVENZANO BE LIABLE FOR ANY 
+ * ARE DISCLAIMED.  IN NO EVENT SHALL CHRIS PROVENZANO BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
  * $FreeBSD: pthread.h,v 1.13 1999/07/31 08:36:07 rse Exp $
@@ -71,7 +71,7 @@
  * Flags for read/write lock attributes
  */
 #define PTHREAD_PROCESS_PRIVATE     0
-#define PTHREAD_PROCESS_SHARED      1	
+#define PTHREAD_PROCESS_SHARED      1
 
 /*
  * Flags for cancelling threads
@@ -147,12 +147,12 @@ struct pthread_once {
 #define PTHREAD_DONE_INIT   1
 
 /*
- * Static once initialization values. 
+ * Static once initialization values.
  */
 #define PTHREAD_ONCE_INIT   { PTHREAD_NEEDS_INIT, PTHREAD_MUTEX_INITIALIZER }
 
 /*
- * Static initialization values. 
+ * Static initialization values.
  */
 #define PTHREAD_MUTEX_INITIALIZER	NULL
 #define PTHREAD_COND_INITIALIZER	NULL

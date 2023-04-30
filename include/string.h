@@ -132,7 +132,7 @@ void	 strmode(int, char *);
 char	*strsep(char **, const char *);
 int	 timingsafe_bcmp(const void *, const void *, size_t);
 int	 timingsafe_memcmp(const void *, const void *, size_t);
-#endif 
+#endif
 __END_DECLS
 
 #endif /* _STRING_H_ */

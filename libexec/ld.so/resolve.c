@@ -612,7 +612,7 @@ _dl_find_symbol_obj(elf_object_t *obj, struct symlookup *sl)
 			if (((*hashval ^ hash) >> 1) == 0) {
 				const Elf_Sym *sym = symt +
 				    (hashval - obj->chains_gnu);
-				
+
 				int r = matched_symbol(obj, sym, sl);
 				if (r)
 					return r > 0;

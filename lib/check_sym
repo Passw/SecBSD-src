@@ -233,7 +233,7 @@ fi
 # relative paths), chdir into our work directory, whatever it is
 cd $odir
 
-jump_slots() { 
+jump_slots() {
 	case $cpu in
 	hppa)	awk '/IPLT/ && $5 != ""{print $5}' r$1
 		;;
@@ -260,7 +260,7 @@ dynamic_sym() {
 		{print $4, $5, $6, $8}' s$1 | sort -o d$1
 }
 
-static_sym() { 
+static_sym() {
 	awk '/^Symbol table ..symtab/{s=1}
 	     /LOCAL/{next}
 	     s&&/^ *[1-9]/{print $4, $5, $6, $8}' s$1 | sort -o S$1

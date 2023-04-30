@@ -89,7 +89,7 @@ _dl_start:
 END(_dl_start)
 
 ENTRY(_dl_bind_start)
-	# r0 contains offset, do not overwrite 
+	# r0 contains offset, do not overwrite
 	# r2 ld.so toc is loaded on entry to this function.
 	mflr	%r12
 	std	%r12,16(%r1)		# save	lr

@@ -35,7 +35,7 @@ RCFLAGS=-DRCRT0
 # amd64 can access the stack protector before relocation has occurred.
 # Other archs aren't so lucky
 .if ${MACHINE_ARCH} != "amd64"
-RCFLAGS+=-fno-stack-protector 
+RCFLAGS+=-fno-stack-protector
 .endif
 
 # Prevent use of builtins in _dl_boot_bind().

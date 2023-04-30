@@ -15,7 +15,7 @@ ENTRY(acos)
 	fldl	ARG_DOUBLE_ONE		/* x */
 	fld	%st(0)
 	fmul	%st(0)			/* x^2 */
-	fld1				
+	fld1
 	fsubp				/* 1 - x^2 */
 	fsqrt				/* sqrt (1 - x^2) */
 	fxch	%st(1)

@@ -83,11 +83,11 @@ typedef struct {
 typedef struct {
 	unsigned char	  vers;		/* protocol version */
 	unsigned char	  type;		/* type of request message, see below */
-	unsigned char	  answer;	/* response to request message, 
+	unsigned char	  answer;	/* response to request message,
 					   see below */
 	unsigned char	  pad;
 	u_int32_t 	  id_num;	/* message id */
-	struct	  osockaddr addr; 	/* address for establishing 
+	struct	  osockaddr addr; 	/* address for establishing
 					   conversation */
 } CTL_RESPONSE;
 

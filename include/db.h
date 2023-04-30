@@ -148,11 +148,11 @@ typedef struct {
 	unsigned int	cachesize;	/* bytes to cache */
 	unsigned int	psize;		/* page size */
 	int		lorder;		/* byte order */
-	size_t		reclen;		/* record length 
+	size_t		reclen;		/* record length
 					   (fixed-length records) */
-	unsigned char	bval;		/* delimiting byte 
+	unsigned char	bval;		/* delimiting byte
 					   (variable-length records) */
-	char	*bfname;		/* btree file name */ 
+	char	*bfname;		/* btree file name */
 } RECNOINFO;
 
 __BEGIN_DECLS

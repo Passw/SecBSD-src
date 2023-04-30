@@ -1,14 +1,14 @@
 #  $OpenBSD: Makefile,v 1.123 2022/01/21 03:12:55 gnezdo Exp $
 #  $NetBSD: Makefile,v 1.28 1995/11/20 22:06:19 jtc Exp $
 #
-#  @(#)Makefile 5.1beta 93/09/24 
-# 
+#  @(#)Makefile 5.1beta 93/09/24
+#
 #  ====================================================
 #  Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
-# 
+#
 #  Developed at SunPro, a Sun Microsystems, Inc. business.
 #  Permission to use, copy, modify, and distribute this
-#  software is freely granted, provided that this notice 
+#  software is freely granted, provided that this notice
 #  is preserved.
 #  ====================================================
 
@@ -130,7 +130,7 @@ PURE_SRCS = s_cabs.c s_cacos.c s_cacosh.c s_carg.c s_casin.c \
 	s_cimag.c s_cimagf.c s_clog.c s_conj.c s_conjf.c s_cpow.c \
 	s_creal.c s_crealf.c s_csin.c s_csinh.c s_csqrt.c s_ctan.c \
 	s_ctanh.c s_fdim.c s_fmax.c s_fmaxf.c s_fmin.c s_fminf.c \
-	s_cproj.c s_cprojf.c s_round.c s_roundf.c s_scalbln.c s_signgam.c 
+	s_cproj.c s_cprojf.c s_round.c s_roundf.c s_scalbln.c s_signgam.c
 
 SRCS=	${COMMON_SRCS} ${PURE_SRCS}
 .if (${MACHINE_ARCH} == "amd64") || (${MACHINE_ARCH} == "i386")
@@ -150,7 +150,7 @@ CPPFLAGS+=-I${.CURDIR}/hidden -include namespace.h \
 
 VERSION_SCRIPT=	${.CURDIR}/Symbols.map
 
-# Substitute common sources with any arch specific sources 
+# Substitute common sources with any arch specific sources
 .for i in ${ARCH_SRCS}
     SRCS:=${SRCS:S/${i:S/.S/.c/}/$i/}
 .endfor

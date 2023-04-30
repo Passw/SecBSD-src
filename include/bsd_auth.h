@@ -80,7 +80,7 @@ void	 auth_setenv(auth_session_t *);
 void	 auth_clrenv(auth_session_t *);
 
 void	 auth_setstate(auth_session_t *, int);
-int	 auth_call(auth_session_t *, char *, ...) 
+int	 auth_call(auth_session_t *, char *, ...)
 	    __attribute__((__sentinel__));
 
 int	 auth_setdata(auth_session_t *, void *, size_t);

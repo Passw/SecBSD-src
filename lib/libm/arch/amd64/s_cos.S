@@ -18,7 +18,7 @@ ENTRY(cos)
 	jnz	1f
 	XMM_DOUBLE_EPILOGUE
 	RETGUARD_CHECK(cos, r11)
-	ret	
+	ret
 1:	fldpi
 	fadd	%st(0)
 	fxch	%st(1)
