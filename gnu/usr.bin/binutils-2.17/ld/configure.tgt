@@ -51,11 +51,11 @@ arm-*-netbsdelf*)	targ_emul=armelf_nbsd;
 arm-*-netbsd*)		targ_emul=armnbsd;
 			targ_extra_emuls="armelf armelf_nbsd armelfb_nbsd"  ;;
 arm-*-nto*)		targ_emul=armnto ;;
-armeb-*-openbsd* | \
-armeb-*-secbsd*)	targ_emul=armelfb_obsd
+armeb-*-openbsd* | armeb-*-secbsd*)
+			targ_emul=armelfb_obsd
 			targ_extra_emuls="armelf_obsd" ;;
-arm-*-openbsd* | \
-arm-*-secbsd*)		targ_emul=armelf_obsd
+arm-*-openbsd* | arm-*-secbsd*)
+			targ_emul=armelf_obsd
 			targ_extra_emuls="armelfb_obsd" ;;
 arm-*-rtems*)		targ_emul=armelf ;;
 armeb-*-elf)		targ_emul=armelfb ;;
@@ -193,10 +193,10 @@ x86_64-*-netbsd*)	targ_emul=elf_x86_64
 i[3-7]86-*-netware)	targ_emul=i386nw ;;
 i[3-7]86-*-openbsd[0-2]* | i[3-7]86-*-openbsd3.[0-2])
 			targ_emul=i386obsd ;;
-i[3-7]86-*-openbsd* | \
-[3-7]86-*-secbsd*)	targ_emul=elf_i386_obsd ;;
-x86_64-*-openbsd* | \
-x86_64-*-secbsd*)	targ_emul=elf_x86_64_obsd
+i[3-7]86-*-openbsd* | [3-7]86-*-secbsd*)
+			targ_emul=elf_i386_obsd ;;
+x86_64-*-openbsd* | x86_64-*-secbsd*)
+			targ_emul=elf_x86_64_obsd
 			targ_extra_emuls="elf_i386_obsd elf_i386"
 			tdir_elf_i386_obsd=`echo ${targ_alias} | \
 			    sed -e 's/x86_64/i386/'`

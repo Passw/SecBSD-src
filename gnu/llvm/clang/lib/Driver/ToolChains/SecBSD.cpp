@@ -24,7 +24,7 @@ using namespace clang::driver::toolchains;
 using namespace clang;
 using namespace llvm::opt;
 
-void openbsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
+void secbsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
                                       const InputInfo &Output,
                                       const InputInfoList &Inputs,
                                       const ArgList &Args,
@@ -88,7 +88,7 @@ void openbsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
                                          Exec, CmdArgs, Inputs, Output));
 }
 
-void openbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+void secbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
                                    const InputInfo &Output,
                                    const InputInfoList &Inputs,
                                    const ArgList &Args,
@@ -330,9 +330,9 @@ std::string SecBSD::getCompilerRT(const ArgList &Args,
 }
 
 Tool *SecBSD::buildAssembler() const {
-  return new tools::openbsd::Assembler(*this);
+  return new tools::secbsd::Assembler(*this);
 }
 
-Tool *SecBSD::buildLinker() const { return new tools::openbsd::Linker(*this); }
+Tool *SecBSD::buildLinker() const { return new tools::secbsd::Linker(*this); }
 
 bool SecBSD::HasNativeLLVMSupport() const { return true; }
