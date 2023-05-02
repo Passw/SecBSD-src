@@ -135,7 +135,7 @@ agp_sis_attach(struct device *parent, struct device *self, void *aux)
 	/* Install the gatt. */
 	pci_conf_write(ssc->ssc_pc, ssc->ssc_tag, AGP_SIS_ATTBASE,
 	    gatt->ag_physical);
-	
+
 	/* Enable the aperture and auto-tlb-inval */
 	reg = pci_conf_read(ssc->ssc_pc, ssc->ssc_tag, AGP_SIS_WINCTRL);
 	reg |= (0x05 << 24) | 3;
@@ -176,7 +176,7 @@ agp_sis_restore(struct agp_sis_softc *ssc)
 	/* Install the gatt. */
 	pci_conf_write(ssc->ssc_pc, ssc->ssc_tag, AGP_SIS_ATTBASE,
 	    ssc->gatt->ag_physical);
-	
+
 	/*
 	 * Enable the aperture, reset the aperture size and enable and
 	 * auto-tlb-inval.
@@ -217,7 +217,7 @@ agp_sis_set_aperture(void *sc, bus_size_t aperture)
 
 	gws = ffs(aperture / 4*1024*1024) - 1;
 
-	reg = pci_conf_read(ssc->ssc_pc, ssc->ssc_tag, AGP_SIS_WINCTRL);	
+	reg = pci_conf_read(ssc->ssc_pc, ssc->ssc_tag, AGP_SIS_WINCTRL);
 	reg &= ~0x00000070;
 	reg |= gws << 4;
 	pci_conf_write(ssc->ssc_pc, ssc->ssc_tag, AGP_SIS_WINCTRL, reg);

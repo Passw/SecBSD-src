@@ -673,7 +673,7 @@ spdmem_ddr3_decode(struct spdmem_softc *sc, struct spdmem *s)
 	    SPDMEM_DDR3_DATAWIDTH_PRIMASK;
 	chipwidth = s->sm_data[SPDMEM_DDR3_MOD_ORG] &
 	    SPDMEM_DDR3_MOD_ORG_CHIPWIDTH_MASK;
-	physbanks = (s->sm_data[SPDMEM_DDR3_MOD_ORG] >> 
+	physbanks = (s->sm_data[SPDMEM_DDR3_MOD_ORG] >>
 	    SPDMEM_DDR3_MOD_ORG_BANKS_SHIFT) & SPDMEM_DDR3_MOD_ORG_BANKS_MASK;
 
 	dimm_size = (chipsize + 28 - 20) - 3 + (datawidth + 3) -
@@ -691,7 +691,7 @@ spdmem_ddr3_decode(struct spdmem_softc *sc, struct spdmem *s)
 	if (mtype == SPDMEM_DDR3_RDIMM || mtype == SPDMEM_DDR3_MINI_RDIMM)
 		printf(" registered");
 
-	if (s->sm_data[SPDMEM_DDR3_DATAWIDTH] & SPDMEM_DDR3_DATAWIDTH_ECCMASK) 
+	if (s->sm_data[SPDMEM_DDR3_DATAWIDTH] & SPDMEM_DDR3_DATAWIDTH_ECCMASK)
 		printf(" ECC");
 
 	dividend = s->sm_data[SPDMEM_DDR3_MTB_DIVIDEND];
@@ -759,7 +759,7 @@ spdmem_ddr4_decode(struct spdmem_softc *sc, struct spdmem *s)
 	    SPDMEM_DDR4_DATAWIDTH_PRIMASK;
 	chipwidth = s->sm_data[SPDMEM_DDR4_MOD_ORG] &
 	    SPDMEM_DDR4_MOD_ORG_CHIPWIDTH_MASK;
-	physbanks = (s->sm_data[SPDMEM_DDR4_MOD_ORG] >> 
+	physbanks = (s->sm_data[SPDMEM_DDR4_MOD_ORG] >>
 	    SPDMEM_DDR4_MOD_ORG_BANKS_SHIFT) & SPDMEM_DDR4_MOD_ORG_BANKS_MASK;
 
 	if ((s->sm_data[SPDMEM_DDR4_PACK_TYPE] &
@@ -796,7 +796,7 @@ spdmem_ddr4_decode(struct spdmem_softc *sc, struct spdmem *s)
 	if (mtype == SPDMEM_DDR4_16B_SO_DIMM)
 		printf(" 16-bit");
 
-	if (s->sm_data[SPDMEM_DDR4_DATAWIDTH] & SPDMEM_DDR4_DATAWIDTH_ECCMASK) 
+	if (s->sm_data[SPDMEM_DDR4_DATAWIDTH] & SPDMEM_DDR4_DATAWIDTH_ECCMASK)
 		printf(" ECC");
 
 	mtb = s->sm_data[SPDMEM_DDR4_TCKMIN_MTB];

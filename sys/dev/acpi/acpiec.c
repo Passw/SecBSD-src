@@ -259,7 +259,7 @@ acpiec_match(struct device *parent, void *match, void *aux)
 	struct acpi_softc	*acpisc = (struct acpi_softc *)parent;
 
 	/* Check for early ECDT table attach */
-	if (ecdt && 
+	if (ecdt &&
 	    !memcmp(ecdt->hdr.signature, ECDT_SIG, sizeof(ECDT_SIG) - 1))
 		return (1);
 	if (acpisc->sc_ec)

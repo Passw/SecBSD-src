@@ -185,7 +185,7 @@ case ${generic_target} in
     esac ;;
   i386-*-openbsd[0-2].* | \
   i386-*-openbsd3.[0-2])		fmt=aout em=obsd ;;
-  i386-*-openbsd* | i386-*-secbsd)	fmt=elf em=obsd ;;
+  i386-*-openbsd* | i386-*-secbsd*)	fmt=elf em=obsd ;;
   i386-*-linux*aout*)			fmt=aout em=linux ;;
   i386-*-linux*oldld)			fmt=aout em=linux ;;
   i386-*-linux*coff*)			fmt=coff em=linux ;;

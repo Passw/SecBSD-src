@@ -170,7 +170,7 @@ const struct ahd_pci_identity ahd_pci_ident_table[] =
 		ID_ALL_MASK,
 		ahd_aic7901A_setup
 	},
-	/* aic7902 based controllers */	
+	/* aic7902 based controllers */
 	{
 		ID_AHA_29320,
 		ID_ALL_MASK,
@@ -240,7 +240,7 @@ const struct ahd_pci_identity ahd_pci_ident_table[] =
 };
 
 const u_int ahd_num_pci_devs = NUM_ELEMENTS(ahd_pci_ident_table);
-		
+
 #define			DEVCONFIG		0x40
 #define			PCIXINITPAT		0x0000E000ul
 #define			PCIXINIT_PCI33_66	0x0000E000ul
@@ -342,7 +342,7 @@ ahd_pci_attach(struct device *parent, struct device *self, void *aux)
 	pci_intr_handle_t ih;
 	const char *intrstr;
 	pcireg_t devconfig, memtype, subid;
-	uint16_t device, subvendor; 
+	uint16_t device, subvendor;
 	int error, ioh_valid, ioh2_valid, l, memh_valid;
 
 	ahd->dev_softc = pa;
@@ -373,10 +373,10 @@ ahd_pci_attach(struct device *parent, struct device *self, void *aux)
 	error = entry->setup(ahd, pa);
 	if (error != 0)
 		return;
-	
+
 	/* XXX ahc on sparc64 needs this twice */
 	devconfig = pci_conf_read(pa->pa_pc, pa->pa_tag, DEVCONFIG);
-	
+
 	if ((devconfig & PCIXINITPAT) == PCIXINIT_PCI33_66) {
 		ahd->chip |= AHD_PCI;
 		/* Disable PCIX workarounds when running in PCI mode. */
@@ -482,7 +482,7 @@ ahd_pci_attach(struct device *parent, struct device *self, void *aux)
 		devconfig |= DACEN;
 		pci_conf_write(pa->pa_pc, pa->pa_tag, DEVCONFIG, devconfig);
 	}
-	
+
 	ahd_softc_init(ahd);
 
 	/*
@@ -514,7 +514,7 @@ ahd_pci_attach(struct device *parent, struct device *self, void *aux)
 	}
 	if (intrstr != NULL)
 		printf(": %s\n", intrstr);
-	
+
 	/* Get the size of the cache */
 	ahd->pci_cachesize = pci_conf_read(pa->pa_pc, pa->pa_tag, PCI_BHLC_REG);
 	ahd->pci_cachesize *= 4;
@@ -668,7 +668,7 @@ ahd_check_extport(struct ahd_softc *ahd)
 		/*
 		 * Fetch VPD for this function and parse it.
 		 */
-		if (bootverbose) 
+		if (bootverbose)
 			printf("%s: Reading VPD from SEEPROM...",
 			       ahd_name(ahd));
 
@@ -681,12 +681,12 @@ ahd_check_extport(struct ahd_softc *ahd)
 					 /*bytestream*/TRUE);
 		if (error == 0)
 			error = ahd_parse_vpddata(ahd, &vpd);
-		if (bootverbose) 
+		if (bootverbose)
 			printf("%s: VPD parsing %s\n",
 			       ahd_name(ahd),
 			       error == 0 ? "successful" : "failed");
 
-		if (bootverbose) 
+		if (bootverbose)
 			printf("%s: Reading SEEPROM...", ahd_name(ahd));
 
 		/* Address is always in units of 16bit words */
@@ -941,7 +941,7 @@ ahd_pci_intr(struct ahd_softc *ahd)
 	u_int		intstat;
 	u_int		i;
 	u_int		reg;
-	
+
 	intstat = ahd_inb(ahd, INTSTAT);
 
 	if ((intstat & SPLTINT) != 0)
@@ -965,7 +965,7 @@ ahd_pci_intr(struct ahd_softc *ahd)
 
 	for (i = 0; i < 8; i++) {
 		u_int bit;
-	
+
 		if (i == 5)
 			continue;
 
@@ -980,7 +980,7 @@ ahd_pci_intr(struct ahd_softc *ahd)
 					    pci_status_strings[bit],
 					    pci_status_source[i]);
 			}
-		}	
+		}
 	}
 	pci_status1 = pci_conf_read(pc, tag, PCI_COMMAND_STATUS_REG);
 	pci_conf_write(pc, tag, PCI_COMMAND_STATUS_REG , pci_status1);

@@ -99,7 +99,7 @@ __rb_deepest_left(struct rb_node *node)
 		else
 			node = RB_RIGHT(node, __entry);
 	}
-	return parent;	
+	return parent;
 }
 
 static inline struct rb_node *

@@ -177,7 +177,7 @@ intel_gmch_gtt_get(u64 *gtt_total,
 {
 	struct inteldrm_softc *dev_priv = (void *)inteldrm_cd.cd_devs[0];
 	struct agp_info *ai = &dev_priv->drm.agp->info;
-	
+
 	*gtt_total = ai->ai_aperture_size;
 	*mappable_base = ai->ai_aperture_base;
 	*mappable_end = ai->ai_aperture_size;

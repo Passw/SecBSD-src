@@ -221,7 +221,7 @@ wake_up(wait_queue_head_t *wqh)
 	wait_queue_entry_t *wqe;
 	wait_queue_entry_t *tmp;
 	mtx_enter(&wqh->lock);
-	
+
 	list_for_each_entry_safe(wqe, tmp, &wqh->head, entry) {
 		KASSERT(wqe->func != NULL);
 		if (wqe->func != NULL)
@@ -255,7 +255,7 @@ wake_up_all_locked(wait_queue_head_t *wqh)
 		.private = curproc,			\
 		.func = autoremove_wake_function,	\
 		.entry = LIST_HEAD_INIT((name).entry),	\
-	}						
+	}
 
 static inline void
 prepare_to_wait(wait_queue_head_t *wqh, wait_queue_entry_t *wqe, int state)

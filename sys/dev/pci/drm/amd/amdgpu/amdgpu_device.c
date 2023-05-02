@@ -6137,7 +6137,7 @@ int amdgpu_in_reset(struct amdgpu_device *adev)
 {
 	return atomic_read(&adev->reset_domain->in_gpu_reset);
 	}
-	
+
 /**
  * amdgpu_device_halt() - bring hardware to some kind of halt state
  *

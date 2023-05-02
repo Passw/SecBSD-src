@@ -86,7 +86,7 @@ abl_match(struct device *parent, void *match, void *aux)
 {
 	struct acpi_attach_args *aa = aux;
 	struct cfdata *cf = match;
-	
+
 	return acpi_matchhids(aa, abl_hids, cf->cf_driver->cd_name);
 }
 

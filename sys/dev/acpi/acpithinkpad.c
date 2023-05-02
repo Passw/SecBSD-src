@@ -435,7 +435,7 @@ thinkpad_hotkey(struct aml_node *node, int notify_type, void *arg)
 		case THINKPAD_BUTTON_SUSPEND:
 #ifndef SMALL_KERNEL
 			if (acpi_record_event(sc->sc_acpi, APM_USER_SUSPEND_REQ))
-				acpi_addtask(sc->sc_acpi, acpi_sleep_task, 
+				acpi_addtask(sc->sc_acpi, acpi_sleep_task,
 				    sc->sc_acpi, SLEEP_SUSPEND);
 #endif
 			break;
@@ -456,7 +456,7 @@ thinkpad_hotkey(struct aml_node *node, int notify_type, void *arg)
 		case THINKPAD_BUTTON_HIBERNATE:
 #if defined(HIBERNATE) && !defined(SMALL_KERNEL)
 			if (acpi_record_event(sc->sc_acpi, APM_USER_HIBERNATE_REQ))
-				acpi_addtask(sc->sc_acpi, acpi_sleep_task, 
+				acpi_addtask(sc->sc_acpi, acpi_sleep_task,
 				    sc->sc_acpi, SLEEP_HIBERNATE);
 #endif
 			break;
@@ -472,12 +472,12 @@ thinkpad_hotkey(struct aml_node *node, int notify_type, void *arg)
 			break;
 		case THINKPAD_PORT_REPL_DOCKED:
 			sc->sc_sens[THINKPAD_SENSOR_PORTREPL].value = 1;
-			sc->sc_sens[THINKPAD_SENSOR_PORTREPL].status = 
+			sc->sc_sens[THINKPAD_SENSOR_PORTREPL].status =
 			    SENSOR_S_OK;
 			break;
 		case THINKPAD_PORT_REPL_UNDOCKED:
 			sc->sc_sens[THINKPAD_SENSOR_PORTREPL].value = 0;
-			sc->sc_sens[THINKPAD_SENSOR_PORTREPL].status = 
+			sc->sc_sens[THINKPAD_SENSOR_PORTREPL].status =
 			    SENSOR_S_OK;
 			break;
 		default:

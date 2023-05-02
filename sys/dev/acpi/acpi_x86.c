@@ -134,7 +134,7 @@ checklids(struct acpi_softc *sc)
 	if (lids == 0 && lid_action != 0)
 		return EAGAIN;
 	return 0;
-}	
+}
 
 
 int

@@ -230,7 +230,7 @@ kstatioc_leave(struct kstat_req *ksreq, struct kstat *ks)
 		ksreq->ks_interval = ks->ks_interval;
 
 		if (ksreq->ks_data == NULL) {
-			/* userland doesn't want actual data, so shortcut */ 
+			/* userland doesn't want actual data, so shortcut */
 			kstat_enter(ks);
 			ksreq->ks_datalen = ks->ks_datalen;
 			ksreq->ks_updated = ks->ks_updated;
@@ -633,7 +633,7 @@ kstat_remove(struct kstat *ks)
 	KASSERTMSG(ks->ks_state == KSTAT_S_INSTALLED,
 	    "kstat %p %s:%u:%s:%u is not installed", ks,
 	    ks->ks_provider, ks->ks_instance, ks->ks_name, ks->ks_unit);
-	  
+
 	ks->ks_state = KSTAT_S_CREATED;
 	rw_exit_write(&kstat_lock);
 }

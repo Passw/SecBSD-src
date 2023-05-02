@@ -329,7 +329,7 @@ sr_raid1c_rw(struct sr_workunit *wu)
 
 	if (sr_validate_io(wu, &blkno, "sr_raid1c_rw"))
 		return (1);
-	
+
 	if (ISSET(wu->swu_xs->flags, SCSI_DATA_OUT) &&
 	    !ISSET(wu->swu_flags, SR_WUF_REBUILD)) {
 		mdd_raid1c = &wu->swu_dis->mds.mdd_raid1c;

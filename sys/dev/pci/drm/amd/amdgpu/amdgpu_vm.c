@@ -101,7 +101,7 @@ amdgpu_vm_it_iter_next(struct amdgpu_bo_va_mapping *node, uint64_t start,
 
 static void
 amdgpu_vm_it_remove(struct amdgpu_bo_va_mapping *node,
-    struct rb_root_cached *root) 
+    struct rb_root_cached *root)
 {
 	rb_erase_cached(&node->rb, root);
 }
