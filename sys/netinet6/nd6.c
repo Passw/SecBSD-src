@@ -1,4 +1,4 @@
-/*	$OpenBSD: nd6.c,v 1.273 2023/05/02 06:06:13 bluhm Exp $	*/
+/*	$OpenBSD: nd6.c,v 1.279 2023/05/12 12:42:16 bluhm Exp $	*/
 /*	$KAME: nd6.c,v 1.280 2002/06/08 19:52:07 itojun Exp $	*/
 
 /*
@@ -62,6 +62,15 @@
 #include <netinet6/nd6.h>
 #include <netinet/icmp6.h>
 
+/*
+ * Locks used to protect struct members in this file:
+ *	a	atomic operations
+ *	I	immutable after creation
+ *	K	kernel lock
+ *	m	nd6 mutex, needed when net lock is shared
+ *	N	net lock
+ */
+
 #define ND6_SLOWTIMER_INTERVAL (60 * 60) /* 1 hour */
 #define ND6_RECALC_REACHTM_INTERVAL (60 * 120) /* 2 hours */
 
@@ -84,9 +93,13 @@ int nd6_debug = 1;
 int nd6_debug = 0;
 #endif
 
-TAILQ_HEAD(llinfo_nd6_head, llinfo_nd6) nd6_list;
-struct	pool nd6_pool;		/* pool for llinfo_nd6 structures */
-int	nd6_inuse;
+/* llinfo_nd6 live time, rt_llinfo and RTF_LLINFO are protected by nd6_mtx */
+struct mutex nd6_mtx = MUTEX_INITIALIZER(IPL_SOFTNET);
+
+TAILQ_HEAD(llinfo_nd6_head, llinfo_nd6) nd6_list =
+    TAILQ_HEAD_INITIALIZER(nd6_list);	/* [mN] list of llinfo_nd6 structures */
+struct	pool nd6_pool;		/* [I] pool for llinfo_nd6 structures */
+int	nd6_inuse;		/* [m] limit neigbor discovery routes */
 unsigned int	ln_hold_total;	/* [a] packets currently in the nd6 queue */
 
 void nd6_timer(void *);
@@ -105,7 +118,6 @@ struct task nd6_expire_task;
 void
 nd6_init(void)
 {
-	TAILQ_INIT(&nd6_list);
 	pool_init(&nd6_pool, sizeof(struct llinfo_nd6), 0,
 	    IPL_SOFTNET, 0, "nd6", NULL);
 
@@ -259,6 +271,7 @@ nd6_timer(void *unused)
 	uptime = getuptime();
 	expire = uptime + nd6_gctimer;
 
+	/* Net lock is exclusive, no nd6 mutex needed for nd6_list here. */
 	TAILQ_FOREACH_SAFE(ln, &nd6_list, ln_list, nln) {
 		struct rtentry *rt = ln->ln_rt;
 
@@ -465,7 +478,7 @@ nd6_purge(struct ifnet *ifp)
 {
 	struct llinfo_nd6 *ln, *nln;
 
-	NET_ASSERT_LOCKED();
+	NET_ASSERT_LOCKED_EXCLUSIVE();
 
 	/*
 	 * Nuke neighbor cache entries for the ifp.
@@ -514,6 +527,7 @@ nd6_lookup(const struct in6_addr *addr6, int create, struct ifnet *ifp,
 	if (rt == NULL) {
 		if (create && ifp) {
 			struct rt_addrinfo info;
+			struct llinfo_nd6 *ln;
 			struct ifaddr *ifa;
 			int error;
 
@@ -543,11 +557,9 @@ nd6_lookup(const struct in6_addr *addr6, int create, struct ifnet *ifp,
 			    rtableid);
 			if (error)
 				return (NULL);
-			if (rt->rt_llinfo != NULL) {
-				struct llinfo_nd6 *ln =
-				    (struct llinfo_nd6 *)rt->rt_llinfo;
+			ln = (struct llinfo_nd6 *)rt->rt_llinfo;
+			if (ln != NULL)
 				ln->ln_state = ND6_LLINFO_NOSTATE;
-			}
 		} else
 			return (NULL);
 	}
@@ -627,13 +639,20 @@ nd6_is_addr_neighbor(const struct sockaddr_in6 *addr, struct ifnet *ifp)
 void
 nd6_invalidate(struct rtentry *rt)
 {
-	struct llinfo_nd6 *ln = (struct llinfo_nd6 *)rt->rt_llinfo;
+	struct llinfo_nd6 *ln;
 	struct sockaddr_dl *sdl = satosdl(rt->rt_gateway);
 
+	mtx_enter(&nd6_mtx);
+	ln = (struct llinfo_nd6 *)rt->rt_llinfo;
+	if (ln == NULL) {
+		mtx_leave(&nd6_mtx);
+		return;
+	}
 	atomic_sub_int(&ln_hold_total, mq_purge(&ln->ln_mq));
 	sdl->sdl_alen = 0;
 	ln->ln_state = ND6_LLINFO_INCOMPLETE;
 	ln->ln_asked = 0;
+	mtx_leave(&nd6_mtx);
 }
 
 /*
@@ -721,7 +740,7 @@ void
 nd6_rtrequest(struct ifnet *ifp, int req, struct rtentry *rt)
 {
 	struct sockaddr *gate = rt->rt_gateway;
-	struct llinfo_nd6 *ln = (struct llinfo_nd6 *)rt->rt_llinfo;
+	struct llinfo_nd6 *ln;
 	struct ifaddr *ifa;
 	struct in6_ifaddr *ifa6;
 
@@ -760,40 +779,12 @@ nd6_rtrequest(struct ifnet *ifp, int req, struct rtentry *rt)
 
 	switch (req) {
 	case RTM_ADD:
-		if ((rt->rt_flags & RTF_CLONING) ||
-		    ((rt->rt_flags & (RTF_LLINFO | RTF_LOCAL)) && ln == NULL)) {
-			if (ln != NULL)
-				nd6_llinfo_settimer(ln, 0);
-			if ((rt->rt_flags & RTF_CLONING) != 0)
-				break;
+		if (rt->rt_flags & RTF_CLONING) {
+			rt->rt_expire = 0;
+			break;
 		}
-		/*
-		 * In IPv4 code, we try to announce new RTF_ANNOUNCE entry here.
-		 * We don't do that here since llinfo is not ready yet.
-		 *
-		 * There are also couple of other things to be discussed:
-		 * - unsolicited NA code needs improvement beforehand
-		 * - RFC2461 says we MAY send multicast unsolicited NA
-		 *   (7.2.6 paragraph 4), however, it also says that we
-		 *   SHOULD provide a mechanism to prevent multicast NA storm.
-		 *   we don't have anything like it right now.
-		 *   note that the mechanism needs a mutual agreement
-		 *   between proxies, which means that we need to implement
-		 *   a new protocol, or a new kludge.
-		 * - from RFC2461 6.2.4, host MUST NOT send an unsolicited NA.
-		 *   we need to check ip6forwarding before sending it.
-		 *   (or should we allow proxy ND configuration only for
-		 *   routers?  there's no mention about proxy ND from hosts)
-		 */
-#if 0
-		/* XXX it does not work */
-		if (rt->rt_flags & RTF_ANNOUNCE)
-			nd6_na_output(ifp,
-			      &satosin6(rt_key(rt))->sin6_addr,
-			      &satosin6(rt_key(rt))->sin6_addr,
-			      ip6_forwarding ? ND_NA_FLAG_ROUTER : 0,
-			      1, NULL);
-#endif
+		if ((rt->rt_flags & RTF_LOCAL) && rt->rt_llinfo == NULL)
+			rt->rt_expire = 0;
 		/* FALLTHROUGH */
 	case RTM_RESOLVE:
 		if (gate->sa_family != AF_LINK ||
@@ -804,21 +795,29 @@ nd6_rtrequest(struct ifnet *ifp, int req, struct rtentry *rt)
 		}
 		satosdl(gate)->sdl_type = ifp->if_type;
 		satosdl(gate)->sdl_index = ifp->if_index;
-		if (ln != NULL)
-			break;	/* This happens on a route change */
 		/*
 		 * Case 2: This route may come from cloning, or a manual route
 		 * add with a LL address.
 		 */
 		ln = pool_get(&nd6_pool, PR_NOWAIT | PR_ZERO);
-		rt->rt_llinfo = (caddr_t)ln;
 		if (ln == NULL) {
 			log(LOG_DEBUG, "%s: pool get failed\n", __func__);
 			break;
 		}
-		mq_init(&ln->ln_mq, LN_HOLD_QUEUE, IPL_SOFTNET);
+
+		mtx_enter(&nd6_mtx);
+		if (rt->rt_llinfo != NULL) {
+			/* we lost the race, another thread has entered it */
+			mtx_leave(&nd6_mtx);
+			pool_put(&nd6_pool, ln);
+			break;
+		}
 		nd6_inuse++;
+		mq_init(&ln->ln_mq, LN_HOLD_QUEUE, IPL_SOFTNET);
+		rt->rt_llinfo = (caddr_t)ln;
 		ln->ln_rt = rt;
+		rt->rt_flags |= RTF_LLINFO;
+		TAILQ_INSERT_HEAD(&nd6_list, ln, ln_list);
 		/* this is required for "ndp" command. - shin */
 		if (req == RTM_ADD) {
 			/*
@@ -836,8 +835,6 @@ nd6_rtrequest(struct ifnet *ifp, int req, struct rtentry *rt)
 			ln->ln_state = ND6_LLINFO_NOSTATE;
 			nd6_llinfo_settimer(ln, 0);
 		}
-		rt->rt_flags |= RTF_LLINFO;
-		TAILQ_INSERT_HEAD(&nd6_list, ln, ln_list);
 
 		/*
 		 * If we have too many cache entries, initiate immediate
@@ -879,43 +876,59 @@ nd6_rtrequest(struct ifnet *ifp, int req, struct rtentry *rt)
 		ifa6 = in6ifa_ifpwithaddr(ifp,
 		    &satosin6(rt_key(rt))->sin6_addr);
 		ifa = ifa6 ? &ifa6->ia_ifa : NULL;
-		if (ifa) {
+		if (ifa != NULL ||
+		    (rt->rt_flags & RTF_ANNOUNCE)) {
 			ln->ln_state = ND6_LLINFO_REACHABLE;
 			ln->ln_byhint = 0;
 			rt->rt_expire = 0;
-			KASSERT(ifa == rt->rt_ifa);
-		} else if (rt->rt_flags & RTF_ANNOUNCE) {
-			ln->ln_state = ND6_LLINFO_REACHABLE;
-			ln->ln_byhint = 0;
-			rt->rt_expire = 0;
+		}
+		mtx_leave(&nd6_mtx);
 
-			/* join solicited node multicast for proxy ND */
-			if (ifp->if_flags & IFF_MULTICAST) {
-				struct in6_addr llsol;
-				int error;
+		/* join solicited node multicast for proxy ND */
+		if (ifa == NULL &&
+		    (rt->rt_flags & RTF_ANNOUNCE) &&
+		    (ifp->if_flags & IFF_MULTICAST)) {
+			struct in6_addr llsol;
+			int error;
 
-				llsol = satosin6(rt_key(rt))->sin6_addr;
-				llsol.s6_addr16[0] = htons(0xff02);
-				llsol.s6_addr16[1] = htons(ifp->if_index);
-				llsol.s6_addr32[1] = 0;
-				llsol.s6_addr32[2] = htonl(1);
-				llsol.s6_addr8[12] = 0xff;
+			llsol = satosin6(rt_key(rt))->sin6_addr;
+			llsol.s6_addr16[0] = htons(0xff02);
+			llsol.s6_addr16[1] = htons(ifp->if_index);
+			llsol.s6_addr32[1] = 0;
+			llsol.s6_addr32[2] = htonl(1);
+			llsol.s6_addr8[12] = 0xff;
 
-				if (in6_addmulti(&llsol, ifp, &error)) {
-					char addr[INET6_ADDRSTRLEN];
-					nd6log((LOG_ERR, "%s: failed to join "
-					    "%s (errno=%d)\n", ifp->if_xname,
-					    inet_ntop(AF_INET6, &llsol,
-						addr, sizeof(addr)),
-					    error));
-				}
+			KERNEL_LOCK();
+			if (in6_addmulti(&llsol, ifp, &error)) {
+				char addr[INET6_ADDRSTRLEN];
+				nd6log((LOG_ERR, "%s: failed to join "
+				    "%s (errno=%d)\n", ifp->if_xname,
+				    inet_ntop(AF_INET6, &llsol,
+					addr, sizeof(addr)),
+				    error));
 			}
+			KERNEL_UNLOCK();
 		}
 		break;
 
 	case RTM_DELETE:
-		if (ln == NULL)
+		mtx_enter(&nd6_mtx);
+		ln = (struct llinfo_nd6 *)rt->rt_llinfo;
+		if (ln == NULL) {
+			/* we lost the race, another thread has removed it */
+			mtx_leave(&nd6_mtx);
 			break;
+		}
+		nd6_inuse--;
+		TAILQ_REMOVE(&nd6_list, ln, ln_list);
+		rt->rt_expire = 0;
+		rt->rt_llinfo = NULL;
+		rt->rt_flags &= ~RTF_LLINFO;
+		atomic_sub_int(&ln_hold_total, mq_purge(&ln->ln_mq));
+		mtx_leave(&nd6_mtx);
+
+		pool_put(&nd6_pool, ln);
+
 		/* leave from solicited node multicast for proxy ND */
 		if ((rt->rt_flags & RTF_ANNOUNCE) != 0 &&
 		    (ifp->if_flags & IFF_MULTICAST) != 0) {
@@ -929,22 +942,15 @@ nd6_rtrequest(struct ifnet *ifp, int req, struct rtentry *rt)
 			llsol.s6_addr32[2] = htonl(1);
 			llsol.s6_addr8[12] = 0xff;
 
+			KERNEL_LOCK();
 			IN6_LOOKUP_MULTI(llsol, ifp, in6m);
 			if (in6m)
 				in6_delmulti(in6m);
+			KERNEL_UNLOCK();
 		}
-		nd6_inuse--;
-		TAILQ_REMOVE(&nd6_list, ln, ln_list);
-		rt->rt_expire = 0;
-		rt->rt_llinfo = NULL;
-		rt->rt_flags &= ~RTF_LLINFO;
-		atomic_sub_int(&ln_hold_total, mq_purge(&ln->ln_mq));
-		pool_put(&nd6_pool, ln);
 		break;
 
 	case RTM_INVALIDATE:
-		if (ln == NULL)
-			break;
 		if (!ISSET(rt->rt_flags, RTF_LOCAL))
 			nd6_invalidate(rt);
 		break;
@@ -1020,10 +1026,10 @@ void
 nd6_cache_lladdr(struct ifnet *ifp, const struct in6_addr *from, char *lladdr,
     int lladdrlen, int type, int code)
 {
-	struct rtentry *rt = NULL;
-	struct llinfo_nd6 *ln = NULL;
+	struct rtentry *rt;
+	struct llinfo_nd6 *ln;
 	int is_newentry;
-	struct sockaddr_dl *sdl = NULL;
+	struct sockaddr_dl *sdl;
 	int do_update;
 	int olladdr;
 	int llchange;
@@ -1142,7 +1148,7 @@ fail:
 			 * meaningless.
 			 */
 			nd6_llinfo_settimer(ln, nd6_gctimer);
-			if_mqoutput(ifp, &ln->ln_mq, &ln_hold_total,
+			if_output_mq(ifp, &ln->ln_mq, &ln_hold_total,
 			    rt_key(rt), rt);
 		} else if (ln->ln_state == ND6_LLINFO_INCOMPLETE) {
 			/* probe right away */
@@ -1250,7 +1256,7 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 {
 	struct sockaddr_dl *sdl;
 	struct rtentry *rt;
-	struct llinfo_nd6 *ln = NULL;
+	struct llinfo_nd6 *ln;
 	struct in6_addr saddr6;
 	time_t uptime;
 	int solicit = 0;
@@ -1260,15 +1266,12 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 		return (0);
 	}
 
-	/* XXXSMP there is a MP race in nd6_resolve() */
-	KERNEL_LOCK();
 	uptime = getuptime();
 	rt = rt_getll(rt0);
 
 	if (ISSET(rt->rt_flags, RTF_REJECT) &&
 	    (rt->rt_expire == 0 || rt->rt_expire > uptime)) {
 		m_freem(m);
-		KERNEL_UNLOCK();
 		return (rt == rt0 ? EHOSTDOWN : EHOSTUNREACH);
 	}
 
@@ -1291,6 +1294,11 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 		goto bad;
 	}
 
+	KERNEL_LOCK();
+	if (!ISSET(rt->rt_flags, RTF_LLINFO)) {
+		KERNEL_UNLOCK();
+		goto bad;
+	}
 	ln = (struct llinfo_nd6 *)rt->rt_llinfo;
 	KASSERT(ln != NULL);
 
@@ -1299,8 +1307,10 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 	 * for this entry to be a target of forced garbage collection (see
 	 * nd6_rtrequest()).
 	 */
+	mtx_enter(&nd6_mtx);
 	TAILQ_REMOVE(&nd6_list, ln, ln_list);
 	TAILQ_INSERT_HEAD(&nd6_list, ln, ln_list);
+	mtx_leave(&nd6_mtx);
 
 	/*
 	 * The first time we send a packet to a neighbor whose entry is
@@ -1321,6 +1331,8 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 	 * send the packet.
 	 */
 	if (ln->ln_state > ND6_LLINFO_INCOMPLETE) {
+		KERNEL_UNLOCK();
+
 		sdl = satosdl(rt->rt_gateway);
 		if (sdl->sdl_alen != ETHER_ADDR_LEN) {
 			char addr[INET6_ADDRSTRLEN];
@@ -1332,7 +1344,6 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 		}
 
 		bcopy(LLADDR(sdl), desten, sdl->sdl_alen);
-		KERNEL_UNLOCK();
 		return (0);
 	}
 
@@ -1374,7 +1385,6 @@ nd6_resolve(struct ifnet *ifp, struct rtentry *rt0, struct mbuf *m,
 
 bad:
 	m_freem(m);
-	KERNEL_UNLOCK();
 	return (EINVAL);
 }
 

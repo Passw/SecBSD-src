@@ -45,9 +45,9 @@ CPPFLAGS+=	-D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS \
 		-D__STDC_FORMAT_MACROS
 
 .if ${MACHINE_ARCH} == "arm"
-TRIPLE=		armv7-unknown-secbsd${OSREV}-gnueabi
+TRIPLE=		armv7-unknown-openbsd${OSREV}-gnueabi
 .else
-TRIPLE=		${MACHINE_ARCH}-unknown-secbsd${OSREV}
+TRIPLE=		${MACHINE_ARCH}-unknown-openbsd${OSREV}
 .endif
 CPPFLAGS+=	-DLLVM_PREFIX=\"/usr\"
 .include "Makefile.arch"

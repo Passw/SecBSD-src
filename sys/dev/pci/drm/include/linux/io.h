@@ -119,7 +119,7 @@ static inline u32
 ioread32(const volatile void __iomem *addr)
 {
 	uint32_t val;
-
+	
 	iobarrier();
 	val = lemtoh32(addr);
 	rmb();

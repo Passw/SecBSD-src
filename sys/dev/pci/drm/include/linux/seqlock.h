@@ -91,7 +91,7 @@ typedef struct {
 
 static inline void
 seqlock_init(seqlock_t *sl, int wantipl)
-{
+{ 
 	sl->seq = 0;
 	mtx_init(&sl->lock, wantipl);
 }

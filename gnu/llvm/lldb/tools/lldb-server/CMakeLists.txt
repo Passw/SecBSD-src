@@ -21,10 +21,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
   list(APPEND LLDB_PLUGINS lldbPluginProcessOpenBSD)
 endif()
 
-if(CMAKE_SYSTEM_NAME MATCHES "SecBSD")
-  list(APPEND LLDB_PLUGINS lldbPluginProcessOpenBSD)
-endif()
-
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   list(APPEND LLDB_PLUGINS lldbPluginObjectFileMachO)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")

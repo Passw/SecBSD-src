@@ -57,7 +57,7 @@ Boston, MA 02111-1307, USA.  */
 #include <machine/ansi.h>
 #endif
 /* On FreeBSD 5 and OpenBSD 3.9, machine/ansi.h does not exist anymore... */
-#if (defined (__FreeBSD__) && (__FreeBSD__ >= 5)) || defined(__OpenBSD__)
+#if (defined (__FreeBSD__) && (__FreeBSD__ >= 5)) || defined(__OpenBSD__) || defined(__SecBSD__)
 #include <sys/_types.h>
 #endif
 
@@ -201,7 +201,7 @@ typedef __PTRDIFF_TYPE__ ptrdiff_t;
 #define ___int_size_t_h
 #define _GCC_SIZE_T
 #define _SIZET_
-#if (defined (__FreeBSD__) && (__FreeBSD__ >= 5)) || defined(__OpenBSD__)
+#if (defined (__FreeBSD__) && (__FreeBSD__ >= 5)) || defined(__OpenBSD__) || defined(__SecBSD__)
 /* __size_t is a typedef on FreeBSD 5 and OpenBSD 3.9!, must not trash it. */
 #else
 #define __size_t

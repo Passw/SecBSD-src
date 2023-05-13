@@ -105,7 +105,7 @@ struct agp_softc {
 	pcireg_t			 sc_id;
 
 	int				 sc_opened;
-	int				 sc_capoff;
+	int				 sc_capoff;			
 	int				 sc_nextid;	/* next mem block id */
 	enum agp_acquire_state		 sc_state;
 

@@ -1481,10 +1481,6 @@ TEST(TripleTest, getARMCPUForArch) {
     EXPECT_EQ("cortex-a8", Triple.getARMCPUForArch());
   }
   {
-    llvm::Triple Triple("arm--secbsd");
-    EXPECT_EQ("cortex-a8", Triple.getARMCPUForArch());
-  }
-  {
     llvm::Triple Triple("armv6-unknown-freebsd");
     EXPECT_EQ("arm1176jzf-s", Triple.getARMCPUForArch());
   }

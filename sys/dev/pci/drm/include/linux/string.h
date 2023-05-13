@@ -74,7 +74,7 @@ match_string(const char * const *array,  size_t n, const char *str)
 	for (i = 0; i < n; i++) {
 		if (array[i] == NULL)
 			break;
-		if (!strcmp(array[i], str))
+		if (!strcmp(array[i], str))	
 			return i;
 	}
 

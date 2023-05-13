@@ -186,7 +186,7 @@ static int xgpu_ai_send_access_requests(struct amdgpu_device *adev,
 		/* Dummy REQ_GPU_INIT_DATA handling */
 		r = xgpu_ai_poll_msg(adev, IDH_REQ_GPU_INIT_DATA_READY);
 		/* version set to 0 since dummy */
-		adev->virt.req_init_data_ver = 0;
+		adev->virt.req_init_data_ver = 0;	
 	}
 
 	return 0;

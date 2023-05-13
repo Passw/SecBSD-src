@@ -60,7 +60,6 @@ SRCS+=	AIX.cpp \
 	OpenBSD.cpp \
 	PS4CPU.cpp \
 	RISCVToolchain.cpp \
-	SecBSD.cpp \
 	Solaris.cpp \
 	TCE.cpp \
 	VEToolchain.cpp \

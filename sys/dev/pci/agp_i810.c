@@ -59,7 +59,7 @@
 /* I810/I815 only, memory is in dcache */
 #define	INTEL_LOCAL	0x2
 /* Memory is snooped, must not be accessed through gtt from the cpu. */
-#define	INTEL_COHERENT	0x6
+#define	INTEL_COHERENT	0x6	
 
 enum {
 	CHIP_NONE	= 0,	/* not integrated graphics */
@@ -194,7 +194,7 @@ agp_i810_get_chiptype(struct pci_attach_args *pa)
 		return (CHIP_IRONLAKE);
 		break;
 	}
-
+	
 	return (CHIP_NONE);
 }
 
@@ -379,7 +379,7 @@ agp_i810_attach(struct device *parent, struct device *self, void *aux)
 		/* FALLTHROUGH */
 	case CHIP_I915:
 		/* FALLTHROUGH */
-	case CHIP_I965:
+	case CHIP_I965: 
 		/* FALLTHROUGH */
 	case CHIP_G33:
 		/* FALLTHROUGH */
@@ -559,7 +559,7 @@ agp_i810_configure(struct agp_i810_softc *isc)
 	tmp = isc->isc_apaddr;
 	if (isc->chiptype == CHIP_I810) {
 		tmp += isc->dcache_size;
-	} else {
+	} else {  
 		tmp += isc->stolen << AGP_PAGE_SHIFT;
 	}
 

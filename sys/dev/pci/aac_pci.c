@@ -285,7 +285,7 @@ aac_pci_attach(parent, self, aux)
 		printf("%s\n", intrstr);
 
 	sc->aac_dmat = pa->pa_dmat;
-
+ 
 	for (m = aac_identifiers; m->vendor != 0; m++)
 		if (m->vendor == PCI_VENDOR(pa->pa_id) &&
 		    m->device == PCI_PRODUCT(pa->pa_id)) {

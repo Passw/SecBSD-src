@@ -2,7 +2,7 @@
 /**
  * \file drm_atomic.h
  * Atomic operations used in the DRM which may or may not be provided by the OS.
- *
+ * 
  * \author Eric Anholt <anholt@FreeBSD.org>
  */
 
@@ -298,7 +298,7 @@ __test_and_set_bit(u_int b, volatile void *p)
 	volatile u_int *ptr = (volatile u_int *)p;
 	unsigned int prev = ptr[b >> 5];
 	ptr[b >> 5] |= m;
-
+	
 	return (prev & m) != 0;
 }
 
@@ -428,7 +428,7 @@ find_next_bit(const volatile void *p, int max, int b)
 #define wmb()	__membar("dsb sy")
 #define mb()	__membar("dsb sy")
 #elif defined(__mips64__)
-#define rmb()	mips_sync()
+#define rmb()	mips_sync() 
 #define wmb()	mips_sync()
 #define mb()	mips_sync()
 #elif defined(__powerpc64__)

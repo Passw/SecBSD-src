@@ -273,7 +273,7 @@ static int sdma_v5_0_init_microcode(struct amdgpu_device *adev)
 		if (ret)
 			return ret;
 	}
-
+	
 	return ret;
 }
 

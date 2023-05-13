@@ -1471,7 +1471,7 @@ class Base(unittest2.TestCase):
 
     def getstdlibFlag(self):
         """ Returns the proper -stdlib flag, or empty if not required."""
-        if self.platformIsDarwin() or self.getPlatform() == "freebsd" or self.getPlatform() == "openbsd" or self.getPlatform() == "secbsd":
+        if self.platformIsDarwin() or self.getPlatform() == "freebsd" or self.getPlatform() == "openbsd":
             stdlibflag = "-stdlib=libc++"
         else:  # this includes NetBSD
             stdlibflag = ""
@@ -1734,7 +1734,7 @@ class Base(unittest2.TestCase):
                 cflags += "c++11"
         if self.platformIsDarwin() or self.getPlatform() == "freebsd":
             cflags += " -stdlib=libc++"
-        elif self.getPlatform() == "openbsd" or self.getPlatform() == "secbsd":
+        elif self.getPlatform() == "openbsd":
             cflags += " -stdlib=libc++"
         elif self.getPlatform() == "netbsd":
             # NetBSD defaults to libc++
@@ -1782,7 +1782,7 @@ class Base(unittest2.TestCase):
         return configuration.lldb_libs_dir
 
     def getLibcPlusPlusLibs(self):
-        if self.getPlatform() in ('freebsd', 'linux', 'netbsd', 'openbsd', 'secbsd'):
+        if self.getPlatform() in ('freebsd', 'linux', 'netbsd', 'openbsd'):
             return ['libc++.so.1']
         else:
             return ['libc++.1.dylib', 'libc++abi.']

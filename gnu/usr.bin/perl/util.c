@@ -4975,7 +4975,7 @@ Perl_parse_unicode_opts(pTHX_ const char **popt)
 U32
 Perl_seed(pTHX)
 {
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(__SecBSD__)
 	return arc4random();
 #else
     /*

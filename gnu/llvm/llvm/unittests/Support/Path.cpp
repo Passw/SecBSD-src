@@ -2156,7 +2156,7 @@ TEST_F(FileSystemTest, permissions) {
   // AIX and Solaris without root will mask off (i.e., lose) the sticky bit
   // on files.
 #if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__) &&  \
-    !defined(__SecBSD__) && !defined(_AIX) && !(defined(__sun__) && defined(__svr4__))
+    !defined(_AIX) && !(defined(__sun__) && defined(__svr4__))
   EXPECT_EQ(fs::setPermissions(TempPath, fs::sticky_bit), NoError);
   EXPECT_TRUE(CheckPermissions(fs::sticky_bit));
 
@@ -2176,7 +2176,7 @@ TEST_F(FileSystemTest, permissions) {
 
   EXPECT_EQ(fs::setPermissions(TempPath, fs::all_perms), NoError);
   EXPECT_TRUE(CheckPermissions(fs::all_perms));
-#endif // !FreeBSD && !NetBSD && !OpenBSD && !SecBSD && !AIX
+#endif // !FreeBSD && !NetBSD && !OpenBSD && !AIX
 
   EXPECT_EQ(fs::setPermissions(TempPath, fs::all_perms & ~fs::sticky_bit),
                                NoError);

@@ -59,7 +59,7 @@ struct agp_intel_softc {
 		CHIP_I845,
 		CHIP_I850,
 		CHIP_I865
-	}			 chiptype;
+	}			 chiptype; 
 	/* registers saved during a suspend/resume cycle. */
 	pcireg_t		 savectrl;
 	pcireg_t		 savecmd;
@@ -115,7 +115,7 @@ agp_intel_probe(struct device *parent, void *match, void *aux)
 	case PCI_PRODUCT_INTEL_82840_HB:
 	case PCI_PRODUCT_INTEL_82845_HB:
 	case PCI_PRODUCT_INTEL_82845G_HB:
-	case PCI_PRODUCT_INTEL_82850_HB:
+	case PCI_PRODUCT_INTEL_82850_HB:	
 	case PCI_PRODUCT_INTEL_82855PM_HB:
 	case PCI_PRODUCT_INTEL_82855GM_HB:
 	case PCI_PRODUCT_INTEL_82860_HB:
@@ -202,7 +202,7 @@ agp_intel_attach(struct device *parent, struct device *self, void *aux)
 	/* Install the gatt. */
 	pci_conf_write(pa->pa_pc, pa->pa_tag, AGP_INTEL_ATTBASE,
 	    gatt->ag_physical);
-
+	
 	/* Enable the GLTB and setup the control register. */
 	switch (isc->chiptype) {
 	case CHIP_I443:
@@ -262,7 +262,7 @@ agp_intel_attach(struct device *parent, struct device *self, void *aux)
 		pci_conf_write(isc->isc_pc, isc->isc_tag,
 		    AGP_INTEL_ERRCMD, reg);
 	}
-
+	
 	isc->agpdev = (struct agp_softc *)agp_attach_bus(pa, &agp_intel_methods,
 	    isc->isc_apaddr, isc->isc_apsize, &isc->dev);
 	return;
@@ -329,7 +329,7 @@ agp_intel_restore(struct agp_intel_softc *isc)
 	/* Install the gatt. */
 	pci_conf_write(isc->isc_pc, isc->isc_tag, AGP_INTEL_ATTBASE,
 	    isc->gatt->ag_physical);
-
+	
 	/* Enable the GLTB and setup the control register. */
 	switch (isc->chiptype) {
 	case CHIP_I443:

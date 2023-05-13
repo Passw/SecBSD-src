@@ -77,7 +77,7 @@ static inline bool
 __sg_page_iter_next(struct sg_page_iter *iter)
 {
 	iter->sg_pgoffset++;
-	while (iter->__nents > 0 &&
+	while (iter->__nents > 0 && 
 	    iter->sg_pgoffset >= (iter->sg->length / PAGE_SIZE)) {
 		iter->sg_pgoffset -= (iter->sg->length / PAGE_SIZE);
 		iter->sg++;

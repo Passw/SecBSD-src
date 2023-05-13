@@ -20,7 +20,8 @@ MAGICMODE=	444
 
 CLEANFILES+=	magic post-magic
 
-MAG1=		$(.CURDIR)/magdir/Header \
+MAG1=		$(.CURDIR)/magdir/SecBSD \
+		$(.CURDIR)/magdir/Header \
 		$(.CURDIR)/magdir/Localstuff \
 		$(.CURDIR)/magdir/OpenBSD
 MAGFILES=	$(.CURDIR)/magdir/[0-9a-z]*

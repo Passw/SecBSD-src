@@ -64,7 +64,7 @@ agpbus_probe(struct agp_attach_args *aa)
 	struct pci_attach_args	*pa = aa->aa_pa;
 
 	if (strncmp(aa->aa_busname, "agp", 3) == 0 &&
-	    PCI_CLASS(pa->pa_class) == PCI_CLASS_BRIDGE &&
+	    PCI_CLASS(pa->pa_class) == PCI_CLASS_BRIDGE && 
 	    PCI_SUBCLASS(pa->pa_class) == PCI_SUBCLASS_BRIDGE_HOST)
 		return (1);
 	return (0);
@@ -215,7 +215,7 @@ agp_generic_enable(struct agp_softc *sc, u_int32_t mode)
 	struct pci_attach_args	pa;
 	pcireg_t		tstatus, mstatus, command;
 	int			rq, sba, fw, rate, capoff;
-
+	
 	if (pci_find_device(&pa, agpvga_match) == 0 ||
 	    pci_get_capability(pa.pa_pc, pa.pa_tag, PCI_CAP_AGP,
 	    &capoff, NULL) == 0) {
@@ -359,7 +359,7 @@ agp_acquire(void *dev)
 {
 	struct agp_softc *sc = (struct agp_softc *)dev;
 
-	if (sc->sc_chipc == NULL)
+	if (sc->sc_chipc == NULL) 
 		return (EINVAL);
 
 	if (sc->sc_state != AGP_ACQUIRE_FREE)
@@ -377,7 +377,7 @@ agp_release(void *dev)
 	if (sc->sc_state == AGP_ACQUIRE_FREE)
 		return (0);
 
-	if (sc->sc_state != AGP_ACQUIRE_KERNEL)
+	if (sc->sc_state != AGP_ACQUIRE_KERNEL) 
 		return (EBUSY);
 
 	sc->sc_state = AGP_ACQUIRE_FREE;

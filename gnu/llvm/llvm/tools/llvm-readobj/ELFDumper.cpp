@@ -1001,7 +1001,6 @@ static const EnumEntry<unsigned> ElfOSABI[] = {
   {"AROS",         "AROS",                 ELF::ELFOSABI_AROS},
   {"FenixOS",      "FenixOS",              ELF::ELFOSABI_FENIXOS},
   {"CloudABI",     "CloudABI",             ELF::ELFOSABI_CLOUDABI},
-  {"SecBSD",       "UNIX - SecBSD",        ELF::ELFOSABI_SECBSD},
   {"Standalone",   "Standalone App",       ELF::ELFOSABI_STANDALONE}
 };
 

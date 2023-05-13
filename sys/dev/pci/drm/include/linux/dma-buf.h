@@ -61,7 +61,7 @@ struct dma_buf_export_info {
 	struct dma_resv *resv;
 };
 
-#define DEFINE_DMA_BUF_EXPORT_INFO(x)  struct dma_buf_export_info x
+#define DEFINE_DMA_BUF_EXPORT_INFO(x)  struct dma_buf_export_info x 
 
 struct dma_buf *dma_buf_export(const struct dma_buf_export_info *);
 

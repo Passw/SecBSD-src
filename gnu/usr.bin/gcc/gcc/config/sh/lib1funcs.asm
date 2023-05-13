@@ -1003,7 +1003,7 @@ GLOBAL(sdivsi3_i4):
 #ifdef L_sdivsi3
 /* __SH4_SINGLE_ONLY__ keeps this part for link compatibility with
    sh3e code.  */
-#if (! defined(__SH4__) && ! defined (__SH4_SINGLE__)) || defined (__linux__) || defined (__OpenBSD__)
+#if (! defined(__SH4__) && ! defined (__SH4_SINGLE__)) || defined (__linux__) || defined (__OpenBSD__) || defined (__SecBSD__)
 !!
 !! Steve Chamberlain
 !! sac@cygnus.com
@@ -1389,7 +1389,7 @@ L1:
 #ifdef L_udivsi3
 /* __SH4_SINGLE_ONLY__ keeps this part for link compatibility with
    sh3e code.  */
-#if (! defined(__SH4__) && ! defined (__SH4_SINGLE__)) || defined (__linux__) || defined (__OpenBSD__)
+#if (! defined(__SH4__) && ! defined (__SH4_SINGLE__)) || defined (__linux__) || defined (__OpenBSD__) || defined (__SecBSD__)
 
 !! args in r4 and r5, result in r0, clobbers r4, pr, and t bit
 	.global	GLOBAL(udivsi3)

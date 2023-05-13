@@ -1100,7 +1100,7 @@ void amdgpu_bo_fini(struct amdgpu_device *adev)
 			arch_io_free_memtype_wc(adev->gmc.aper_base, adev->gmc.aper_size);
 #else
 			drm_mtrr_del(0, adev->gmc.aper_base, adev->gmc.aper_size, DRM_MTRR_WC);
-
+			
 #endif
 		}
 		drm_dev_exit(idx);

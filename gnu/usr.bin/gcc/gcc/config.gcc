@@ -420,6 +420,22 @@ case $machine in
 		tmake_file="${tmake_file} t-openbsd-thread"
 	fi
 	;;
+*-*-secbsd*)
+	case $machine in
+	*)
+		secbsd_libspec="secbsd-libpthread.h"
+		;;
+	esac
+	tm_file="${secbsd_libspec} ${cpu_type}/secbsd.h"
+	tmake_file="t-libc-ok t-secbsd t-libgcc-pic"
+	xm_defines=POSIX
+	# for gcc in tree, we use our own fragment
+	xmake_file=x-secbsd
+	if test x$enable_threads = xyes; then
+		thread_file='posix'
+		tmake_file="${tmake_file} t-secbsd-thread"
+	fi
+	;;
 *-*-netbsd*)
 	tmake_file="t-slibgcc-elf-ver t-libc-ok t-netbsd"
 	xm_defines=POSIX
@@ -707,6 +723,11 @@ arm*-*-openbsd*)
 	tm_file="dbxelf.h elfos.h arm/openbsd1.h arm/elf.h arm/aout.h arm/arm.h openbsd.h ${tm_file}"
 	tm_file="${tm_file} exec-stack.h"
 	tmake_file="${tmake_file} arm/t-openbsd"
+	;;
+arm*-*-secbsd*)
+	tm_file="dbxelf.h elfos.h arm/secbsd1.h arm/elf.h arm/aout.h arm/arm.h secbsd.h ${tm_file}"
+	tm_file="${tm_file} exec-stack.h"
+	tmake_file="${tmake_file} arm/t-secbsd"
 	;;
 arm*-*-netbsd*)
 	tm_file="arm/aout.h arm/arm.h netbsd.h netbsd-aout.h arm/netbsd.h"
@@ -1186,6 +1207,20 @@ x86_64-*-openbsd*)
 	tm_file="i386/biarch64.h i386/i386.h i386/unix.h i386/att.h dbxelf.h elfos.h openbsd.h openbsd-libpthread.h i386/x86-64.h i386/openbsd64.h"
 	tm_file="${tm_file} exec-stack.h"
 	tmake_file="t-libc-ok t-openbsd i386/t-openbsd"
+	;;
+i[34567]86-*-secbsd*)
+	# needed to unconfuse gdb
+	tmake_file="t-libc-ok t-secbsd i386/t-secbsd"
+	tm_file="${cpu_type}/${cpu_type}.h i386/unix.h i386/att.h dbxelf.h elfos.h"
+	tm_file="${tm_file} exec-stack.h"
+	tm_file="${tm_file} secbsd.h secbsd-libpthread.h i386/secbsdelf.h"
+	gas=yes
+	gnu_ld=yes
+	;;
+x86_64-*-secbsd*)
+	tm_file="i386/biarch64.h i386/i386.h i386/unix.h i386/att.h dbxelf.h elfos.h secbsd.h secbsd-libpthread.h i386/x86-64.h i386/secbsd64.h"
+	tm_file="${tm_file} exec-stack.h"
+	tmake_file="t-libc-ok t-secbsd i386/t-secbsd"
 	;;
 i[34567]86-*-coff*)
 	tm_file="${tm_file} i386/unix.h i386/bsd.h i386/gas.h dbxcoff.h i386/i386-coff.h"

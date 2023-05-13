@@ -13,7 +13,7 @@
 #ifdef __svr4__
 #include <sys/statvfs.h>
 #else
-#if defined(__FreeBSD__) || defined(__bsdi__) || defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__bsdi__) || defined(__OpenBSD__) || defined(__SecBSD__)
 #include <sys/mount.h>
 #else
 #if defined(_IBMR2)

@@ -62,24 +62,16 @@
 #define  SYSTEM_ID_DEFAULT     "OpenBSD"
 #endif
 
+#ifdef __SecBSD__
+#define  SYSTEM_ID_DEFAULT     "SecBSD"
+#endif
+
 #ifdef __NetBSD__
 #define  SYSTEM_ID_DEFAULT     "NetBSD"
 #endif
 
 #ifdef __linux__
 #define  SYSTEM_ID_DEFAULT 	"LINUX"
-#endif
-
-#ifdef __FreeBSD__
-#define  SYSTEM_ID_DEFAULT 	"FreeBSD"
-#endif
-
-#ifdef __OpenBSD__
-#define  SYSTEM_ID_DEFAULT 	"OpenBSD"
-#endif
-
-#ifdef __NetBSD__
-#define  SYSTEM_ID_DEFAULT 	"NetBSD"
 #endif
 
 #ifndef SYSTEM_ID_DEFAULT

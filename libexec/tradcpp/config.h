@@ -58,6 +58,8 @@
 #define CONFIG_OS_2 "__unix__"
 #elif defined(__OpenBSD__)
 #define CONFIG_OS "__OpenBSD__"
+#elif defined(__SecBSD__)
+#define CONFIG_OS "__SecBSD__"
 #define CONFIG_OS_2 "__unix__"
 #elif defined(__DragonFly__)
 #define CONFIG_OS "__DragonFly__"

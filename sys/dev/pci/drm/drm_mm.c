@@ -174,7 +174,7 @@ drm_mm_interval_tree_iter_first(const struct rb_root_cached *root,
 
 static void
 drm_mm_interval_tree_remove(struct drm_mm_node *node,
-    struct rb_root_cached *root)
+    struct rb_root_cached *root) 
 {
 	rb_erase_cached(&node->rb, root);
 }

@@ -151,7 +151,7 @@ darwin*|macosx*)
 	SHLIB_LIBS='-lSystem'
 	;;
 
-openbsd*)
+openbsd* | secbsd*)
 	SHOBJ_CFLAGS=-fPIC
 	SHOBJ_LD='${CC}'
 	SHOBJ_LDFLAGS='-shared'

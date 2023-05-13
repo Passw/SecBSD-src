@@ -682,6 +682,10 @@ EOF
 	UNAME_MACHINE_ARCH=`arch | sed 's/OpenBSD.//'`
 	echo ${UNAME_MACHINE_ARCH}-unknown-openbsd${UNAME_RELEASE}
 	exit 0 ;;
+    *:SecBSD:*:*)
+	UNAME_MACHINE_ARCH=`arch | sed 's/SecBSD.//'`
+	echo ${UNAME_MACHINE_ARCH}-unknown-secbsd${UNAME_RELEASE}
+	exit 0 ;;
     i*:CYGWIN*:*)
 	echo ${UNAME_MACHINE}-pc-cygwin
 	exit 0 ;;

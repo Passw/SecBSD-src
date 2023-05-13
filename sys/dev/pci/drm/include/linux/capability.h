@@ -12,8 +12,8 @@
 #define CAP_SYS_NICE	0x2
 
 static inline bool
-capable(int cap)
-{
+capable(int cap) 
+{ 
 	switch (cap) {
 	case CAP_SYS_ADMIN:
 	case CAP_SYS_NICE:
@@ -21,7 +21,7 @@ capable(int cap)
 	default:
 		panic("unhandled capability");
 	}
-}
+} 
 
 static inline bool
 perfmon_capable(void)

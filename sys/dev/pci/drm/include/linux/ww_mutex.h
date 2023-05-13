@@ -209,7 +209,7 @@ static inline int
 ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx) {
 	return __ww_mutex_lock(lock, ctx, false, false);
 }
-
+	
 static inline void
 ww_mutex_lock_slow(struct ww_mutex *lock, struct ww_acquire_ctx *ctx) {
 	(void)__ww_mutex_lock(lock, ctx, true, false);
@@ -219,7 +219,7 @@ static inline int
 ww_mutex_lock_interruptible(struct ww_mutex *lock, struct ww_acquire_ctx *ctx) {
 	return __ww_mutex_lock(lock, ctx, false, true);
 }
-
+	
 static inline int __must_check
 ww_mutex_lock_slow_interruptible(struct ww_mutex *lock, struct ww_acquire_ctx *ctx) {
 	return __ww_mutex_lock(lock, ctx, true, true);

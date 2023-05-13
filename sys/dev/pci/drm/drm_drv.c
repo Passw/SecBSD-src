@@ -90,7 +90,7 @@ DEFINE_STATIC_SRCU(drm_unplug_srcu);
  * Some functions are only called once on init regardless of how many times
  * drm attaches.  In linux this is handled via module_init()/module_exit()
  */
-int drm_refcnt;
+int drm_refcnt; 
 
 struct drm_softc {
 	struct device		sc_dev;
@@ -1225,7 +1225,7 @@ drm_attach_pci(const struct drm_driver *driver, struct pci_attach_args *pa,
 	sc = (struct drm_softc *)config_found_sm(dev, &arg, drmprint, drmsubmatch);
 	if (sc == NULL)
 		return NULL;
-
+	
 	return sc->sc_drm;
 }
 
@@ -1522,7 +1522,7 @@ const struct pci_device_id *
 drm_find_description(int vendor, int device, const struct pci_device_id *idlist)
 {
 	int i = 0;
-
+	
 	for (i = 0; idlist[i].vendor != 0; i++) {
 		if ((idlist[i].vendor == vendor) &&
 		    (idlist[i].device == device ||
@@ -1546,7 +1546,7 @@ struct drm_file *
 drm_find_file_by_minor(struct drm_device *dev, int minor)
 {
 	struct drm_file	key;
-
+	
 	key.fminor = minor;
 	return (SPLAY_FIND(drm_file_tree, &dev->files, &key));
 }
@@ -1886,7 +1886,7 @@ drm_dmamem_alloc(bus_dma_tag_t dmat, bus_size_t size, bus_size_t alignment,
 	struct drm_dmamem	*mem;
 	size_t			 strsize;
 	/*
-	 * segs is the last member of the struct since we modify the size
+	 * segs is the last member of the struct since we modify the size 
 	 * to allow extra segments if more than one are allowed.
 	 */
 	strsize = sizeof(*mem) + (sizeof(bus_dma_segment_t) * (nsegments - 1));
@@ -1904,7 +1904,7 @@ drm_dmamem_alloc(bus_dma_tag_t dmat, bus_size_t size, bus_size_t alignment,
 	    &mem->nsegs, BUS_DMA_NOWAIT | BUS_DMA_ZERO) != 0)
 		goto destroy;
 
-	if (bus_dmamem_map(dmat, mem->segs, mem->nsegs, size,
+	if (bus_dmamem_map(dmat, mem->segs, mem->nsegs, size, 
 	    &mem->kva, BUS_DMA_NOWAIT | mapflags) != 0)
 		goto free;
 

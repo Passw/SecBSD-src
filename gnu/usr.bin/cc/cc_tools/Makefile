@@ -51,15 +51,15 @@ TARGET_INC+=	elfos.h
 .if ${TARGET_ARCH} == "arm"
 TARGET_INC+=	arm/elf.h
 TARGET_INC+=	arm/aout.h
-TARGET_INC+=	arm/openbsd1.h
+TARGET_INC+=	arm/secbsd1.h
 TARGET_INC+=	arm/arm.h
 .endif
 .if ${TARGET_ARCH} == "sh"
 TARGET_INC+=	sh/elf.h
 .endif
-TARGET_INC+=	openbsd.h
-TARGET_INC+=	openbsd-libpthread.h
-TARGET_INC+=	openbsd-native.h
+TARGET_INC+=	secbsd.h
+TARGET_INC+=	secbsd-libpthread.h
+TARGET_INC+=	secbsd-native.h
 .if ${TARGET_ARCH} == "powerpc"
 TARGET_INC+=	rs6000/secureplt.h
 TARGET_INC+=	freebsd-spec.h
@@ -78,17 +78,17 @@ TM_DEFINES+= TARGET_ENDIAN_DEFAULT=0
 .endif
 .if ${TARGET_ARCH} == "amd64"
 TARGET_INC+=	${GCC_CPU}/x86-64.h
-TARGET_INC+=	${GCC_CPU}/openbsd64.h
+TARGET_INC+=	${GCC_CPU}/secbsd64.h
 .elif ${TARGET_ARCH} == "hppa64"
 TARGET_INC+=	${GCC_CPU}/openbsd64.h
 .elif ${TARGET_ARCH} == "sparc64"
 TARGET_INC+=	${GCC_CPU}/openbsd64.h
 .elif ${TARGET_ARCH} == "i386"
-TARGET_INC+=	${GCC_CPU}/openbsdelf.h
+TARGET_INC+=	${GCC_CPU}/secbsdelf.h
 .elif ${TARGET_ARCH} == "m88k"
 TARGET_INC+=	${GCC_CPU}/openbsdelf.h
 .else
-TARGET_INC+=	${GCC_CPU}/openbsd.h
+TARGET_INC+=	${GCC_CPU}/secbsd.h
 .endif
 TARGET_INC+=	defaults.h
 
@@ -182,8 +182,8 @@ OPT_FILES=	c.opt common.opt
 OPT_FILES+=	${GCCDIR}/config/${GCC_CPU}/${GCC_CPU}.opt
 .endif
 
-.if exists(${.CURDIR}/${GCC_CPU}-openbsd.opt)
-OPT_FILES+=	${.CURDIR}/${GCC_CPU}-openbsd.opt
+.if exists(${.CURDIR}/${GCC_CPU}-secbsd.opt)
+OPT_FILES+=	${.CURDIR}/${GCC_CPU}-secbsd.opt
 .endif
 
 .if ${TARGET_ARCH} == "powerpc"
@@ -194,8 +194,8 @@ OPT_FILES+=	${GCCDIR}/config/${GCC_CPU}/sysv4.opt
 OPT_FILES+=	${GCCDIR}/config/${GCC_CPU}/long-double-switch.opt
 .endif
 
-.if exists(${.CURDIR}/openbsd.opt)
-OPT_FILES+=	${.CURDIR}/openbsd.opt
+.if exists(${.CURDIR}/secbsd.opt)
+OPT_FILES+=	${.CURDIR}/secbsd.opt
 .endif
 
 #-----------------------------------------------------------------------
@@ -334,7 +334,7 @@ GENSRCS+=	multilib.h
 
 configargs.h:
 	echo 'static const char configuration_arguments[] ='	> ${.TARGET}
-	echo '	"OpenBSD/${TARGET_ARCH} system compiler";'	>> ${.TARGET}
+	echo '	"SecBSD/${TARGET_ARCH} system compiler";'	>> ${.TARGET}
 	echo 'static const char thread_model[] = "posix";'	>> ${.TARGET}
 	echo 'static const struct {'				>> ${.TARGET}
 	echo '	const char *name, *value;'			>> ${.TARGET}

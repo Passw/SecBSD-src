@@ -1,0 +1,269 @@
+
+
+#------------------------------------------------------------------------------
+# SecBSD:  file(1) magic for SecBSD objects
+#
+# All new-style magic numbers are in network byte order.
+#
+
+0	lelong			000000407	SecBSD little-endian object file
+>16	lelong			>0		not stripped
+0	belong			000000407	SecBSD big-endian object file
+>16	belong			>0		not stripped
+
+0	belong&0377777777	041400413	SecBSD/i386 demand paged
+>0	byte			&0x80		
+>>20	lelong			<4096		shared library
+>>20	lelong			=4096		dynamically linked executable
+>>20	lelong			>4096		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	041400410	SecBSD/i386 pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	041400407	SecBSD/i386
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	lelong			!0		executable
+>>20	lelong			=0		object file
+>16	lelong			>0		not stripped
+0	belong&0377777777	041400507	SecBSD/i386 core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	041600413	SecBSD/m68k demand paged
+>0	byte			&0x80		
+>>20	belong			<8192		shared library
+>>20	belong			=8192		dynamically linked executable
+>>20	belong			>8192		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	041600410	SecBSD/m68k pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	041600407	SecBSD/m68k
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	belong			!0		executable
+>>20	belong			=0		object file
+>16	belong			>0		not stripped
+0	belong&0377777777	041600507	SecBSD/m68k core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	046200413	SecBSD/m88k demand paged
+>0	byte			&0x80		
+>>20	belong			<8192		shared library
+>>20	belong			=8192		dynamically linked executable
+>>20	belong			>8192		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	046200410	SecBSD/m88k pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	046200407	SecBSD/m88k
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	belong			!0		executable
+>>20	belong			=0		object file
+>16	belong			>0		not stripped
+0	belong&0377777777	046200507	SecBSD/m88k core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	042000413	SecBSD/m68k4k demand paged
+>0	byte			&0x80		
+>>20	belong			<4096		shared library
+>>20	belong			=4096		dynamically linked executable
+>>20	belong			>4096		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	042000410	SecBSD/m68k4k pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	042000407	SecBSD/m68k4k
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	belong			!0		executable
+>>20	belong			=0		object file
+>16	belong			>0		not stripped
+0	belong&0377777777	042000507	SecBSD/m68k4k core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	042200413	SecBSD/ns32532 demand paged
+>0	byte			&0x80		
+>>20	lelong			<4096		shared library
+>>20	lelong			=4096		dynamically linked executable
+>>20	lelong			>4096		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	042200410	SecBSD/ns32532 pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	042200407	SecBSD/ns32532
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	lelong			!0		executable
+>>20	lelong			=0		object file
+>16	lelong			>0		not stripped
+0	belong&0377777777	042200507	SecBSD/ns32532 core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	042400413	SecBSD/sparc demand paged
+>0	byte			&0x80		
+>>20	belong			<8192		shared library
+>>20	belong			=8192		dynamically linked executable
+>>20	belong			>8192		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	042400410	SecBSD/sparc pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	042400407	SecBSD/sparc
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	belong			!0		executable
+>>20	belong			=0		object file
+>16	belong			>0		not stripped
+0	belong&0377777777	042400507	SecBSD/sparc core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	042600413	SecBSD/pmax demand paged
+>0	byte			&0x80		
+>>20	lelong			<4096		shared library
+>>20	lelong			=4096		dynamically linked executable
+>>20	lelong			>4096		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	042600410	SecBSD/pmax pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	042600407	SecBSD/pmax
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	lelong			!0		executable
+>>20	lelong			=0		object file
+>16	lelong			>0		not stripped
+0	belong&0377777777	042600507	SecBSD/pmax core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	043000413	SecBSD/vax1k demand paged
+>0	byte			&0x80		
+>>20	lelong			<4096		shared library
+>>20	lelong			=4096		dynamically linked executable
+>>20	lelong			>4096		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	043000410	SecBSD/vax1k pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	043000407	SecBSD/vax1k
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	lelong			!0		executable
+>>20	lelong			=0		object file
+>16	lelong			>0		not stripped
+0	belong&0377777777	043000507	SecBSD/vax1k core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	045400413	SecBSD/vax demand paged
+>0	byte			&0x80		
+>>20	lelong			<4096		shared library
+>>20	lelong			=4096		dynamically linked executable
+>>20	lelong			>4096		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	045400410	SecBSD/vax pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	045400407	SecBSD/vax
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	lelong			!0		executable
+>>20	lelong			=0		object file
+>16	lelong			>0		not stripped
+0	belong&0377777777	045400507	SecBSD/vax core
+>12	string			>\0		from '%s'
+
+# SecBSD/alpha does not support (and has never supported) a.out objects,
+# so no rules are provided for them.  SecBSD/alpha ELF objects are 
+# dealt with in "elf".
+0	leshort		0x00070185		ECOFF SecBSD/alpha binary
+>10	leshort		0x0001			not stripped
+>10	leshort		0x0000			stripped
+0	belong&0377777777	043200507	SecBSD/alpha core
+>12	string			>\0		from '%s'
+
+# SecBSD/powerpc core files
+0	belong&0377777777	045200507	SecBSD/powerpc core
+>12	string			>\0		from '%s'
+
+# SecBSD/sparc64 core files
+0	belong&0377777777	045600507	SecBSD/sparc64 core
+>12	string			>\0		from '%s'
+
+# SecBSD/hppa core files
+0	belong&0377777777	046400507	SecBSD/hppa core
+>12	string			>\0		from '%s'
+
+# SecBSD/mips64
+0	belong&0377777777	047400413	SecBSD/mips64 demand paged
+>0	byte			&0x80		
+>>20	belong			<8192		shared library
+>>20	belong			=8192		dynamically linked executable
+>>20	belong			>8192		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	047400410	SecBSD/mips64 pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	belong			>0		not stripped
+0	belong&0377777777	047400407	SecBSD/mips64
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	belong			!0		executable
+>>20	belong			=0		object file
+>16	belong			>0		not stripped
+0	belong&0377777777	047400507	SecBSD/mips64 core
+>12	string			>\0		from '%s'
+
+0	belong&0377777777	043600413	SecBSD/arm demand paged
+>0	byte			&0x80
+>>20	lelong			<8192		shared library
+>>20	lelong			=8192		dynamically linked executable
+>>20	lelong			>8192		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	043600410	SecBSD/arm pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+0	belong&0377777777	043600407	SecBSD/arm
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80
+>>0	byte			&0x40		position independent
+>>20	lelong			!0		executable
+>>20	lelong			=0		object file
+>16	lelong			>0		not stripped
+0	belong&0377777777	043600507	SecBSD/arm core
+>12	string			>\0		from '%s'
+0	belong&0377777777	047200507	SecBSD/amd64 core
+>12	string			>\0		from '%s'
+0	belong&0377777777	044200507	SecBSD/sh core
+>12	string			>\0		from '%s'

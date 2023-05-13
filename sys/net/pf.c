@@ -1,4 +1,4 @@
-/*	$OpenBSD: pf.c,v 1.1174 2023/04/28 14:08:34 phessler Exp $ */
+/*	$OpenBSD: pf.c,v 1.1178 2023/05/10 12:07:16 bluhm Exp $ */
 
 /*
  * Copyright (c) 2001 Daniel Hartmeier
@@ -1369,6 +1369,8 @@ pf_state_import(const struct pfsync_state *sp, int flags)
 	int pool_flags;
 	int error = ENOMEM;
 	int n = 0;
+
+	PF_ASSERT_LOCKED();
 
 	if (sp->creatorid == 0) {
 		DPFPRINTF(LOG_NOTICE, "%s: invalid creator id: %08x", __func__,
@@ -4270,6 +4272,8 @@ pf_test_rule(struct pf_pdesc *pd, struct pf_rule **rm, struct pf_state **sm,
 	struct pf_test_ctx	 ctx;
 	int			 rv;
 
+	PF_ASSERT_LOCKED();
+
 	memset(&ctx, 0, sizeof(ctx));
 	ctx.pd = pd;
 	ctx.rm = rm;
@@ -6462,12 +6466,11 @@ void
 pf_route(struct pf_pdesc *pd, struct pf_state *st)
 {
 	struct mbuf		*m0;
-	struct mbuf_list	 fml;
+	struct mbuf_list	 ml;
 	struct sockaddr_in	*dst, sin;
 	struct rtentry		*rt = NULL;
 	struct ip		*ip;
 	struct ifnet		*ifp = NULL;
-	int			 error = 0;
 	unsigned int		 rtableid;
 
 	if (pd->m->m_pkthdr.pf.routed++ > 3) {
@@ -6545,8 +6548,6 @@ pf_route(struct pf_pdesc *pd, struct pf_state *st)
 		ip = mtod(m0, struct ip *);
 	}
 
-	in_proto_cksum_out(m0, ifp);
-
 	if (ntohs(ip->ip_len) <= ifp->if_mtu) {
 		ip->ip_sum = 0;
 		if (ifp->if_capabilities & IFCAP_CSUM_IPv4)
@@ -6555,9 +6556,20 @@ pf_route(struct pf_pdesc *pd, struct pf_state *st)
 			ipstat_inc(ips_outswcsum);
 			ip->ip_sum = in_cksum(m0, ip->ip_hl << 2);
 		}
-		error = ifp->if_output(ifp, m0, sintosa(dst), rt);
+		in_proto_cksum_out(m0, ifp);
+		ifp->if_output(ifp, m0, sintosa(dst), rt);
 		goto done;
 	}
+
+	if (ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO) &&
+	    m0->m_pkthdr.ph_mss <= ifp->if_mtu) {
+		if (tcp_chopper(m0, &ml, ifp, m0->m_pkthdr.ph_mss) ||
+		    if_output_ml(ifp, &ml, sintosa(dst), rt))
+			goto done;
+		tcpstat_inc(tcps_outswtso);
+		goto done;
+	}
+	CLR(m0->m_pkthdr.csum_flags, M_TCP_TSO);
 
 	/*
 	 * Too large for interface; fragment if possible.
@@ -6571,19 +6583,10 @@ pf_route(struct pf_pdesc *pd, struct pf_state *st)
 		goto bad;
 	}
 
-	error = ip_fragment(m0, &fml, ifp, ifp->if_mtu);
-	if (error)
+	if (ip_fragment(m0, &ml, ifp, ifp->if_mtu) ||
+	    if_output_ml(ifp, &ml, sintosa(dst), rt))
 		goto done;
-
-	while ((m0 = ml_dequeue(&fml)) != NULL) {
-		error = ifp->if_output(ifp, m0, sintosa(dst), rt);
-		if (error)
-			break;
-	}
-	if (error)
-		ml_purge(&fml);
-	else
-		ipstat_inc(ips_fragmented);
+	ipstat_inc(ips_fragmented);
 
 done:
 	if_put(ifp);
@@ -6601,6 +6604,7 @@ void
 pf_route6(struct pf_pdesc *pd, struct pf_state *st)
 {
 	struct mbuf		*m0;
+	struct mbuf_list	 ml;
 	struct sockaddr_in6	*dst, sin6;
 	struct rtentry		*rt = NULL;
 	struct ip6_hdr		*ip6;
@@ -6683,23 +6687,36 @@ pf_route6(struct pf_pdesc *pd, struct pf_state *st)
 		}
 	}
 
-	in6_proto_cksum_out(m0, ifp);
-
 	/*
 	 * If packet has been reassembled by PF earlier, we have to
 	 * use pf_refragment6() here to turn it back to fragments.
 	 */
 	if ((mtag = m_tag_find(m0, PACKET_TAG_PF_REASSEMBLED, NULL))) {
 		(void) pf_refragment6(&m0, mtag, dst, ifp, rt);
-	} else if ((u_long)m0->m_pkthdr.len <= ifp->if_mtu) {
-		ifp->if_output(ifp, m0, sin6tosa(dst), rt);
-	} else {
-		ip6stat_inc(ip6s_cantfrag);
-		if (st->rt != PF_DUPTO)
-			pf_send_icmp(m0, ICMP6_PACKET_TOO_BIG, 0,
-			    ifp->if_mtu, pd->af, st->rule.ptr, pd->rdomain);
-		goto bad;
+		goto done;
 	}
+
+	if (m0->m_pkthdr.len <= ifp->if_mtu) {
+		in6_proto_cksum_out(m0, ifp);
+		ifp->if_output(ifp, m0, sin6tosa(dst), rt);
+		goto done;
+	}
+
+	if (ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO) &&
+	    m0->m_pkthdr.ph_mss <= ifp->if_mtu) {
+		if (tcp_chopper(m0, &ml, ifp, m0->m_pkthdr.ph_mss) ||
+		    if_output_ml(ifp, &ml, sin6tosa(dst), rt))
+			goto done;
+		tcpstat_inc(tcps_outswtso);
+		goto done;
+	}
+	CLR(m0->m_pkthdr.csum_flags, M_TCP_TSO);
+
+	ip6stat_inc(ip6s_cantfrag);
+	if (st->rt != PF_DUPTO)
+		pf_send_icmp(m0, ICMP6_PACKET_TOO_BIG, 0,
+		    ifp->if_mtu, pd->af, st->rule.ptr, pd->rdomain);
+	goto bad;
 
 done:
 	if_put(ifp);

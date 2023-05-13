@@ -36,7 +36,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-#if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (bsdi)
+#if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) ||  defined (__SecBSD__) || defined (bsdi)
 #undef BSD
 #include <sys/ioctl.h>
 #endif

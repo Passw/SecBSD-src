@@ -251,7 +251,7 @@ kthread_run(int (*func)(void *), void *data, const char *name)
 	thread->func = func;
 	thread->data = data;
 	thread->flags = 0;
-
+	
 	if (kthread_create(kthread_func, thread, &thread->proc, name)) {
 		free(thread, M_DRM, sizeof(*thread));
 		return ERR_PTR(-ENOMEM);
@@ -272,7 +272,7 @@ kthread_create_worker(unsigned int flags, const char *fmt, ...)
 	vsnprintf(name, sizeof(name), fmt, ap);
 	va_end(ap);
 	w->tq = taskq_create(name, 1, IPL_HIGH, 0);
-
+	
 	return w;
 }
 
@@ -281,7 +281,7 @@ kthread_destroy_worker(struct kthread_worker *worker)
 {
 	taskq_destroy(worker->tq);
 	free(worker, M_DRM, sizeof(*worker));
-
+	
 }
 
 void
@@ -551,7 +551,7 @@ __free_pages(struct vm_page *page, unsigned int order)
 {
 	struct pglist mlist;
 	int i;
-
+	
 	TAILQ_INIT(&mlist);
 	for (i = 0; i < (1 << order); i++)
 		TAILQ_INSERT_TAIL(&mlist, &page[i], pageq);
@@ -623,7 +623,7 @@ void
 kunmap_atomic(void *addr)
 {
 	KASSERT(kmap_atomic_inuse);
-
+	
 	pmap_kremove(kmap_atomic_va, PAGE_SIZE);
 	kmap_atomic_inuse = 0;
 }
@@ -1193,7 +1193,7 @@ retry:
 int
 i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 {
-	int ret;
+	int ret; 
 
 	if (adap->lock_ops)
 		adap->lock_ops->lock_bus(adap, 0);
@@ -1497,7 +1497,7 @@ backlight_device_register(const char *name, void *kdev, void *data,
 	bd->data = data;
 
 	task_set(&bd->task, backlight_do_update_status, bd);
-
+	
 	return bd;
 }
 
@@ -1720,7 +1720,7 @@ dma_fence_wait(struct dma_fence *fence, bool intr)
 	ret = dma_fence_wait_timeout(fence, intr, MAX_SCHEDULE_TIMEOUT);
 	if (ret < 0)
 		return ret;
-
+	
 	return 0;
 }
 
@@ -1880,7 +1880,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 		list_del(&cb.base.node);
 out:
 	mtx_leave(fence->lock);
-
+	
 	return ret;
 }
 
@@ -1926,7 +1926,7 @@ dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
 	cb = mallocarray(count, sizeof(*cb), M_DRM, M_WAITOK|M_CANFAIL|M_ZERO);
 	if (cb == NULL)
 		return -ENOMEM;
-
+	
 	for (i = 0; i < count; i++) {
 		struct dma_fence *fence = fences[i];
 		cb[i].proc = curproc;
@@ -2022,7 +2022,7 @@ dma_fence_array_cb_func(struct dma_fence *f, struct dma_fence_cb *cb)
 	struct dma_fence_array_cb *array_cb =
 	    container_of(cb, struct dma_fence_array_cb, cb);
 	struct dma_fence_array *dfa = array_cb->array;
-
+	
 	if (atomic_dec_and_test(&dfa->num_pending))
 		timeout_add(&dfa->to, 1);
 	else
@@ -2046,7 +2046,7 @@ dma_fence_array_enable_signaling(struct dma_fence *fence)
 				return false;
 		}
 	}
-
+	
 	return true;
 }
 
@@ -2526,7 +2526,7 @@ pcie_get_speed_cap(struct pci_dev *pdev)
 	tag = pdev->tag;
 
 	if (!pci_get_capability(pc, tag, PCI_CAP_PCIEXPRESS,
-	    &pos, NULL))
+	    &pos, NULL)) 
 		return PCI_SPEED_UNKNOWN;
 
 	id = pci_conf_read(pc, tag, PCI_ID_REG);
@@ -2582,7 +2582,7 @@ pcie_get_width_cap(struct pci_dev *pdev)
 	int			bus, device, function;
 
 	if (!pci_get_capability(pc, tag, PCI_CAP_PCIEXPRESS,
-	    &pos, NULL))
+	    &pos, NULL)) 
 		return PCIE_LNK_WIDTH_UNKNOWN;
 
 	id = pci_conf_read(pc, tag, PCI_ID_REG);
@@ -2607,13 +2607,13 @@ pcie_aspm_enabled(struct pci_dev *pdev)
 	pcireg_t		lcsr;
 
 	if (!pci_get_capability(pc, tag, PCI_CAP_PCIEXPRESS,
-	    &pos, NULL))
+	    &pos, NULL)) 
 		return false;
 
 	lcsr = pci_conf_read(pc, tag, pos + PCI_PCIE_LCSR);
 	if ((lcsr & (PCI_PCIE_LCSR_ASPM_L0S | PCI_PCIE_LCSR_ASPM_L1)) != 0)
 		return true;
-
+	
 	return false;
 }
 
@@ -2896,7 +2896,7 @@ interval_tree_iter_first(struct rb_root_cached *root, unsigned long start,
 
 void
 interval_tree_remove(struct interval_tree_node *node,
-    struct rb_root_cached *root)
+    struct rb_root_cached *root) 
 {
 	rb_erase_cached(&node->rb, root);
 }
@@ -3021,7 +3021,7 @@ fput(struct file *fp)
 {
 	if (fp->f_type != DTYPE_SYNC)
 		return;
-
+	
 	FRELE(fp, curproc);
 }
 

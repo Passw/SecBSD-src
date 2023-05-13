@@ -2,7 +2,7 @@
    Copyright (C) 1995, 1996, 1997, 1998, 1999, 2000
    Free Software Foundation, Inc.
    Contributed by Richard Earnshaw (rearnsha@armltd.co.uk).
-   
+
 This file is part of GNU CC.
 
 GNU CC is free software; you can redistribute it and/or modify
@@ -130,7 +130,7 @@ Boston, MA 02111-1307, USA.  */
       ASM_OUTPUT_INTERNAL_LABEL (STREAM, "Ltext", 0);			\
     }									\
   while (0)
-  
+
 /* Output a function label definition.  */
 #ifndef ASM_DECLARE_FUNCTION_NAME
 #define ASM_DECLARE_FUNCTION_NAME(STREAM, NAME, DECL)	\
@@ -150,7 +150,7 @@ Boston, MA 02111-1307, USA.  */
 #define ASM_GENERATE_INTERNAL_LABEL(STRING, PREFIX, NUM)  \
   sprintf (STRING, "*%s%s%u", LOCAL_LABEL_PREFIX, PREFIX, (unsigned int)(NUM))
 #endif
-     
+
 /* Construct a private name.  */
 #define ASM_FORMAT_PRIVATE_NAME(OUTVAR, NAME, NUMBER)  \
   ((OUTVAR) = (char *) alloca (strlen (NAME) + 10),  \
@@ -207,7 +207,7 @@ Boston, MA 02111-1307, USA.  */
     }							\
   while (0)
 #endif
-     
+
 /* Output a local common block.  /bin/as can't do this, so hack a
    `.space' into the bss segment.  Note that this is *bad* practice,
    which is guaranteed NOT to work since it doesn't define STATIC
@@ -223,13 +223,13 @@ Boston, MA 02111-1307, USA.  */
     }									\
   while (0)
 #endif
-     
+
 /* Output a zero-initialized block.  */
 #ifndef ASM_OUTPUT_ALIGNED_BSS
 #define ASM_OUTPUT_ALIGNED_BSS(STREAM, DECL, NAME, SIZE, ALIGN) \
   asm_output_aligned_bss (STREAM, DECL, NAME, SIZE, ALIGN)
 #endif
-     
+
 /* Output a source line for the debugger.  */
 /* #define ASM_OUTPUT_SOURCE_LINE(STREAM,LINE) */
 
@@ -238,7 +238,7 @@ Boston, MA 02111-1307, USA.  */
 #define ASM_OUTPUT_IDENT(STREAM,STRING)  \
   asm_fprintf (STREAM, "%@ - - - ident %s\n", STRING)
 #endif
-     
+
 #ifndef ASM_COMMENT_START
 #define ASM_COMMENT_START 	"@"
 #endif

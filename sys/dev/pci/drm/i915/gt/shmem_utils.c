@@ -228,7 +228,7 @@ static int __uao_rw(struct uvm_object *uao, loff_t off,
 		unsigned int this =
 			min_t(size_t, PAGE_SIZE - offset_in_page(off), len);
 		void *vaddr = kmap(page);
-
+		
 		if (write) {
 			memcpy(vaddr + offset_in_page(off), ptr, this);
 			set_page_dirty(page);

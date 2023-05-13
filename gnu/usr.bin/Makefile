@@ -28,7 +28,8 @@ SUBDIR+=	binutils
 SUBDIR+=	binutils-2.17
 
 # Do these last; texinfo builds the info 'dir' file, perl must be after binutils
-SUBDIR+=	perl texinfo
+SUBDIR+=	texinfo
+SUBDIR+=	perl
 
 maninstall:
 	${INSTALL} ${INSTALL_COPY} -o ${MANOWN} -g ${MANGRP} -m ${MANMODE} \

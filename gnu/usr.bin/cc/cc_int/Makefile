@@ -14,7 +14,7 @@ NOPIC=		Yes
 
 EXTRA_OBJS=
 GGC=		ggc-page.o
-host_hook_obj=	host-openbsd.o
+host_hook_obj=	host-secbsd.o
 
 #
 # Most lists copied verbatim from GCC Makefiles.

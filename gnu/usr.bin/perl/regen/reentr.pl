@@ -131,7 +131,7 @@ print $h <<EOF;
  * incompatible with everyone else.  To make OpenBSD happy, we have to
  * memzero out certain structures before calling the functions.
  */
-#  if defined(__OpenBSD__)
+#  if defined(__OpenBSD__) || defined(__SecBSD__)
 #    define REENTR_MEMZERO(a,b) memzero(a,b)
 #  else
 #    define REENTR_MEMZERO(a,b) 0
