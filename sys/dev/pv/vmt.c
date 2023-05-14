@@ -1338,7 +1338,7 @@ vmt_xdr_nic_info(char *data)
 		nictotal = vmt_xdr_nic_entry(iface, data);
 		if (nictotal == 0)
 			continue;
-		
+
 		if (data != NULL)
 			data += nictotal;
 

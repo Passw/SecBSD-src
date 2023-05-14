@@ -176,10 +176,10 @@ vmmci_config_change(struct virtio_softc *vsc)
 	case VMMCI_SYNCRTC:
 		inittodr(gettime());
 		sc->sc_cmd = VMMCI_NONE;
-		break;	
+		break;
 	default:
 		printf("%s: invalid command %d\n", sc->sc_dev.dv_xname, cmd);
-		cmd = VMMCI_NONE;		
+		cmd = VMMCI_NONE;
 		break;
 	}
 

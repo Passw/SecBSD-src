@@ -1,6 +1,6 @@
 /*	$OpenBSD: lock.h,v 1.27 2016/06/19 11:54:33 natano Exp $	*/
 
-/* 
+/*
  * Copyright (c) 1995
  *	The Regents of the University of California.  All rights reserved.
  *

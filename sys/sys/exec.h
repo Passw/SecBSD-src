@@ -193,7 +193,7 @@ void	new_vmcmd(struct exec_vmcmd_set *evsp,
 	(vmc)->evs_cnt = EXEC_DEFAULT_VMCMD_SETSIZE; \
 	(vmc)->evs_cmds = (vmc)->evs_start; \
 	(vmc)->evs_used = 0; \
-} while (0)	
+} while (0)
 
 /*
  * Exec function switch:
@@ -276,7 +276,7 @@ struct exec {
 #define	MID_VAX		150	/* vax */
 #define	MID_SPARC64	151	/* LP64 sparc */
 #define MID_MIPS2	152	/* MIPS2 */
-#define	MID_M88K	153	/* m88k BSD binary */ 
+#define	MID_M88K	153	/* m88k BSD binary */
 #define	MID_HPPA	154	/* hppa */
 #define	MID_AMD64	157	/* AMD64 */
 #define	MID_MIPS64	158	/* big-endian MIPS64 */

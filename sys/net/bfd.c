@@ -640,7 +640,7 @@ bfd_upcall(struct socket *so, caddr_t arg, int waitflag)
 	struct bfd_config *bfd = (struct bfd_config *)arg;
 
 	bfd->bc_upcallso = so;
-	task_add(bfdtq, &bfd->bc_upcall_task);	
+	task_add(bfdtq, &bfd->bc_upcall_task);
 }
 
 void

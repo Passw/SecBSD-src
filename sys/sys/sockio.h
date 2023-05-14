@@ -174,7 +174,7 @@
 
 #define SIOCDVNETID	_IOW('i', 175, struct ifreq)	/* del virt net id */
 
-#define SIOCSIFPAIR	_IOW('i', 176, struct ifreq)	/* set paired if */ 
+#define SIOCSIFPAIR	_IOW('i', 176, struct ifreq)	/* set paired if */
 #define SIOCGIFPAIR	_IOWR('i', 177, struct ifreq)	/* get paired if */
 
 #define SIOCSIFPARENT	_IOW('i', 178, struct if_parent) /* set parent if */

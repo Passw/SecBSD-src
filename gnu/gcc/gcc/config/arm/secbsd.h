@@ -1,4 +1,4 @@
-/* Definitions of target machine for GNU compiler, OpenBSD/arm ELF version.
+/* Definitions of target machine for GNU compiler, SecBSD/arm ELF version.
    Copyright (C) 2002 Free Software Foundation, Inc.
    Contributed by Wasabi Systems, Inc.
 
@@ -21,11 +21,11 @@ Boston, MA 02111-1307, USA.  */
 
 /* Run-time Target Specification.  */
 #undef TARGET_VERSION
-#define TARGET_VERSION fputs (" (OpenBSD/arm)", stderr);
+#define TARGET_VERSION fputs (" (SecBSD/arm)", stderr);
 
 /* This is used in ASM_FILE_START.  */
 #undef ARM_OS_NAME
-#define ARM_OS_NAME "OpenBSD"
+#define ARM_OS_NAME "SecBSD"
 
 /* Unsigned chars produces much better code than signed.  */
 #define DEFAULT_SIGNED_CHAR  0
@@ -55,21 +55,21 @@ Boston, MA 02111-1307, USA.  */
   do					\
     {					\
       builtin_define ("__GXX_MERGED_TYPEINFO_NAMES=0"); \
-      OPENBSD_OS_CPP_BUILTINS_ELF();	\
+      SECBSD_OS_CPP_BUILTINS_ELF();	\
     }					\
   while (0)
 
 #undef SUBTARGET_CPP_SPEC
-#define SUBTARGET_CPP_SPEC OBSD_CPP_SPEC
+#define SUBTARGET_CPP_SPEC SBSD_CPP_SPEC
 
-/* OBSD_LINK_SPEC appropriate for OpenBSD.  Support for GCC options 
+/* SBSD_LINK_SPEC appropriate for SecBSD.  Support for GCC options 
    -static, -assert, and -nostdlib.  */
-#undef OBSD_LINK_SPEC
-#ifdef OBSD_NO_DYNAMIC_LIBRARIES
-#define OBSD_LINK_SPEC \
+#undef SBSD_LINK_SPEC
+#ifdef SBSD_NO_DYNAMIC_LIBRARIES
+#define SBSD_LINK_SPEC \
   "%{!nostdlib:%{!r*:%{!e*:-e __start}}} %{assert*}"
 #else
-#define OBSD_LINK_SPEC \
+#define SBSD_LINK_SPEC \
   "%{!shared:%{!nostdlib:%{!r*:%{!e*:-e __start}}}} \
    %{shared:-shared} %{R*} \
    %{static:-Bstatic} \
@@ -97,10 +97,10 @@ Boston, MA 02111-1307, USA.  */
 #define SUBTARGET_EXTRA_SPECS				\
   { "subtarget_extra_asm_spec",	SUBTARGET_EXTRA_ASM_SPEC }, \
   { "subtarget_asm_float_spec", SUBTARGET_ASM_FLOAT_SPEC }, \
-  { "openbsd_link_spec",	OBSD_LINK_SPEC },	\
-  { "openbsd_entry_point",	OPENBSD_ENTRY_POINT },
+  { "openbsd_link_spec",	SBSD_LINK_SPEC },	\
+  { "openbsd_entry_point",	SECBSD_ENTRY_POINT },
 
-#define OPENBSD_ENTRY_POINT "__start"
+#define SECBSD_ENTRY_POINT "__start"
 
 /* Pass -X to the linker so that it will strip symbols starting with 'L' */
 #undef LINK_SPEC
@@ -131,7 +131,7 @@ Boston, MA 02111-1307, USA.  */
 /* We don't have any limit on the length as out debugger is GDB.  */
 #undef DBX_CONTIN_LENGTH
 
-/* OpenBSD and NetBSD do their profiling differently to the Acorn compiler. We
+/* SecBSD and NetBSD do their profiling differently to the Acorn compiler. We
    don't need a word following the mcount call; and to skip it
    requires either an assembly stub or use of fomit-frame-pointer when
    compiling the profiling functions.  Since we break Acorn CC
@@ -153,12 +153,12 @@ Boston, MA 02111-1307, USA.  */
 #undef FPUTYPE_DEFAULT
 #define FPUTYPE_DEFAULT FPUTYPE_VFP
 
-/* VERY BIG NOTE: Change of structure alignment for OpenBSD|NetBSD/arm.
+/* VERY BIG NOTE: Change of structure alignment for SecBSD|NetBSD/arm.
    There are consequences you should be aware of...
 
    Normally GCC/arm uses a structure alignment of 32 for compatibility
    with armcc.  This means that structures are padded to a word
-   boundary.  However this causes problems with bugged OpenBSD|NetBSD kernel
+   boundary.  However this causes problems with bugged SecBSD|NetBSD kernel
    code (possibly userland code as well - I have not checked every
    binary).  The nature of this bugged code is to rely on sizeof()
    returning the correct size of various structures rounded to the
@@ -166,7 +166,7 @@ Boston, MA 02111-1307, USA.  */
    is another).  This code breaks when the structure alignment is 32
    as sizeof() will report a word=rounded size.  By changing the
    structure alignment to 8. GCC will conform to what is expected by
-   OpenBSD|NetBSD.
+   SecBSD|NetBSD.
    
    This has several side effects that should be considered.
    1. Structures will only be aligned to the size of the largest member.
@@ -182,7 +182,7 @@ Boston, MA 02111-1307, USA.  */
       short strings.
 
    This modification is not encouraged but with the present state of the
-   OpenBSD|NetBSD source tree it is currently the only solution that meets the
+   SecBSD|NetBSD source tree it is currently the only solution that meets the
    requirements.  */
 
 #undef DEFAULT_STRUCTURE_SIZE_BOUNDARY

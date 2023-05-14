@@ -51,7 +51,7 @@
 
 /*
  * Maximum length of a volume identification string
- */                                               
+ */
 #define CH_VOLTAG_MAXLEN 32
 
 /*
@@ -142,7 +142,7 @@ struct changer_element_status {
 struct changer_element_status_request {
 	int				cesr_type;  /* element type */
 	int				cesr_flags;
-#define CESR_VOLTAGS 0x01	
+#define CESR_VOLTAGS 0x01
 
 	struct changer_element_status	*cesr_data; /* pre-allocated data storage */
 };

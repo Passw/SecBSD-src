@@ -69,16 +69,16 @@ struct cd_sub_channel_q_data {
 	u_int	mc_valid:1;
 	u_int	:7;
 #endif
-	u_char	mc_number[15]; 
+	u_char	mc_number[15];
 #if _BYTE_ORDER == _LITTLE_ENDIAN
 	u_int	:7;
-	u_int	ti_valid:1;   
+	u_int	ti_valid:1;
 #endif
 #if _BYTE_ORDER == _BIG_ENDIAN
-	u_int	ti_valid:1;   
+	u_int	ti_valid:1;
 	u_int	:7;
 #endif
-	u_char	ti_number[15]; 
+	u_char	ti_number[15];
 };
 
 struct cd_sub_channel_position_data {
@@ -272,7 +272,7 @@ struct dvd_layer {
 	u_int32_t end_sector;
 	u_int32_t end_sector_l0;
 };
- 
+
 struct dvd_physical {
 	u_int8_t type;
 

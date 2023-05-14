@@ -42,10 +42,10 @@
 /*
  * PARAMETERS:
  * addr	- Emulator memory address to read
- * 
+ *
  * RETURNS:
  * Byte value read from emulator memory.
- * 
+ *
  * REMARKS:
  * Reads a byte value from the emulator memory.
  */
@@ -60,10 +60,10 @@ rdb(struct x86emu *emu, uint32_t addr)
 /*
  * PARAMETERS:
  * addr	- Emulator memory address to read
- * 
+ *
  * RETURNS:
  * Word value read from emulator memory.
- * 
+ *
  * REMARKS:
  * Reads a word value from the emulator memory.
  */
@@ -90,7 +90,7 @@ rdw(struct x86emu *emu, uint32_t addr)
 /*
  * PARAMETERS:
  * addr	- Emulator memory address to read
- * 
+ *
  * RETURNS:
  * Long value read from emulator memory.
  * REMARKS:
@@ -122,7 +122,7 @@ rdl(struct x86emu *emu, uint32_t addr)
  * PARAMETERS:
  * addr	- Emulator memory address to read
  * val		- Value to store
- * 
+ *
  * REMARKS:
  * Writes a byte value to emulator memory.
  */
@@ -138,7 +138,7 @@ wrb(struct x86emu *emu, uint32_t addr, uint8_t val)
  * PARAMETERS:
  * addr	- Emulator memory address to read
  * val		- Value to store
- * 
+ *
  * REMARKS:
  * Writes a word value to emulator memory.
  */
@@ -164,7 +164,7 @@ wrw(struct x86emu *emu, uint32_t addr, uint16_t val)
  * PARAMETERS:
  * addr	- Emulator memory address to read
  * val		- Value to store
- * 
+ *
  * REMARKS:
  * Writes a long value to emulator memory.
  */

@@ -101,7 +101,7 @@ struct clockintr_queue {
 	struct clockintr *cq_statclock;	/* [o] statclock handle */
 	struct intrclock cq_intrclock;	/* [I] local interrupt clock */
 	struct clockintr_stat cq_stat;	/* [o] dispatch statistics */
-	volatile u_int cq_gen;		/* [o] cq_stat update generation */ 
+	volatile u_int cq_gen;		/* [o] cq_stat update generation */
 	volatile u_int cq_dispatch;	/* [o] dispatch is running */
 	u_int cq_flags;			/* [I] CQ_* flags; see below */
 };

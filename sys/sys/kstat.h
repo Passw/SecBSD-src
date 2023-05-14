@@ -96,7 +96,7 @@ struct kstat_kv {
 	char			 kv_key[KSTAT_KV_NAMELEN];
 	union {
 		char			v_istr[16];
-		unsigned int		v_bool;	
+		unsigned int		v_bool;
 		uint64_t		v_u64;
 		int64_t			v_s64;
 		uint32_t		v_u32;

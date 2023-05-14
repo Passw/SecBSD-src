@@ -106,7 +106,7 @@ struct schedstate_percpu {
 	u_char spc_curpriority;		/* usrpri of curproc */
 	int spc_rrticks;		/* ticks until roundrobin() */
 	int spc_pscnt;			/* prof/stat counter */
-	int spc_psdiv;			/* prof/stat divisor */	
+	int spc_psdiv;			/* prof/stat divisor */
 
 	u_int spc_nrun;			/* procs on the run queues */
 	fixpt_t spc_ldavg;		/* shortest load avg. for this cpu */

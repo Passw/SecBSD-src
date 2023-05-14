@@ -356,7 +356,7 @@ struct proc {
 
 	struct	plimit	*p_limit;	/* [l] read ref. of p_p->ps_limit */
 	struct	kcov_dev *p_kd;		/* kcov device handle */
-	struct	lock_list_entry *p_sleeplocks;	/* WITNESS lock tracking */ 
+	struct	lock_list_entry *p_sleeplocks;	/* WITNESS lock tracking */
 	struct	kqueue *p_kq;		/* [o] select/poll queue of evts */
 	unsigned long p_kq_serial;	/* [o] to check against enqueued evts */
 

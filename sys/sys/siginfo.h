@@ -29,19 +29,19 @@
 #define _SYS_SIGINFO_H
 
 #include <sys/cdefs.h>
- 
+
 union sigval {
 	int	sival_int;	/* integer value */
 	void	*sival_ptr;	/* pointer value */
 };
- 
+
 /*
  * Negative signal codes are reserved for future use for
  * user generated signals.
  */
 #define SI_FROMUSER(sip)	((sip)->si_code <= 0)
 #define SI_FROMKERNEL(sip)	((sip)->si_code > 0)
- 
+
 #define SI_NOINFO	32767	/* no signal information */
 #define SI_USER		0	/* user generated signal via kill() */
 #define SI_LWP		(-1)	/* user generated signal via lwp_kill()*/

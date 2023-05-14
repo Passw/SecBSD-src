@@ -60,7 +60,7 @@ struct scsi_addr {
 };
 
 #define SCIOCRESET	_IO('Q', 7)	/* reset the device */
-#define SCIOCIDENTIFY	_IOR('Q', 9, struct scsi_addr) 
+#define SCIOCIDENTIFY	_IOR('Q', 9, struct scsi_addr)
 
 struct sbioc_device {
 	void		*sd_cookie;

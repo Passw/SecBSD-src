@@ -106,7 +106,7 @@ struct protosw {
 
 /* user-protocol hooks */
 	const	struct pr_usrreqs *pr_usrreqs;
-	
+
 /* utility hooks */
 	void	(*pr_init)(void);	/* initialization hook */
 	void	(*pr_fasttimo)(void);	/* fast timeout (200ms) */

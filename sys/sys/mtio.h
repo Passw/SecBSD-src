@@ -72,7 +72,7 @@ struct mtget {
 	short	mt_erreg;	/* ``error'' register */
 /* end device-dependent registers */
 	short	mt_resid;	/* residual count */
-	int	mt_fileno;	/* current file number relative to BOT. */ 
+	int	mt_fileno;	/* current file number relative to BOT. */
 	int	mt_blkno;	/* current block number relative to BOF. */
 	int	mt_blksiz;	/* current block size */
 	int	mt_density;	/* current density code */

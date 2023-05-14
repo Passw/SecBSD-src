@@ -398,7 +398,7 @@ struct mount {
 #define	MNT_DELEXPORT	0x00020000	/* delete export host lists */
 #define	MNT_RELOAD	0x00040000	/* reload filesystem data */
 #define	MNT_FORCE	0x00080000	/* force unmount or readonly change */
-#define	MNT_STALLED	0x00100000	/* filesystem stalled */ 
+#define	MNT_STALLED	0x00100000	/* filesystem stalled */
 #define	MNT_SWAPPABLE	0x00200000	/* filesystem can be used for swap */
 #define MNT_WANTRDWR	0x02000000	/* want upgrade to read/write */
 #define MNT_SOFTDEP     0x04000000      /* soft dependencies being done */
@@ -441,7 +441,7 @@ typedef struct fhandle	fhandle_t;
 #define VFS_MAXTYPENUM	1	/* int: highest defined filesystem type */
 #define VFS_CONF	2	/* struct: vfsconf for filesystem given
 				   as next argument */
-#define VFS_BCACHESTAT	3	/* struct: buffer cache statistics given 
+#define VFS_BCACHESTAT	3	/* struct: buffer cache statistics given
 				   as next argument */
 #define	CTL_VFSGENCTL_NAMES { \
 	{ 0, 0 }, \
