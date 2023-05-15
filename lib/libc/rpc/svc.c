@@ -266,11 +266,11 @@ svc_fd_remove(int sock)
 }
 
 /*
- * De-activate a transport handle. 
+ * De-activate a transport handle.
  */
 void
 xprt_unregister(SVCXPRT *xprt)
-{ 
+{
 	int sock = xprt->xp_sock;
 
 	if (xports[sock] == xprt) {
@@ -368,15 +368,15 @@ done:
 bool_t
 svc_sendreply(SVCXPRT *xprt, xdrproc_t xdr_results, caddr_t xdr_location)
 {
-	struct rpc_msg rply; 
+	struct rpc_msg rply;
 
 	rply.rm_direction = REPLY;
-	rply.rm_reply.rp_stat = MSG_ACCEPTED; 
-	rply.acpted_rply.ar_verf = xprt->xp_verf; 
+	rply.rm_reply.rp_stat = MSG_ACCEPTED;
+	rply.acpted_rply.ar_verf = xprt->xp_verf;
 	rply.acpted_rply.ar_stat = SUCCESS;
 	rply.acpted_rply.ar_results.where = xdr_location;
 	rply.acpted_rply.ar_results.proc = xdr_results;
-	return (SVC_REPLY(xprt, &rply)); 
+	return (SVC_REPLY(xprt, &rply));
 }
 DEF_WEAK(svc_sendreply);
 
@@ -401,13 +401,13 @@ svcerr_noproc(SVCXPRT *xprt)
 void
 svcerr_decode(SVCXPRT *xprt)
 {
-	struct rpc_msg rply; 
+	struct rpc_msg rply;
 
-	rply.rm_direction = REPLY; 
-	rply.rm_reply.rp_stat = MSG_ACCEPTED; 
+	rply.rm_direction = REPLY;
+	rply.rm_reply.rp_stat = MSG_ACCEPTED;
 	rply.acpted_rply.ar_verf = xprt->xp_verf;
 	rply.acpted_rply.ar_stat = GARBAGE_ARGS;
-	SVC_REPLY(xprt, &rply); 
+	SVC_REPLY(xprt, &rply);
 }
 DEF_WEAK(svcerr_decode);
 
@@ -417,13 +417,13 @@ DEF_WEAK(svcerr_decode);
 void
 svcerr_systemerr(SVCXPRT *xprt)
 {
-	struct rpc_msg rply; 
+	struct rpc_msg rply;
 
-	rply.rm_direction = REPLY; 
-	rply.rm_reply.rp_stat = MSG_ACCEPTED; 
+	rply.rm_direction = REPLY;
+	rply.rm_reply.rp_stat = MSG_ACCEPTED;
 	rply.acpted_rply.ar_verf = xprt->xp_verf;
 	rply.acpted_rply.ar_stat = SYSTEM_ERR;
-	SVC_REPLY(xprt, &rply); 
+	SVC_REPLY(xprt, &rply);
 }
 
 /*
@@ -455,7 +455,7 @@ svcerr_weakauth(SVCXPRT *xprt)
 /*
  * Program unavailable error reply
  */
-void 
+void
 svcerr_noprog(SVCXPRT *xprt)
 {
 	struct rpc_msg rply;
@@ -496,9 +496,9 @@ DEF_WEAK(svcerr_progvers);
  * the "raw" parameters (msg.rm_call.cb_cred and msg.rm_call.cb_verf) and
  * the "cooked" credentials (rqst->rq_clntcred).
  * However, this function does not know the structure of the cooked
- * credentials, so it make the following assumptions: 
+ * credentials, so it make the following assumptions:
  *   a) the structure is contiguous (no pointers), and
- *   b) the cred structure size does not exceed RQCRED_SIZE bytes. 
+ *   b) the cred structure size does not exceed RQCRED_SIZE bytes.
  * In all events, all three parameters are freed upon exit from this routine.
  * The storage is trivially management on the call stack in userland, but
  * is mallocated in kernel land.

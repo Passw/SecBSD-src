@@ -36,7 +36,7 @@ MAKE_FLAGS+= _REGRESS_TMP=${_REGRESS_TMP}
 	${_REGRESS_CLEAN}
 
 .END: .SILENT
-.if ${.TARGETS:Mall} || ${.TARGETS:Mregress} 
+.if ${.TARGETS:Mall} || ${.TARGETS:Mregress}
 	echo ====================================================================
 .if empty(REGRESS_MAIL) || empty(_REGRESS_TMP)
 	echo You can set REGRESS_LOG to point to a file and mail it manually.

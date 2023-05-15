@@ -72,8 +72,8 @@ __BEGIN_DECLS
 extern bool_t xdr_authunix_parms(XDR *, struct authunix_parms *);
 __END_DECLS
 
-/* 
- * If a response verifier has flavor AUTH_SHORT, 
+/*
+ * If a response verifier has flavor AUTH_SHORT,
  * then the body of the response verifier encapsulates the following structure;
  * again it is serialized in the obvious fashion.
  */

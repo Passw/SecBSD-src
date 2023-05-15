@@ -85,7 +85,7 @@ static const struct xdr_ops xdrmem_ops_unaligned = {
 
 /*
  * The procedure xdrmem_create initializes a stream descriptor for a
- * memory buffer.  
+ * memory buffer.
  */
 void
 xdrmem_create(XDR *xdrs, caddr_t addr, u_int size, enum xdr_op op)

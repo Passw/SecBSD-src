@@ -33,8 +33,8 @@
 
 /*
  * auth_none.c
- * Creates a client authentication handle for passing "null" 
- * credentials and verifiers to remote systems. 
+ * Creates a client authentication handle for passing "null"
+ * credentials and verifiers to remote systems.
  */
 
 #include <stdlib.h>
@@ -106,7 +106,7 @@ authnone_marshal(AUTH *client, XDR *xdrs)
 	    ap->marshalled_client, ap->mcnt));
 }
 
-static void 
+static void
 authnone_verf(struct __rpc_auth *none)
 {
 }

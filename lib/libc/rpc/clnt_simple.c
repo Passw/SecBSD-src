@@ -31,7 +31,7 @@
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* 
+/*
  * clnt_simple.c
  * Simplified front end to rpc.
  */
@@ -81,7 +81,7 @@ callrpc(char *host, int prognum, int versnum, int procnum, xdrproc_t inproc,
 	}
 	if (crp->valid && crp->oldprognum == prognum && crp->oldversnum == versnum
 		&& strcmp(crp->oldhost, host) == 0) {
-		/* reuse old client */		
+		/* reuse old client */
 	} else {
 		crp->valid = 0;
 		if (crp->socket != -1) {
@@ -114,7 +114,7 @@ callrpc(char *host, int prognum, int versnum, int procnum, xdrproc_t inproc,
 	tottimeout.tv_usec = 0;
 	clnt_stat = clnt_call(crp->client, procnum, inproc, in,
 	    outproc, out, tottimeout);
-	/* 
+	/*
 	 * if call failed, empty cache
 	 */
 	if (clnt_stat != RPC_SUCCESS)

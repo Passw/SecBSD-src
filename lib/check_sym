@@ -311,7 +311,7 @@ then
 fi
 
 if $verbose; then
-	printf "\nReloc counts:\nbefore:\n" 
+	printf "\nReloc counts:\nbefore:\n"
 	grep ^R r1
 	printf "\nafter:\n"
 	grep ^R r2

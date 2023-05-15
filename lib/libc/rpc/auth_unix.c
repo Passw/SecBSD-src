@@ -32,8 +32,8 @@
  */
 
 /*
- * auth_unix.c, Implements UNIX style authentication parameters. 
- *  
+ * auth_unix.c, Implements UNIX style authentication parameters.
+ *
  * The system is very weak.  The client uses no encryption for its
  * credentials and only sends null verifiers.  The server sends backs
  * null verifiers or optionally a verifier that suggests a new short hand
@@ -133,15 +133,15 @@ authunix_create(char *machname, int uid, int gid, int len, int *aup_gids)
 	 * Serialize the parameters into origcred
 	 */
 	xdrmem_create(&xdrs, mymem, MAX_AUTH_BYTES, XDR_ENCODE);
-	if (!xdr_authunix_parms(&xdrs, &aup)) 
-		goto authfail;	
+	if (!xdr_authunix_parms(&xdrs, &aup))
+		goto authfail;
 	au->au_origcred.oa_length = len = XDR_GETPOS(&xdrs);
 	au->au_origcred.oa_flavor = AUTH_UNIX;
 #ifdef KERNEL
 	au->au_origcred.oa_base = mem_alloc((u_int) len);
 #else
 	if ((au->au_origcred.oa_base = mem_alloc((u_int) len)) == NULL)
-		goto authfail;	
+		goto authfail;
 #endif
 	memcpy(au->au_origcred.oa_base, mymem, (u_int)len);
 
@@ -270,7 +270,7 @@ authunix_refresh(AUTH *auth)
 	xdrmem_create(&xdrs, au->au_origcred.oa_base,
 	    au->au_origcred.oa_length, XDR_DECODE);
 	stat = xdr_authunix_parms(&xdrs, &aup);
-	if (! stat) 
+	if (! stat)
 		goto done;
 
 	/* update the time and serialize in place */

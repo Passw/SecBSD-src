@@ -31,7 +31,7 @@
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* 
+/*
  * svc_simple.c
  * Simplified front end to rpc.
  */
@@ -59,7 +59,7 @@ registerrpc(int prognum, int versnum, int procnum, char *(*progname)(),
     xdrproc_t inproc, xdrproc_t outproc)
 {
 	struct proglst *pl;
-	
+
 	if (procnum == NULLPROC)
 		return (-1);
 	if (transp == NULL) {
@@ -68,7 +68,7 @@ registerrpc(int prognum, int versnum, int procnum, char *(*progname)(),
 			return (-1);
 	}
 	(void) pmap_unset((u_long)prognum, (u_long)versnum);
-	if (!svc_register(transp, (u_long)prognum, (u_long)versnum, 
+	if (!svc_register(transp, (u_long)prognum, (u_long)versnum,
 	    universal, IPPROTO_UDP))
 		return (-1);
 	pl = malloc(sizeof(struct proglst));
@@ -92,7 +92,7 @@ universal(struct svc_req *rqstp, SVCXPRT *transp)
 	char xdrbuf[UDPMSGSIZE];
 	struct proglst *pl;
 
-	/* 
+	/*
 	 * enforce "procnum 0 is echo" convention
 	 */
 	if (rqstp->rq_proc == NULLPROC) {

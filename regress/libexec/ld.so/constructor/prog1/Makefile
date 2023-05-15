@@ -27,7 +27,7 @@ LDADD=
 LDADD+=-lab
 LDADD+=-laa
 LDFLAGS=-L$(AA_OBJDIR) -L$(AB_OBJDIR)
-LDFLAGS+= -Wl,-rpath,$(AA_OBJDIR)  -Wl,-rpath,$(AB_OBJDIR) 
+LDFLAGS+= -Wl,-rpath,$(AA_OBJDIR)  -Wl,-rpath,$(AB_OBJDIR)
 NOMAN=
 CC=c++
 

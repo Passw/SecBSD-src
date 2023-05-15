@@ -176,7 +176,7 @@ gpt_chk_mbr(struct dos_partition *dp, u_int64_t dsize)
 }
 
 /*
- * Try to find the disk address of the first MBR OpenBSD partition.
+ * Try to find the disk address of the first MBR SecBSD partition.
  *
  * N.B.: must boot from a partition within first 2^32-1 sectors!
  *
@@ -210,7 +210,7 @@ again:
 		return (-1);
 	}
 
-	/* Search for OpenBSD partition */
+	/* Search for SecBSD partition */
 	nextebr = 0;
 	for (i = 0; i < NDOSPART; i++) {
 		dp = &mbr.dmbr_parts[i];
@@ -253,7 +253,7 @@ again:
 }
 
 /*
- * Try to find the disk address of the first GPT OpenBSD partition.
+ * Try to find the disk address of the first GPT SecBSD partition.
  *
  * N.B.: must boot from a partition within first 2^32-1 sectors!
  *
@@ -275,7 +275,7 @@ findopenbsd_gpt(efi_diskinfo_t ed, const char **err)
 	static struct uuid	*openbsd_uuid = NULL, openbsd_uuid_space;
 	static u_char		 buf[4096];
 
-	/* Prepare OpenBSD UUID */
+	/* Prepare SecBSD UUID */
 	if (openbsd_uuid == NULL) {
 		/* XXX: should be replaced by uuid_dec_be() */
 		memcpy(&openbsd_uuid_space, openbsd_uuid_code,
@@ -368,7 +368,7 @@ findopenbsd_gpt(efi_diskinfo_t ed, const char **err)
 		lba = letoh64(gp.gp_lba_start);
 		/* Bootloaders do not current handle addresses > UINT_MAX! */
 		if (lba > UINT_MAX || EFI_SECTOBLK(ed, lba) > UINT_MAX) {
-			*err = "OpenBSD Partition LBA > 2**32 - 1";
+			*err = "SecBSD Partition LBA > 2**32 - 1";
 			return (-1);
 		}
 		return (u_int)lba;
@@ -414,14 +414,14 @@ efi_getdisklabel(efi_diskinfo_t ed, struct disklabel *label)
 		if (start == (u_int)-1) {
 			if (err != NULL)
 				return (err);
-			return ("no OpenBSD GPT partition");
+			return ("no SecBSD GPT partition");
 		}
 	} else {
 		start = findopenbsd(ed, &err);
 		if (start == (u_int)-1) {
 			if (err != NULL)
 				return (err);
-			return "no OpenBSD MBR partition\n";
+			return "no SecBSD MBR partition\n";
 		}
 	}
 

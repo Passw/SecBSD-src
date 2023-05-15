@@ -548,11 +548,11 @@ sr_getdisklabel(struct sr_boot_volume *bv, struct disklabel *label)
 		if (start == (u_int)-1) {
 			if (err != NULL)
 				return (err);
-			return "no OpenBSD partition\n";
+			return "no SecBSD partition\n";
 		}
 	} else if (mbr.dmbr_sign == DOSMBR_SIGNATURE) {
 
-		/* Search for OpenBSD partition */
+		/* Search for SecBSD partition */
 		for (i = 0; i < NDOSPART; i++) {
 			dp = &mbr.dmbr_parts[i];
 			if (!dp->dp_size)

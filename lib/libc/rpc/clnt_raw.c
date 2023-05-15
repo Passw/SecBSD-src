@@ -103,7 +103,7 @@ clntraw_create(u_long prog, u_long vers)
 	call_msg.rm_call.cb_rpcvers = RPC_MSG_VERSION;
 	call_msg.rm_call.cb_prog = prog;
 	call_msg.rm_call.cb_vers = vers;
-	xdrmem_create(xdrs, clp->mashl_callmsg, MCALL_MSG_SIZE, XDR_ENCODE); 
+	xdrmem_create(xdrs, clp->mashl_callmsg, MCALL_MSG_SIZE, XDR_ENCODE);
 	if (!xdr_callhdr(xdrs, &call_msg))
 		goto fail;
 	clp->mcnt = XDR_GETPOS(xdrs);
@@ -131,7 +131,7 @@ fail:
 	return (NULL);
 }
 
-static enum clnt_stat 
+static enum clnt_stat
 clntraw_call(CLIENT *h, u_long proc, xdrproc_t xargs, caddr_t argsp,
     xdrproc_t xresults, caddr_t resultsp, struct timeval timeout)
 {

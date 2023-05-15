@@ -41,7 +41,7 @@
 #include <rpc/pmap_prot.h>
 
 
-/* 
+/*
  * What is going on with linked lists? (!)
  * First recall the link list declaration from pmap_prot.h:
  *
@@ -50,11 +50,11 @@
  *	struct pmaplist *pml_map;
  * };
  *
- * Compare that declaration with a corresponding xdr declaration that 
+ * Compare that declaration with a corresponding xdr declaration that
  * is (a) pointer-less, and (b) recursive:
  *
  * typedef union switch (bool_t) {
- * 
+ *
  *	case TRUE: struct {
  *		struct pmap;
  * 		pmaplist_t foo;
@@ -67,8 +67,8 @@
  * the C declaration has no bool_t variable.  The bool_t can be
  * interpreted as ``more data follows me''; if FALSE then nothing
  * follows this bool_t; if TRUE then the bool_t is followed by
- * an actual struct pmap, and then (recursively) by the 
- * xdr union, pamplist_t.  
+ * an actual struct pmap, and then (recursively) by the
+ * xdr union, pamplist_t.
  *
  * This could be implemented via the xdr_union primitive, though this
  * would cause a one recursive call per element in the list.  Rather than do
@@ -103,7 +103,7 @@ xdr_pmaplist(XDR *xdrs, struct pmaplist **rp)
 		 * before we free the current object ...
 		 */
 		if (freeing)
-			next = &((*rp)->pml_next); 
+			next = &((*rp)->pml_next);
 		if (! xdr_reference(xdrs, (caddr_t *)rp,
 		    (u_int)sizeof(struct pmaplist), xdr_pmap))
 			return (FALSE);

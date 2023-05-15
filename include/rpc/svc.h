@@ -31,7 +31,7 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *	from: @(#)svc.h 1.20 88/02/08 SMI 
+ *	from: @(#)svc.h 1.20 88/02/08 SMI
  *	@(#)svc.h	2.2 88/07/29 4.0 RPCSRC
  */
 
@@ -167,7 +167,7 @@ struct svc_req {
  *	unsigned long prog;
  *	unsigned long vers;
  *	void (*dispatch)();
- *	int protocol;    like TCP or UDP, zero means do not register 
+ *	int protocol;    like TCP or UDP, zero means do not register
  */
 __BEGIN_DECLS
 extern bool_t	svc_register(SVCXPRT *, unsigned long, unsigned long,
@@ -211,7 +211,7 @@ __END_DECLS
 /*
  * When the service routine is called, it must first check to see if it
  * knows about the procedure;  if not, it should call svcerr_noproc
- * and return.  If so, it should deserialize its arguments via 
+ * and return.  If so, it should deserialize its arguments via
  * SVC_GETARGS (defined above).  If the deserialization does not work,
  * svcerr_decode should be called followed by a return.  Successful
  * decoding of the arguments should be followed the execution of the
@@ -222,7 +222,7 @@ __END_DECLS
  * Note: do not confuse access-control failure with weak authentication!
  *
  * NB: In pure implementations of rpc, the caller always waits for a reply
- * msg.  This message is sent when svc_sendreply is called.  
+ * msg.  This message is sent when svc_sendreply is called.
  * Therefore pure service implementations should always call
  * svc_sendreply even if the function logically returns void;  use
  * xdr.h - xdr_void for the xdr routine.  HOWEVER, tcp based rpc allows
@@ -244,7 +244,7 @@ extern void	svcerr_auth(SVCXPRT *, enum auth_stat);
 extern void	svcerr_noprog(SVCXPRT *);
 extern void	svcerr_systemerr(SVCXPRT *);
 __END_DECLS
-    
+
 /*
  * Lowest level dispatching -OR- who owns this process anyway.
  * Somebody has to wait for incoming requests and then call the correct
@@ -258,7 +258,7 @@ __END_DECLS
 
 /*
  * Global keeper of rpc service descriptors in use
- * dynamic; must be inspected before each call to select 
+ * dynamic; must be inspected before each call to select
  */
 #include <sys/select.h>			/* for fd_set */
 extern fd_set svc_fdset;

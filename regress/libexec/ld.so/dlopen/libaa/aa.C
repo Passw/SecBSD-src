@@ -9,7 +9,7 @@
 #include "aa.h"
 char strbuf[512];
 
-extern "C" { 
+extern "C" {
 const char *libname = "libaa";
 };
 

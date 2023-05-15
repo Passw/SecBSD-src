@@ -83,7 +83,7 @@ struct ct_data {
 	int		ct_connected;	/* pre-connected */
 	struct timeval	ct_wait;
 	bool_t          ct_waitset;       /* wait set by clnt_control? */
-	struct sockaddr_in ct_addr; 
+	struct sockaddr_in ct_addr;
 	struct rpc_err	ct_error;
 	char		ct_mcall[MCALL_MSG_SIZE];	/* marshalled callmsg */
 	u_int		ct_mpos;			/* pos after marshal */

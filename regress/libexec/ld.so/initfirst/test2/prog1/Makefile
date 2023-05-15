@@ -44,11 +44,11 @@ AE_OBJDIR!=    if [ -d $(AE_DIR)/${__objdir} ]; then \
 LDADD=-laa
 LDFLAGS=  -L$(AA_OBJDIR)
 LDFLAGS+= -Wl,--disable-new-dtags
-LDFLAGS+= -Wl,-rpath,$(AA_OBJDIR) 
-LDFLAGS+= -Wl,-rpath,$(AB_OBJDIR) 
-LDFLAGS+= -Wl,-rpath,$(AC_OBJDIR) 
-LDFLAGS+= -Wl,-rpath,$(AD_OBJDIR) 
-LDFLAGS+= -Wl,-rpath,$(AE_OBJDIR) 
+LDFLAGS+= -Wl,-rpath,$(AA_OBJDIR)
+LDFLAGS+= -Wl,-rpath,$(AB_OBJDIR)
+LDFLAGS+= -Wl,-rpath,$(AC_OBJDIR)
+LDFLAGS+= -Wl,-rpath,$(AD_OBJDIR)
+LDFLAGS+= -Wl,-rpath,$(AE_OBJDIR)
 NOMAN=
 CC=c++
 

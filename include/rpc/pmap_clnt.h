@@ -31,7 +31,7 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *	from: @(#)pmap_clnt.h 1.11 88/02/08 SMI 
+ *	from: @(#)pmap_clnt.h 1.11 88/02/08 SMI
  *	@(#)pmap_clnt.h	2.1 88/07/29 4.0 RPCSRC
  */
 
@@ -48,7 +48,7 @@
  *	head = pmap_getmaps(address);
  *	clnt_stat = pmap_rmtcall(address, program, version, procedure,
  *		xdrargs, argsp, xdrres, resp, tout, port_ptr)
- *		(works for udp only.) 
+ *		(works for udp only.)
  * 	clnt_stat = clnt_broadcast(program, version, procedure,
  *		xdrargs, argsp,	xdrres, resp, eachresult)
  *		(like pmap_rmtcall, except the call is broadcasted to all
@@ -67,18 +67,18 @@
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
-extern bool_t		pmap_set(unsigned long, unsigned long, unsigned int, 
+extern bool_t		pmap_set(unsigned long, unsigned long, unsigned int,
 			    int);
 extern bool_t		pmap_unset(unsigned long, unsigned long);
 extern struct pmaplist	*pmap_getmaps(struct sockaddr_in *);
-extern enum clnt_stat	pmap_rmtcall(struct sockaddr_in *, unsigned long, 
-			    unsigned long, unsigned long, xdrproc_t, caddr_t, 
-			    xdrproc_t, caddr_t, struct timeval, 
+extern enum clnt_stat	pmap_rmtcall(struct sockaddr_in *, unsigned long,
+			    unsigned long, unsigned long, xdrproc_t, caddr_t,
+			    xdrproc_t, caddr_t, struct timeval,
 			    unsigned long *);
-extern enum clnt_stat	clnt_broadcast(unsigned long, unsigned long, 
+extern enum clnt_stat	clnt_broadcast(unsigned long, unsigned long,
 			    unsigned long, xdrproc_t, char *, xdrproc_t, char *,
 			    bool_t (*)(caddr_t, struct sockaddr_in *));
-extern unsigned short	pmap_getport(struct sockaddr_in *, unsigned long, 
+extern unsigned short	pmap_getport(struct sockaddr_in *, unsigned long,
 			    unsigned long, unsigned int);
 __END_DECLS
 

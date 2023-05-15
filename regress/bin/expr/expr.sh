@@ -11,7 +11,7 @@ function test_expr {
 		exit 1
 	fi
 }
-	
+
 # The first arg will get eval'd so escape any meta characters
 # The 2nd arg is an expected string/response from expr for that op.
 
@@ -98,7 +98,7 @@ test_expr '1 - -5' '6'
 # More complex math test for precedence
 test_expr '-3 + -1 \* 4 + 3 / -6' '-7'
 
-# The next two are messy but the shell escapes cause that. 
+# The next two are messy but the shell escapes cause that.
 # Test precendence
 test_expr 'X1/2/3 : X\\\(.\*[^/]\\\)//\*[^/][^/]\*/\*$ \| . : \\\(.\\\)' '1/2'
 

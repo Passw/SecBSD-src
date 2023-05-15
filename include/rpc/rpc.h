@@ -31,7 +31,7 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *	from: @(#)rpc.h 1.9 88/02/08 SMI 
+ *	from: @(#)rpc.h 1.9 88/02/08 SMI
  *	@(#)rpc.h	2.4 89/07/11 4.0 RPCSRC
  */
 
@@ -61,7 +61,7 @@
 #include <rpc/rpc_msg.h>	/* protocol for rpc messages */
 #include <rpc/auth_unix.h>	/* protocol for unix style cred */
 /*
- *  Uncomment-out the next line if you are building the rpc library with    
+ *  Uncomment-out the next line if you are building the rpc library with
  *  DES Authentication (see the README file in the secure_rpc/ directory).
  */
 #ifdef notdef

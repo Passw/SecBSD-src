@@ -982,7 +982,7 @@ print(struct match *m, const char *caption, states st, int ch, FILE *d)
 	(void)fprintf(d, "\n");
 }
 
-/* 
+/*
  - at - print current situation
  */
 static void

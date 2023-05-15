@@ -173,7 +173,7 @@ static enum xprt_stat
 svcudp_stat(SVCXPRT *xprt)
 {
 
-	return (XPRT_IDLE); 
+	return (XPRT_IDLE);
 }
 
 static bool_t
@@ -294,7 +294,7 @@ struct cache_node {
 	/*
  	 * Next node on the list, if there is a collision
 	 */
-	cache_ptr cache_next;	
+	cache_ptr cache_next;
 };
 
 /*
@@ -316,11 +316,11 @@ struct udp_cache {
  * the hashing function
  */
 #define CACHE_LOC(transp, xid)	\
- (xid % (SPARSENESS*((struct udp_cache *) su_data(transp)->su_cache)->uc_size))	
+ (xid % (SPARSENESS*((struct udp_cache *) su_data(transp)->su_cache)->uc_size))
 
 
 /*
- * Enable use of the cache. 
+ * Enable use of the cache.
  * Note: there is no disable.
  */
 int
@@ -330,7 +330,7 @@ svcudp_enablecache(SVCXPRT *transp, u_long size)
 	struct udp_cache *uc;
 
 	if (su->su_cache != NULL)
-		return(0);	
+		return(0);
 	uc = malloc(sizeof(*uc));
 	if (uc == NULL)
 		return(0);
@@ -358,7 +358,7 @@ svcudp_enablecache(SVCXPRT *transp, u_long size)
 static void
 cache_set(SVCXPRT *xprt, u_long replylen)
 {
-	cache_ptr victim;	
+	cache_ptr victim;
 	cache_ptr *vicp;
 	struct svcudp_data *su = su_data(xprt);
 	struct udp_cache *uc = (struct udp_cache *) su->su_cache;
@@ -372,9 +372,9 @@ cache_set(SVCXPRT *xprt, u_long replylen)
 	victim = uc->uc_fifo[uc->uc_nextvictim];
 	if (victim != NULL) {
 		loc = CACHE_LOC(xprt, victim->cache_xid);
-		for (vicp = &uc->uc_entries[loc]; 
-		  *vicp != NULL && *vicp != victim; 
-		  vicp = &(*vicp)->cache_next) 
+		for (vicp = &uc->uc_entries[loc];
+		  *vicp != NULL && *vicp != victim;
+		  vicp = &(*vicp)->cache_next)
 				;
 		if (*vicp == NULL) {
 			return;
@@ -406,7 +406,7 @@ cache_set(SVCXPRT *xprt, u_long replylen)
 	victim->cache_prog = uc->uc_prog;
 	victim->cache_addr = uc->uc_addr;
 	loc = CACHE_LOC(xprt, victim->cache_xid);
-	victim->cache_next = uc->uc_entries[loc];	
+	victim->cache_next = uc->uc_entries[loc];
 	uc->uc_entries[loc] = victim;
 	uc->uc_fifo[uc->uc_nextvictim++] = victim;
 	uc->uc_nextvictim %= uc->uc_size;

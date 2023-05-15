@@ -26,7 +26,7 @@ REGRESS_TARGETS= ${C_TARGETS} ${CPP_TARGETS}
 
 .for i in ${C_MODULES}
 .  for j in ${C_${i:U}}
-C_TARGETS+= c-${i}-${j} 
+C_TARGETS+= c-${i}-${j}
 c-${i}-${j}:
 	${TCC} ${TCFLAGS} -o /dev/null ${i}-${j}.c 2>&1 | sed '/^\/tmp\//d;s/(\.text+0x[0-9a-f]*)//' | diff -u - ${.CURDIR}/${i}-${j}.c${EXP}
 .  endfor
@@ -59,9 +59,9 @@ NOOBJ= Yes
 REGRESS_EXPECTED_FAILURES=	c-getcwd-1
 .endif
 
-.if ${BUILD_GCC3:L} == "yes" 
+.if ${BUILD_GCC3:L} == "yes"
 EXP=		.exp.gcc3
-.elif ${BUILD_GCC4:L} == "yes" 
+.elif ${BUILD_GCC4:L} == "yes"
 EXP=		.exp.gcc4
 .else
 regress:

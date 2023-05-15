@@ -148,7 +148,7 @@ DEF_WEAK(xdr_rmtcallres);
 
 /*
  * The following is kludged-up support for simple rpc broadcasts.
- * Someday a large, complicated system will replace these trivial 
+ * Someday a large, complicated system will replace these trivial
  * routines which only support udp/ip .
  */
 static int
@@ -200,7 +200,7 @@ newgetbroadcastnets(struct in_addr **addrsp)
 
 typedef bool_t (*resultproc_t)(caddr_t, struct sockaddr_in *);
 
-enum clnt_stat 
+enum clnt_stat
 clnt_broadcast(u_long prog,	/* program number */
     u_long vers,		/* version number */
     u_long proc,		/* procedure number */

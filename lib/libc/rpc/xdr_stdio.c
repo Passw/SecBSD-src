@@ -142,7 +142,7 @@ xdrstdio_getpos(XDR *xdrs)
 
 static bool_t
 xdrstdio_setpos(XDR *xdrs, u_int pos)
-{ 
+{
 
 	return ((fseeko((FILE *)xdrs->x_private, pos, SEEK_SET) == -1) ?
 		FALSE : TRUE);

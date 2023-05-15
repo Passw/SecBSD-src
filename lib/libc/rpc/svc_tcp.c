@@ -32,7 +32,7 @@
  */
 
 /*
- * svc_tcp.c, Server side for TCP/IP based RPC. 
+ * svc_tcp.c, Server side for TCP/IP based RPC.
  *
  * Actually implements two flavors of transporter -
  * a tcp rendezvouser (a listener and connection establisher)
@@ -199,7 +199,7 @@ makefd_xprt(int fd, u_int sendsize, u_int recvsize)
 {
 	SVCXPRT *xprt;
 	struct tcp_conn *cd;
- 
+
 	xprt = (SVCXPRT *)mem_alloc(sizeof(SVCXPRT));
 	if (xprt == NULL)
 		goto done;
@@ -258,7 +258,7 @@ rendezvous_request(SVCXPRT *xprt, struct rpc_msg *ignored)
 		    (char *)&opts, &optsize) == 0 &&
 		    optsize != 0) {
 			for (i = 0; (char *)&opts.ipopt_list[i] - (char *)&opts <
-			    optsize; ) {	
+			    optsize; ) {
 				u_char c = (u_char)opts.ipopt_list[i];
 				if (c == IPOPT_LSRR || c == IPOPT_SSRR) {
 					close(sock);

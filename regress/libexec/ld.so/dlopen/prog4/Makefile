@@ -26,9 +26,9 @@ LDADD=
 #LDADD+=-laa
 #LDADD+=-lac
 LDFLAGS=-L$(AA_OBJDIR) -L$(AC_OBJDIR)
-#LDFLAGS+= -Wl,-rpath,$(AA_OBJDIR)  -Wl,-rpath,$(AC_OBJDIR) 
+#LDFLAGS+= -Wl,-rpath,$(AA_OBJDIR)  -Wl,-rpath,$(AC_OBJDIR)
 # This intentionally leaves out AA_OBJDIR from -rpath
-LDFLAGS+= -Wl,-rpath,$(AC_OBJDIR) 
+LDFLAGS+= -Wl,-rpath,$(AC_OBJDIR)
 NOMAN=
 CC=c++
 

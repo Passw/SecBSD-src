@@ -16,7 +16,7 @@ int
 checksym(const char *name)
 {
 	void *sym = dlsym(RTLD_DEFAULT, name);
-	
+
 	if (sym != NULL) {
 		printf("symbol present: %s\n", name);
 		return 1;
@@ -35,7 +35,7 @@ main(int argc, char *argv[])
 	/* symbol should not be here at startup */
 	if (checksym(SYMBOL) == 1)
 		errx(1, "symbol found: %s", SYMBOL);
-	
+
 	printf("opening\n");
 	if ((h1 = dlopen(LIBNAME, RTLD_GLOBAL)) == NULL)
 		errx(1, "dlopen: h1: %s: %s", LIBNAME, dlerror());

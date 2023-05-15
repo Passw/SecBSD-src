@@ -49,7 +49,7 @@
 #include <netinet/in.h>
 #include <ifaddrs.h>
 
-/* 
+/*
  * don't use gethostbyname, which would invoke yellow pages
  *
  * Avoid loopback interfaces.  We return information from a loopback

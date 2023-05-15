@@ -39,16 +39,16 @@
 #include <rpc/rpc.h>
 
 /*
- * svcauthsw is the bdevsw of server side authentication. 
- * 
+ * svcauthsw is the bdevsw of server side authentication.
+ *
  * Server side authenticators are called from authenticate by
  * using the client auth struct flavor field to index into svcauthsw.
- * The server auth flavors must implement a routine that looks  
- * like: 
- * 
+ * The server auth flavors must implement a routine that looks
+ * like:
+ *
  *	enum auth_stat
  *	flavorx_auth(rqst, msg)
- *		struct svc_req *rqst; 
+ *		struct svc_req *rqst;
  *		struct rpc_msg *msg;
  *
  */

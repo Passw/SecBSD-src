@@ -24,6 +24,6 @@ foo(void)
 {
 	if (h == NULL)
 		foo_init();
-	
+
 	return bar();
 }

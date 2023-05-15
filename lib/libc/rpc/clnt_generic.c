@@ -39,7 +39,7 @@
 
 /*
  * Generic client creation: takes (hostname, program-number, protocol) and
- * returns client handle. Default options are set, which the user can 
+ * returns client handle. Default options are set, which the user can
  * change using the rpc equivalent of ioctl()'s.
  */
 CLIENT *
@@ -62,7 +62,7 @@ clnt_create(char *hostname, u_long prog, u_long vers, char *proto)
 		 * Only support INET for now
 		 */
 		rpc_createerr.cf_stat = RPC_SYSTEMERROR;
-		rpc_createerr.cf_error.re_errno = EAFNOSUPPORT; 
+		rpc_createerr.cf_error.re_errno = EAFNOSUPPORT;
 		return (NULL);
 	}
 	memset(&sin, 0, sizeof(sin));
@@ -73,7 +73,7 @@ clnt_create(char *hostname, u_long prog, u_long vers, char *proto)
 	p = getprotobyname(proto);
 	if (p == NULL) {
 		rpc_createerr.cf_stat = RPC_UNKNOWNPROTO;
-		rpc_createerr.cf_error.re_errno = EPFNOSUPPORT; 
+		rpc_createerr.cf_error.re_errno = EPFNOSUPPORT;
 		return (NULL);
 	}
 	sock = RPC_ANYSOCK;
@@ -94,7 +94,7 @@ clnt_create(char *hostname, u_long prog, u_long vers, char *proto)
 		break;
 	default:
 		rpc_createerr.cf_stat = RPC_SYSTEMERROR;
-		rpc_createerr.cf_error.re_errno = EPFNOSUPPORT; 
+		rpc_createerr.cf_error.re_errno = EPFNOSUPPORT;
 		return (NULL);
 	}
 	return (client);

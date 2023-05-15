@@ -66,7 +66,7 @@ static const struct clnt_ops udp_ops = {
 	clntudp_control
 };
 
-/* 
+/*
  * Private data kept per client handle
  */
 struct cu_data {
@@ -198,7 +198,7 @@ clntudp_create(struct sockaddr_in *raddr, u_long program, u_long version,
 }
 DEF_WEAK(clntudp_create);
 
-static enum clnt_stat 
+static enum clnt_stat
 clntudp_call(CLIENT *cl,	/* client handle */
     u_long proc,		/* procedure number */
     xdrproc_t xargs,		/* xdr routine for args */
@@ -304,11 +304,11 @@ send_again:
 		do {
 			fromlen = sizeof(struct sockaddr);
 			if (cu->cu_connected) {
-				inlen = recv(cu->cu_sock, cu->cu_inbuf, 
+				inlen = recv(cu->cu_sock, cu->cu_inbuf,
 				    (int) cu->cu_recvsz, 0);
 			} else {
 
-				inlen = recvfrom(cu->cu_sock, cu->cu_inbuf, 
+				inlen = recvfrom(cu->cu_sock, cu->cu_inbuf,
 				    (int) cu->cu_recvsz, 0,
 				    (struct sockaddr *)&from, &fromlen);
 			}
@@ -320,7 +320,7 @@ send_again:
 			return (cu->cu_error.re_status = RPC_CANTRECV);
 		}
 		if (inlen < sizeof(u_int32_t))
-			continue;	
+			continue;
 		/* see if reply transaction id matches sent id */
 		if (((struct rpc_msg *)(cu->cu_inbuf))->rm_xid !=
 		    ((struct rpc_msg *)(cu->cu_outbuf))->rm_xid)
@@ -359,7 +359,7 @@ send_again:
 				xdrs->x_op = XDR_FREE;
 				(void)xdr_opaque_auth(xdrs,
 				    &(reply_msg.acpted_rply.ar_verf));
-			} 
+			}
 		} else {
 			/* maybe our credentials need to be refreshed ... */
 			if (nrefreshes > 0 && AUTH_REFRESH(cl->cl_auth)) {
@@ -398,7 +398,7 @@ clntudp_freeres(CLIENT *cl, xdrproc_t xdr_res, caddr_t res_ptr)
 	return ((*xdr_res)(xdrs, res_ptr));
 }
 
-static void 
+static void
 clntudp_abort(CLIENT *clnt)
 {
 }
@@ -432,7 +432,7 @@ clntudp_control(CLIENT *cl, u_int request, void *info)
 	}
 	return (TRUE);
 }
-	
+
 static void
 clntudp_destroy(CLIENT *cl)
 {

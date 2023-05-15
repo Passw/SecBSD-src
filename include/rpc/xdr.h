@@ -105,10 +105,10 @@ typedef struct __rpc_xdr {
 		/* put a long to " */
 		bool_t	(*x_putlong)(struct __rpc_xdr *, long *);
 		/* get some bytes from " */
-		bool_t	(*x_getbytes)(struct __rpc_xdr *, caddr_t, 
+		bool_t	(*x_getbytes)(struct __rpc_xdr *, caddr_t,
 		    unsigned int);
 		/* put some bytes to " */
-		bool_t	(*x_putbytes)(struct __rpc_xdr *, caddr_t, 
+		bool_t	(*x_putbytes)(struct __rpc_xdr *, caddr_t,
 		    unsigned int);
 		/* returns bytes off from beginning */
 		unsigned int	(*x_getpostn)(struct __rpc_xdr *);
@@ -254,16 +254,16 @@ extern bool_t	xdr_int64_t(XDR *, int64_t *);
 extern bool_t	xdr_u_int64_t(XDR *, u_int64_t *);
 extern bool_t	xdr_bool(XDR *, bool_t *);
 extern bool_t	xdr_enum(XDR *, enum_t *);
-extern bool_t	xdr_array(XDR *, char **, unsigned int *, unsigned int, 
+extern bool_t	xdr_array(XDR *, char **, unsigned int *, unsigned int,
     unsigned int, xdrproc_t);
 extern bool_t	xdr_bytes(XDR *, char **, unsigned int *, unsigned int);
 extern bool_t	xdr_opaque(XDR *, caddr_t, unsigned int);
 extern bool_t	xdr_string(XDR *, char **, unsigned int);
-extern bool_t	xdr_union(XDR *, enum_t *, char *, struct xdr_discrim *, 
+extern bool_t	xdr_union(XDR *, enum_t *, char *, struct xdr_discrim *,
     xdrproc_t);
 extern bool_t	xdr_char(XDR *, char *);
 extern bool_t	xdr_u_char(XDR *, unsigned char *);
-extern bool_t	xdr_vector(XDR *, char *, unsigned int, unsigned int, 
+extern bool_t	xdr_vector(XDR *, char *, unsigned int, unsigned int,
     xdrproc_t);
 extern bool_t	xdr_float(XDR *, float *);
 extern bool_t	xdr_double(XDR *, double *);
@@ -277,7 +277,7 @@ __END_DECLS
  * Common opaque bytes objects used by many rpc protocols;
  * declared here due to commonality.
  */
-#define MAX_NETOBJ_SZ 1024 
+#define MAX_NETOBJ_SZ 1024
 struct netobj {
 	unsigned int	 n_len;
 	char		*n_bytes;

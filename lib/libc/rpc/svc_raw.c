@@ -140,7 +140,7 @@ svcraw_getargs(SVCXPRT *xprt, xdrproc_t xdr_args, caddr_t args_ptr)
 
 static bool_t
 svcraw_freeargs(SVCXPRT *xprt, xdrproc_t xdr_args, caddr_t args_ptr)
-{ 
+{
 	struct svcraw_private *srp = svcraw_private;
 	XDR *xdrs;
 
@@ -149,7 +149,7 @@ svcraw_freeargs(SVCXPRT *xprt, xdrproc_t xdr_args, caddr_t args_ptr)
 	xdrs = &srp->xdr_stream;
 	xdrs->x_op = XDR_FREE;
 	return ((*xdr_args)(xdrs, args_ptr));
-} 
+}
 
 static void
 svcraw_destroy(SVCXPRT *xprt)

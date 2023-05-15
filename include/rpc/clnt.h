@@ -121,7 +121,7 @@ typedef struct __rpc_client {
 	const struct clnt_ops {
 		/* call remote procedure */
 		enum clnt_stat	(*cl_call)(struct __rpc_client *,
-				    unsigned long, xdrproc_t, caddr_t, 
+				    unsigned long, xdrproc_t, caddr_t,
 				    xdrproc_t, caddr_t, struct timeval);
 		/* abort a call */
 		void		(*cl_abort)(struct __rpc_client *);
@@ -134,7 +134,7 @@ typedef struct __rpc_client {
 		/* destroy this structure */
 		void		(*cl_destroy)(struct __rpc_client *);
 		/* the ioctl() of rpc */
-		bool_t          (*cl_control)(struct __rpc_client *, 
+		bool_t          (*cl_control)(struct __rpc_client *,
 				    unsigned int, void *);
 	} *cl_ops;
 	caddr_t			cl_private;	/* private stuff */
@@ -244,7 +244,7 @@ typedef struct __rpc_client {
 
 /*
  * Below are the client handle creation routines for the various
- * implementations of client side rpc.  They can return NULL if a 
+ * implementations of client side rpc.  They can return NULL if a
  * creation failure occurs.
  */
 
@@ -286,7 +286,7 @@ __END_DECLS
  *	unsigned int recvsz;
  */
 __BEGIN_DECLS
-extern CLIENT *clnttcp_create(struct sockaddr_in *, unsigned long, 
+extern CLIENT *clnttcp_create(struct sockaddr_in *, unsigned long,
     unsigned long, int *, unsigned int, unsigned int);
 __END_DECLS
 
@@ -313,9 +313,9 @@ __END_DECLS
  *	unsigned int recvsz;
  */
 __BEGIN_DECLS
-extern CLIENT *clntudp_create(struct sockaddr_in *, unsigned long, 
+extern CLIENT *clntudp_create(struct sockaddr_in *, unsigned long,
     unsigned long, struct timeval, int *);
-extern CLIENT *clntudp_bufcreate(struct sockaddr_in *, unsigned long, 
+extern CLIENT *clntudp_bufcreate(struct sockaddr_in *, unsigned long,
     unsigned long, struct timeval, int *, unsigned int, unsigned int);
 __END_DECLS
 
@@ -330,7 +330,7 @@ __END_DECLS
 
 /*
  * Like clnt_perror(), but is more verbose in its output
- */ 
+ */
 __BEGIN_DECLS
 extern void clnt_perrno(enum clnt_stat);	/* stderr */
 extern char *clnt_sperrno(enum clnt_stat);	/* string */
@@ -345,7 +345,7 @@ extern char *clnt_sperror(CLIENT *, char *);	/* string */
 __END_DECLS
 
 
-/* 
+/*
  * If a creation fails, the following allows the user to figure out why.
  */
 struct rpc_createerr {
