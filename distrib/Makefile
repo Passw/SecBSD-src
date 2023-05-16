@@ -3,9 +3,7 @@
 SUBDIR=	special notes
 
 .if	make(obj)
-SUBDIR+=alpha amd64 armv7 arm64 hppa i386 \
-	landisk loongson luna88k macppc \
-	octeon powerpc64 riscv64 sparc64
+SUBDIR+=amd64 armv7 arm64
 .elif exists(${MACHINE})
 SUBDIR+=${MACHINE}
 .endif
