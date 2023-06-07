@@ -15,7 +15,7 @@
 
 int
 main(int argc, char *argv[])
-{	
+{
 	char temp[] = "/tmp/pwritevXXXXXXXXX";
 	char magic[10] = "0123456789";
 	const char zeroes[10] = "0000000000";

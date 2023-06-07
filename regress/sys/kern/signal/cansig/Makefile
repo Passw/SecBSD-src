@@ -1,4 +1,4 @@
-#	$OpenBSD: Makefile,v 1.1 2008/06/10 18:04:31 hshoexer Exp $ 
+#	$OpenBSD: Makefile,v 1.1 2008/06/10 18:04:31 hshoexer Exp $
 
 PROG=	cansig
 CFLAGS+=-Wall

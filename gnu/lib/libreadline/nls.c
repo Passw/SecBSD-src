@@ -188,7 +188,7 @@ find_codeset (name, lenp)
   /* This does not make sense: language has to be specified.  As
      an exception we allow the variable to contain only the codeset
      name.  Perhaps there are funny codeset names.  */
-  if (language == cp) 
+  if (language == cp)
     {
       *lenp = strlen (language);
       result = language;

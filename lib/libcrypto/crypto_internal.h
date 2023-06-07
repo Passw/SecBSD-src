@@ -1,4 +1,4 @@
-/*	$OpenBSD: crypto_internal.h,v 1.4 2023/05/17 06:37:14 jsing Exp $ */
+/*	$OpenBSD: crypto_internal.h,v 1.6 2023/05/27 09:18:17 jsing Exp $ */
 /*
  * Copyright (c) 2023 Joel Sing <jsing@openbsd.org>
  *
@@ -32,7 +32,7 @@
  */
 #ifndef HAVE_CRYPTO_LOAD_BE32TOH
 static inline uint32_t
-crypto_load_be32toh(const void *src)
+crypto_load_be32toh(const uint8_t *src)
 {
 	uint32_t v;
 
@@ -49,7 +49,7 @@ crypto_load_be32toh(const void *src)
  */
 #ifndef HAVE_CRYPTO_STORE_HTOBE32
 static inline void
-crypto_store_htobe32(void *dst, uint32_t v)
+crypto_store_htobe32(uint8_t *dst, uint32_t v)
 {
 	v = htobe32(v);
 	memcpy(dst, &v, sizeof(v));
@@ -63,7 +63,7 @@ crypto_store_htobe32(void *dst, uint32_t v)
  */
 #ifndef HAVE_CRYPTO_LOAD_BE64TOH
 static inline uint64_t
-crypto_load_be64toh(const void *src)
+crypto_load_be64toh(const uint8_t *src)
 {
 	uint64_t v;
 
@@ -80,7 +80,7 @@ crypto_load_be64toh(const void *src)
  */
 #ifndef HAVE_CRYPTO_STORE_HTOBE64
 static inline void
-crypto_store_htobe64(void *dst, uint64_t v)
+crypto_store_htobe64(uint8_t *dst, uint64_t v)
 {
 	v = htobe64(v);
 	memcpy(dst, &v, sizeof(v));

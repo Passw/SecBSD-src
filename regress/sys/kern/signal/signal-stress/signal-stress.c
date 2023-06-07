@@ -159,7 +159,7 @@ main()
 		wait_stopped(pid);
 		kill(pid, SIGCONT);
 	}
-		
+
 
 	/* Step 3. Repeat. */
 	for (i = 0; i < nprocs; i++)

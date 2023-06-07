@@ -33,11 +33,11 @@
 #include <unistd.h>
 
 #define	AREA	(16 * 4096)
-/* 
+/*
  * Check for mmap/ftruncate interaction.  Specifically, ftruncate on
- * a short file may lose modifications made through an mmapped area.  
+ * a short file may lose modifications made through an mmapped area.
  */
-int 
+int
 main(int argc, char *argv[])
 {
 	int i;

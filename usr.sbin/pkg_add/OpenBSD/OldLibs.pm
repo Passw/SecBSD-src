@@ -1,5 +1,5 @@
 # ex:ts=8 sw=4:
-# $OpenBSD: OldLibs.pm,v 1.14 2023/05/16 14:31:26 espie Exp $
+# $OpenBSD: OldLibs.pm,v 1.16 2023/05/27 10:01:51 espie Exp $
 #
 # Copyright (c) 2004-2010 Marc Espie <espie@openbsd.org>
 #
@@ -19,6 +19,8 @@ use warnings;
 
 package OpenBSD::PackingElement;
 
+# $self->mark_lib($libs, $libpatterns)
+#	store libs into hashes
 sub mark_lib
 {
 }
@@ -27,6 +29,8 @@ sub unmark_lib
 {
 }
 
+# $self->separate_element($libs, $c1, $c2)
+# 	based on libs hash, do we sort it into clone 1 or clone 2
 sub separate_element
 {
 	my ($self, $libs, $c1, $c2) = @_;
@@ -41,6 +45,7 @@ sub special_deep_copy
 
 package OpenBSD::PackingElement::Meta;
 
+# so every meta element ends up in both
 sub separate_element
 {
 	my ($self, $libs, $c1, $c2) = @_;
@@ -214,9 +219,8 @@ sub do_save_libs
 
 
 	if ($state->{not}) {
-		require OpenBSD::SharedLibs;
 
-		OpenBSD::SharedLibs::add_libs_from_plist($stub_list, $state);
+		$state->shlibs->add_libs_from_plist($stub_list);
 		$stub_list->to_cache;
 		$o->plist->to_cache;
 	} else {

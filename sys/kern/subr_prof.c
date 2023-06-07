@@ -1,4 +1,4 @@
-/*	$OpenBSD: subr_prof.c,v 1.33 2023/04/25 01:32:36 cheloha Exp $	*/
+/*	$OpenBSD: subr_prof.c,v 1.35 2023/06/02 17:44:29 cheloha Exp $	*/
 /*	$NetBSD: subr_prof.c,v 1.12 1996/04/22 01:38:50 christos Exp $	*/
 
 /*-
@@ -34,6 +34,7 @@
 
 #include <sys/param.h>
 #include <sys/systm.h>
+#include <sys/pledge.h>
 #include <sys/proc.h>
 #include <sys/resourcevar.h>
 #include <sys/mount.h>
@@ -137,7 +138,7 @@ prof_state_toggle(struct gmonparam *gp, int oldstate)
 #if !defined(GPROF)
 		/*
 		 * If this is not a profiling kernel, we need to patch
-		 * all symbols that can be instrummented.
+		 * all symbols that can be instrumented.
 		 */
 		error = db_prof_enable();
 #endif
@@ -236,7 +237,11 @@ sys_profil(struct proc *p, void *v, register_t *retval)
 	} */ *uap = v;
 	struct process *pr = p->p_p;
 	struct uprof *upp;
-	int s;
+	int error, s;
+
+	error = pledge_profil(p, SCARG(uap, scale));
+	if (error)
+		return error;
 
 	if (SCARG(uap, scale) > (1 << 16))
 		return (EINVAL);

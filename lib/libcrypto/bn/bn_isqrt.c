@@ -1,4 +1,4 @@
-/*	$OpenBSD: bn_isqrt.c,v 1.8 2023/05/17 07:42:38 tb Exp $ */
+/*	$OpenBSD: bn_isqrt.c,v 1.10 2023/06/04 17:28:35 tb Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  *

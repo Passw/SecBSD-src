@@ -2,7 +2,7 @@
 
 MAN=pkg-config.1
 
-LIBDIR = /usr/libdata/perl5/SecBSD
+LIBDIR = /usr/libdata/perl5/OpenBSD
 
 realinstall:
 	${INSTALL} -d -o ${LIBOWN} -g ${LIBGRP} -m ${DIRMODE} \

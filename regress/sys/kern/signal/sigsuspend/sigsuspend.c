@@ -58,7 +58,7 @@ main()
 	switch((pid = fork())) {
 	case 0:
 		/*
-		 * In the child. 
+		 * In the child.
 		 */
 
 		kill(ppid, SIGUSR1);	/* Tell the parent we're ready. */
@@ -81,7 +81,7 @@ main()
 			errx(1, "didn't get usr1");
 		if (gotusr2)
 			errx(1, "got incorrect usr2");
-		
+
 		sigemptyset(&set);
 		sigaddset(&set, SIGUSR1);
 		sigsuspend(&set);

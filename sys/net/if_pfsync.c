@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_pfsync.c,v 1.315 2023/05/18 12:10:04 sashan Exp $	*/
+/*	$OpenBSD: if_pfsync.c,v 1.317 2023/06/05 08:45:20 sashan Exp $	*/
 
 /*
  * Copyright (c) 2002 Michael Shalayeff
@@ -1009,10 +1009,12 @@ pfsync_in_bus(caddr_t buf, int len, int count, int flags)
 
 	switch (bus->status) {
 	case PFSYNC_BUS_START:
+		PF_LOCK();
 		timeout_add(&sc->sc_bulkfail_tmo, 4 * hz +
 		    pf_pool_limits[PF_LIMIT_STATES].limit /
 		    ((sc->sc_if.if_mtu - PFSYNC_MINPKT) /
 		    sizeof(struct pfsync_state)));
+		PF_UNLOCK();
 		DPFPRINTF(LOG_INFO, "received bulk update start");
 		break;
 
@@ -1989,6 +1991,11 @@ pfsync_update_state(struct pf_state *st)
 		st->sync_updates = 0;
 		break;
 
+	case PFSYNC_S_DEL:
+	case PFSYNC_S_COUNT:
+	case PFSYNC_S_DEFER:
+		break;
+
 	default:
 		panic("pfsync_update_state: unexpected sync state %d",
 		    st->sync_state);
@@ -2037,10 +2044,12 @@ pfsync_request_full_update(struct pfsync_softc *sc)
 #endif
 		pfsync_sync_ok = 0;
 		DPFPRINTF(LOG_INFO, "requesting bulk update");
+		PF_LOCK();
 		timeout_add(&sc->sc_bulkfail_tmo, 4 * hz +
 		    pf_pool_limits[PF_LIMIT_STATES].limit /
 		    ((sc->sc_if.if_mtu - PFSYNC_MINPKT) /
 		    sizeof(struct pfsync_state)));
+		PF_UNLOCK();
 		pfsync_request_update(0, 0);
 	}
 }

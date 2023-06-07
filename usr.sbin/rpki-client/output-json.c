@@ -1,4 +1,4 @@
-/*	$OpenBSD: output-json.c,v 1.37 2023/05/03 09:54:25 claudio Exp $ */
+/*	$OpenBSD: output-json.c,v 1.39 2023/06/05 14:19:13 claudio Exp $ */
 /*
  * Copyright (c) 2019 Claudio Jeker <claudio@openbsd.org>
  *
@@ -37,7 +37,7 @@ outputheader_json(struct stats *st)
 
 	gethostname(hn, sizeof hn);
 
-	json_do_object("metadata");
+	json_do_object("metadata", 0);
 
 	json_do_string("buildmachine", hn);
 	json_do_string("buildtime", tbuf);
@@ -73,8 +73,10 @@ outputheader_json(struct stats *st)
 	json_do_int("vaps", st->repo_tal_stats.vaps);
 	json_do_int("uniquevaps", st->repo_tal_stats.vaps_uniqs);
 	json_do_int("cachedir_del_files", st->repo_stats.del_files);
-	json_do_int("cachedir_superfluous_files", st->repo_stats.extra_files);
 	json_do_int("cachedir_del_dirs", st->repo_stats.del_dirs);
+	json_do_int("cachedir_superfluous_files", st->repo_stats.extra_files);
+	json_do_int("cachedir_del_superfluous_files",
+	    st->repo_stats.del_extra_files);
 
 	json_do_end();
 }
@@ -85,7 +87,7 @@ print_vap(struct vap *v, enum afi afi)
 	size_t i;
 	int found = 0;
 
-	json_do_object("aspa");
+	json_do_object("aspa", 1);
 	json_do_int("customer_asid", v->custasid);
 	json_do_int("expires", v->expires);
 
@@ -106,7 +108,7 @@ output_aspa(struct vap_tree *vaps)
 {
 	struct vap	*v;
 
-	json_do_object("provider_authorizations");
+	json_do_object("provider_authorizations", 0);
 
 	json_do_array("ipv4");
 	RB_FOREACH(v, vap_tree, vaps) {
@@ -136,7 +138,7 @@ output_json(FILE *out, struct vrp_tree *vrps, struct brk_tree *brks,
 	RB_FOREACH(v, vrp_tree, vrps) {
 		ip_addr_print(&v->addr, v->afi, buf, sizeof(buf));
 
-		json_do_object("roa");
+		json_do_object("roa", 1);
 		json_do_int("asn", v->asid);
 		json_do_string("prefix", buf);
 		json_do_int("maxLength", v->maxlength);
@@ -148,7 +150,7 @@ output_json(FILE *out, struct vrp_tree *vrps, struct brk_tree *brks,
 
 	json_do_array("bgpsec_keys");
 	RB_FOREACH(b, brk_tree, brks) {
-		json_do_object("brks");
+		json_do_object("brks", 0);
 		json_do_int("asn", b->asid);
 		json_do_string("ski", b->ski);
 		json_do_string("pubkey", b->pubkey);

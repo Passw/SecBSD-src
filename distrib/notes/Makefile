@@ -18,8 +18,7 @@ all:	$(TARG)
 
 allarchs:
 	@cd $(.CURDIR); \
-	for arch in alpha amd64 arm64 armv7 hppa i386 landisk \
-	    loongson luna88k macppc octeon powerpc64 riscv64 sparc64; \
+	for arch in amd64 arm64 armv7 i386; \
 	do ${MAKE} M=$$arch; done
 
 $(TARG): $(DEP)

@@ -1,4 +1,4 @@
-/*	$OpenBSD: roa.c,v 1.66 2023/04/26 16:32:41 claudio Exp $ */
+/*	$OpenBSD: roa.c,v 1.68 2023/06/07 10:46:34 job Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
@@ -107,7 +107,7 @@ roa_parse_econtent(const unsigned char *d, size_t dsz, struct parse *p)
 	int				 addrsz;
 	enum afi			 afi;
 	const ROAIPAddress		*addr;
-	long				 maxlen;
+	uint64_t			 maxlen;
 	struct ip_addr			 ipaddr;
 	struct roa_ip			*res;
 	int				 ipaddrblocksz;
@@ -119,7 +119,7 @@ roa_parse_econtent(const unsigned char *d, size_t dsz, struct parse *p)
 		goto out;
 	}
 
-	if (!valid_econtent_version(p->fn, roa->version))
+	if (!valid_econtent_version(p->fn, roa->version, 0))
 		goto out;
 
 	if (!as_id_parse(roa->asid, &p->res->asid)) {
@@ -168,21 +168,23 @@ roa_parse_econtent(const unsigned char *d, size_t dsz, struct parse *p)
 			maxlen = ipaddr.prefixlen;
 
 			if (addr->maxLength != NULL) {
-				maxlen = ASN1_INTEGER_get(addr->maxLength);
-				if (maxlen < 0) {
+				if (!ASN1_INTEGER_get_uint64(&maxlen,
+				    addr->maxLength)) {
 					warnx("%s: RFC 6482 section 3.2: "
-					    "ASN1_INTEGER_get failed", p->fn);
+					    "ASN1_INTEGER_get_uint64 failed",
+					    p->fn);
 					goto out;
 				}
 				if (ipaddr.prefixlen > maxlen) {
 					warnx("%s: prefixlen (%d) larger than "
-					    "maxLength (%ld)", p->fn,
-					    ipaddr.prefixlen, maxlen);
+					    "maxLength (%llu)", p->fn,
+					    ipaddr.prefixlen,
+					    (unsigned long long)maxlen);
 					goto out;
 				}
 				if (maxlen > ((afi == AFI_IPV4) ? 32 : 128)) {
-					warnx("%s: maxLength (%ld) too large",
-					    p->fn, maxlen);
+					warnx("%s: maxLength (%llu) too large",
+					    p->fn, (unsigned long long)maxlen);
 					goto out;
 				}
 			}

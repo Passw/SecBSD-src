@@ -48,7 +48,7 @@ test_request_tty()
 		_exit(errno);
 	errno = 0; /* discard error */
 
-	/* tests that only need tty (and stdio for calling ioctl(2)) */	
+	/* tests that only need tty (and stdio for calling ioctl(2)) */
 	if (pledge("stdio tty", NULL) == -1)
 		_exit(errno);
 
@@ -74,11 +74,11 @@ test_request_tty()
 	/* TIOCSETA */
 	if (tcsetattr(fd, TCSANOW, &ts) == -1)
 		_exit(errno);
-	
+
 	/* TIOCSETAW */
 	if (tcsetattr(fd, TCSADRAIN, &ts) == -1)
 		_exit(errno);
-	
+
 	/* TIOCSETAF */
 	if (tcsetattr(fd, TCSAFLUSH, &ts) == -1)
 		_exit(errno);

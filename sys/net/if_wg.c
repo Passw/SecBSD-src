@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_wg.c,v 1.26 2022/07/21 11:26:50 kn Exp $ */
+/*	$OpenBSD: if_wg.c,v 1.28 2023/06/01 18:57:53 kn Exp $ */
 
 /*
  * Copyright (C) 2015-2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
@@ -221,6 +221,8 @@ struct wg_peer {
 
 	SLIST_ENTRY(wg_peer)	 p_start_list;
 	int			 p_start_onlist;
+
+	char			 p_description[IFDESCRSIZE];
 };
 
 struct wg_softc {
@@ -406,6 +408,8 @@ wg_peer_create(struct wg_softc *sc, uint8_t public[WG_KEY_SIZE])
 	mtx_init(&peer->p_counters_mtx, IPL_NET);
 	peer->p_counters_tx = 0;
 	peer->p_counters_rx = 0;
+
+	strlcpy(peer->p_description, "", IFDESCRSIZE);
 
 	mtx_init(&peer->p_endpoint_mtx, IPL_NET);
 	bzero(&peer->p_endpoint, sizeof(peer->p_endpoint));
@@ -1463,7 +1467,7 @@ wg_handshake_worker(void *_sc)
  *  - The parallel queue is used to distribute the encryption across multiple
  *    threads.
  *  - The serial queue ensures that packets are not reordered and are
- *    delievered in sequence.
+ *    delivered in sequence.
  * The wg_tag attached to the packet contains two flags to help the two queues
  * interact.
  *  - t_done: The parallel queue has finished with the packet, now the serial
@@ -2320,6 +2324,10 @@ wg_ioctl_set(struct wg_softc *sc, struct wg_data_io *data)
 			}
 		}
 
+		if (peer_o.p_flags & WG_PEER_SET_DESCRIPTION)
+			strlcpy(peer->p_description, peer_o.p_description,
+			    IFDESCRSIZE);
+
 		aip_p = &peer_p->p_aips[0];
 		for (j = 0; j < peer_o.p_aips_count; j++) {
 			if ((ret = copyin(aip_p, &aip_o, sizeof(aip_o))) != 0)
@@ -2429,6 +2437,8 @@ wg_ioctl_get(struct wg_softc *sc, struct wg_data_io *data)
 			aip_count++;
 		}
 		peer_o.p_aips_count = aip_count;
+
+		strlcpy(peer_o.p_description, peer->p_description, IFDESCRSIZE);
 
 		if ((ret = copyout(&peer_o, peer_p, sizeof(peer_o))) != 0)
 			goto unlock_and_ret_size;

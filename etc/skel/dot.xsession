@@ -14,3 +14,4 @@ fi
 #exec /usr/local/bin/startxfce4 --with-ck-launch
 # rcctl enable messagebus xenodm
 # rcctl start messagebus xenodm
+# reboot

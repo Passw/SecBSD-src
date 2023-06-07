@@ -1,4 +1,4 @@
-/*	$OpenBSD: kern_pledge.c,v 1.304 2023/02/19 18:46:46 anton Exp $	*/
+/*	$OpenBSD: kern_pledge.c,v 1.306 2023/06/02 17:44:29 cheloha Exp $	*/
 
 /*
  * Copyright (c) 2015 Nicholas Marriott <nicm@openbsd.org>
@@ -145,6 +145,9 @@ const uint64_t pledge_syscalls[SYS_MAXSYSCALL] = {
 	 */
 	[SYS_sysctl] = PLEDGE_STDIO,
 
+	/* For moncontrol(3).  Only allowed to disable profiling. */
+	[SYS_profil] = PLEDGE_STDIO,
+
 	/* Support for malloc(3) family of operations */
 	[SYS_getentropy] = PLEDGE_STDIO,
 	[SYS_madvise] = PLEDGE_STDIO,
@@ -231,6 +234,7 @@ const uint64_t pledge_syscalls[SYS_MAXSYSCALL] = {
 	[SYS_socketpair] = PLEDGE_STDIO,
 
 	[SYS_wait4] = PLEDGE_STDIO,
+	[SYS_waitid] = PLEDGE_STDIO,
 
 	/*
 	 * Can kill self with "stdio".  Killing another pid
@@ -1583,6 +1587,16 @@ pledge_kill(struct proc *p, pid_t pid)
 	if (pid == 0 || pid == p->p_p->ps_pid)
 		return 0;
 	return pledge_fail(p, EPERM, PLEDGE_PROC);
+}
+
+int
+pledge_profil(struct proc *p, u_int scale)
+{
+	if ((p->p_p->ps_flags & PS_PLEDGE) == 0)
+		return 0;
+	if (scale != 0)
+		return pledge_fail(p, EPERM, PLEDGE_STDIO);
+	return 0;
 }
 
 int

@@ -62,7 +62,7 @@ REGRESS_ROOT_TARGETS+=		test-${_test}-${_vnode}
 _sudo-${_test}-${_vnode}=	${SUDO}
 .  endif
 
-.  if ${PASS_TARGETS:Mtest-${_test}-${_vnode}} 
+.  if ${PASS_TARGETS:Mtest-${_test}-${_vnode}}
 test-${_test}-${_vnode}: sendrecvfd
 	@echo test-${_test}-${_vnode}: expected PASS
 	@${_sudo-${_test}-${_vnode}} ./sendrecvfd ${_test} ${_vnode}

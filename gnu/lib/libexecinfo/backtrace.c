@@ -64,7 +64,7 @@ rasprintf(char **buf, size_t *bufsiz, size_t offs, const char *fmt, ...)
 			nbufsiz = MAX(*bufsiz + 512, (size_t)len + 1);
 		} else
 			nbufsiz = MAX(offs, *bufsiz) + 512;
-			
+
 		nbuf = realloc(*buf, nbufsiz);
 		if (nbuf == NULL)
 			return -1;

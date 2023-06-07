@@ -1,4 +1,4 @@
-/* $OpenBSD: crypto_lock.c,v 1.3 2023/05/17 07:42:38 tb Exp $ */
+/* $OpenBSD: crypto_lock.c,v 1.5 2023/06/04 17:28:35 tb Exp $ */
 /*
  * Copyright (c) 2018 Brent Cook <bcook@openbsd.org>
  *

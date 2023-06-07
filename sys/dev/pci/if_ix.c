@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_ix.c,v 1.195 2023/05/18 08:22:37 jan Exp $	*/
+/*	$OpenBSD: if_ix.c,v 1.197 2023/06/01 09:05:33 jan Exp $	*/
 
 /******************************************************************************
 
@@ -3214,12 +3214,23 @@ ixgbe_rxeof(struct rx_ring *rxr)
 		sendmp = rxbuf->fmp;
 		rxbuf->buf = rxbuf->fmp = NULL;
 
-		if (sendmp != NULL) /* secondary frag */
+		if (sendmp != NULL) { /* secondary frag */
 			sendmp->m_pkthdr.len += mp->m_len;
-		else {
+
+			/*
+			 * This function iterates over interleaved descriptors.
+			 * Thus, we reuse ph_mss as global segment counter per
+			 * TCP connection, instead of introducing a new variable
+			 * in m_pkthdr.
+			 */
+			if (rsccnt)
+				sendmp->m_pkthdr.ph_mss += rsccnt - 1;
+		} else {
 			/* first desc of a non-ps chain */
 			sendmp = mp;
 			sendmp->m_pkthdr.len = mp->m_len;
+			if (rsccnt)
+				sendmp->m_pkthdr.ph_mss = rsccnt - 1;
 #if NVLAN > 0
 			if (sc->vlan_stripping && staterr & IXGBE_RXD_STAT_VP) {
 				sendmp->m_pkthdr.ether_vtag = vtag;
@@ -3234,11 +3245,54 @@ ixgbe_rxeof(struct rx_ring *rxr)
 			sendmp = NULL;
 			mp->m_next = nxbuf->buf;
 		} else { /* Sending this frame? */
+			uint16_t pkts;
+
 			ixgbe_rx_checksum(staterr, sendmp);
 
 			if (hashtype != IXGBE_RXDADV_RSSTYPE_NONE) {
 				sendmp->m_pkthdr.ph_flowid = hash;
 				SET(sendmp->m_pkthdr.csum_flags, M_FLOWID);
+			}
+
+			pkts = sendmp->m_pkthdr.ph_mss;
+			sendmp->m_pkthdr.ph_mss = 0;
+
+			if (pkts > 1) {
+				struct ether_extracted ext;
+				uint32_t hdrlen, paylen;
+
+				/* Calculate header size. */
+				ether_extract_headers(sendmp, &ext);
+				hdrlen = sizeof(*ext.eh);
+				if (ext.ip4)
+					hdrlen += ext.ip4->ip_hl << 2;
+				if (ext.ip6)
+					hdrlen += sizeof(*ext.ip6);
+				if (ext.tcp) {
+					hdrlen += ext.tcp->th_off << 2;
+					tcpstat_inc(tcps_inhwlro);
+					tcpstat_add(tcps_inpktlro, pkts);
+				} else {
+					tcpstat_inc(tcps_inbadlro);
+				}
+
+				/*
+				 * If we gonna forward this packet, we have to
+				 * mark it as TSO, set a correct mss,
+				 * and recalculate the TCP checksum.
+				 */
+				paylen = sendmp->m_pkthdr.len - hdrlen;
+				if (ext.tcp && paylen >= pkts) {
+					SET(sendmp->m_pkthdr.csum_flags,
+					    M_TCP_TSO);
+					sendmp->m_pkthdr.ph_mss = paylen / pkts;
+				}
+				if (ext.tcp &&
+				    ISSET(sendmp->m_pkthdr.csum_flags,
+				    M_TCP_CSUM_IN_OK)) {
+					SET(sendmp->m_pkthdr.csum_flags,
+					    M_TCP_CSUM_OUT);
+				}
 			}
 
 			ml_enqueue(&ml, sendmp);

@@ -33,7 +33,7 @@
 
 #include <sys/cdefs.h>
 #include <stddef.h>
-  
+
 __BEGIN_DECLS
 size_t backtrace(void **, size_t);
 char **backtrace_symbols(void *const *, size_t);

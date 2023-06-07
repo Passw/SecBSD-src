@@ -46,11 +46,11 @@ TOUCH=			/usr/bin/touch
 CHMOD=			/bin/chmod
 LN=			/bin/ln
 CHFLAGS=		/usr/bin/chflags
-CHGRP=			${SUDO} /bin/chgrp
-CHOWN=			${SUDO} /sbin/chown
-STAT=			${SUDO} /usr/bin/stat
+CHGRP=			/bin/chgrp
+CHOWN=			/sbin/chown
+STAT=			/usr/bin/stat
 DIFF=			/usr/bin/diff -up
-RM=			${SUDO} /bin/rm
+RM=			/bin/rm
 
 prepfile: clean
 	${MKDIR} -p regress

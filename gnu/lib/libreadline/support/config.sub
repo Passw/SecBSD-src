@@ -323,7 +323,7 @@ case $basic_machine in
 	| ksr1-* | esa-ibm | fxc-alliant | *370-amdahl | sx[45]*-nec )
 		;;
 	# NOTE -- END cases added for Bash -- NOTE
-	
+
 	# Recognize the various machine names and aliases which stand
 	# for a CPU type and a company and sometimes even an OS.
 	386bsd)

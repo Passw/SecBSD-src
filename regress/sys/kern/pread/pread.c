@@ -12,7 +12,7 @@
 
 int
 main(int argc, char *argv[])
-{	
+{
 	char temp[] = "/tmp/dup2XXXXXXXXX";
 	const char magic[10] = "0123456789";
 	char c;

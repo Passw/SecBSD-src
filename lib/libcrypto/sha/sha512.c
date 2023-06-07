@@ -1,4 +1,4 @@
-/* $OpenBSD: sha512.c,v 1.37 2023/05/17 06:37:14 jsing Exp $ */
+/* $OpenBSD: sha512.c,v 1.39 2023/05/27 09:18:17 jsing Exp $ */
 /* ====================================================================
  * Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
  *
@@ -66,7 +66,7 @@
 
 #if !defined(OPENSSL_NO_SHA) && !defined(OPENSSL_NO_SHA512)
 
-/* Ensure that SHA_LONG64 and uint64_t are equivalent. */
+/* Ensure that SHA_LONG64 is 64 bits. */
 CTASSERT(sizeof(SHA_LONG64) == sizeof(uint64_t));
 
 #ifdef SHA512_ASM
@@ -144,7 +144,8 @@ static const SHA_LONG64 K512[80] = {
 static void
 sha512_block_data_order(SHA512_CTX *ctx, const void *_in, size_t num)
 {
-	const SHA_LONG64 *in = _in;
+	const uint8_t *in = _in;
+	const SHA_LONG64 *in64;
 	SHA_LONG64 a, b, c, d, e, f, g, h, s0, s1, T1, T2;
 	SHA_LONG64 X[16];
 	int i;
@@ -159,44 +160,45 @@ sha512_block_data_order(SHA512_CTX *ctx, const void *_in, size_t num)
 		g = ctx->h[6];
 		h = ctx->h[7];
 
-		if ((uintptr_t)in % sizeof(SHA_LONG64) == 0) {
+		if ((size_t)in % sizeof(SHA_LONG64) == 0) {
 			/* Input is 64 bit aligned. */
-			X[0] = be64toh(in[0]);
-			X[1] = be64toh(in[1]);
-			X[2] = be64toh(in[2]);
-			X[3] = be64toh(in[3]);
-			X[4] = be64toh(in[4]);
-			X[5] = be64toh(in[5]);
-			X[6] = be64toh(in[6]);
-			X[7] = be64toh(in[7]);
-			X[8] = be64toh(in[8]);
-			X[9] = be64toh(in[9]);
-			X[10] = be64toh(in[10]);
-			X[11] = be64toh(in[11]);
-			X[12] = be64toh(in[12]);
-			X[13] = be64toh(in[13]);
-			X[14] = be64toh(in[14]);
-			X[15] = be64toh(in[15]);
+			in64 = (const SHA_LONG64 *)in;
+			X[0] = be64toh(in64[0]);
+			X[1] = be64toh(in64[1]);
+			X[2] = be64toh(in64[2]);
+			X[3] = be64toh(in64[3]);
+			X[4] = be64toh(in64[4]);
+			X[5] = be64toh(in64[5]);
+			X[6] = be64toh(in64[6]);
+			X[7] = be64toh(in64[7]);
+			X[8] = be64toh(in64[8]);
+			X[9] = be64toh(in64[9]);
+			X[10] = be64toh(in64[10]);
+			X[11] = be64toh(in64[11]);
+			X[12] = be64toh(in64[12]);
+			X[13] = be64toh(in64[13]);
+			X[14] = be64toh(in64[14]);
+			X[15] = be64toh(in64[15]);
 		} else {
 			/* Input is not 64 bit aligned. */
-			X[0] = crypto_load_be64toh(&in[0]);
-			X[1] = crypto_load_be64toh(&in[1]);
-			X[2] = crypto_load_be64toh(&in[2]);
-			X[3] = crypto_load_be64toh(&in[3]);
-			X[4] = crypto_load_be64toh(&in[4]);
-			X[5] = crypto_load_be64toh(&in[5]);
-			X[6] = crypto_load_be64toh(&in[6]);
-			X[7] = crypto_load_be64toh(&in[7]);
-			X[8] = crypto_load_be64toh(&in[8]);
-			X[9] = crypto_load_be64toh(&in[9]);
-			X[10] = crypto_load_be64toh(&in[10]);
-			X[11] = crypto_load_be64toh(&in[11]);
-			X[12] = crypto_load_be64toh(&in[12]);
-			X[13] = crypto_load_be64toh(&in[13]);
-			X[14] = crypto_load_be64toh(&in[14]);
-			X[15] = crypto_load_be64toh(&in[15]);
+			X[0] = crypto_load_be64toh(&in[0 * 8]);
+			X[1] = crypto_load_be64toh(&in[1 * 8]);
+			X[2] = crypto_load_be64toh(&in[2 * 8]);
+			X[3] = crypto_load_be64toh(&in[3 * 8]);
+			X[4] = crypto_load_be64toh(&in[4 * 8]);
+			X[5] = crypto_load_be64toh(&in[5 * 8]);
+			X[6] = crypto_load_be64toh(&in[6 * 8]);
+			X[7] = crypto_load_be64toh(&in[7 * 8]);
+			X[8] = crypto_load_be64toh(&in[8 * 8]);
+			X[9] = crypto_load_be64toh(&in[9 * 8]);
+			X[10] = crypto_load_be64toh(&in[10 * 8]);
+			X[11] = crypto_load_be64toh(&in[11 * 8]);
+			X[12] = crypto_load_be64toh(&in[12 * 8]);
+			X[13] = crypto_load_be64toh(&in[13 * 8]);
+			X[14] = crypto_load_be64toh(&in[14 * 8]);
+			X[15] = crypto_load_be64toh(&in[15 * 8]);
 		}
-		in += SHA_LBLOCK;
+		in += SHA512_CBLOCK;
 
 		ROUND_00_15(0, a, b, c, d, e, f, g, h, X[0]);
 		ROUND_00_15(1, h, a, b, c, d, e, f, g, X[1]);

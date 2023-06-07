@@ -7,7 +7,7 @@
  * calling a signal hander.  This is not supposed to catch all that
  * can go wrong, but trashed fp registers will typically get caught.
  */
- 
+
 #include <err.h>
 #include <signal.h>
 #include <unistd.h>
@@ -50,7 +50,7 @@ main()
 
 	signal(SIGALRM, handler);
 	setitimer(ITIMER_REAL, &it, NULL);
-	
+
 	while (count < 10000) {
 		handler(0);
 

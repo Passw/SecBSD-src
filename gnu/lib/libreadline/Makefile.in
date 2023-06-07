@@ -340,8 +340,8 @@ misc.o: rldefs.h ${BUILD_DIR}/config.h rlconf.h
 misc.o: history.h rlstdc.h ansi_stdlib.h
 nls.o: ansi_stdlib.h
 nls.o: rldefs.h ${BUILD_DIR}/config.h rlconf.h
-nls.o: readline.h keymaps.h rltypedefs.h chardefs.h tilde.h  
-nls.o: history.h rlstdc.h  
+nls.o: readline.h keymaps.h rltypedefs.h chardefs.h tilde.h
+nls.o: history.h rlstdc.h
 parens.o: rlconf.h
 parens.o: ${BUILD_DIR}/config.h
 parens.o: readline.h keymaps.h rltypedefs.h chardefs.h tilde.h rlstdc.h
@@ -401,10 +401,10 @@ kill.o: rlprivate.h
 macro.o: rlprivate.h
 mbutil.o: rlprivate.h
 misc.o: rlprivate.h
-nls.o: rlprivate.h   
+nls.o: rlprivate.h
 parens.o: rlprivate.h
 readline.o: rlprivate.h
-rltty.o: rlprivate.h 
+rltty.o: rlprivate.h
 search.o: rlprivate.h
 signals.o: rlprivate.h
 terminal.o: rlprivate.h
@@ -442,12 +442,12 @@ xmalloc.o: xmalloc.h
 complete.o: rlmbutil.h
 display.o: rlmbutil.h
 histexpand.o: rlmbutil.h
-input.o: rlmbutil.h    
+input.o: rlmbutil.h
 isearch.o: rlmbutil.h
 mbutil.o: rlmbutil.h
 misc.o: rlmbutil.h
 readline.o: rlmbutil.h
-search.o: rlmbutil.h 
+search.o: rlmbutil.h
 text.o: rlmbutil.h
 vi_mode.o: rlmbutil.h
 
