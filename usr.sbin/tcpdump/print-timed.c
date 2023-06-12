@@ -22,7 +22,7 @@
  *
  * from tcpdump.org:
  * Header: /tcpdump/master/tcpdump/print-timed.c,v 1.1 2000/10/06 05:35:37 guy Exp
- * 
+ *
  */
 
 #ifdef HAVE_CONFIG_H

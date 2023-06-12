@@ -567,7 +567,7 @@ const uchar *fdata(const uchar *buf, const char *fmt, const uchar *maxbuf)
   if (!depth && buf<maxbuf) {
     int len = PTR_DIFF(maxbuf,buf);
     printf("(%d data bytes)",len);
-    /* EMF -  use -X flag if you want this verbosity 
+    /* EMF -  use -X flag if you want this verbosity
      * print_data(buf,len);
      */
     return(buf+len);

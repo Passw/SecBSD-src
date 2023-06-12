@@ -1,7 +1,7 @@
 /*	$OpenBSD: ipx.h,v 1.7 2007/10/07 16:41:05 deraadt Exp $	*/
 
 /*
- * IPX protocol formats 
+ * IPX protocol formats
  *
  * @(#) $Id: ipx.h,v 1.7 2007/10/07 16:41:05 deraadt Exp $
  */

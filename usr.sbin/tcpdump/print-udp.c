@@ -409,7 +409,7 @@ udp_print(const u_char *bp, u_int length, const void *iph)
 		if (usum == 0) {
 			if (ipv == 4)
 				printf("[no udp cksum] ");
-			else		
+			else
 				printf("[invalid udp cksum 0] ");
 		} else {
 			cksum += htons(IPPROTO_UDP);

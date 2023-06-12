@@ -66,7 +66,7 @@ sub register_libname($self, $name, $pkgname)
 	if ($lib->is_valid) {
 		$self->register_library($lib, $pkgname);
 	} else {
-		$self->{state}->errsay("Bogus library in #1: #2", $pkgname, 
+		$self->{state}->errsay("Bogus library in #1: #2", $pkgname,
 		    $name) unless $pkgname eq 'system';
 	}
 

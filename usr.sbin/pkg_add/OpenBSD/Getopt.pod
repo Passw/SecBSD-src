@@ -8,7 +8,7 @@ OpenBSD::Getopt - Process single-characters switches
 
    use OpenBSD::Getopt;
 
-   my $h = { 'v' => 
+   my $h = { 'v' =>
 	    sub() {
 		++$opt_v;
 	    };

@@ -271,7 +271,7 @@ recurse:
 		p += 4;
 		length -= 4;
 		caplen -= 4;
-		if (ethertype > ETHERMTU) 
+		if (ethertype > ETHERMTU)
 			goto recurse;
 
 		extracted_ethertype = 0;

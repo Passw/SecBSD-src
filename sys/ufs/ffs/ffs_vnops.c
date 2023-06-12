@@ -439,7 +439,7 @@ loop:
 		bp->b_flags &= ~B_SCANNED;
 	}
 	LIST_FOREACH_SAFE(bp, &vp->v_dirtyblkhd, b_vnbufs, nbp) {
-		/* 
+		/*
 		 * Reasons to skip this buffer: it has already been considered
 		 * on this pass, this pass is the first time through on a
 		 * synchronous flush request and the buffer being considered

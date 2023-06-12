@@ -74,7 +74,7 @@ static struct radius_ctable radius_codes[] = {
 
 /* --------------------------------------------------------------- */
 
-#define MAX_VALUES 20	
+#define MAX_VALUES 20
 
 struct radius_atable {
 	int code;
@@ -88,7 +88,7 @@ struct radius_atable {
 /* the right way to do this is probably to read these values out
  * of the actual RADIUS dictionary; this would require the machine
  * running tcpdump to have that file installed, and it's not my
- * program, so I'm not going to introduce new dependencies. Oh well. 
+ * program, so I'm not going to introduce new dependencies. Oh well.
  */
 
 static struct radius_atable radius_atts[] = {
@@ -99,10 +99,10 @@ static struct radius_atable radius_atts[] = {
 { RADIUS_ATT_NAS_IP, 		RD_ADDRESS, 	"NAS-IP", 	{ NULL } },
 { RADIUS_ATT_NAS_PORT, 		RD_INT, 	"NAS-Pt", 	{ NULL } },
 
-{ RADIUS_ATT_USER_SERVICE, 	RD_INT, 	"USvc", 	
+{ RADIUS_ATT_USER_SERVICE, 	RD_INT, 	"USvc",
 { "", "Login", "Framed", "DB-Lgn", "DB-Frm", "Out", "Shell", NULL } },
 
-{ RADIUS_ATT_PROTOCOL, 		RD_INT, 	"FProt", 
+{ RADIUS_ATT_PROTOCOL, 		RD_INT, 	"FProt",
 { "", "PPP", "SLIP", NULL } },
 
 { RADIUS_ATT_FRAMED_ADDRESS, 	RD_ADDRESS, 	"F-IP", 	{ NULL } },
@@ -113,7 +113,7 @@ static struct radius_atable radius_atts[] = {
 { RADIUS_ATT_COMPRESSION, 	RD_INT, 	"F-Comp", 	{ NULL } },
 { RADIUS_ATT_LOGIN_HOST, 	RD_ADDRESS, 	"L-Hst", 	{ NULL } },
 
-{ RADIUS_ATT_LOGIN_SERVICE, 	RD_INT, 	"L-Svc", 
+{ RADIUS_ATT_LOGIN_SERVICE, 	RD_INT, 	"L-Svc",
 { "", "Telnt", "Rlog", "Clear", "PortM", NULL }				},
 
 { RADIUS_ATT_LOGIN_TCP_PORT, 	RD_INT, 	"L-Pt", 	{ NULL } },
@@ -133,7 +133,7 @@ static struct radius_atable radius_atts[] = {
 { RADIUS_ATT_CALLED_ID, 	RD_STRING, 	"Callee", 	{ NULL } },
 { RADIUS_ATT_CALLER_ID, 	RD_STRING, 	"Caller", 	{ NULL } },
 
-{ RADIUS_ATT_STATUS_TYPE, 	RD_INT, 	"Stat", 
+{ RADIUS_ATT_STATUS_TYPE, 	RD_INT, 	"Stat",
 { "", "Start", "Stop", NULL }					},
 
 { -1,				-1,		NULL, 		{ NULL } }
@@ -142,9 +142,9 @@ static struct radius_atable radius_atts[] = {
 
 typedef void (*aselector)(int code, int len, const u_char *data);
 aselector atselector[] = {
-	r_print_hex, 
-	r_print_int, 
-	r_print_int, 
+	r_print_hex,
+	r_print_int,
+	r_print_int,
 	r_print_address,
 	r_print_string,
 	r_print_hex
@@ -154,7 +154,7 @@ static void r_print_att(int code, int len, const u_char *data) {
 	struct radius_atable *atp;
 	int i;
 
-	for(atp = radius_atts; atp->code != -1; atp++) 
+	for(atp = radius_atts; atp->code != -1; atp++)
 		if(atp->code == code)
 			break;
 
@@ -162,7 +162,7 @@ static void r_print_att(int code, int len, const u_char *data) {
 		if(vflag > 1) {
 			printf(" %d =", code);
 			atselector[RD_HEX](code, len, data);
-		} else 
+		} else
 			printf(" %d", code);
 
 		return;
@@ -173,7 +173,7 @@ static void r_print_att(int code, int len, const u_char *data) {
 	if(atp->encoding == RD_INT && *atp->values) {
 		u_int32_t k = ntohl((*(int *)data));
 
-		for(i = 0; atp->values[i] != NULL; i++) 
+		for(i = 0; atp->values[i] != NULL; i++)
 			/* SHOOT ME */ ;
 
 		if(k < i) {
@@ -181,9 +181,9 @@ static void r_print_att(int code, int len, const u_char *data) {
 				atp->values[k]);
 			return;
 		}
-	}	
-			
-	atselector[atp->encoding](code, len, data);	
+	}
+
+	atselector[atp->encoding](code, len, data);
 }
 
 static void r_print_int(int code, int len, const u_char *data) {
@@ -223,12 +223,12 @@ static void r_print_string(int code, int len, const u_char *data) {
 }
 
 static void r_print_hex(int code, int len, const u_char *data) {
-	int i;	
+	int i;
 
 	/* excuse me */
 
 	printf(" [");
-	
+
 	for(i = 0; i < len; i++)
 		printf("%02x", data[i]);
 
@@ -248,7 +248,7 @@ void radius_print(const u_char *data, u_int len) {
 	rhp = (struct radius_header *) data;
 
 	if(rhp->code > DEFINED_OPCODES ||
-	   rhp->code < 1) 
+	   rhp->code < 1)
 		printf("Code:%d id:%x [%d]",
 		rhp->code, rhp->id, ntohs(rhp->len));
 	else
@@ -281,7 +281,7 @@ void radius_print(const u_char *data, u_int len) {
 			printf(" [|radius]");
 			return;
 		}
-	
+
 		al -= 2;
 
 		r_print_att(ac, al, pp);

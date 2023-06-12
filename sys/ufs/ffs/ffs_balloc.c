@@ -439,7 +439,7 @@ ffs2_balloc(struct inode *ip, off_t off, int size, struct ucred *cred,
 	struct fs *fs;
 	struct vnode *vp;
 	struct proc *p;
-	
+
 	vp = ITOV(ip);
 	fs = ip->i_fs;
 	p = curproc;

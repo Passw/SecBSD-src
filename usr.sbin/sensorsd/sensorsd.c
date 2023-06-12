@@ -731,7 +731,7 @@ parse_config_sdlim(struct sdlim_t *sdlim, char *cf)
 	char		 *buf = NULL, *ebuf = NULL;
 	char		  node[48];
 	char		 *cfa[2];
-	
+
 	cfa[0] = cf;
 	cfa[1] = NULL;
 

@@ -157,7 +157,7 @@ static char *lcpconfopts[] = {
 	"Auth-Prot",
 	"Quality-Prot",
 	"Magic-Number",
-	"unassigned (6)",	
+	"unassigned (6)",
 	"Prot-Field-Compr",
 	"Add-Ctrl-Field-Compr",
 	"FCS-Alternatives",
@@ -192,7 +192,7 @@ static const char *chapcode[] = {
 	"Challenge",
 	"Response",
 	"Success",
-	"Failure",	
+	"Failure",
 };
 
 /* PAP */
@@ -234,7 +234,7 @@ static const char *eapcode[] = {
 	"Challenge",
 	"Response",
 	"Success",
-	"Failure",	
+	"Failure",
 };
 
 static const char *eaptype[] = {
@@ -457,7 +457,7 @@ handle_lcp(const u_char *p, int l)
 	case LCP_CONF_REJ:
 		while (l > 0) {
 			int optlen;
-	
+
 			optlen = print_lcp_config_options(p, l);
 			if (optlen == -1)
 				goto trunc;
@@ -563,7 +563,7 @@ print_lcp_config_options(const u_char *p, int l)
 
 			p += sizeof(proto);
 			l -= sizeof(proto);
-	
+
 			type = *p;
 			switch (type) {
 			case 0x05:
@@ -844,7 +844,7 @@ handle_pap(const u_char *p, int l)
 
 		p += sizeof(x);
 		l -= sizeof(x);
-	
+
 		printf(" Peer-Id=");
 		for (i = 0; i < x; i++) {
 			if (l == 0)
@@ -863,7 +863,7 @@ handle_pap(const u_char *p, int l)
 
 		p += sizeof(x);
 		l -= sizeof(x);
-	
+
 		printf(" Passwd=");
 		for (i = 0; i < x; i++) {
 			if (l == 0)
@@ -885,7 +885,7 @@ handle_pap(const u_char *p, int l)
 
 		p += sizeof(x);
 		l -= sizeof(x);
-	
+
 		printf(" Message=");
 		for (i = 0; i < x; i++) {
 			if (l == 0)
@@ -938,7 +938,7 @@ handle_ipcp(const u_char *p, int l)
 	case IPCP_CODE_CFG_REJ:
 		while (l > 0) {
 			int optlen;
-	
+
 			optlen = print_ipcp_config_options(p, l);
 			if (optlen == -1)
 				goto trunc;
@@ -1074,7 +1074,7 @@ handle_ipv6cp(const u_char *p, int l)
 	case IPV6CP_CODE_CFG_REJ:
 		while (l > 0) {
 			int optlen;
-	
+
 			optlen = print_ipv6cp_config_options(p, l);
 			if (optlen == -1)
 				goto trunc;
@@ -1133,7 +1133,7 @@ print_ipv6cp_config_options(const u_char *p, int l)
 			return (-1);
 
 		printf("=%04x:%04x:%04x:%04x", EXTRACT_16BITS(p + 0),
-		    EXTRACT_16BITS(p + 2), EXTRACT_16BITS(p + 4), 
+		    EXTRACT_16BITS(p + 2), EXTRACT_16BITS(p + 4),
 		    EXTRACT_16BITS(p + 6));
 		break;
 	default:

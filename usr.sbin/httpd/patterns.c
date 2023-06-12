@@ -446,7 +446,7 @@ match(struct match_state *ms, const char *s, const char *p)
 					    match(ms, s + 1, ep + 1)) != NULL)
 						s = res;
 					else {
-						/* 
+						/*
 						 * else return
 						 *     match(ms, s, ep + 1);
 						 */

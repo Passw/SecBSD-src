@@ -205,7 +205,7 @@ igmp_print(const u_char *bp, u_int len, const u_char *bp2)
 		u_int32_t sum = 0;
 		int count;
 		const u_short *sp = (u_short *)bp;
-		
+
 		for (count = len / 2; --count >= 0; )
 			sum += *sp++;
 		if (len & 1)
@@ -517,7 +517,7 @@ ip_print(const u_char *bp, u_int length)
 			ipcomp_print(cp, len, (const u_char *)ip);
 			break;
 
-#ifndef IPPROTO_CARP  
+#ifndef IPPROTO_CARP
 #define IPPROTO_CARP 112
 #endif
 		case IPPROTO_CARP:
@@ -536,7 +536,7 @@ ip_print(const u_char *bp, u_int length)
 			}
 			break;
 
-#ifndef IPPROTO_PFSYNC  
+#ifndef IPPROTO_PFSYNC
 #define IPPROTO_PFSYNC 240
 #endif
 		case IPPROTO_PFSYNC:
@@ -571,7 +571,7 @@ ip_print(const u_char *bp, u_int length)
 		    ntohs(ip->ip_id), len,
 		    (off & 0x1fff) * 8,
 		    (off & IP_MF)? "+" : "");
-	} 
+	}
 	if (off & IP_DF)
 		printf(" (DF)");
 
@@ -585,7 +585,7 @@ ip_print(const u_char *bp, u_int length)
 			}
 			if (ip->ip_tos & IPTOS_CE) {
 				/* _C_ongestion experienced (ECN) */
-				putchar('C'); 
+				putchar('C');
 			}
 			printf(")");
   		}

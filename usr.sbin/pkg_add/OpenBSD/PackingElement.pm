@@ -2201,7 +2201,7 @@ sub new
 {
 	my ($class, $fullpkgpath) = @_;
 	my ($dir, @mandatory) = split(/\,/, $fullpkgpath);
-	my $o = 
+	my $o =
 	    bless {dir => $dir,
 		mandatory => {map {($_, 1)} @mandatory},
 	    }, $class;

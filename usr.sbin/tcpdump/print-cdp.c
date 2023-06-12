@@ -136,7 +136,7 @@ error:
 	printf("[!cdp]");
 }
 
-#define CDP_CHECK_ACCESS(p, s) if ((endp - (p)) < (s)) return 1	
+#define CDP_CHECK_ACCESS(p, s) if ((endp - (p)) < (s)) return 1
 
 int
 cdp_print_addr(const u_char * p, int l)

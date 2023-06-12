@@ -830,7 +830,7 @@ mldv2_query_print(const u_char *bp, u_int len)
 	}
 	if (vflag) {
 		printf(" [max resp delay=%d]", mrd);
-	} 
+	}
 	TCHECK2(bp[8], sizeof(struct in6_addr));
 	printf(" [gaddr %s", ip6addr_string(&bp[8]));
 

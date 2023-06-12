@@ -47,10 +47,10 @@ static int	 getint(void);
 static long	 getlong(void);
 static unsigned long getulong(void);
 static char	*getstr(void);
-static char	*mklong(const char *, int); 
+static char	*mklong(const char *, int);
 static void      check_conversion(const char *, const char *);
 static void __dead usage(void);
-     
+
 static int	rval;
 static char  **gargv;
 
@@ -100,9 +100,9 @@ main(int argc, char *argv[])
 		/*
 		 * Basic algorithm is to scan the format string for conversion
 		 * specifications -- once one is found, find out if the field
-		 * width or precision is a '*'; if it is, gather up value. 
+		 * width or precision is a '*'; if it is, gather up value.
 		 * Note, format strings are reused as necessary to use up the
-		 * provided arguments, arguments of zero/null string are 
+		 * provided arguments, arguments of zero/null string are
 		 * provided to use up the format string.
 		 */
 
@@ -228,7 +228,7 @@ main(int argc, char *argv[])
 
 
 /*
- * Print SysV echo(1) style escape string 
+ * Print SysV echo(1) style escape string
  *	Halts processing string and returns 1 if a \c escape is encountered.
  */
 static int
@@ -240,10 +240,10 @@ print_escape_str(const char *str)
 	while (*str) {
 		if (*str == '\\') {
 			str++;
-			/* 
+			/*
 			 * %b string octal constants are not like those in C.
-			 * They start with a \0, and are followed by 0, 1, 2, 
-			 * or 3 octal digits. 
+			 * They start with a \0, and are followed by 0, 1, 2,
+			 * or 3 octal digits.
 			 */
 			if (*str == '0') {
 				str++;
@@ -256,7 +256,7 @@ print_escape_str(const char *str)
 			} else if (*str == 'c') {
 				return 1;
 			} else {
-				str--;			
+				str--;
 				str += print_escape(str);
 			}
 		} else {
@@ -269,7 +269,7 @@ print_escape_str(const char *str)
 }
 
 /*
- * Print "standard" escape characters 
+ * Print "standard" escape characters
  */
 static int
 print_escape(const char *str)
@@ -368,7 +368,7 @@ mklong(const char *str, int ch)
 {
 	static char *copy;
 	static int copysize;
-	int len;	
+	int len;
 
 	len = strlen(str) + 2;
 	if (copysize < len) {
@@ -388,7 +388,7 @@ mklong(const char *str, int ch)
 	copy[len - 3] = 'l';
 	copy[len - 2] = ch;
 	copy[len - 1] = '\0';
-	return (copy);	
+	return (copy);
 }
 
 static int

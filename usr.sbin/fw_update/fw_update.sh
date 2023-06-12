@@ -222,7 +222,7 @@ lock_db() {
 		$|=1;
 
 		lock_db(0);
-	
+
 		say $$;
 		sleep;
 EOL

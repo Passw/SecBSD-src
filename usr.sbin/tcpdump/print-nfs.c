@@ -168,7 +168,7 @@ static struct tok type2str[] = {
  *
  * Assume that a system that has INT64_FORMAT defined, has a 64-bit
  * integer datatype and can print it.
- */ 
+ */
 
 #define UNSIGNED 0
 #define SIGNED   1
@@ -812,7 +812,7 @@ xid_map_find(const struct rpc_msg *rp, const u_char *bp, u_int32_t *proc,
 	int cmp;
 
 	/* Start searching from where we last left off */
-	i = xid_map_hint; 
+	i = xid_map_hint;
 	do {
 		xmep = &xid_map[i];
 		cmp = 1;

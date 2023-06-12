@@ -1,4 +1,4 @@
-/*	$OpenBSD: ifconfig.c,v 1.465 2023/06/01 18:57:54 kn Exp $	*/
+/*	$OpenBSD: ifconfig.c,v 1.467 2023/06/09 12:22:01 kn Exp $	*/
 /*	$NetBSD: ifconfig.c,v 1.40 1997/10/01 02:19:43 enami Exp $	*/
 
 /*
@@ -471,8 +471,8 @@ const struct	cmd {
 	{ "-soii",	IFXF_INET6_NOSOII,	0,	setifxflags },
 	{ "monitor",	IFXF_MONITOR,	0,		setifxflags },
 	{ "-monitor",	-IFXF_MONITOR,	0,		setifxflags },
-	{ "tcprecvoffload", IFXF_LRO,	0,		setifxflags },
-	{ "-tcprecvoffload", -IFXF_LRO,	0,		setifxflags },
+	{ "tcplro",	IFXF_LRO,	0,		setifxflags },
+	{ "-tcplro",	-IFXF_LRO,	0,		setifxflags },
 #ifndef SMALL
 	{ "hwfeatures", NEXTARG0,	0,		printifhwfeatures },
 	{ "metric",	NEXTARG,	0,		setifmetric },
@@ -631,6 +631,7 @@ const struct	cmd {
 	{ "wgkey",	NEXTARG,	A_WIREGUARD,	setwgkey},
 	{ "wgrtable",	NEXTARG,	A_WIREGUARD,	setwgrtable},
 	{ "-wgpeer",	NEXTARG,	A_WIREGUARD,	unsetwgpeer},
+	{ "-wgpsk",	0,		A_WIREGUARD,	unsetwgpeerpsk},
 	{ "-wgdescription", 0,		A_WIREGUARD,	unsetwgpeerdesc},
 	{ "-wgdescr",	0,		A_WIREGUARD,	unsetwgpeerdesc},
 	{ "-wgpeerall",	0,		A_WIREGUARD,	unsetwgpeerall},

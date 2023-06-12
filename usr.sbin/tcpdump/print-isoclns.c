@@ -311,7 +311,7 @@ osi_cksum(const u_char *p, u_int len,
 	}
 
 	/* skip cksum bytes */
-	p += 2;		
+	p += 2;
 	c1 += c0; c1 += c0;
 
 	for (; p < ep; p++) {

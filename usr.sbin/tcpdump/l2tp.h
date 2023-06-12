@@ -63,17 +63,17 @@
 
 struct l2tp_avp_vec {
 	const char *name;
-	void (*print)(const u_char *, u_int);	
+	void (*print)(const u_char *, u_int);
 };
-		
+
 struct l2tp_call_errors {
 	u_short	reserved;
 	u_int	crc_errs;
-	u_int	framing_errs;	
-	u_int	hardware_overruns;	
+	u_int	framing_errs;
+	u_int	hardware_overruns;
 	u_int	buffer_overruns;
-	u_int	timeout_errs;	
-	u_int	alignment_errs;	
+	u_int	timeout_errs;
+	u_int	alignment_errs;
 };
 
 struct l2tp_accm {

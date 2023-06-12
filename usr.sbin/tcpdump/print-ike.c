@@ -680,7 +680,7 @@ ike_pl_notification_print (u_int8_t *buf, int len)
 			printf("seq %u", ntohl(*seq));
 		}
 		break;
-		
+
 
 	default:
 	  	printf("%d (unknown)", type);
@@ -830,7 +830,7 @@ void
 ike_pl_print (u_int8_t type, u_int8_t *buf, u_int8_t doi)
 {
 	static const char *pltypes[] = IKE_PAYLOAD_TYPES_INITIALIZER;
-	static const char *plprivtypes[] = 
+	static const char *plprivtypes[] =
 	    IKE_PRIVATE_PAYLOAD_TYPES_INITIALIZER;
 	static const char *plv2types[] = IKEV2_PAYLOAD_TYPES_INITIALIZER;
 	u_int8_t next_type;
@@ -864,7 +864,7 @@ ike_pl_print (u_int8_t type, u_int8_t *buf, u_int8_t doi)
 	    this_len < min_priv_payload_lengths[type - PAYLOAD_PRIVATE_MIN]) ||
 	    this_len == 0)
 		goto pltrunc;
-	    
+
 	if (buf + this_len > snapend)
 		goto pltrunc;
 

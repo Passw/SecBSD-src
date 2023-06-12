@@ -192,14 +192,14 @@ print_state(struct pfsync_state *s, int opts)
 		dst = &s->dst;
 		sk = &s->key[PF_SK_STACK];
 		nk = &s->key[PF_SK_WIRE];
-		if (s->proto == IPPROTO_ICMP || s->proto == IPPROTO_ICMPV6) 
+		if (s->proto == IPPROTO_ICMP || s->proto == IPPROTO_ICMPV6)
 			sk->port[0] = nk->port[0];
 	} else {
 		src = &s->dst;
 		dst = &s->src;
 		sk = &s->key[PF_SK_WIRE];
 		nk = &s->key[PF_SK_STACK];
-		if (s->proto == IPPROTO_ICMP || s->proto == IPPROTO_ICMPV6) 
+		if (s->proto == IPPROTO_ICMP || s->proto == IPPROTO_ICMPV6)
 			sk->port[1] = nk->port[1];
 	}
 	/* Treat s->ifname as untrusted input. */

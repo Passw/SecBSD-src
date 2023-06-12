@@ -350,7 +350,7 @@ struct snmp3_sm {
 	{3, "USM", snmp3_print_usmparams},
 	{0, NULL, NULL}
 };
-	
+
 /*
  * constants for ASN.1 decoding
  */
@@ -431,7 +431,7 @@ asn1_parse(const u_char *p, u_int len, struct be *elem)
 		if (len == 0 && *p & ASN_BIT8) {
 			if (truncated)
 				printf("[|snmp]");
-			else 
+			else
 				printf("[Xtagfield?]");
 			return -1;
 		}
@@ -1339,7 +1339,7 @@ snmp3_print(const u_char *np, u_int length)
 	}
 	length -= count;
 	np += count;
-	
+
 	if (SNMP3_PRIV(authpriv) != 0) {
 		printf("[encrypted PDU]");
 		return;

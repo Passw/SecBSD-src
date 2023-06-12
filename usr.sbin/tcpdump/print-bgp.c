@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 1999 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -15,7 +15,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -309,7 +309,7 @@ static const char *bgpattr_nlri_safi[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/* 64-66: MPLS BGP RFC3107 */
 	"Tunnel", "VPLS", "MDT",
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -475,7 +475,7 @@ bgp_attr_print(const struct bgp_attr *attr, const u_char *dat, int len)
 	 * segment value in bytes, with the path segment length from the
 	 * message (counted in # of AS)
 	 */
-	 
+
 		if (len % 2) {
 			printf(" invalid len");
 			break;
@@ -600,7 +600,7 @@ bgp_attr_print(const struct bgp_attr *attr, const u_char *dat, int len)
 		break;
 	case BGPTYPE_ONLY_TO_CUSTOMER:
 		if (len != 4) {
-			printf(" invalid len");	
+			printf(" invalid len");
 			break;
 		}
 		TCHECK2(p[0], 4);
@@ -890,7 +890,7 @@ bgp_open_print(const u_char *dat, int length)
 		i += BGP_OPT_SIZE + bgpopt.bgpopt_len;
 	}
 	/* ( */
-	printf(")");	
+	printf(")");
 	return;
 trunc:
 	printf("[|BGP]");
@@ -966,7 +966,7 @@ bgp_update_print(const u_char *dat, int length)
 			newline = 1;
 
 			/* ( */
-			printf(")");	
+			printf(")");
 
 			i += aoff + alen;
 		}
@@ -1026,7 +1026,7 @@ bgp_notification_print(const u_char *dat, int length)
 		 * RFC 4486: optional maxprefix subtype of 7 bytes
 		 * may contain AFI, SAFI and MAXPREFIXES
 		 */
-		if(bgpn.bgpn_minor == BGP_NOTIFY_MINOR_CEASE_MAXPRFX && 
+		if(bgpn.bgpn_minor == BGP_NOTIFY_MINOR_CEASE_MAXPRFX &&
 		    length >= BGP_NOTIFICATION_SIZE + 7) {
 
 			p = dat + BGP_NOTIFICATION_SIZE;
@@ -1042,7 +1042,7 @@ bgp_notification_print(const u_char *dat, int length)
 
 		/*
 		 * RFC 8203 describes a method to send a message intended
-		 * for human consumption regarding the Administrative 
+		 * for human consumption regarding the Administrative
 		 * Shutdown or Reset event. This is called the "Shutdown
 		 * Communication". The communication is UTF-8 encoded
 		 * and may be no longer than 128 bytes.
@@ -1064,7 +1064,7 @@ bgp_notification_print(const u_char *dat, int length)
 			    BGP_NOTIFICATION_SIZE))
 				goto trunc;
 			TCHECK2(*(p+1), shutdown_comm_length);
-			
+
 			/* a proper shutdown communication */
 			printf(", Shutdown Communication [len %zu]: \"",
 			    shutdown_comm_length);
@@ -1147,8 +1147,8 @@ bgp_print(const u_char *dat, int length)
 	const u_char *ep;
 	const u_char *start;
 	const u_char marker[] = {
-		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	};
 	struct bgp bgp;
 	u_int16_t hlen;

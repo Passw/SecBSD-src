@@ -719,7 +719,7 @@ ext2fs_sync_vnode(struct vnode *vp, void *args)
 		return (0);
 
 	ip = VTOI(vp);
-	
+
 	if (ip->i_e2fs_nlink == 0)
 		nlink0 = 1;
 
@@ -812,7 +812,7 @@ ext2fs_sync(struct mount *mp, int waitfor, int stall,
 			    mp->mnt_stat.f_mntonname, esa.nlink0, esa.inflight);
 #endif
 		}
-	}		
+	}
 	if (fs->e2fs_fmod != 0) {
 		fs->e2fs_fmod = 0;
 		fs->e2fs.e2fs_wtime = gettime();

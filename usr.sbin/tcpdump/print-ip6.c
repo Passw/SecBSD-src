@@ -201,7 +201,7 @@ ip6_print(const u_char *bp, u_int length)
 			etherip_print(cp, snapend - cp, len);
 			goto end;
 
-#ifndef IPPROTO_CARP  
+#ifndef IPPROTO_CARP
 #define IPPROTO_CARP 112
 #endif
 		case IPPROTO_CARP:

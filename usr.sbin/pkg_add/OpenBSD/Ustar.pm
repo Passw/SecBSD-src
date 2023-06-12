@@ -901,7 +901,7 @@ sub write_contents
 	my $filename = $self->{realname};
 	my $size = $self->{size};
 	my $out = $arc->{fh};
-	open my $fh, "<", $filename or 
+	open my $fh, "<", $filename or
 	    $self->_fatal("Can't read file #1: #2", $filename, $!);
 
 	my $buffer;

@@ -199,7 +199,7 @@ static char *l2tp_error_code_general[] = {
 /******************************/
 /* generic print out routines */
 /******************************/
-static void 
+static void
 print_string(const u_char *dat, u_int length)
 {
 	int i;
@@ -208,7 +208,7 @@ print_string(const u_char *dat, u_int length)
 	}
 }
 
-static void 
+static void
 print_octets(const u_char *dat, u_int length)
 {
 	int i;
@@ -247,9 +247,9 @@ l2tp_result_code_print(const u_char *dat, u_int length)
 {
 	/* we just print out the result and error code number */
 	u_short *ptr = (u_short *)dat;
-	
+
 	if (length == 2) {		/* result code */
-		printf("%d", ntohs(*ptr));	
+		printf("%d", ntohs(*ptr));
 	} else if (length == 4) { 	/* result & error code */
 		printf("%d/%d", ntohs(*ptr), ntohs(*(ptr+1)));
 	} else if (length > 4) {	/* result & error code & msg */
@@ -324,7 +324,7 @@ l2tp_assnd_tun_id_print(const u_char *dat, u_int length)
 static void
 l2tp_recv_win_size_print(const u_char *dat, u_int length)
 {
-	print_short((u_short *)dat); 
+	print_short((u_short *)dat);
 }
 
 static void
@@ -341,7 +341,7 @@ l2tp_q931_cc_print(const u_char *dat, u_int length)
 	if (length > 3) {
 		printf(" ");
 		print_string(dat+3, length-3);
-	} 
+	}
 }
 
 static void
@@ -541,7 +541,7 @@ l2tp_random_vector_print(const u_char *dat, u_int length)
 static void
 l2tp_private_grp_id_print(const u_char *dat, u_int length)
 {
-	print_string(dat, length);	
+	print_string(dat, length);
 	/* XXX print_octets is more appropriate?? */
 }
 
@@ -621,7 +621,7 @@ l2tp_print(const u_char *dat, u_int length)
 
 	flag_t = flag_l = flag_s = flag_o = flag_p = FALSE;
 
-	if (length < 6 || snapend - dat < 6) { 
+	if (length < 6 || snapend - dat < 6) {
 		/* flag/ver, tunnel_id, session_id must be present for
 		   this packet to be properly decoded */
 		printf("%s", tstr);
@@ -665,7 +665,7 @@ l2tp_print(const u_char *dat, u_int length)
 
 	dat += 2;
 	cnt += 2;
-	
+
 	if (flag_l) {
 		TCHECK2(*dat, sizeof(val));
 		memcpy(&val, dat, sizeof(val));

@@ -47,13 +47,13 @@ const char *ieee80211_ctl_subtype_name[] = {
 	"reserved#6",
 	"wrapper",
 	"block ack request",
-	"block ack", 
-	"ps poll", 
-	"rts", 
-	"cts", 
-	"ack", 
-	"cf-end", 
-	"cf-end-ack", 
+	"block ack",
+	"ps poll",
+	"rts",
+	"cts",
+	"ack",
+	"cf-end",
+	"cf-end-ack",
 };
 
 const char *ieee80211_mgt_subtype_name[] = {
@@ -740,14 +740,14 @@ ieee80211_print_vhtcaps(u_int8_t *data, u_int len)
 	/* Supported MCS set. */
 	rxmcs = (data[4] | (data[5] << 8));
 	printf(",RxMCS");
-	print_vht_mcsmap(rxmcs);	
+	print_vht_mcsmap(rxmcs);
 	max_lgi = ((data[6] | (data[7] << 8)) &
 	    IEEE80211_VHT_MAX_LGI_MBIT_S_MASK);
 	if (max_lgi)
 		printf(",Rx max LGI rate %uMbit/s", max_lgi);
 	txmcs = (data[8] | (data[9] << 8));
 	printf(",TxMCS");
-	print_vht_mcsmap(txmcs);	
+	print_vht_mcsmap(txmcs);
 	max_lgi = ((data[6] | (data[7] << 8)) &
 	    IEEE80211_VHT_MAX_LGI_MBIT_S_MASK);
 	if (max_lgi)
@@ -1318,7 +1318,7 @@ ieee80211_frame(struct ieee80211_frame *wh, u_int len)
 			    subtype == IEEE80211_FC0_SUBTYPE_BA) {
 				u_int16_t ctrl;
 
-				t += 6;	
+				t += 6;
 				TCHECK2(*t, 2); /* BAR/BA control */
 				ctrl = t[0] | (t[1] << 8);
 				if (ctrl & IEEE80211_BA_ACK_POLICY)

@@ -276,7 +276,7 @@ tcp_print(const u_char *bp, u_int length, const u_char *bp2)
 		    dport == NFS_PORT) {
 			nfsreq_print((u_char *)tp + hlen + 4, len, bp2);
 			return;
-		} else if ((u_char *)tp + 4 + 
+		} else if ((u_char *)tp + 4 +
 		    sizeof(struct rpc_msg) <= snapend && sport == NFS_PORT) {
 			nfsreply_print((u_char *)tp + hlen + 4, len, bp2);
 			return;

@@ -21,9 +21,9 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Format and print IPsec (ESP/AH) packets.
- *      By Tero Kivinen <kivinen@ssh.fi>, Tero Mononen <tmo@ssh.fi>,  
+ *      By Tero Kivinen <kivinen@ssh.fi>, Tero Mononen <tmo@ssh.fi>,
  *         Tatu Ylonen <ylo@ssh.fi> and Timo J. Rinne <tri@ssh.fi>
- *         in co-operation with SSH Communications Security, Espoo, Finland    
+ *         in co-operation with SSH Communications Security, Espoo, Finland
  */
 
 #include <sys/time.h>
@@ -202,7 +202,7 @@ esp_decrypt (const u_char *bp, u_int len, const u_char *bp2)
 		printf(" (esp)");
 }
 
-void 
+void
 esp_print (const u_char *bp, u_int len, const u_char *bp2)
 {
 	const struct esp_hdr *esp;
@@ -266,11 +266,11 @@ ah_print (const u_char *bp, u_int len, const u_char *bp2)
 		        printf("truncated");
 			goto out;
 		}
-		
-		switch (ah->ah_nxt_hdr) { 
+
+		switch (ah->ah_nxt_hdr) {
 
 		case IPPROTO_IPIP: /* Tunnel Mode, IP-in-IP */
-		        ip_print(bp + pl_len, len - pl_len); 
+		        ip_print(bp + pl_len, len - pl_len);
 			break;
 
 	        case IPPROTO_ICMP: /* From here and down; Transport mode */
@@ -284,22 +284,22 @@ ah_print (const u_char *bp, u_int len, const u_char *bp2)
 			break;
 
 	        case IPPROTO_TCP:
-		        tcp_print(bp + pl_len, len - pl_len, 
+		        tcp_print(bp + pl_len, len - pl_len,
 				  (const u_char *) ip);
 			break;
 
 	        case IPPROTO_UDP:
-		        udp_print(bp + pl_len, len - pl_len, 
+		        udp_print(bp + pl_len, len - pl_len,
 				  (const u_char *) ip);
 			break;
 
 		case IPPROTO_ESP:
-		        esp_print(bp + pl_len, len - pl_len, 
+		        esp_print(bp + pl_len, len - pl_len,
 				  (const u_char *) ip);
 			break;
 
 		case IPPROTO_AH:
-		        ah_print(bp + pl_len, len - pl_len, 
+		        ah_print(bp + pl_len, len - pl_len,
 				 (const u_char *) ip);
 			break;
 
@@ -325,7 +325,7 @@ ipcomp_print (const u_char *bp, u_int len, const u_char *bp2)
 	const struct ip *ip;
 	const struct ipcomp_hdr *ipc;
 	u_int plen = len;
- 
+
 	ip = (const struct ip *)bp2;
 
 	printf("ipcomp %s > %s",

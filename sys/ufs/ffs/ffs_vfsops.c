@@ -354,7 +354,7 @@ ffs_mount(struct mount *mp, const char *path, void *data,
 			/*
 			 * Process export requests.
 			 */
-			error = vfs_export(mp, &ump->um_export, 
+			error = vfs_export(mp, &ump->um_export,
 			    &args->export_info);
 			if (error)
 				goto error_1;
@@ -495,7 +495,7 @@ struct ffs_reload_args {
 };
 
 int
-ffs_reload_vnode(struct vnode *vp, void *args) 
+ffs_reload_vnode(struct vnode *vp, void *args)
 {
 	struct ffs_reload_args *fra = args;
 	struct inode *ip;
@@ -524,7 +524,7 @@ ffs_reload_vnode(struct vnode *vp, void *args)
 	 */
 	ip = VTOI(vp);
 
-	error = bread(fra->devvp, 
+	error = bread(fra->devvp,
 	    fsbtodb(fra->fs, ino_to_fsba(fra->fs, ip->i_number)),
 	    (int)fra->fs->fs_bsize, &bp);
 	if (error) {
@@ -1255,7 +1255,7 @@ ffs_sync(struct mount *mp, int waitfor, int stall, struct ucred *cred, struct pr
 		if ((error = softdep_flushworklist(ump->um_mountp, &count, p)))
 			allerror = error;
 		/* Flushed work items may create new vnodes to clean */
-		if (count) 
+		if (count)
 			goto loop;
 	}
 	if (waitfor != MNT_LAZY) {
@@ -1351,7 +1351,7 @@ retry:
 	 * disk portion of this inode to be read.
 	 */
 	error = ufs_ihashins(ip);
-	
+
 	if (error) {
 		/*
 		 * VOP_INACTIVE will treat this as a stale file

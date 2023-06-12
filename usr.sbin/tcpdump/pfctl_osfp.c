@@ -96,11 +96,11 @@ pfctl_file_fingerprints(int dev, int opts, const char *fp_filename)
 	struct pf_osfp_ioctl fp;
 
 	pfctl_flush_my_fingerprints(&classes);
-	
+
 	fd = priv_open_pfosfp();
 	if (fd < 0)
 		return (1);
-	
+
 	if ((in = fdopen(fd, "r")) == NULL) {
 		warn("%s", fp_filename);
 		return (1);

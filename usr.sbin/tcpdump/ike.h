@@ -201,7 +201,7 @@
 	  "CP",			/* 47 */		\
 	  "EAP",		/* 48 */		\
 	}
-	
+
 
 /* Exchange types */
 #define EXCHANGE_NONE			0
@@ -412,7 +412,7 @@ static struct tok ipsec_attr_encap[] = {
 };
 
 /*
- * IKE mode config. 
+ * IKE mode config.
  */
 
 #define IKE_CFG_ATTRIBUTE_TYPE_INITIALIZER		\
@@ -475,7 +475,7 @@ static u_int16_t min_priv_payload_lengths[] = {
 	0, 0, ISAKMP_NAT_D_SZ, ISAKMP_NAT_OA_SZ
 };
 
-static const struct vendor_id 
+static const struct vendor_id
 {
     size_t	 len;
     char	 vid[16];

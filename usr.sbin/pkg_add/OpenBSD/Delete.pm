@@ -705,7 +705,7 @@ sub copy_old_stuff
 {
 	my ($self, $plist, $state) = @_;
 
-	OpenBSD::PackingElement::Comment->add($plist, 
+	OpenBSD::PackingElement::Comment->add($plist,
 	    "\@".$self->keyword." ".$self->stringize);
 }
 

@@ -465,7 +465,7 @@ gtp_print_apn(const u_char *cp, u_int len)
 		if (len > 0)
 			printf(".");
 
-	}	
+	}
 }
 
 /* Print string from array. */
@@ -528,7 +528,7 @@ gtp_v0_print(const u_char *cp, u_int length, u_short sport, u_short dport)
 			printf("Unknown IP version %u", version);
 
 		printf(" }");
-	} else 
+	} else
 		gtp_decode_ie(cp, GTP_VERSION_0, len);
 
 	return;
@@ -542,7 +542,7 @@ gtp_v0_print_prime(const u_char *cp)
 {
 	struct gtp_v0_prime_hdr *gph = (struct gtp_v0_prime_hdr *)cp;
 	int len;
-	
+
 	/* Decode GTP prime header. */
 	TCHECK(*gph);
 	cp += sizeof(*gph);
@@ -734,7 +734,7 @@ gtp_v0_print_tv(const u_char *cp, u_int value)
 		    cp[0]);
 		ielen = GTPV0_TV_PACKET_XFER_CMD_LENGTH;
 		break;
-		
+
 	case GTPV0_TV_CHARGING_ID:
 
 		/* 09.60 7.9.17 - Charging ID. */
@@ -960,7 +960,7 @@ gtp_v1_print(const u_char *cp, u_int length, u_short sport, u_short dport)
 				printf(" [Unknown Header %u]", nexthdr);
 			}
 
-			p += hlen - 1;	
+			p += hlen - 1;
 			nexthdr = (int)p[0];
 			p++;
 		}
@@ -1035,7 +1035,7 @@ void
 gtp_v1_print_prime(const u_char *cp, struct gtp_v1_prime_hdr *gph)
 {
 	int len;
-	
+
 	/* Decode GTP prime header. */
 	TCHECK(*gph);
 	cp += sizeof(struct gtp_v1_prime_hdr);

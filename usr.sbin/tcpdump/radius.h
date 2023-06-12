@@ -93,8 +93,8 @@
 
 #define RADIUS_ATT_STATUS_TYPE			40
 
-/* the accounting attributes change way too much 
- * for me to want to hardcode them in. 
+/* the accounting attributes change way too much
+ * for me to want to hardcode them in.
  */
 
 /* ------------------------------------------------------------ */

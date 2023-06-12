@@ -173,7 +173,7 @@ ffs_truncate(struct inode *oip, off_t length, int flags, struct ucred *cred)
 		return (EFBIG);
 
 	uvm_vnp_setsize(ovp, length);
-	oip->i_ci.ci_lasta = oip->i_ci.ci_clen 
+	oip->i_ci.ci_lasta = oip->i_ci.ci_clen
 	    = oip->i_ci.ci_cstart = oip->i_ci.ci_lastw = 0;
 
 	if (DOINGSOFTDEP(ovp)) {
@@ -210,7 +210,7 @@ ffs_truncate(struct inode *oip, off_t length, int flags, struct ucred *cred)
 		aflags = B_CLRBUF;
 		if (flags & IO_SYNC)
 			aflags |= B_SYNC;
-		error = UFS_BUF_ALLOC(oip, length - 1, 1, 
+		error = UFS_BUF_ALLOC(oip, length - 1, 1,
 				   cred, aflags, &bp);
 		if (error)
 			return (error);
@@ -566,7 +566,7 @@ ffs_indirtrunc(struct inode *ip, daddr_t lbn, daddr_t dbn,
 		bp->b_flags |= B_INVAL;
 		brelse(bp);
 	}
-		
+
 	*countp = blocksreleased;
 	return (allerror);
 }

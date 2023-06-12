@@ -181,7 +181,7 @@ icmp_print(const u_char *bp, u_int length, const u_char *bp2)
 	    ipaddr_string(&ip->ip_dst));
 
 	TCHECK(dp->icmp_code);
-	if (qflag) 
+	if (qflag)
 		(void) snprintf(buf, sizeof buf, "%u %u", dp->icmp_type,
 		    dp->icmp_code);
 	else switch (dp->icmp_type) {

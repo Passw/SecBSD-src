@@ -1542,7 +1542,7 @@ top:
 		if (next == '=')
 			return (NE);
 		lungetc(next);
-		break;		
+		break;
 	case '<':
 		next = lgetc(0);
 		if (next == '=')

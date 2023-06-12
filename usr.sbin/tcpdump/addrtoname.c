@@ -320,7 +320,7 @@ lookup_emem(const u_char *ep)
 }
 
 /*
- * Find the hash node that corresponds to the bytestring 'bs' 
+ * Find the hash node that corresponds to the bytestring 'bs'
  * with length 'nlen'
  */
 
@@ -470,7 +470,7 @@ linkaddr_string(const u_char *ep, const int len)
 
 	if (len == 6)	/* XXX not totally correct... */
 		return etheraddr_string(ep);
-	
+
 	tp = lookup_bytestring(ep, len);
 	if (tp->e_name)
 		return (tp->e_name);
