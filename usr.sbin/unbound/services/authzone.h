@@ -4,22 +4,22 @@
  * Copyright (c) 2017, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -194,7 +194,7 @@ struct auth_rrset {
  * The structure consists of different tasks.  Each can be unowned (-1) or
  * owner by a worker (worker-num).  A worker can pick up a task and then do
  * it.  This means the events (timeouts, sockets) are for that worker.
- * 
+ *
  * (move this to tasks).
  * They don't have locks themselves, the worker (that owns it) uses it,
  * also as part of callbacks, hence it has separate zonename pointers for
@@ -208,7 +208,7 @@ struct auth_xfer {
 	/** lock on this structure, and on the workernum elements of the
 	 * tasks.  First hold the tree-lock in auth_zones, find the auth_xfer,
 	 * lock this lock.  Then a worker can reassign itself to fill up
-	 * one of the tasks. 
+	 * one of the tasks.
 	 * Once it has the task assigned to it, the worker can access the
 	 * other elements of the task structure without a lock, because that
 	 * is necessary for the eventloop and callbacks from that. */
@@ -340,7 +340,7 @@ struct auth_probe {
 	/** once notified, or the timeout has been reached. a scan starts. */
 	/** the scan specific target (notify source), or NULL if none */
 	struct auth_master* scan_specific;
-	/** scan tries all the upstream masters. the scan current target. 
+	/** scan tries all the upstream masters. the scan current target.
 	 * or NULL if not working on sequential scan */
 	struct auth_master* scan_target;
 	/** if not NULL, the specific addr for the current master */
@@ -388,7 +388,7 @@ struct auth_transfer {
 	/** once notified, or the timeout has been reached. a scan starts. */
 	/** the scan specific target (notify source), or NULL if none */
 	struct auth_master* scan_specific;
-	/** scan tries all the upstream masters. the scan current target. 
+	/** scan tries all the upstream masters. the scan current target.
 	 * or NULL if not working on sequential scan */
 	struct auth_master* scan_target;
 	/** what address we are scanning for the master, or NULL if the
@@ -555,7 +555,7 @@ int auth_zones_answer(struct auth_zones* az, struct module_env* env,
 	struct query_info* qinfo, struct edns_data* edns,
 	struct comm_reply* repinfo, struct sldns_buffer* buf, struct regional* temp);
 
-/** 
+/**
  * Find the auth zone that is above the given qname.
  * Return NULL when there is no auth_zone above the give name, otherwise
  * returns the closest auth_zone above the qname that pertains to it.

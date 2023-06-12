@@ -235,14 +235,14 @@ print_entry(DBT *dbk, DBT *dbd)
 		to = strchr(from, '\n');
 		if (to == NULL) {
 			/* probably old format - print it the
-			 * with an empty HELO field instead 
+			 * with an empty HELO field instead
 			 * of erroring out.
-			 */			  
+			 */
 			printf("GREY|%s|%s|%s|%s|%lld|%lld|%lld|%d|%d\n",
 			    a, "", helo, from, (long long)gd.first,
 			    (long long)gd.pass, (long long)gd.expire,
 			    gd.bcount, gd.pcount);
-		
+
 		} else {
 			*to = '\0';
 			to++;

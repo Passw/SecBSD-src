@@ -62,7 +62,7 @@ setsprint:
 pkgpaths:
 	${PERLSCRIPT}/check-path
 
-signatures: 
+signatures:
 	-rm -f signatures.out
 	${PERLSCRIPT}/check-sig 2>signatures.out
 	diff -u signatures.out ${.CURDIR}/signatures.ref
@@ -351,7 +351,7 @@ rep0/inta-0.tgz:
 	@${CREATE_PKG} -P't/intb:intb-*:intb-0' ${EMPTY} $@
 rep0/intb-0.tgz:
 	@${CREATE_PKG} -P't/inta:inta-*:inta-0' ${EMPTY} $@
- 
+
 rep1/o-1.tgz:
 	@${CREATE_PKG} -DREGRESSION_TESTING -P't/p:p-*:p-0' -W'coincoin.0.0' ${EMPTY} $@
 
@@ -376,10 +376,10 @@ rep0/p4-0.tgz: plist12
 rep1/p4-1.tgz: plist12
 	@${WITH} -B src31 -DLIBa_VERSION=1.0 -f plist12 $@ ${CPKG}
 
-rep0/boost-0.tgz: 
+rep0/boost-0.tgz:
 	@${CREATE_PKG} -DREGRESSION_TESTING -W'a.0.0' -P't/p4:p4-*:p4-0' ${EMPTY} $@
-	
-rep1/boost-0.tgz: 
+
+rep1/boost-0.tgz:
 	@${CREATE_PKG} -DREGRESSION_TESTING -W'a.1.0' -P't/p4:p4-*:p4-1' ${EMPTY} $@
 
 rep0/Imath-0.tgz:
@@ -489,10 +489,10 @@ rep0/g-0.tgz: plist4
 rep1/g-0.tgz: plist4
 	@PACKAGE_COMMENT=updated ${CREATE_PKG} -f plist4 $@
 
-rep0/gg-0.tgz: plist4 
+rep0/gg-0.tgz: plist4
 	@${CREATE_PKG} -P't/g:g-*:g-1' -f plist4 $@
 
-rep1/gg-0.tgz: plist4 
+rep1/gg-0.tgz: plist4
 	@PACKAGE_COMMENT=updated ${CREATE_PKG} -P't/g:g-*:g-0' -f plist4 $@
 
 rep1/gd-1.tgz rep1/ge-1.tgz: plist5
@@ -540,7 +540,7 @@ plist-rep1-$n:
 	@${MKPLIST} "@conflict q1-0" "@conflict q2-0" "@conflict q3-0" "@conflict q4-0" "@exec echo 1>&2 'XXXrep1 $n'" >$@
 
 .endfor
-	
+
 rep0/q6-0.tgz:
 	@${CREATE_PKG} -P't/q3:q3-*:q3-0' ${EMPTY} $@
 
@@ -713,12 +713,12 @@ temp-error1: rep0/a-0.tgz rep0/b-0.tgz temp1.ref
 	@{ INJECT=inject-temp1 ROOT=${D40} SILENT=1 ${ADD_PKG} rep0/a-0.tgz 1>/dev/null|| echo $$? ; } 2>&1|${SED_PIPE} >temp1.out
 	@diff -u temp1.out ${.CURDIR}/temp1.ref
 
-temp-error2: 
+temp-error2:
 	@-rm -rf ${XXXD}
 	@{ INJECT=inject-temp2 ROOT=${XXXD} SILENT=1 PKG_PATH=https://www.google.com/ ${ADD_PKG} rep0/a-0.tgz 1>/dev/null|| echo $$? ; } 2>&1|${SED_PIPE2} >${XXXBASE}.out
 	@diff -u ${XXXBASE}.out ${.CURDIR}/temp2.ref
 
-temp-error2-as-root: 
+temp-error2-as-root:
 	@# XXX thx tedu for not allowing env thru
 	@${SUDO} make -C ${.CURDIR} temp-error2 XXXBASE=temp2bis XXXD=${D41}
 
@@ -768,7 +768,7 @@ rep6/avahi-0.tgz: plist25
 rep6/cups-0.tgz:
 	@${CREATE_PKG} -DREGRESSION_TESTING -P't/avahi:avahi-*:avahi-0' -W avahi.0.0 ${EMPTY} $@
 
-rep7/avahi-1.tgz: 
+rep7/avahi-1.tgz:
 	@${CREATE_PKG} -DREGRESSION_TESTING -P't/avahi-libs:avahi-libs-*:avahi-libs-1' ${EMPTY} $@
 
 rep7/avahi-libs-1.tgz: plist27

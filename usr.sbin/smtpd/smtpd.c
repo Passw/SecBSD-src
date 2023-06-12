@@ -344,7 +344,7 @@ parent_sig_handler(int sig, short event, void *p)
 			int len;
 			enum mda_resp_status mda_status;
 			int mda_sysexit;
-			
+
 			pid = waitpid(-1, &status, WNOHANG);
 			if (pid <= 0)
 				continue;
@@ -1355,7 +1355,7 @@ fork_filter_process(const char *name, const char *command, const char *user, con
 	if (command[0] == '/')
 		execr = snprintf(exec, sizeof(exec), "exec %s", command);
 	else
-		execr = snprintf(exec, sizeof(exec), "exec %s/%s", 
+		execr = snprintf(exec, sizeof(exec), "exec %s/%s",
 		    PATH_LIBEXEC, command);
 	if (execr >= (int) sizeof(exec))
 		fatalx("%s: exec path too long", name);

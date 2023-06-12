@@ -219,7 +219,7 @@ table_static_config(struct table *t)
 		return 0;
 	priv->type = t->t_type;
 	dict_init(&priv->dict);
-	
+
 	if (*t->t_config) {
 		/* load the config file */
 		if (table_static_priv_load(priv, t->t_config) == 0) {

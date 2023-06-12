@@ -238,7 +238,7 @@ main_create_user_groups(struct env *env)
 		if (*bp == '\0')
 			continue;
 		bp = cp;
-		for (;;) { 
+		for (;;) {
 			if (!(cp = strsep(&bp, ",")))
 				break;
 			ukey.ue_line = cp;

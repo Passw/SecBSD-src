@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -118,7 +118,7 @@ struct unbound_socket {
 };
 
 /**
- * Single linked list to store shared ports that have been 
+ * Single linked list to store shared ports that have been
  * opened for use by all threads.
  */
 struct listen_port {
@@ -137,7 +137,7 @@ struct listen_port {
 
 /**
  * Create shared listening ports
- * Getaddrinfo, create socket, bind and listen to zero or more 
+ * Getaddrinfo, create socket, bind and listen to zero or more
  * interfaces for IP4 and/or IP6, for UDP and/or TCP.
  * On the given port number. It creates the sockets.
  * @param cfg: settings on what ports to open.
@@ -176,7 +176,7 @@ int resolve_interface_names(char** ifs, int num_ifs,
  *	for default all ifs.
  * @param ports: the list of shared ports.
  * @param bufsize: size of datagram buffer.
- * @param tcp_accept_count: max number of simultaneous TCP connections 
+ * @param tcp_accept_count: max number of simultaneous TCP connections
  * 	from clients.
  * @param tcp_idle_timeout: idle timeout for TCP connections in msec.
  * @param harden_large_queries: whether query size should be limited.
@@ -249,7 +249,7 @@ void listen_start_accept(struct listen_dnsport* listen);
 	IPv6 proto (family) is not available.
  * @param rcv: set size on rcvbuf with socket option, if 0 it is not set.
  * @param snd: set size on sndbuf with socket option, if 0 it is not set.
- * @param listen: if true, this is a listening UDP port, eg port 53, and 
+ * @param listen: if true, this is a listening UDP port, eg port 53, and
  * 	set SO_REUSEADDR on it.
  * @param reuseport: if nonNULL and true, try to set SO_REUSEPORT on
  * 	listening UDP port.  Set to false on return if it failed to do so.
@@ -259,7 +259,7 @@ void listen_start_accept(struct listen_dnsport* listen);
  * @param dscp: DSCP to use.
  * @return: the socket. -1 on error.
  */
-int create_udp_sock(int family, int socktype, struct sockaddr* addr, 
+int create_udp_sock(int family, int socktype, struct sockaddr* addr,
 	socklen_t addrlen, int v6only, int* inuse, int* noproto, int rcv,
 	int snd, int listen, int* reuseport, int transparent, int freebind, int use_systemd, int dscp);
 
@@ -271,7 +271,7 @@ int create_udp_sock(int family, int socktype, struct sockaddr* addr,
  * @param reuseport: if nonNULL and true, try to set SO_REUSEPORT on
  * 	listening UDP port.  Set to false on return if it failed to do so.
  * @param transparent: set IP_TRANSPARENT socket option.
- * @param mss: maximum segment size of the socket. if zero, leaves the default. 
+ * @param mss: maximum segment size of the socket. if zero, leaves the default.
  * @param nodelay: if true set TCP_NODELAY and TCP_QUICKACK socket options.
  * @param freebind: set IP_FREEBIND socket option.
  * @param use_systemd: if true, fetch sockets from systemd.
@@ -414,7 +414,7 @@ int tcp_req_info_add_meshstate(struct tcp_req_info* req,
 void tcp_req_info_send_reply(struct tcp_req_info* req);
 
 /** the read channel has closed
- * @param req: request. remaining queries are looked up and answered. 
+ * @param req: request. remaining queries are looked up and answered.
  * @return zero if nothing to do, just close the tcp.
  */
 int tcp_req_info_handle_read_close(struct tcp_req_info* req);
@@ -428,7 +428,7 @@ size_t http2_get_query_buffer_size(void);
 size_t http2_get_response_buffer_size(void);
 
 #ifdef HAVE_NGHTTP2
-/** 
+/**
  * Create nghttp2 callbacks to handle HTTP2 requests.
  * @return malloc'ed struct, NULL on failure
  */

@@ -311,7 +311,7 @@ diropt		: BINDDN STRING				{
 				YYERROR;
 			}
 			free($2);
-		} 
+		}
 		| GROUPDN STRING		{
 			if(strlcpy(idm->idm_groupdn, $2,
 			    sizeof(idm->idm_groupdn)) >=

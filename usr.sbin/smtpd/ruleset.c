@@ -56,7 +56,7 @@ ruleset_match_from(struct rule *r, const struct envelope *evp)
 
 	if (evp->flags & EF_INTERNAL) {
 		/* if expanded from an empty table_from, skip rule
-		 * if no table 
+		 * if no table
 		 */
 		if (r->table_from == NULL)
 			return 0;

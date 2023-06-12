@@ -30,7 +30,7 @@ sub wrap
 	my ($name, $sub) = @_;
 	my $typeglob = caller()."::$name";
 	my $original;
-	{ 	
+	{
 		no strict qw(refs);
 		$original = *$typeglob{CODE};
 	}
@@ -38,7 +38,7 @@ sub wrap
 		return &$sub($original, @_);
 	};
 
-	{ 
+	{
 		no strict qw(refs);
 		no warnings qw(redefine);
 		*{$typeglob} = $imposter;

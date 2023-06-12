@@ -168,7 +168,7 @@ typedef struct {
 %token	BACKUP BOUNCE BYPASS
 %token	CA CERT CHAIN CHROOT CIPHERS COMMIT COMPRESSION CONNECT
 %token	DATA DATA_LINE DHE DISCONNECT DOMAIN
-%token	EHLO ENABLE ENCRYPTION ERROR EXPAND_ONLY 
+%token	EHLO ENABLE ENCRYPTION ERROR EXPAND_ONLY
 %token	FCRDNS FILTER FOR FORWARD_ONLY FROM
 %token	GROUP
 %token	HELO HELO_SRC HOST HOSTNAME HOSTNAMES
@@ -408,7 +408,7 @@ PKI STRING {
 	}
 } pki_params
 ;
- 
+
 pki_params_opt:
 CERT STRING {
 	pki->pki_cert_file = $2;
@@ -3356,7 +3356,7 @@ config_listener(struct listener *h,  struct listen_opts *lo)
 
 	if (lo->ssl & F_STARTTLS_REQUIRE)
 		h->flags |= F_STARTTLS_REQUIRE;
-	
+
 	if (h != conf->sc_sock_listener)
 		TAILQ_INSERT_TAIL(conf->sc_listeners, h, entry);
 }

@@ -121,7 +121,7 @@ yp_init(struct env *x_env)
 
 	env = x_env;
 	env->sc_yp = yp;
-	
+
 	switch (env->sc_bind_mode) {
 	case BIND_MODE_LOCAL:
 		addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -228,7 +228,7 @@ yp_write_binding(int udpport, int tcpport)
 	memmove(&ybr.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
 	    &ypserv_udp,
 	    sizeof(ybr.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port));
-	
+
 	total = iov[0].iov_len + iov[1].iov_len + iov[2].iov_len;
 	if (writev(fd, iov, sizeof(iov)/sizeof(iov[0])) !=
 	    total) {
@@ -404,7 +404,7 @@ bool_t *
 ypproc_domain_2_svc(domainname *arg, struct svc_req *req)
 {
 	static bool_t	res;
-	
+
 	res = (bool_t)1;
 	if (strcmp(*arg, env->sc_domainname) != 0)
 		res = (bool_t)0;
@@ -415,7 +415,7 @@ bool_t *
 ypproc_domain_nonack_2_svc(domainname *arg, struct svc_req *req)
 {
 	static bool_t	res;
-	
+
 	if (strcmp(*arg, env->sc_domainname) != 0)
 		return NULL;
 	res = (bool_t)1;
@@ -467,7 +467,7 @@ ypproc_match_2_svc(ypreq_key *arg, struct svc_req *req)
 		return (&res);
 	} else if (strcmp(arg->map, "passwd.byuid") == 0 ||
 		   strcmp(arg->map, "master.passwd.byuid") == 0) {
-		ukey.ue_uid = strtonum(key, 0, UID_MAX, &estr); 
+		ukey.ue_uid = strtonum(key, 0, UID_MAX, &estr);
 		if (estr) {
 			res.stat = YP_BADARGS;
 			return (&res);
@@ -482,7 +482,7 @@ ypproc_match_2_svc(ypreq_key *arg, struct svc_req *req)
 		yp_make_val(&res, ue->ue_line, 1);
 		return (&res);
 	} else if (strcmp(arg->map, "group.bygid") == 0) {
-		gkey.ge_gid = strtonum(key, 0, GID_MAX, &estr); 
+		gkey.ge_gid = strtonum(key, 0, GID_MAX, &estr);
 		if (estr) {
 			res.stat = YP_BADARGS;
 			return (&res);
@@ -530,7 +530,7 @@ ypproc_match_2_svc(ypreq_key *arg, struct svc_req *req)
 			return (&res);
 		}
 
-		ukey.ue_uid = strtonum(cp, 0, UID_MAX, &estr); 
+		ukey.ue_uid = strtonum(cp, 0, UID_MAX, &estr);
 		if (estr) {
 			res.stat = YP_BADARGS;
 			return (&res);
@@ -544,7 +544,7 @@ ypproc_match_2_svc(ypreq_key *arg, struct svc_req *req)
 
 		yp_make_val(&res, ue->ue_netid_line, 0);
 		return (&res);
-	
+
 	} else {
 		log_debug("unknown map %s", arg->map);
 		res.stat = YP_NOMAP;
@@ -614,7 +614,7 @@ ypproc_next_2_svc(ypreq_key *arg, struct svc_req *req)
 		memset(key, 0, sizeof(key));
 		(void)strncpy(key, arg->key.keydat_val,
 		    arg->key.keydat_len);
-		
+
 		gkey.ge_line = key;
 		if ((ge = RB_NFIND(group_name_tree, env->sc_group_names,
 		    &gkey)) == NULL) {
@@ -680,7 +680,7 @@ ypproc_maplist_2_svc(domainname *arg, struct svc_req *req)
 	};
 	static ypresp_maplist	 res;
 	static struct ypmaplist	 maps[sizeof(mapnames) / sizeof(mapnames[0])];
-	
+
 	if (yp_valid_domain(*arg, (struct ypresp_val *)&res) == -1)
 		return (&res);
 
@@ -724,7 +724,7 @@ yp_make_keyval(struct ypresp_key_val *res, char *key, char *line)
 
 	memset(keybuf, 0, sizeof(keybuf));
 	memset(buf, 0, sizeof(buf));
-	
+
 	(void)strlcpy(keybuf, key, sizeof(keybuf));
 	res->key.keydat_len = strlen(keybuf);
 	res->key.keydat_val = keybuf;

@@ -49,7 +49,7 @@
  */
 
 #define CONF_FILE		"/etc/snmpd.conf"
-#define SNMPD_BACKEND		"/usr/libexec/snmpd"                                                                                                                                                                                                                                                                        
+#define SNMPD_BACKEND		"/usr/libexec/snmpd"
 #define SNMPD_USER		"_snmpd"
 #define SNMP_PORT		"161"
 #define SNMPTRAP_PORT		"162"

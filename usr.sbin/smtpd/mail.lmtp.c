@@ -49,7 +49,7 @@ struct session {
 static int lmtp_connect(const char *);
 static void lmtp_engine(int, struct session *);
 static void stream_file(FILE *);
-	
+
 int
 main(int argc, char *argv[])
 {
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 
 	conn = lmtp_connect(destination);
 	lmtp_engine(conn, &session);
-	
+
 	return (0);
 }
 
@@ -155,7 +155,7 @@ lmtp_connect_inet(const char *destination)
 		*p++ = '\0';
 		servname = p;
 	}
-	
+
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = PF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
@@ -198,7 +198,7 @@ lmtp_connect_unix(const char *destination)
 
 	if (*destination != '/')
 		errx(EX_TEMPFAIL, "unix: path must be absolute");
-	
+
 	if ((s = socket(PF_LOCAL, SOCK_STREAM, 0)) == -1)
 		err(EX_TEMPFAIL, NULL);
 
@@ -263,7 +263,7 @@ lmtp_engine(int fd_read, struct session *session)
 
 		if (line[0] != (phase == PHASE_DATA ? '3' : '2'))
 			errx(EX_TEMPFAIL, "LMTP server error: %s", line);
-		
+
 		if (line[3] == '-')
 			continue;
 
@@ -302,7 +302,7 @@ lmtp_engine(int fd_read, struct session *session)
 		case PHASE_EOM:
 			fprintf(file_write, "QUIT\r\n");
 			phase++;
-			break;						
+			break;
 
 		case PHASE_QUIT:
 			exit(0);

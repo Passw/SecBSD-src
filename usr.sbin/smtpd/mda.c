@@ -335,7 +335,7 @@ mda_imsg(struct mproc *p, struct imsg *imsg)
 		syserror = NULL;
 		if (mda_sysexit)
 			syserror = mda_sysexit_to_str(mda_sysexit);
-		
+
 		/* update queue entry */
 		switch (mda_status) {
 		case MDA_TEMPFAIL:

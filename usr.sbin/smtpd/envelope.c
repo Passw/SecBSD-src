@@ -275,7 +275,7 @@ ascii_load_sockaddr(struct sockaddr_storage *ss, char *buf)
 	}
 	else if (buf[0] == '[' && buf[strlen(buf)-1] == ']') {
 		struct addrinfo hints, *res0;
-		
+
 		buf[strlen(buf)-1] = '\0';
 
 		/* getaddrinfo() is used to support scoped addresses. */

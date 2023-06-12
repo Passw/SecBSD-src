@@ -96,7 +96,7 @@ snmpd_sig_handler(int sig, short event, void *arg)
 
 			if (len == -1)
 				fatal("asprintf");
-			
+
 			for (id = 0; id < PROC_MAX; id++) {
 				if (pid == ps->ps_pid[id] &&
 				    check_child(ps->ps_pid[id],

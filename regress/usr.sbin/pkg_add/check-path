@@ -39,7 +39,7 @@ my @p = (
 	make_plist('p1'), 			# 1
 	make_plist('p2'), 			# 2
 	make_plist('p2', 'p1'),			# 3
-	make_plist('p3', 'p1'),			# 4 
+	make_plist('p3', 'p1'),			# 4
 	make_plist('p4,flavor'),		# 5
 	make_plist('newp4', 'p4,flavor'),	# 6
 	make_plist('newp4', 'p4,otherflavor'),	# 7

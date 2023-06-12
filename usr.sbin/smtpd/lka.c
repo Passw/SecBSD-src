@@ -333,7 +333,7 @@ lka_imsg(struct mproc *p, struct imsg *imsg)
 		if (table == NULL) {
 			log_warnx("warn: Lookup table not found: "
 			    "\"%s\"", (char *)imsg->data);
-		} else 
+		} else
 			ret = table_update(table);
 
 		m_compose(p_control,

@@ -467,7 +467,7 @@ appl_agentx_open(struct appl_agentx_connection *conn, struct ax_pdu *pdu)
 			goto fail;
 		}
 	}
-	    
+
 	/* RFC 2742 agentxSessionIndex: chances of reuse, slim to none */
 	do {
 		session->sess_id = arc4random();
@@ -584,7 +584,7 @@ appl_agentx_register(struct appl_agentx_session *session, struct ax_pdu *pdu)
 	}
 
 	error = appl_register(pdu->ap_context.aos_string, timeout,
-	    pdu->ap_payload.ap_register.ap_priority, &oid, 
+	    pdu->ap_payload.ap_register.ap_priority, &oid,
 	    pdu->ap_header.aph_flags & AX_PDU_FLAG_INSTANCE_REGISTRATION,
 	    subtree, pdu->ap_payload.ap_register.ap_range_subid,
 	    pdu->ap_payload.ap_register.ap_upper_bound,
@@ -611,8 +611,8 @@ appl_agentx_unregister(struct appl_agentx_session *session, struct ax_pdu *pdu)
 		goto fail;
 	}
 
-	error = appl_unregister(pdu->ap_context.aos_string, 
-	    pdu->ap_payload.ap_unregister.ap_priority, &oid, 
+	error = appl_unregister(pdu->ap_context.aos_string,
+	    pdu->ap_payload.ap_unregister.ap_priority, &oid,
 	    pdu->ap_payload.ap_unregister.ap_range_subid,
 	    pdu->ap_payload.ap_unregister.ap_upper_bound,
 	    &(session->sess_backend));
@@ -806,7 +806,7 @@ appl_agentx_oid2ber_oid(struct ax_oid *aoid, struct ber_oid *boid)
 		errno = EINVAL;
 		return NULL;
 	}
-	
+
 
 	boid->bo_n = aoid->aoi_idlen;
 	for (i = 0; i < boid->bo_n; i++)

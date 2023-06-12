@@ -17,7 +17,7 @@ sub check_list
 	my @r = sort(@$expected);
 	@_ = sort(@_);
 	if (@r != @_) {
-		print STDERR "length: ", scalar(@r)," vs. ", 
+		print STDERR "length: ", scalar(@r)," vs. ",
 		    scalar(@_), "\n";
 		    print STDERR "Expected: ", join(',', @r), "\n";
 		    print STDERR "Result: ", join(',', @_), "\n";

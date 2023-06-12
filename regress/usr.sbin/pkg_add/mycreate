@@ -32,7 +32,7 @@ if (!defined $pkgpath) {
 }
 
 my @l;
-push(@l, 
+push(@l,
 	'-p', $ENV{'PACKAGE_BASE'} || '/usr/local',
 	"-DFULLPKGPATH=$pkgpath",
 	'-DMAINTAINER=regress-tests',
@@ -40,7 +40,7 @@ push(@l,
 	'-DSHARED_LIBS=1',
 	'-d', $ENV{'PACKAGE_DESCR'} || '-descr',
 	'-A', $ENV{'PACKAGE_ARCH'} || '*');
-	
+
 
 my @args = ('pkg_create', @l, @ARGV, $target);
 print join(' ', @args), "\n" if $ENV{'VERBOSE'};

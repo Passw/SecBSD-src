@@ -57,7 +57,7 @@ sub check_print
 
 my $u1 = create_set([qw(cups-2.9 cups-libs-2.9 mupdf-2.5)], [qw(mupdf-2.5 cups-3.1 cups-libs-3.1)]);
 
-ok(check_print($u1, 
+ok(check_print($u1,
     'cups-2.9+cups-libs-2.9+mupdf-2.5->cups-3.1+cups-libs-3.1+mupdf-2.5'));
 
 $u1->move_kept(OpenBSD::Handle->create_old('mupdf-2.5', $state));

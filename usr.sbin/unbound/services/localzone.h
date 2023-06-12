@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -86,9 +86,9 @@ enum localzone_type {
 	local_zone_inform_deny,
 	/** log client address, and direct */
 	local_zone_inform_redirect,
-	/** resolve normally, even when there is local data */	
+	/** resolve normally, even when there is local data */
 	local_zone_always_transparent,
-	/** answer with error, even when there is local data */	
+	/** answer with error, even when there is local data */
 	local_zone_always_refuse,
 	/** answer with nxdomain, even when there is local data */
 	local_zone_always_nxdomain,
@@ -132,7 +132,7 @@ struct local_zone {
 	size_t namelen;
 	/** number of labels in zone name */
 	int namelabs;
-	/** the class of this zone. 
+	/** the class of this zone.
 	 * uses 'dclass' to not conflict with c++ keyword class. */
 	uint16_t dclass;
 
@@ -216,7 +216,7 @@ struct local_zones* local_zones_create(void);
 void local_zones_delete(struct local_zones* zones);
 
 /**
- * Apply config settings; setup the local authoritative data. 
+ * Apply config settings; setup the local authoritative data.
  * Takes care of locking.
  * @param zones: is set up.
  * @param cfg: config data.
@@ -262,7 +262,7 @@ void local_zone_delete(struct local_zone* z);
  * local-zone's tags.
  * @return closest local_zone or NULL if no covering zone is found.
  */
-struct local_zone* local_zones_tags_lookup(struct local_zones* zones, 
+struct local_zone* local_zones_tags_lookup(struct local_zones* zones,
 	uint8_t* name, size_t len, int labs, uint16_t dclass, uint16_t dtype,
 	uint8_t* taglist, size_t taglen, int ignoretags);
 
@@ -278,11 +278,11 @@ struct local_zone* local_zones_tags_lookup(struct local_zones* zones,
  *   pass 0 to just plain find a zone for a name.
  * @return closest local_zone or NULL if no covering zone is found.
  */
-struct local_zone* local_zones_lookup(struct local_zones* zones, 
+struct local_zone* local_zones_lookup(struct local_zones* zones,
 	uint8_t* name, size_t len, int labs, uint16_t dclass, uint16_t dtype);
 
 /**
- * Debug helper. Print all zones 
+ * Debug helper. Print all zones
  * Takes care of locking.
  * @param zones: the zones tree
  */
@@ -307,8 +307,8 @@ void local_zones_print(struct local_zones* zones);
  * @param tagname: array of tag name strings (for debug output).
  * @param num_tags: number of items in tagname array.
  * @param view: answer using this view. May be NULL.
- * @return true if answer is in buffer. false if query is not answered 
- * by authority data. If the reply should be dropped altogether, the return 
+ * @return true if answer is in buffer. false if query is not answered
+ * by authority data. If the reply should be dropped altogether, the return
  * value is true, but the buffer is cleared (empty).
  * It can also return true if a non-exact alias answer is found.  In this
  * case qinfo->local_alias points to the corresponding alias RRset but the
@@ -326,7 +326,7 @@ int local_zones_answer(struct local_zones* zones, struct module_env* env,
 	struct config_strlist** tag_datas, size_t tag_datas_size,
 	char** tagname, int num_tags, struct view* view);
 
-/** 
+/**
  * Answer using the local zone only (not local data used).
  * @param z: zone for query.
  * @param env: module environment.
@@ -372,7 +372,7 @@ const char* local_zone_type2str(enum localzone_type t);
  * @param dclass: class to lookup.
  * @return the exact local_zone or NULL.
  */
-struct local_zone* local_zones_find(struct local_zones* zones, 
+struct local_zone* local_zones_find(struct local_zones* zones,
 	uint8_t* name, size_t len, int labs, uint16_t dclass);
 
 /**
@@ -403,8 +403,8 @@ local_zones_find_le(struct local_zones* zones,
  * @param tp: type.
  * @return local_zone or NULL on error, caller must printout memory error.
  */
-struct local_zone* local_zones_add_zone(struct local_zones* zones, 
-	uint8_t* name, size_t len, int labs, uint16_t dclass, 
+struct local_zone* local_zones_add_zone(struct local_zones* zones,
+	uint8_t* name, size_t len, int labs, uint16_t dclass,
 	enum localzone_type tp);
 
 /**
@@ -434,12 +434,12 @@ int local_zones_add_RR(struct local_zones* zones, const char* rr);
  * @param labs: labelcount of name.
  * @param dclass: class to remove.
  */
-void local_zones_del_data(struct local_zones* zones, 
+void local_zones_del_data(struct local_zones* zones,
 	uint8_t* name, size_t len, int labs, uint16_t dclass);
 
 
-/** 
- * Form wireformat from text format domain name. 
+/**
+ * Form wireformat from text format domain name.
  * @param str: the domain name in text "www.example.com"
  * @param res: resulting wireformat is stored here with malloc.
  * @param len: length of resulting wireformat.
@@ -637,6 +637,6 @@ local_zone_enter_rr(struct local_zone* z, uint8_t* nm, size_t nmlen,
  * @param nmlabs: labs of nm
  * @return local_data on exact match, NULL otherwise.
  */
-struct local_data* 
+struct local_data*
 local_zone_find_data(struct local_zone* z, uint8_t* nm, size_t nmlen, int nmlabs);
 #endif /* SERVICES_LOCALZONE_H */

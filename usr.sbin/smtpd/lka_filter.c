@@ -71,7 +71,7 @@ struct filter_session {
 	char *helo;
 	char *username;
 	char *mail_from;
-	
+
 	enum filter_phase	phase;
 };
 
@@ -290,7 +290,7 @@ processor_io(struct io *io, int evt, void *arg)
 				processor_register(name, line);
 				continue;
 			}
-			
+
 			processor = dict_xget(&processors, name);
 			if (!processor->ready)
 				fatalx("Non-register message before register|"
@@ -849,7 +849,7 @@ filter_protocol(uint64_t reqid, enum filter_phase phase, const char *param)
 	struct filter_session  *fs;
 	uint64_t		token = 0;
 	char		       *nparam = NULL;
-	
+
 	fs = tree_xget(&sessions, reqid);
 
 	switch (phase) {
@@ -927,7 +927,7 @@ filter_protocol_query(struct filter *filter, uint64_t token, uint64_t reqid, con
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	
+
 	fs = tree_xget(&sessions, reqid);
 	if (strcmp(phase, "connect") == 0)
 		n = io_printf(lka_proc_get_io(filter->proc),
@@ -1021,7 +1021,7 @@ filter_check_rdns_table(struct filter *filter, enum table_service kind, const ch
 
 	if (filter->config->rdns_table == NULL)
 		return 0;
-	
+
 	if (table_match(filter->config->rdns_table, kind, key) > 0)
 		ret = 1;
 
@@ -1113,7 +1113,7 @@ filter_check_auth_table(struct filter *filter, enum table_service kind, const ch
 
 	if (filter->config->auth_table == NULL)
 		return 0;
-	
+
 	if (key && table_match(filter->config->auth_table, kind, key) > 0)
 		ret = 1;
 

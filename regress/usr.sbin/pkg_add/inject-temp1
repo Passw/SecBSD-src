@@ -8,7 +8,7 @@ use OpenBSD::Temp;
 package OpenBSD::Temp;
 use Wrapper;
 
-wrap('permanent_dir', 
+wrap('permanent_dir',
     sub {
 	my $original = shift;
 	$_[0] = "/nonexistent";

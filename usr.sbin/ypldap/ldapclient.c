@@ -514,7 +514,7 @@ client_search_idm(struct env *env, struct idm *idm, struct aldap *al,
 			if (al->msgid != m->msgid) {
 				goto fail;
 			}
-			
+
 			if (m->message_type == LDAP_RES_SEARCH_RESULT) {
 				if (m->page != NULL && m->page->cookie_len != 0)
 					pg = m->page;
@@ -534,14 +534,14 @@ client_search_idm(struct env *env, struct idm *idm, struct aldap *al,
 				    &ir, sizeof(ir.ir_key) +
 				    strlen(ir.ir_line) + 1);
 
-			aldap_freemsg(m);	
+			aldap_freemsg(m);
 		}
 	} while (pg != NULL);
 
 	return (0);
 
 fail:
-	aldap_freemsg(m);	
+	aldap_freemsg(m);
 	if (pg != NULL) {
 		aldap_freepage(pg);
 	}

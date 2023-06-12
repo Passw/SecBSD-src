@@ -166,7 +166,7 @@ main(int argc, char *argv[])
 		case 'n':
 			nflag = 1;	/* Capitalize name parts */
 			break;
-		case 's':		/* Ignore */ 
+		case 's':		/* Ignore */
 			break;
 		case 'u':
 			uflag = 1;	/* Don't check UUCP hostname */

@@ -271,7 +271,7 @@ mta_session_imsg(struct mproc *p, struct imsg *imsg)
 	const char		*name;
 	int			 status;
 	struct stat		 sb;
-	
+
 	switch (imsg->hdr.type) {
 
 	case IMSG_MTA_OPEN_MESSAGE:
@@ -312,7 +312,7 @@ mta_session_imsg(struct mproc *p, struct imsg *imsg)
 				return;
 			}
 		}
-		
+
 		s->datafp = fdopen(imsg->fd, "r");
 		if (s->datafp == NULL)
 			fatal("mta: fdopen");

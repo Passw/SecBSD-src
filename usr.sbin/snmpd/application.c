@@ -378,7 +378,7 @@ appl_register(const char *ctxname, uint32_t timeout, uint8_t priority,
 	search.ar_oid = *oid;
 	if (search.ar_oid.bo_id[range_subid] == lower_bound)
 		return error;
-	
+
 	for (search.ar_oid.bo_id[range_subid]--;
 	    search.ar_oid.bo_id[range_subid] != lower_bound;
 	    search.ar_oid.bo_id[range_subid]--) {
