@@ -392,7 +392,7 @@ amluartopen(dev_t dev, int flag, int mode, struct proc *p)
 		tp->t_lflag = TTYDEF_LFLAG;
 		tp->t_ispeed = tp->t_ospeed =
 		    sc->sc_conspeed ? sc->sc_conspeed : B115200;
-		
+
 		s = spltty();
 
 		amluart_param(tp, &tp->t_termios);
@@ -481,7 +481,7 @@ amluartread(dev_t dev, struct uio *uio, int flag)
 
 	if (tp == NULL)
 		return ENODEV;
-	
+
 	return (*linesw[tp->t_line].l_read)(tp, uio, flag);
 }
 
@@ -492,7 +492,7 @@ amluartwrite(dev_t dev, struct uio *uio, int flag)
 
 	if (tp == NULL)
 		return ENODEV;
-	
+
 	return (*linesw[tp->t_line].l_write)(tp, uio, flag);
 }
 
@@ -598,7 +598,7 @@ int
 amluartcngetc(dev_t dev)
 {
 	uint8_t c;
-	
+
 	while (bus_space_read_4(amluartconsiot, amluartconsioh, UART_STATUS) &
 	    UART_STATUS_RX_FIFO_EMPTY)
 		CPU_BUSY_CYCLE();

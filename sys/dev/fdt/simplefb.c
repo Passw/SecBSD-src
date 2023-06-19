@@ -316,7 +316,7 @@ simplefb_alloc_screen(void *v, const struct wsscreen_descr *type,
     void **cookiep, int *curxp, int *curyp, uint32_t *attrp)
 {
 	return rasops_alloc_screen(v, cookiep, curxp, curyp, attrp);
-} 
+}
 
 void
 simplefb_burn_screen(void *v, u_int on, u_int flags)
@@ -343,7 +343,7 @@ simplefb_init_cons(bus_space_tag_t iot)
 	node = fdt_find_cons("simple-framebuffer");
 	if (node == NULL)
 		return;
-	
+
 	if (fdt_get_reg(node, 0, &reg))
 		return;
 

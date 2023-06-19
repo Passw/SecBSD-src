@@ -469,7 +469,7 @@ bcmpcie_bs_iomap(bus_space_tag_t t, bus_addr_t addr, bus_size_t size,
 			    addr - pci_start + phys_start, size, flags, bshp);
 		}
 	}
-	
+
 	return ENXIO;
 }
 
@@ -491,7 +491,7 @@ bcmpcie_bs_memmap(bus_space_tag_t t, bus_addr_t addr, bus_size_t size,
 			    addr - pci_start + phys_start, size, flags, bshp);
 		}
 	}
-	
+
 	return ENXIO;
 }
 

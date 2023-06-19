@@ -172,7 +172,7 @@ sypwr_get_voltage(void *cookie)
 {
 	struct sypwr_softc *sc = cookie;
 	uint8_t value;
-	
+
 	value = sypwr_read(sc, SY8106A_VOUT1_SEL);
 	if (value & SY8106A_VOUT1_SEL_I2C)
 		return 680000 + (value & SY8106A_VOUT1_SEL_MASK) * 10000;

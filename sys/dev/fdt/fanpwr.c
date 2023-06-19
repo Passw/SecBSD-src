@@ -271,7 +271,7 @@ fanpwr_get_voltage(void *cookie)
 {
 	struct fanpwr_softc *sc = cookie;
 	uint8_t vsel;
-	
+
 	vsel = fanpwr_read(sc, sc->sc_vsel);
 	return sc->sc_vbase + (vsel & sc->sc_vsel_nsel_mask) * sc->sc_vstep;
 }

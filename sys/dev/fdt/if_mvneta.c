@@ -1872,42 +1872,42 @@ static const struct mvneta_counter mvneta_counters[] = {
 	    { "1024-maxB",	KSTAT_KV_U_PACKETS,	0x3034 },
 	[mvneta_stat_good_octets_sent] =
 	    { "tx good",	KSTAT_KV_U_BYTES,	0x0 /* 64bit */ },
-	[mvneta_stat_good_frames_sent] = 
+	[mvneta_stat_good_frames_sent] =
 	    { "tx good",	KSTAT_KV_U_PACKETS,	0x3040 },
-	[mvneta_stat_excessive_collision] = 
+	[mvneta_stat_excessive_collision] =
 	    { "tx excess coll",	KSTAT_KV_U_PACKETS,	0x3044 },
-	[mvneta_stat_multicast_frames_sent] = 
+	[mvneta_stat_multicast_frames_sent] =
 	    { "tx mcast",	KSTAT_KV_U_PACKETS,	0x3048 },
-	[mvneta_stat_broadcast_frames_sent] = 
+	[mvneta_stat_broadcast_frames_sent] =
 	    { "tx bcast",	KSTAT_KV_U_PACKETS,	0x304c },
-	[mvneta_stat_unrecog_mac_control_received] = 
+	[mvneta_stat_unrecog_mac_control_received] =
 	    { "rx unknown fc",	KSTAT_KV_U_PACKETS,	0x3050 },
-	[mvneta_stat_good_fc_received] = 
+	[mvneta_stat_good_fc_received] =
 	    { "rx fc good",	KSTAT_KV_U_PACKETS,	0x3058 },
-	[mvneta_stat_bad_fc_received] = 
+	[mvneta_stat_bad_fc_received] =
 	    { "rx fc bad",	KSTAT_KV_U_PACKETS,	0x305c },
-	[mvneta_stat_undersize] = 
+	[mvneta_stat_undersize] =
 	    { "rx undersize",	KSTAT_KV_U_PACKETS,	0x3060 },
-	[mvneta_stat_fc_sent] = 
+	[mvneta_stat_fc_sent] =
 	    { "tx fc",		KSTAT_KV_U_PACKETS,	0x3054 },
-	[mvneta_stat_fragments] = 
+	[mvneta_stat_fragments] =
 	    { "rx fragments",	KSTAT_KV_U_NONE,	0x3064 },
-	[mvneta_stat_oversize] = 
+	[mvneta_stat_oversize] =
 	    { "rx oversize",	KSTAT_KV_U_PACKETS,	0x3068 },
-	[mvneta_stat_jabber] = 
+	[mvneta_stat_jabber] =
 	    { "rx jabber",	KSTAT_KV_U_PACKETS,	0x306c },
-	[mvneta_stat_mac_rcv_error] = 
+	[mvneta_stat_mac_rcv_error] =
 	    { "rx mac errors",	KSTAT_KV_U_PACKETS,	0x3070 },
-	[mvneta_stat_bad_crc] = 
+	[mvneta_stat_bad_crc] =
 	    { "rx bad crc",	KSTAT_KV_U_PACKETS,	0x3074 },
-	[mvneta_stat_collisions] = 
+	[mvneta_stat_collisions] =
 	    { "rx colls",	KSTAT_KV_U_PACKETS,	0x3078 },
-	[mvneta_stat_late_collisions] = 
+	[mvneta_stat_late_collisions] =
 	    { "rx late colls",	KSTAT_KV_U_PACKETS,	0x307c },
 
-	[mvneta_stat_port_discard] = 
+	[mvneta_stat_port_discard] =
 	    { "rx discard",	KSTAT_KV_U_PACKETS,	MVNETA_PXDFC },
-	[mvneta_stat_port_overrun] = 
+	[mvneta_stat_port_overrun] =
 	    { "rx overrun",	KSTAT_KV_U_PACKETS,	MVNETA_POFC },
 };
 

@@ -192,7 +192,7 @@ midi_ointr(void *addr)
 	MUTEX_ASSERT_LOCKED(&audio_lock);
 	if (!(sc->dev.dv_flags & DVF_ACTIVE) || !(sc->flags & FWRITE))
 		return;
-	
+
 	mb = &sc->outbuf;
 	if (mb->used > 0) {
 #ifdef MIDI_DEBUG

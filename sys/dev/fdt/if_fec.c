@@ -330,7 +330,7 @@ fec_attach(struct device *parent, struct device *self, void *aux)
 		 * active-low, even if it is marked as active-high in
 		 * the device tree.  As a result the device tree for
 		 * many boards incorrectly marks the gpio as
-		 * active-high.  
+		 * active-high.
 		 */
 		phy_reset_gpio[2] = GPIO_ACTIVE_LOW;
 		gpio_controller_config_pin(phy_reset_gpio, GPIO_CONFIG_OUTPUT);

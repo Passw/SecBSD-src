@@ -582,7 +582,7 @@ sxipio_attach_gpio(struct device *parent)
 		gba.gba_gc = &sc->sc_gpio_tag[i];
 		gba.gba_pins = &sc->sc_gpio_pins[i][0];
 		gba.gba_npins = 32;
-		
+
 #if NGPIO > 0
 		config_found(&sc->sc_dev, &gba, gpiobus_print);
 #endif

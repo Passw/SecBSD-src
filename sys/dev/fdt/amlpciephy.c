@@ -191,7 +191,7 @@ void
 amlpciephy_addr(struct amlpciephy_softc *sc, bus_addr_t addr)
 {
 	int timo;
-	
+
 	HWRITE4(sc, PHY_R4, addr << 2);
 	HWRITE4(sc, PHY_R4, addr << 2);
 	HWRITE4(sc, PHY_R4, (addr << 2) | PHY_R4_PHY_CR_CAP_ADDR);

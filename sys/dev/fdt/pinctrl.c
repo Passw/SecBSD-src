@@ -139,7 +139,7 @@ pinctrl_pinctrl(uint32_t phandle, void *cookie)
 	struct pinctrl_softc *sc = cookie;
 	uint32_t *pins;
 	int node, len, i;
-	
+
 	node = OF_getnodebyphandle(phandle);
 	if (node == 0)
 		return -1;
@@ -158,7 +158,7 @@ pinctrl_pinctrl(uint32_t phandle, void *cookie)
 
 		if (sc->sc_ncells == 2)
 			func |= pins[i + 2];
-		
+
 		if (sc->sc_reg_width == 16)
 			val = HREAD2(sc, reg);
 		else if (sc->sc_reg_width == 32)

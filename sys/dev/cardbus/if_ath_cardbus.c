@@ -33,8 +33,8 @@
  */
 
 #include <sys/param.h>
-#include <sys/systm.h> 
-#include <sys/mbuf.h>   
+#include <sys/systm.h>
+#include <sys/mbuf.h>
 #include <sys/malloc.h>
 #include <sys/kernel.h>
 #include <sys/socket.h>
@@ -43,11 +43,11 @@
 #include <sys/device.h>
 #include <sys/gpio.h>
 #include <sys/endian.h>
- 
+
 #include <net/if.h>
 #include <net/if_media.h>
 
-#include <netinet/in.h> 
+#include <netinet/in.h>
 #include <netinet/if_ether.h>
 
 #include <net80211/ieee80211_var.h>

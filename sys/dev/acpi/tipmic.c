@@ -435,7 +435,7 @@ tipmic_power_opreg_handler(void *cookie, int iodir, uint64_t address,
 	return 0;
 }
 
-/* 
+/*
  * Allegedly the GPIOs are virtual and only there to deal with a
  * limitation of Microsoft Windows.
  */

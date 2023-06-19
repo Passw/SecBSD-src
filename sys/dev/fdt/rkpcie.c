@@ -153,7 +153,7 @@ void	rkpcie_intr_disestablish(void *, void *);
  * When link training, the LTSSM configuration state exits to L0 state upon
  * success. Wait for L0 state before proceeding after link training has been
  * initiated either by PCIE_CLIENT_LINK_TRAIN_EN or when triggered via
- * LCSR Retrain Link bit. See PCIE 2.0 Base Specification, 4.2.6.3.6 
+ * LCSR Retrain Link bit. See PCIE 2.0 Base Specification, 4.2.6.3.6
  * Configuration.Idle.
  *
  * Checking link up alone is not sufficient for checking for L0 state. LTSSM
@@ -256,7 +256,7 @@ rkpcie_attach(struct device *parent, struct device *self, void *aux)
 	reset_assert(sc->sc_node, "pipe");
 
 	delay(10);
-	
+
 	reset_deassert(sc->sc_node, "pm");
 	reset_deassert(sc->sc_node, "aclk");
 	reset_deassert(sc->sc_node, "pclk");
@@ -305,7 +305,7 @@ rkpcie_attach(struct device *parent, struct device *self, void *aux)
 	if (max_link_speed > 1) {
 		status = HREAD4(sc, PCIE_RC_LCSR);
 		if ((status & PCI_PCIE_LCSR_CLS) == PCI_PCIE_LCSR_CLS_2_5) {
-			HWRITE4(sc, PCIE_RC_LCSR, HREAD4(sc, PCIE_RC_LCSR) | 
+			HWRITE4(sc, PCIE_RC_LCSR, HREAD4(sc, PCIE_RC_LCSR) |
 			    PCI_PCIE_LCSR_RL);
 
 			if (rkpcie_link_training_wait(sc)) {
@@ -534,7 +534,7 @@ rkpcie_conf_read(void *v, pcitag_t tag, int reg)
 		KASSERT(dev == 0);
 		return bus_space_read_4(sc->sc_iot, sc->sc_axi_ioh, tag | reg);
 	}
-	
+
 	return 0xffffffff;
 }
 
@@ -750,7 +750,7 @@ rkpcie_phy_poweron(struct rkpcie_softc *sc)
 	regmap_write_4(rm, RK3399_GRF_SOC_CON8,
 	    RK3399_PCIE_TEST_ADDR_MASK |
 	    RK3399_PCIE_PHY_CFG_PLL_LOCK << RK3399_PCIE_TEST_ADDR_SHIFT);
-		
+
 	for (timo = 50; timo > 0; timo--) {
 		status = regmap_read_4(rm, RK3399_GRF_SOC_STATUS1);
 		if (status & RK3399_PCIE_PHY_PLL_LOCKED)

@@ -85,7 +85,7 @@ ohci_cardbus_match(struct device *parent, void *match, void *aux)
 	    PCI_SUBCLASS(ca->ca_class) == PCI_SUBCLASS_SERIALBUS_USB &&
 	    PCI_INTERFACE(ca->ca_class) == PCI_INTERFACE_OHCI)
 		return (1);
- 
+
 	return (0);
 }
 

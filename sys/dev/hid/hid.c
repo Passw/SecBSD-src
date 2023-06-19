@@ -467,9 +467,9 @@ hid_get_item(struct hid_data *s, struct hid_item *h)
 				if ((s->nusage < MAXUSAGE) &&
 				    (c->usage_minimum <= c->usage_maximum)) {
 					/* add usage range */
-					s->usages_min[s->nusage] = 
+					s->usages_min[s->nusage] =
 					    c->usage_minimum;
-					s->usages_max[s->nusage] = 
+					s->usages_max[s->nusage] =
 					    c->usage_maximum;
 					s->nusage ++;
 				} else {

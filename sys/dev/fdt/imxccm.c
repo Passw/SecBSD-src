@@ -453,7 +453,7 @@ imxccm_get_periphclk(struct imxccm_softc *sc)
 		default:
 			return 0;
 		}
-	
+
 	} else {
 		switch((HREAD4(sc, CCM_CBCMR)
 		    >> CCM_CBCMR_PRE_PERIPH_CLK_SEL_SHIFT) & CCM_CBCMR_PRE_PERIPH_CLK_SEL_MASK) {

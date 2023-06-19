@@ -236,7 +236,7 @@ product ASU 4701	Mini 486AS Main Board
 product ASU 4901	VL/EISA-486SV1 Main Board
 product ASU 5101	PCI/E-P5MP4 or PCI/E-P54NP4 Main Board V2.3
 product ASU 5201	P/E-P55T2P4D  Main Board (CFG File V1.2)
- 
+
 /* ATI products */
 product ATI 1500	AT-1500 Ethernet
 product ATI 1700	AT-1700 Ethernet

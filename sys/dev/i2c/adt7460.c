@@ -208,7 +208,7 @@ adt_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_sensor[ADT_2_5V].type = SENSOR_VOLTS_DC;
 	strlcpy(sc->sc_sensor[ADT_2_5V].desc, "+2.5Vin",
 	    sizeof(sc->sc_sensor[ADT_2_5V].desc));
-		
+
 	if (sc->chip->type == 5017)
 		strlcpy(sc->sc_sensor[ADT_2_5V].desc, "+5VTR",
 		    sizeof(sc->sc_sensor[ADT_2_5V].desc));

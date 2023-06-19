@@ -168,7 +168,7 @@ fxp_cardbus_attach(struct device *parent, struct device *self, void *aux)
 		return;
 	}
 	snprintf(intrstr, sizeof(intrstr), "irq %d", ca->ca_intrline);
-	
+
 	sc->sc_revision = PCI_REVISION(ca->ca_class);
 
 	fxp_attach(sc, intrstr);

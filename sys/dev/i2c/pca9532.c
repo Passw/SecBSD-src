@@ -179,6 +179,6 @@ fail:
 void
 pcaled_gpio_pin_ctl (void *arg, int pin, int flags)
 {
-	/* XXX all pins are inout */ 
+	/* XXX all pins are inout */
 }
 

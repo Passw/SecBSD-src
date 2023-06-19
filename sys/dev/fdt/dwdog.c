@@ -103,7 +103,7 @@ dwdog_reset(void)
 {
 	struct dwdog_softc *sc = dwdog_cd.cd_devs[0];
 
-	/* 
+	/*
 	 * Generate system reset when timer expires and select
 	 * smallest timeout.
 	 */

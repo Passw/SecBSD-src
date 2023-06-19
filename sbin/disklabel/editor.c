@@ -1,4 +1,4 @@
-/*	$OpenBSD: editor.c,v 1.407 2023/05/23 13:20:31 krw Exp $	*/
+/*	$OpenBSD: editor.c,v 1.410 2023/06/19 13:45:19 krw Exp $	*/
 
 /*
  * Copyright (c) 1997-2000 Todd C. Miller <millert@openbsd.org>
@@ -44,6 +44,7 @@
 
 #define	ROUNDUP(_s, _a)		((((_s) + (_a) - 1) / (_a)) * (_a))
 #define	ROUNDDOWN(_s, _a)	(((_s) / (_a)) * (_a))
+#define	CHUNKSZ(_c)		((_c)->stop - (_c)->start)
 
 /* flags for getuint64() */
 #define	DO_CONVERSIONS	0x00000001
@@ -197,7 +198,7 @@ editor(int f)
 	if (!(omountpoints = calloc(MAXPARTITIONS, sizeof(char *))) ||
 	    !(origmountpoints = calloc(MAXPARTITIONS, sizeof(char *))) ||
 	    !(tmpmountpoints = calloc(MAXPARTITIONS, sizeof(char *))))
-		errx(4, "out of memory");
+		err(1, NULL);
 
 	/* How big is the OpenBSD portion of the disk?  */
 	find_bounds(&newlab);
@@ -404,11 +405,11 @@ editor(int f)
 			/* Display free space. */
 			chunk = free_chunks(&newlab, -1);
 			for (; chunk->start != 0 || chunk->stop != 0; chunk++) {
-				total += chunk->stop - chunk->start;
+				total += CHUNKSZ(chunk);
 				fprintf(stderr, "Free sectors: %16llu - %16llu "
 				    "(%16llu)\n",
 				    chunk->start, chunk->stop - 1,
-				    chunk->stop - chunk->start);
+				    CHUNKSZ(chunk));
 			}
 			fprintf(stderr, "Total free sectors: %llu.\n", total);
 			break;
@@ -566,7 +567,7 @@ again:
 		goto again;
 	alloc = reallocarray(NULL, lastalloc, sizeof(struct space_allocation));
 	if (alloc == NULL)
-		errx(4, "out of memory");
+		err(1, NULL);
 	memcpy(alloc, alloc_table[index].table,
 	    lastalloc * sizeof(struct space_allocation));
 
@@ -674,7 +675,7 @@ again:
 			}
 			free(*partmp);
 			if ((*partmp = strdup(ap->mp)) == NULL)
-				errx(4, "out of memory");
+				err(1, NULL);
 		}
 	}
 
@@ -788,8 +789,8 @@ editor_add(struct disklabel *lp, const char *p)
 	chunk = free_chunks(lp, -1);
 	new_size = new_offset = 0;
 	for (; chunk->start != 0 || chunk->stop != 0; chunk++) {
-		if (chunk->stop - chunk->start > new_size) {
-			new_size = chunk->stop - chunk->start;
+		if (CHUNKSZ(chunk) > new_size) {
+			new_size = CHUNKSZ(chunk);
 			new_offset = chunk->start;
 		}
 	}
@@ -1413,7 +1414,7 @@ editor_countfree(const struct disklabel *lp)
 	chunk = free_chunks(lp, -1);
 
 	for (; chunk->start != 0 || chunk->stop != 0; chunk++)
-		freesectors += chunk->stop - chunk->start;
+		freesectors += CHUNKSZ(chunk);
 
 	return (freesectors);
 }
@@ -1454,7 +1455,7 @@ mpcopy(char **to, char **from)
 		if (from[i] != NULL) {
 			to[i] = strdup(from[i]);
 			if (to[i] == NULL)
-				errx(4, "out of memory");
+				err(1, NULL);
 		}
 	}
 }
@@ -1752,7 +1753,7 @@ get_mp(const struct disklabel *lp, int partno)
 			/* XXX - might as well realloc */
 			free(mountpoints[partno]);
 			if ((mountpoints[partno] = strdup(p)) == NULL)
-				errx(4, "out of memory");
+				err(1, NULL);
 			break;
 		}
 		fputs("Mount points must start with '/'\n", stderr);
@@ -1979,7 +1980,7 @@ parse_sizerange(char *buf, u_int64_t *min, u_int64_t *max)
 		return (-1);
 	if (p != NULL && p[0] != '\0') {
 		if (p[0] == '*')
-			*max = -1;
+			*max = UINT64_MAX;
 		else
 			if (parse_sizespec(p, &val2, &unit2) == -1)
 				return (-1);

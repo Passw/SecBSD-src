@@ -160,7 +160,7 @@ tipd_intr(void *arg)
 		error = tipd_read_4(sc, TPS_STATUS, &status);
 		if (error)
 			goto fail;
-			
+
 		if (status & TPS_STATUS_PLUG_PRESENT)
 			tipd_connect(sc);
 		else

@@ -500,7 +500,7 @@ gpio_ioctl(struct gpio_softc *sc, u_long cmd, caddr_t data, int flag)
 				return (EINVAL);
 		} else
 			pin = set->gp_pin;
-		
+
 		if (pin < 0 || pin >= sc->sc_npins)
 			return (EINVAL);
 		if (sc->sc_pins[pin].pin_mapped)

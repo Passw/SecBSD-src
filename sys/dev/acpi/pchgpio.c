@@ -130,7 +130,7 @@ const struct pchgpio_group spt_lp_groups[] =
 	{ 1, 0, 48, 71, 48 },		/* GPP_C */
 	{ 1, 1, 72, 95, 72 },		/* GPP_D */
 	{ 1, 2, 96, 119, 96 },		/* GPP_E */
-	
+
 	/* Community 3 */
 	{ 2, 0, 120, 143, 120 },	/* GPP_F */
 	{ 2, 1, 144, 151, 144 },	/* GPP_G */

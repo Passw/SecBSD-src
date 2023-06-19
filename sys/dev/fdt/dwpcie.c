@@ -1392,7 +1392,7 @@ dwpcie_rk3568_init(struct dwpcie_softc *sc)
 err:
 	if (reset_gpiolen > 0)
 		free(reset_gpio, M_TEMP, reset_gpiolen);
-	
+
 	return error;
 }
 

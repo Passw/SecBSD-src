@@ -37,7 +37,7 @@ struct midi_buffer {
 	void	     *softintr;		/* context to call selwakeup() */
 	struct	      selinfo sel;	/* to record & wakeup poll(2) */
 	int	      blocking;		/* read/write blocking */
-	unsigned char data[MIDIBUF_SIZE]; 
+	unsigned char data[MIDIBUF_SIZE];
 	unsigned      start, used;
 };
 
@@ -68,7 +68,7 @@ struct midi_buffer {
 	do {							\
 		(buf)->start = (buf)->used = 0;			\
 	} while(0)
-	
+
 
 struct midi_softc {
 	struct device	    dev;

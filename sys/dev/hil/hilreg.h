@@ -129,7 +129,7 @@
 /* HIL packet headers */
 #define	HIL_MOUSEDATA   0x02
 #define	HIL_KBDDATA     0x70
-  
+
 #define	HIL_MOUSEMOTION	0x02	/* mouse movement event */
 #define	HIL_TABLET      0x02	/* tablet motion event */
 #define	HIL_KNOBBOX     0x03	/* knob box motion data */

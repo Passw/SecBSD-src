@@ -554,7 +554,7 @@ dwmmc_intr(void *arg)
 		sdmmc_card_intr(sc->sc_sdmmc);
 		handled = 1;
 	}
-		
+
 	return handled;
 }
 
@@ -656,7 +656,7 @@ dwmmc_bus_clock(sdmmc_chipset_handle_t sch, int freq, int timing)
 
 	if (freq == 0)
 		return 0;
-	
+
 	if (sc->sc_clkbase / 1000 > freq) {
 		for (div = 1; div < 256; div++)
 			if (sc->sc_clkbase / (2 * 1000 * div) <= freq)
@@ -705,7 +705,7 @@ int
 dwmmc_bus_width(sdmmc_chipset_handle_t sch, int width)
 {
 	struct dwmmc_softc *sc = sch;
-	
+
 	switch (width) {
 	case 1:
 		HCLR4(sc, SDMMC_CTYPE, SDMMC_CTYPE_8BIT|SDMMC_CTYPE_4BIT);
@@ -929,7 +929,7 @@ dwmmc_exec_command(sdmmc_chipset_handle_t sch, struct sdmmc_command *cmd)
 
 		if (ISSET(cmd->c_flags, SCF_CMD_READ)) {
 			/* Set card read threshold to the size of a block. */
-			HWRITE4(sc, SDMMC_CARDTHRCTL, 
+			HWRITE4(sc, SDMMC_CARDTHRCTL,
 			    cmd->c_blklen << SDMMC_CARDTHRCTL_RDTHR_SHIFT |
 			    SDMMC_CARDTHRCTL_RDTHREN);
 		}
@@ -1010,7 +1010,7 @@ dwmmc_exec_command(sdmmc_chipset_handle_t sch, struct sdmmc_command *cmd)
 
 	if (cmd->c_datalen > 0 && !cmd->c_dmamap)
 		dwmmc_transfer_data(sc, cmd);
-	
+
 	if (cmd->c_datalen > 0 && cmd->c_dmamap) {
 		while (sc->sc_idsts == 0) {
 			error = tsleep_nsec(&sc->sc_idsts, PWAIT, "idsts",
@@ -1021,7 +1021,7 @@ dwmmc_exec_command(sdmmc_chipset_handle_t sch, struct sdmmc_command *cmd)
 				goto done;
 			}
 		}
-		
+
 		for (timeout = 10000; timeout > 0; timeout--) {
 			status = HREAD4(sc, SDMMC_RINTSTS);
 			if (status & SDMMC_RINTSTS_DTO)

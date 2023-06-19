@@ -353,7 +353,7 @@ hil_process_int(struct hil_softc *sc, u_int8_t stat, u_int8_t c)
 				if (sc->sc_cmdending) {
 					sc->sc_cmddone = 1;
 					sc->sc_cmdending = 0;
-				} else  
+				} else
 					*sc->sc_cmdbp++ = c;
 		        }
 		}
@@ -516,7 +516,7 @@ hilconfig(struct hil_softc *sc, u_int knowndevs)
 	for (id = knowndevs + 1; id <= sc->sc_maxdev; id++) {
 		int len;
 		const struct hildevice *hd;
-		
+
 		if (send_device_cmd(sc, id, HIL_IDENTIFY) != 0) {
 			printf("%s: no answer from device %d\n",
 			    sc->sc_dev.dv_xname, id);
@@ -650,7 +650,7 @@ send_hil_cmd(struct hil_softc *sc, u_int cmd, u_int8_t *data, u_int dlen,
 {
 	u_int8_t status;
 	int s;
-	
+
 	s = splhil();
 
 	if (hilwait(sc) == 0) {
@@ -760,7 +760,7 @@ send_hildev_cmd(struct hildev_softc *dev, u_int cmd,
 {
 	struct hil_softc *sc = (struct hil_softc *)dev->sc_dev.dv_parent;
 	int s, rc;
-       
+
 	s = splhil();
 
 	if ((rc = send_device_cmd(sc, dev->sc_code, cmd)) == 0) {
@@ -811,7 +811,7 @@ polloff(struct hil_softc *sc)
 	/*
 	 * Must wait until polling is really stopped
 	 */
-	do {	
+	do {
 		hilwait(sc);
 		bus_space_write_1(sc->sc_bst, sc->sc_bsh, HILP_CMD, HIL_READBUSY);
 		hildatawait(sc);

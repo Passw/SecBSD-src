@@ -620,7 +620,7 @@ static const keysym_t akbd_keydesc_sg_nodead[] = {
     KC(30),	KS_diaeresis,	KS_exclam,	KS_bracketright,KS_braceright,
     KC(45),	KS_n,		KS_N,		KS_asciitilde,
 };
- 
+
 #define KBD_MAP(name, base, map) \
 			{ name, base, sizeof(map)/sizeof(keysym_t), map }
 

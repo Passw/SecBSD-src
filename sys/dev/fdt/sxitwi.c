@@ -245,7 +245,7 @@ sxitwi_attach(struct device *parent, struct device *self, void *aux)
 
 	rw_init(&sc->sc_buslock, sc->sc_dev.dv_xname);
 
-	/* 
+	/*
 	 * On the Allwinner A31 we need to write 1 to clear a pending
 	 * interrupt.
 	 */

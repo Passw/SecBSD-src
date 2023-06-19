@@ -125,7 +125,7 @@ iosf_acpi_mbi_mdr_rd(struct iosf_mbi *mbi, uint32_t mcr, uint32_t mcrx)
 	struct iosf_acpi_softc *sc = (struct iosf_acpi_softc *)mbi->mbi_dev;
 
 	if (mcrx != 0) {
-		bus_space_write_4(sc->sc_iot, sc->sc_ioh, 
+		bus_space_write_4(sc->sc_iot, sc->sc_ioh,
 		    IOSF_ACPI_MBI_MCRX, mcrx);
 	}
 	bus_space_write_4(sc->sc_iot, sc->sc_ioh, IOSF_ACPI_MBI_MCR, mcr);

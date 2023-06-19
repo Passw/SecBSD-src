@@ -44,7 +44,7 @@
  * Why recursive?
  *
  *  The recursive bus-space administration has two reasons. For one
- *  this modelling matches the actual memory and io space management 
+ *  this modelling matches the actual memory and io space management
  *  of bridge devices quite well. Furthermore  is the rbus a
  *  distributed management system, as such it plays well with
  *  multi-thread kernel.
@@ -54,7 +54,7 @@
  *  rbus can model a bus-to-bus bridge in two ways: dedicated or shared
  *  Dedicated: the bridge has its own bus space.
  *  Shared: the bridge has bus space, but this bus space is
- *  shared with other bus bridges. 
+ *  shared with other bus bridges.
  */
 
 

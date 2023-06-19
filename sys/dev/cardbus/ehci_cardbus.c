@@ -78,7 +78,7 @@ ehci_cardbus_match(struct device *parent, void *match, void *aux)
 	    PCI_SUBCLASS(ca->ca_class) == PCI_SUBCLASS_SERIALBUS_USB &&
 	    PCI_INTERFACE(ca->ca_class) == PCI_INTERFACE_EHCI)
 		return (1);
- 
+
 	return (0);
 }
 
@@ -138,7 +138,7 @@ ehci_cardbus_attach(struct device *parent, struct device *self, void *aux)
 	else
 		snprintf(sc->sc.sc_vendor, sizeof(sc->sc.sc_vendor),
 		    "vendor 0x%04x", PCI_VENDOR(ca->ca_id));
-	
+
 	r = ehci_init(&sc->sc);
 	if (r != USBD_NORMAL_COMPLETION) {
 		printf("%s: init failed, error=%d\n", devname, r);

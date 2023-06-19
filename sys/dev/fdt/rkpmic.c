@@ -58,7 +58,7 @@ struct rkpmic_regdata {
 	const struct rkpmic_vsel_range *vsel_range;
 };
 
-/* 
+/*
  * Used by RK805 for BUCK1, BUCK2
  *  0-59:	0.7125V-1.45V, step=12.5mV
  *  60-62:	1.8V-2.2V, step=200mV
@@ -72,7 +72,7 @@ const struct rkpmic_vsel_range rk805_vsel_range1[] = {
 };
 
 /*
- * Used by RK805 for BUCK4 
+ * Used by RK805 for BUCK4
  *  0-27:	0.8V-3.5V, step=100mV
  */
 const struct rkpmic_vsel_range rk805_vsel_range2[] = {
@@ -81,7 +81,7 @@ const struct rkpmic_vsel_range rk805_vsel_range2[] = {
 };
 
 /*
- * Used by RK805 for LDO1-3 
+ * Used by RK805 for LDO1-3
  *  0-26:	0.8V-3.4V, step=100mV
  */
 const struct rkpmic_vsel_range rk805_vsel_range3[] = {
@@ -393,7 +393,7 @@ rkpmic_get_voltage(void *cookie)
 	uint32_t ret = 0;
 
 	vsel = rkpmic_reg_read(rr->rr_sc, rr->rr_reg) & rr->rr_mask;
-	
+
 	while (vsel_range->base) {
 		ret = vsel_range->base;
 		if (vsel >= vsel_range->vsel_min &&
@@ -405,7 +405,7 @@ rkpmic_get_voltage(void *cookie)
 			ret += (vsel_range->vsel_max - vsel_range->vsel_min) *
 			    vsel_range->delta;
 		vsel_range++;
-			
+
 	}
 
 	return ret;

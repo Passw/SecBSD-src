@@ -126,7 +126,7 @@ gpioiic_attach(struct device *parent, struct device *self, void *aux)
 		printf(": can't map pins\n");
 		return;
 	}
-	
+
 	if (ga->ga_flags & GPIOIIC_PIN_REVERSE) {
 		sc->sc_pin_sda = GPIOIIC_PIN_SCL;
 		sc->sc_pin_scl = GPIOIIC_PIN_SDA;

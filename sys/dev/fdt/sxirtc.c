@@ -44,7 +44,7 @@
 #define LEAPYEAR(y)        \
     (((y) % 4 == 0 &&    \
     (y) % 100 != 0) ||    \
-    (y) % 400 == 0) 
+    (y) % 400 == 0)
 
 struct sxirtc_softc {
 	struct device		sc_dev;

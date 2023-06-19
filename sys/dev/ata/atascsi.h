@@ -271,7 +271,7 @@ struct ata_fis_d2h {
 } __packed;
 
 /*
- * SATA log page 10h - 
+ * SATA log page 10h -
  * looks like a D2H FIS, with errored tag number in first byte.
  */
 struct ata_log_page_10h {

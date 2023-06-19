@@ -119,7 +119,7 @@ static inline void
 amlpwrc_toggle(struct regmap *rm, bus_size_t reg, uint32_t mask, int on)
 {
 	uint32_t val;
-	
+
 	val = regmap_read_4(rm, reg << 2);
 	if (on)
 		val &= ~mask;

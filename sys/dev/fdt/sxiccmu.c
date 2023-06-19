@@ -627,11 +627,11 @@ sxiccmu_pll6_get_frequency(void *cookie, uint32_t *cells)
 
 	freq = clock_get_frequency_idx(sc->sc_node, 0);
 	switch (idx) {
-	case 0:	
+	case 0:
 		return (freq * n * k) / m / 6;		/* pll6_sata */
-	case 1:	
+	case 1:
 		return (freq * n * k) / 2;		/* pll6_other */
-	case 2:	
+	case 2:
 		return (freq * n * k);			/* pll6 */
 	case 3:
 		return (freq * n * k) / 4;		/* pll6_div_4 */
@@ -647,7 +647,7 @@ sxiccmu_pll6_enable(void *cookie, uint32_t *cells, int on)
 	uint32_t idx = cells[0];
 	uint32_t reg;
 
-	/* 
+	/*
 	 * Since this clock has several outputs, we never turn it off.
 	 */
 
@@ -1878,7 +1878,7 @@ sxiccmu_ccu_reset(void *cookie, uint32_t *cells, int assert)
 
 	reset_deassert_all(sc->sc_node);
 
-	if (idx >= sc->sc_nresets || 
+	if (idx >= sc->sc_nresets ||
 	    (sc->sc_resets[idx].reg == 0 && sc->sc_gates[idx].bit == 0)) {
 		printf("%s: 0x%08x\n", __func__, cells[0]);
 		return;
@@ -1886,7 +1886,7 @@ sxiccmu_ccu_reset(void *cookie, uint32_t *cells, int assert)
 
 	reg = sc->sc_resets[idx].reg;
 	bit = sc->sc_resets[idx].bit;
-	
+
 	if (assert)
 		SXICLR4(sc, reg, (1U << bit));
 	else

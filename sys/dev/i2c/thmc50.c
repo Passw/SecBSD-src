@@ -139,7 +139,7 @@ thmc_refresh(void *arg)
 	} else
 		sc->sc_sensor[THMC_TEMP1].flags |= SENSOR_FINVALID;
 
-	if (sc->sc_sensor[THMC_TEMP2].type > 0) { 
+	if (sc->sc_sensor[THMC_TEMP2].type > 0) {
 		cmd = THMC50_TEMP2;
 		if (iic_exec(sc->sc_tag, I2C_OP_READ_WITH_STOP,
 		    sc->sc_addr, &cmd, sizeof cmd, &sdata, sizeof sdata, 0) == 0) {

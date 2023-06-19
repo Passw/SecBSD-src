@@ -135,7 +135,7 @@ dwgpio_attach(struct device *parent, struct device *self, void *aux)
 		printf(": too many pins\n");
 		return;
 	}
-	
+
 	sc->sc_pin_ih = mallocarray(sc->sc_npins, sizeof(*sc->sc_pin_ih),
 	    M_DEVBUF, M_WAITOK | M_ZERO);
 

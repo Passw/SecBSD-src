@@ -201,7 +201,7 @@ struct sximmc_idma_descriptor {
 } __packed;
 
 #define SXIMMC_NDESC		32
- 
+
 #define SXIMMC_DMA_FTRGLEVEL_A20	0x20070008
 #define SXIMMC_DMA_FTRGLEVEL_A80	0x200f0010
 
@@ -1019,7 +1019,7 @@ sximmc_exec_command(sdmmc_chipset_handle_t sch, struct sdmmc_command *cmd)
 #endif
 		goto done;
 	}
-		
+
 	if (cmd->c_datalen > 0) {
 		cmd->c_error = sximmc_wait_rint(sc,
 		    SXIMMC_INT_ERROR|

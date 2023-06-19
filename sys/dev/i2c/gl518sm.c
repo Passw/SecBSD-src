@@ -107,7 +107,7 @@ glenv_attach(struct device *parent, struct device *self, void *aux)
 		printf(": cannot read revision register\n");
 		return;
 	}
-	
+
 	printf(": GL518SM rev 0x%02x", data);
 
 	cmd = GL518SM_MISC;
@@ -184,7 +184,7 @@ glenv_refresh(void *arg)
 		sc->sc_sensor[GLENV_VIN3].flags &= ~SENSOR_FINVALID;
 		sc->sc_sensor[GLENV_VIN3].value = data * 19000;
 	}
-	
+
 	cmd = GL518SM_TEMP;
 	if (iic_exec(sc->sc_tag, I2C_OP_READ_WITH_STOP,
 	    sc->sc_addr, &cmd, sizeof cmd, &data, sizeof data, 0)) {

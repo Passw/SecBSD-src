@@ -77,7 +77,7 @@ bcmtmon_attach(struct device *parent, struct device *self, void *aux)
 {
 	struct bcmtmon_softc *sc = (struct bcmtmon_softc *)self;
 	struct fdt_attach_args *faa = aux;
-	
+
 	if (faa->fa_nreg < 1) {
 		printf(": no registers\n");
 		return;

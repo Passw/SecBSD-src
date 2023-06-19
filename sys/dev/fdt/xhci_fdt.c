@@ -133,7 +133,7 @@ xhci_fdt_attach(struct device *parent, struct device *self, void *aux)
 	clock_set_assigned(sc->sc_node);
 	clock_enable_all(sc->sc_node);
 
-	/* 
+	/*
 	 * Cadence and Synopsys DesignWare USB3 controllers need some
 	 * extra attention because of the additional OTG
 	 * functionality.
@@ -233,7 +233,7 @@ void
 xhci_snps_do_connect(void *arg)
 {
 	struct xhci_fdt_softc *sc = arg;
-	
+
 	xhci_reinit(&sc->sc);
 }
 

@@ -72,11 +72,11 @@ ahc_eisa_irq(bus_space_tag_t iot, bus_space_handle_t ioh)
 	int irq;
 	u_char intdef;
 	u_char hcntrl;
-	
+
 	/* Pause the card preserving the IRQ type */
 	hcntrl = bus_space_read_1(iot, ioh, HCNTRL) & IRQMS;
 	bus_space_write_1(iot, ioh, HCNTRL, hcntrl | PAUSE);
-	
+
 	intdef = bus_space_read_1(iot, ioh, INTDEF);
 	switch (irq = (intdef & VECTOR)) {
 	case 9:
@@ -145,10 +145,10 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 	u_int scsiconf1;
 	u_int intdef;
 	int i;
-	
+
 	ahc_set_name(ahc, ahc->sc_dev.dv_xname);
 	ahc_set_unit(ahc, ahc->sc_dev.dv_unit);
-	
+
 	/* set dma tags */
 	ahc->parent_dmat = ea->ea_dmat;
 
@@ -167,7 +167,7 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 				ea->ea_idstring);
 	}
 	printf(": %s\n", model);
-	
+
 	/*
 	 * Instead of ahc_alloc() as in FreeBSD, do the few relevant
 	 * initializations manually.
@@ -194,15 +194,15 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 
 	if (ahc_softc_init(ahc) != 0)
 		return;
-	
+
 	if (ahc_reset(ahc, /*reinit*/FALSE) != 0)
 		return;
-	
+
 	/* See if we are edge triggered */
 	intdef = ahc_inb(ahc, INTDEF);
 	if ((intdef & EDGE_TRIG) != 0)
 		ahc->flags |= AHC_EDGE_INTERRUPT;
-	
+
 	if (eisa_intr_map(ec, irq, &ih)) {
 		printf("%s: couldn't map interrupt (%d)\n",
 		       ahc->sc_dev.dv_xname, irq);
@@ -221,7 +221,7 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 	}
 
 	/*
-	 * Now that we know we own the resources we need, do the 
+	 * Now that we know we own the resources we need, do the
 	 * card initialization.
 	 *
 	 * First, the aic7770 card specific setup.
@@ -229,7 +229,7 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 	biosctrl = ahc_inb(ahc, HA_274_BIOSCTRL);
 	scsiconf = ahc_inb(ahc, SCSICONF);
 	scsiconf1 = ahc_inb(ahc, SCSICONF + 1);
-	
+
 	/* Get the primary channel information */
 	if ((biosctrl & CHANNEL_B_PRIMARY) != 0)
 		ahc->flags |= AHC_PRIMARY_CHANNEL;
@@ -252,10 +252,10 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 	 * We have no way to tell, so assume extended
 	 * translation is enabled.
 	 */
-	
+
 	ahc->flags |= AHC_EXTENDED_TRANS_A|AHC_EXTENDED_TRANS_B;
-	
-	/*      
+
+	/*
 	 * See if we have a Rev E or higher aic7770. Anything below a
 	 * Rev E will have a R/O autoflush disable configuration bit.
 	 * It's still not clear exactly what is different about the Rev E.
@@ -303,12 +303,12 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 		ahc_free(ahc);
 		return;
 	}
- 
+
 	/*
 	 * Link this softc in with all other ahc instances.
 	 */
 	ahc_softc_insert(ahc);
-	
+
 	/*
 	 * Enable the board's BUS drivers
 	 */
@@ -334,7 +334,7 @@ ahc_eisa_attach(struct device *parent, struct device *self, void *aux)
 	if (intrstr != NULL)
 		printf("%s: interrupting at %s\n", ahc->sc_dev.dv_xname,
 		    intrstr);
-	
+
 	ahc_intr_enable(ahc, TRUE);
 
 	/* Attach sub-devices - always succeeds */

@@ -254,7 +254,7 @@ amlclock_set_cpu_freq(struct amlclock_softc *sc, bus_size_t offset,
 	 */
 	reg = HREAD4(sc, offset);
 	if (freq > 1000000000) {
-		/* 
+		/*
 		 * Switch to a fixed clock if we're currently using
 		 * SYS_PLL/SYS1_PLL.  Doesn't really matter which one.
 		 */
@@ -296,7 +296,7 @@ amlclock_set_cpu_freq(struct amlclock_softc *sc, bus_size_t offset,
 	if ((div % 2) == 0) {
 		parent_freq /= 2;
 		div /= 2;
-	} else {	
+	} else {
 		parent_freq /= 3;
 		div /= 3;
 	}

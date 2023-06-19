@@ -257,7 +257,7 @@ attach	amldwusb at fdt
 file	dev/fdt/amldwusb.c		amldwusb
 
 device	amliic: i2cbus
-attach	amliic at fdt			
+attach	amliic at fdt
 file	dev/fdt/amliic.c		amliic
 
 device	amlmmc: sdmmcbus

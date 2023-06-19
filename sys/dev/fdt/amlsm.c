@@ -108,7 +108,7 @@ amlsm_attach(struct device *parent, struct device *self, void *aux)
 		ret = smc_call(AML_SM_GET_CHIP_ID, 0, 0, 0);
 
 	printf(": ver %u\n", info->version);
-	
+
 	if (ret != -1) {
 		for (i = 0; i < nitems(info->chip_id); i++)
 			enqueue_randomness(info->chip_id[i]);

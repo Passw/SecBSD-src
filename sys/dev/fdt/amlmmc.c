@@ -510,7 +510,7 @@ amlmmc_bus_clock(sdmmc_chipset_handle_t sch, int freq, int timing)
 		freq = 150000;
 
 	pinctrl_byname(sc->sc_node, "clk-gate");
-	
+
 	if (freq == 0)
 		return 0;
 
@@ -547,7 +547,7 @@ amlmmc_bus_clock(sdmmc_chipset_handle_t sch, int freq, int timing)
 	HCLR4(sc, SD_EMMC_CFG, SD_EMMC_CFG_STOP_CLOCK);
 
 	pinctrl_byname(sc->sc_node, "default");
-	
+
 	return 0;
 }
 

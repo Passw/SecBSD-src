@@ -311,7 +311,7 @@ ccpmic_power_opreg_handler(void *cookie, int iodir, uint64_t address,
 	return 0;
 }
 
-/* 
+/*
  * We have 16 real GPIOs and a bunch of virtual ones.  The virtual
  * ones are mostly there to deal with a limitation of Microsoft
  * Windows.  We only implement the "panel" control GPIO, which

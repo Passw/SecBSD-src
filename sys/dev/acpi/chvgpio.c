@@ -356,7 +356,7 @@ chvgpio_intr_enable(void *cookie, int pin)
 	    CHVGPIO_INTERRUPT_MASK);
 	bus_space_write_4(sc->sc_memt, sc->sc_memh,
 	    CHVGPIO_INTERRUPT_MASK, reg | (1 << line));
-}	
+}
 
 void
 chvgpio_intr_disable(void *cookie, int pin)
@@ -375,7 +375,7 @@ chvgpio_intr_disable(void *cookie, int pin)
 	    CHVGPIO_INTERRUPT_MASK);
 	bus_space_write_4(sc->sc_memt, sc->sc_memh,
 	    CHVGPIO_INTERRUPT_MASK, reg & ~(1 << line));
-}	
+}
 
 int
 chvgpio_intr(void *arg)

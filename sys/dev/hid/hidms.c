@@ -189,7 +189,7 @@ hidms_setup(struct device *self, struct hidms *ms, uint32_t quirks,
 			break;
 	ms->sc_num_buttons = i - 1;
 
-	/* 
+	/*
 	 * The Kensington Slimblade reports some of its buttons as binary
 	 * inputs in the first vendor usage page (0xff00). Add such inputs
 	 * as buttons if the device has this quirk.

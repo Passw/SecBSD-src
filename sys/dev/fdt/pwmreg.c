@@ -155,7 +155,7 @@ pwmreg_enable(void *cookie, int on)
 
 	if (ps.ps_enabled == on)
 		return 0;
-	
+
 	ps.ps_enabled = on;
 	return pwm_set_state(sc->sc_pwm, &ps);
 }

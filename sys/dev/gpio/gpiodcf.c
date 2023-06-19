@@ -45,7 +45,7 @@ int gpiodcfdebug = 0;
 
 struct gpiodcf_softc {
 	struct device		sc_dev;		/* base device */
-	void			*sc_gpio; 
+	void			*sc_gpio;
 	struct gpio_pinmap	sc_map;
 	int			__map[GPIODCF_NPINS];
 	u_char			sc_dying;	/* disconnecting */
@@ -96,10 +96,10 @@ void	gpiodcf_mg_probe(void *);
 void	gpiodcf_sl_probe(void *);
 void	gpiodcf_invalidate(void *);
 
-int gpiodcf_match(struct device *, void *, void *); 
-void gpiodcf_attach(struct device *, struct device *, void *); 
-int gpiodcf_detach(struct device *, int); 
-int gpiodcf_activate(struct device *, int); 
+int gpiodcf_match(struct device *, void *, void *);
+void gpiodcf_attach(struct device *, struct device *, void *);
+int gpiodcf_detach(struct device *, int);
+int gpiodcf_activate(struct device *, int);
 
 int gpiodcf_signal(struct gpiodcf_softc *);
 
@@ -316,7 +316,7 @@ gpiodcf_bv_probe(void *xsc)
 	if (data == -1) {
 		DPRINTF(("bit detection failed\n"));
 		return;
-	}	
+	}
 
 	DPRINTFN(1, (data ? "0" : "1"));
 	if (!(data))
@@ -364,7 +364,7 @@ gpiodcf_mg_probe(void *xsc)
 	p2_bit = sc->sc_tbits >> 35 & 1;
 	p3_bit = sc->sc_tbits >> 58 & 1;
 
-	minute_bits = sc->sc_tbits >> 21 & 0x7f;	
+	minute_bits = sc->sc_tbits >> 21 & 0x7f;
 	hour_bits = sc->sc_tbits >> 29 & 0x3f;
 	day_bits = sc->sc_tbits >> 36 & 0x3f;
 	wday = (sc->sc_tbits >> 42) & 0x07;

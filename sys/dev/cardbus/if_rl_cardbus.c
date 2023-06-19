@@ -31,7 +31,7 @@
 /*
  * if_rl_cardbus.c:
  *	Cardbus specific routines for Realtek 8139 ethernet adapter.
- *	Tested for 
+ *	Tested for
  *		- elecom-Laneed	LD-10/100CBA (Accton MPX5030)
  *		- MELCO		LPC3-TX-CB   (Realtek 8139)
  */
@@ -79,7 +79,7 @@
  * on the part of Realtek. Memory mapped mode does appear to work on
  * uniprocessor systems though.
  */
-#define RL_USEIOSPACE 
+#define RL_USEIOSPACE
 
 #include <dev/ic/rtl81x9reg.h>
 
@@ -99,7 +99,7 @@ const struct pci_matchid rl_cardbus_devices[] = {
 };
 
 struct rl_cardbus_softc {
-	struct rl_softc sc_rl;	/* real rtk softc */ 
+	struct rl_softc sc_rl;	/* real rtk softc */
 
 	/* CardBus-specific goo. */
 	cardbus_devfunc_t sc_ct;
@@ -141,7 +141,7 @@ rl_cardbus_attach(struct device *parent, struct device *self, void *aux)
 	struct cardbus_softc		*psc =
 	    (struct cardbus_softc *)sc->sc_dev.dv_parent;
 	cardbus_chipset_tag_t		cc = psc->sc_cc;
-	cardbus_function_tag_t		cf = psc->sc_cf;                            
+	cardbus_function_tag_t		cf = psc->sc_cf;
 	cardbus_devfunc_t		ct = ca->ca_ct;
 	bus_addr_t			adr;
 
@@ -199,7 +199,7 @@ rl_cardbus_attach(struct device *parent, struct device *self, void *aux)
 	rl_attach(sc);
 }
 
-int 
+int
 rl_cardbus_detach(struct device *self, int flags)
 {
 	struct rl_cardbus_softc	*csc = (void *) self;
@@ -219,7 +219,7 @@ rl_cardbus_detach(struct device *self, int flags)
 	 */
 	if (sc->sc_ih != NULL)
 		cardbus_intr_disestablish(ct->ct_cc, ct->ct_cf, sc->sc_ih);
-	
+
 	/*
 	 * Release bus space and close window.
 	 */
@@ -230,7 +230,7 @@ rl_cardbus_detach(struct device *self, int flags)
 	return (0);
 }
 
-void 
+void
 rl_cardbus_setup(struct rl_cardbus_softc *csc)
 {
 	struct rl_softc		*sc = &csc->sc_rl;
@@ -284,11 +284,11 @@ rl_cardbus_setup(struct rl_cardbus_softc *csc)
 		csc->sc_bar_reg, csc->sc_bar_val);
 
 	/* Enable the appropriate bits in the CARDBUS CSR. */
-	reg = pci_conf_read(pc, csc->sc_tag, 
+	reg = pci_conf_read(pc, csc->sc_tag,
 	    PCI_COMMAND_STATUS_REG);
 	reg &= ~(PCI_COMMAND_IO_ENABLE|PCI_COMMAND_MEM_ENABLE);
 	reg |= csc->sc_csr;
-	pci_conf_write(pc, csc->sc_tag, 
+	pci_conf_write(pc, csc->sc_tag,
 	    PCI_COMMAND_STATUS_REG, reg);
 
 	/*

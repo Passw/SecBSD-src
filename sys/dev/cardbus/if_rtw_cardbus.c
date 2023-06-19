@@ -70,8 +70,8 @@
 #include "bpfilter.h"
 
 #include <sys/param.h>
-#include <sys/systm.h> 
-#include <sys/mbuf.h>   
+#include <sys/systm.h>
+#include <sys/mbuf.h>
 #include <sys/malloc.h>
 #include <sys/kernel.h>
 #include <sys/socket.h>
@@ -89,9 +89,9 @@
 #include <net80211/ieee80211_radiotap.h>
 #include <net80211/ieee80211_var.h>
 
-#if NBPFILTER > 0 
+#if NBPFILTER > 0
 #include <net/bpf.h>
-#endif 
+#endif
 
 #include <machine/bus.h>
 
@@ -257,7 +257,7 @@ rtw_cardbus_attach(struct device *parent, struct device *self, void *aux)
 	csc->sc_intrline = ca->ca_intrline;
 
 	printf(": irq %d\n", csc->sc_intrline);
-	    
+
 	/*
 	 * Finish off the attach.
 	 */

@@ -237,7 +237,7 @@ xl_cardbus_attach(struct device *parent, struct device *self, void *aux)
 	(ct->ct_cf->cardbus_ctrl)(cc, CARDBUS_BM_ENABLE);
 	pci_conf_write(ca->ca_pc, ca->ca_tag, PCI_COMMAND_STATUS_REG,
 	    command);
-  
+
  	/*
 	 * set latency timer
 	 */

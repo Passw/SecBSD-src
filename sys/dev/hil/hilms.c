@@ -327,7 +327,7 @@ hilms_callback(struct hildev_softc *dev, u_int buflen, u_int8_t *buf)
 		}
 		/* buf++; */
 	}
-	
+
 	if (sc->sc_wsmousedev == NULL)
 		return;
 

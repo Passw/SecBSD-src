@@ -268,4 +268,4 @@ fintek_fullspeed(struct fintek_softc *sc)
 	data = 0xff;		/* Maximum voltage */
 	fintek_write_reg(sc, FINTEK_PWM_DUTY1, &data, sizeof data);
 	fintek_write_reg(sc, FINTEK_PWM_DUTY2, &data, sizeof data);
-}	
+}

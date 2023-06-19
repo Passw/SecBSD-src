@@ -183,7 +183,7 @@ amltemp_calc_temp(struct amltemp_softc *sc, int32_t code)
 	const uint32_t m = 424;
 	const uint32_t n = 324;
 	int64_t tmp1, tmp2;
-	
+
 	tmp1 = (code * m) / 100;
 	tmp2 = (code * n) / 100;
 	tmp1 = (tmp1 * (1 << 16)) / ((1 << 16) + tmp2);

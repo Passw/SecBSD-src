@@ -78,7 +78,7 @@ spdmem_iic_match(struct device *parent, void *match, void *aux)
 	struct i2c_attach_args *ia = aux;
 	struct spdmem_iic_softc sc;
 
-	/* clever attachments like openfirmware informed macppc */	
+	/* clever attachments like openfirmware informed macppc */
 	if (strcmp(ia->ia_name, "spd") == 0)
 		return (1);
 

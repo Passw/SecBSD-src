@@ -37,7 +37,7 @@
 
 struct radio_hw_if {
 	/* open hardware */
-	int	(*open)(void *, int, int, struct proc *);	
+	int	(*open)(void *, int, int, struct proc *);
 
 	/* close hardware */
 	int	(*close)(void *, int, int, struct proc *);

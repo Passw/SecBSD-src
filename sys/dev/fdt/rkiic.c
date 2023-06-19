@@ -191,7 +191,7 @@ void
 rkiic_release_bus(void *cookie, int flags)
 {
 	struct rkiic_softc *sc = cookie;
-	
+
 	HCLR4(sc, RKI2C_CON, RKI2C_CON_I2C_EN);
 }
 
@@ -241,7 +241,7 @@ rkiic_write(struct rkiic_softc *sc, i2c_addr_t addr, const void *cmd,
 	int len = 0;
 	int timo, i;
 
-	/* 
+	/*
 	 * Lump slave address, command and data into one single buffer
 	 * and transfer it in a single operation.
 	 */

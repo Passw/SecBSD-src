@@ -453,7 +453,7 @@ rktemp_rk3568_init(struct rktemp_softc *sc)
 	rm = regmap_byphandle(grf);
 	if (rm == 0)
 		return;
-	
+
 	regmap_write_4(rm, RK3568_GRF_TSADC_CON,
 	    RK3568_GRF_TSADC_EN << 16 | RK3568_GRF_TSADC_EN);
 	delay(15);

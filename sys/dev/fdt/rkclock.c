@@ -1,4 +1,4 @@
-/*	$OpenBSD: rkclock.c,v 1.76 2023/04/27 08:55:59 kettenis Exp $	*/
+/*	$OpenBSD: rkclock.c,v 1.77 2023/06/19 09:54:15 kettenis Exp $	*/
 /*
  * Copyright (c) 2017, 2018 Mark Kettenis <kettenis@openbsd.org>
  *
@@ -500,7 +500,7 @@ rkclock_div_con(struct rkclock_softc *sc, const struct rkclock *clk,
 
 	/* Derive maximum value from mask. */
 	max_div_con = clk->div_mask >> (ffs(clk->div_mask) - 1);
-	
+
 	parent_freq = sc->sc_cd.cd_get_frequency(sc, &idx);
 	div = (parent_freq + freq - 1) / freq;
 	div_con = (div > 0 ? div - 1 : 0);
@@ -706,7 +706,7 @@ rk3288_init(struct rkclock_softc *sc)
 	node = OF_finddevice("/");
 	if (OF_is_compatible(node, "rockchip,rk3288-tinker")) {
 		uint32_t idx;
-		
+
 		/* Run at 1.2 GHz. */
 		idx = RK3288_ARMCLK;
 		rk3288_set_frequency(sc, &idx, 1200000000);
@@ -1106,7 +1106,7 @@ const struct rkclock rk3308_clocks[] = {
 		RK3308_PCLK_MAC, 0, 0, 0,
 		{ RK3308_PCLK_PERI }
 	},
-	
+
 	{
 		/* Sentinel */
 	}
@@ -2221,8 +2221,8 @@ rk3328_reset(void *cookie, uint32_t *cells, int on)
 	    mask << 16 | (on ? mask : 0));
 }
 
-/* 
- * Rockchip RK3399 
+/*
+ * Rockchip RK3399
  */
 
 const struct rkclock rk3399_clocks[] = {
@@ -2692,7 +2692,7 @@ rk3399_get_armclk(struct rkclock_softc *sc, bus_size_t clksel)
 	div_con = (reg & RK3399_CRU_CLK_CORE_DIV_CON_MASK) >>
 	    RK3399_CRU_CLK_CORE_DIV_CON_SHIFT;
 	idx = rk3399_armclk_parent(mux);
-	
+
 	return rk3399_get_frequency(sc, &idx) / (div_con + 1);
 }
 
@@ -2817,7 +2817,7 @@ rk3399_set_frac(struct rkclock_softc *sc, uint32_t parent, bus_size_t base,
 		if (q2 > 0xffff)
 			break;
 
-		p0 = p1; p1 = p2; 
+		p0 = p1; p1 = p2;
 		q0 = q1; q1 = q2;
 	}
 
@@ -3008,7 +3008,7 @@ const struct rkclock rk3399_pmu_clocks[] = {
 		/* Sentinel */
 	}
 };
-	
+
 void
 rk3399_pmu_init(struct rkclock_softc *sc)
 {
@@ -3077,8 +3077,8 @@ rk3399_pmu_reset(void *cookie, uint32_t *cells, int on)
 	printf("%s: 0x%08x\n", __func__, idx);
 }
 
-/* 
- * Rockchip RK3568 
+/*
+ * Rockchip RK3568
  */
 
 const struct rkclock rk3568_clocks[] = {
@@ -3829,8 +3829,8 @@ rk3568_pmu_reset(void *cookie, uint32_t *cells, int on)
 	printf("%s: 0x%08x\n", __func__, idx);
 }
 
-/* 
- * Rockchip RK3588 
+/*
+ * Rockchip RK3588
  */
 
 const struct rkclock rk3588_clocks[] = {
@@ -4217,7 +4217,7 @@ rk3588_set_pll(struct rkclock_softc *sc, bus_size_t base, uint32_t freq)
 	/* Power down PLL. */
 	HWRITE4(sc, base + 0x0004,
 	    RK3588_CRU_PLL_RESETB << 16 | RK3588_CRU_PLL_RESETB);
-	
+
 	/* Set PLL rate. */
 	HWRITE4(sc, base + 0x0000,
 	    RK3588_CRU_PLL_M_MASK << 16 | m << RK3588_CRU_PLL_M_SHIFT);
@@ -4340,6 +4340,10 @@ rk3588_reset(void *cookie, uint32_t *cells, int on)
 	case RK3588_SRST_PCIE4_POWER_UP:
 		reg = RK3588_CRU_SOFTRST_CON(33);
 		bit = 1;
+		break;
+	case RK3588_SRST_P_PCIE4:
+		reg = RK3588_CRU_SOFTRST_CON(34);
+		bit = 0;
 		break;
 	case RK3588_SRST_REF_PIPE_PHY0:
 		reg = RK3588_CRU_SOFTRST_CON(77);

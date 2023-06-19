@@ -1,4 +1,4 @@
-/*	$OpenBSD: rkpinctrl.c,v 1.11 2023/03/04 22:51:12 kettenis Exp $	*/
+/*	$OpenBSD: rkpinctrl.c,v 1.12 2023/06/19 13:37:22 kettenis Exp $	*/
 /*
  * Copyright (c) 2017, 2018 Mark Kettenis <kettenis@openbsd.org>
  *
@@ -407,7 +407,7 @@ rk3308_pinctrl(uint32_t phandle, void *cookie)
 		mux = pins[i + 2];
 		pull = rk3308_pull(bank, idx, pins[i + 3]);
 		strength = rk3308_strength(bank, idx, pins[i + 3]);
- 
+
 		if (bank > 4 || idx > 32 || mux > 7)
 			continue;
 
@@ -626,8 +626,8 @@ fail:
 	return -1;
 }
 
-/* 
- * Rockchip RK3399 
+/*
+ * Rockchip RK3399
  */
 
 int
@@ -801,7 +801,7 @@ fail:
 	return -1;
 }
 
-/* 
+/*
  * Rockchip RK3568
  */
 
@@ -874,7 +874,7 @@ struct rockchip_route_table rk3568_route_table[] = {
 	{ 4, RK_PD0, 2, ROUTE_GRF, 0x0304, ROUTE_VAL(4, 1) }, /* I2C5 M1 */
 	{ 3, RK_PB1, 5, ROUTE_GRF, 0x0304, ROUTE_VAL(14, 0) }, /* PWM8 M0 */
 	{ 1, RK_PD5, 4, ROUTE_GRF, 0x0304, ROUTE_VAL(14, 1) }, /* PWM8 M1 */
-	
+
 	{ 3, RK_PB2, 5, ROUTE_GRF, 0x0308, ROUTE_VAL(0, 0) }, /* PWM9 M0 */
 	{ 1, RK_PD6, 4, ROUTE_GRF, 0x0308, ROUTE_VAL(0, 1) }, /* PWM9 M1 */
 	{ 3, RK_PB5, 5, ROUTE_GRF, 0x0308, ROUTE_VAL(2, 0) }, /* PWM10 M0 */
@@ -1058,7 +1058,7 @@ fail:
 }
 
 
-/* 
+/*
  * Rockchip RK3588
  */
 
@@ -1114,7 +1114,7 @@ rk3588_schmitt(uint32_t bank, uint32_t idx, uint32_t phandle)
 #define RK3588_PMU2_IOC		0x4000
 #define RK3588_BUS_IOC		0x8000
 #define RK3588_VCCIO1_4_IOC	0x9000
-#define RK3588_VCCIO3_5_IOC	0xa000	
+#define RK3588_VCCIO3_5_IOC	0xa000
 #define RK3588_VCCIO2_IOC	0xb000
 #define RK3588_VCCIO6_IOC	0xc000
 #define RK3588_EMMC_IOC		0xd000
@@ -1174,9 +1174,9 @@ rk3588_pinctrl(uint32_t phandle, void *cookie)
 		bank = pins[i];
 		idx = pins[i + 1];
 		mux = pins[i + 2];
-		pull = rk3568_pull(bank, idx, pins[i + 3]);
-		strength = rk3568_strength(bank, idx, pins[i + 3]);
-		schmitt = rk3568_schmitt(bank, idx, pins[i + 3]);
+		pull = rk3588_pull(bank, idx, pins[i + 3]);
+		strength = rk3588_strength(bank, idx, pins[i + 3]);
+		schmitt = rk3588_schmitt(bank, idx, pins[i + 3]);
 
 		if (bank > 5 || idx > 32 || mux > 15)
 			continue;
@@ -1237,7 +1237,7 @@ rk3588_pinctrl(uint32_t phandle, void *cookie)
 		if (strength >= 0) {
 			off = bank * 0x20 + (idx / 4) * 0x04;
 			mask = (0xf << ((idx % 4) * 4));
-			bits = ((1 << (strength + 1)) - 1) << ((idx % 4) * 4);
+			bits = (strength << ((idx % 4) * 4));
 			regmap_write_4(rm, ds_base + off, mask << 16 | bits);
 		}
 
@@ -1245,7 +1245,7 @@ rk3588_pinctrl(uint32_t phandle, void *cookie)
 		if (schmitt >= 0) {
 			off = bank * 0x10 + (idx / 8) * 0x04;
 			mask = (0x1 << (idx % 8));
-			bits = schmitt << (idx % 8);
+			bits = (schmitt << (idx % 8));
 			regmap_write_4(rm, smt_base + off, mask << 16 | bits);
 		}
 

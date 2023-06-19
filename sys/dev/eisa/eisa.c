@@ -82,7 +82,7 @@ int
 eisaprint(void *aux, const char *pnp)
 {
 	register struct eisa_attach_args *ea = aux;
-	char devinfo[256]; 
+	char devinfo[256];
 
 	if (pnp) {
 		eisa_devinfo(ea->ea_idstring, devinfo, sizeof devinfo);

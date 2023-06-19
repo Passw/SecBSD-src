@@ -278,7 +278,7 @@ const struct axppmic_sensdata axp803_sensdata[] = {
 	{ "", SENSOR_TEMP, 0x56, 5450000, 106250 },
 	{ NULL }
 };
-	
+
 const struct axppmic_sensdata axp803_battery_sensdata[] = {
 	{ "ACIN", SENSOR_INDICATOR, 0x00, (1 << 7), (1 << 6) },
 	{ "VBUS", SENSOR_INDICATOR, 0x00, (1 << 5), (1 << 4) },

@@ -294,7 +294,7 @@ wdattach(struct device *parent, struct device *self, void *aux)
 		wdc_c.r_features = WDSF_EN_WR_CACHE;
 		wdc_c.timeout = 1000;
 		wdc_c.flags = at_poll;
-	
+
 		if (wdc_exec_command(wd->drvp, &wdc_c) != WDC_COMPLETE) {
 			printf("%s: enable write cache command didn't "
 			    "complete\n", wd->sc_dev.dv_xname);
