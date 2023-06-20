@@ -40,7 +40,7 @@
 #define	MARK_END	4
 #define	MARK_RANDOM	5
 #define	MARK_ERANDOM	6
-#define	MARK_VENTRY	7 
+#define	MARK_VENTRY	7
 #define	MARK_MAX	8
 
 /*

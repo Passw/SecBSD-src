@@ -176,7 +176,7 @@ reswitch:	switch (ch) {
 				}
 				kprintn64(put, ull, 10, width, padchar);
 				break;
-			} 
+			}
 #endif
 			ul = lflag ?
 			    va_arg(ap, long) : va_arg(ap, int);
@@ -192,7 +192,7 @@ reswitch:	switch (ch) {
 				ull = va_arg(ap, u_int64_t);
 				kprintn64(put, ull, 8, width, padchar);
 				break;
-			} 
+			}
 #endif
 			ul = lflag ?
 			    va_arg(ap, u_long) : va_arg(ap, u_int);
@@ -204,7 +204,7 @@ reswitch:	switch (ch) {
 				ull = va_arg(ap, u_int64_t);
 				kprintn64(put, ull, 10, width, padchar);
 				break;
-			} 
+			}
 #endif
 			ul = lflag ?
 			    va_arg(ap, u_long) : va_arg(ap, u_int);

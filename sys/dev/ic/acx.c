@@ -989,7 +989,7 @@ encapped:
 			} else
 				rate = ni->ni_rates.rs_rates[ni->ni_txrate];
 			rate &= IEEE80211_RATE_VAL;
-		} 
+		}
 
 #if NBPFILTER > 0
 		if (ic->ic_rawbpf != NULL)
@@ -2375,7 +2375,7 @@ acx_set_probe_resp_tmplt(struct acx_softc *sc, struct ieee80211_node *ni)
 
 	m_copydata(m, 0, m->m_pkthdr.len, &resp.data);
 	len = m->m_pkthdr.len + sizeof(resp.size);
-	m_freem(m); 
+	m_freem(m);
 
 	return (acx_set_tmplt(sc, ACXCMD_TMPLT_PROBE_RESP, &resp, len));
 }

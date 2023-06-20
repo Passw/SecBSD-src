@@ -127,10 +127,10 @@ struct aac_softc;
 #define AAC_SYNC_DELAY 20000
 
 /*
- * The firmware interface allows for a 16-bit s/g list length.  We limit 
+ * The firmware interface allows for a 16-bit s/g list length.  We limit
  * ourselves to a reasonable maximum and ensure alignment.
  */
-#define AAC_MAXSGENTRIES	64	/* max S/G entries, limit 65535 */		
+#define AAC_MAXSGENTRIES	64	/* max S/G entries, limit 65535 */
 
 /*
  * We gather a number of adapter-visible items into a single structure.
@@ -157,7 +157,7 @@ struct aac_common {
 
 	/* buffer for text messages from the controller */
 	char	ac_printf[AAC_PRINTF_BUFSIZE];
-    
+
 	/* fib for synchronous commands */
 	struct aac_fib ac_sync_fib;
 };
@@ -348,7 +348,7 @@ struct aac_softc
 
 	/* command management */
 	struct mutex		 aac_free_mtx;
-	TAILQ_HEAD(,aac_command) aac_free;	/* command structures 
+	TAILQ_HEAD(,aac_command) aac_free;	/* command structures
 						 * available for reuse */
 	TAILQ_HEAD(,aac_command) aac_ready;	/* commands on hold for
 						 * controller resources */

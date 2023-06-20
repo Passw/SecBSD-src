@@ -825,7 +825,7 @@ ahc_handle_seqint(struct ahc_softc *ahc, u_int intstat)
 					if (scb != NULL)
 						ahc_set_transaction_status(scb,
 						    CAM_UNCOR_PARITY);
-					ahc_reset_channel(ahc, devinfo.channel, 
+					ahc_reset_channel(ahc, devinfo.channel,
 							  /*init reset*/TRUE);
 				}
 			} else {

@@ -3,7 +3,7 @@
  * Written by Christian Weisgerber <naddy@openbsd.org>.
  * Public domain.
  */
- 
+
 #include <machine/asm.h>
 
 ENTRY(ffs)

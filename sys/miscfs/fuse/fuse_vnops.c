@@ -224,7 +224,7 @@ filt_fusefsvnode(struct knote *kn, long int hint)
 
 /*
  * FUSE file systems can maintain a file handle for each VFS file descriptor
- * that is opened. The OpenBSD VFS does not make file descriptors visible to 
+ * that is opened. The OpenBSD VFS does not make file descriptors visible to
  * us so we fake it by mapping open flags to file handles.
  * There is no way for FUSE to know which file descriptor is being used
  * by an application for a file operation. We only maintain 3 descriptors,
@@ -360,7 +360,7 @@ fusefs_access(void *v)
 	ip = VTOI(ap->a_vp);
 	fmp = (struct fusefs_mnt *)ip->ufs_ino.i_ump;
 
-	/* 
+	/*
 	 * Only user that mounted the file system can access it unless
 	 * allow_other mount option was specified.
 	 */
@@ -411,7 +411,7 @@ fusefs_getattr(void *v)
 	ip = VTOI(vp);
 	fmp = (struct fusefs_mnt *)ip->ufs_ino.i_ump;
 
-	/* 
+	/*
 	 * Only user that mounted the file system can access it unless
 	 * allow_other mount option was specified. Return dummy values
 	 * for the root inode in this situation.
@@ -853,7 +853,7 @@ fusefs_inactive(void *v)
 
 			/*
 			 * FUSE file systems expect the same flags to be sent
-			 * on release that were sent on open. We don't have a 
+			 * on release that were sent on open. We don't have a
 			 * record of them so make a best guess.
 			 */
 			switch (type) {

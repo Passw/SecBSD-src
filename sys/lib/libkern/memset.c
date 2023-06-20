@@ -80,7 +80,7 @@ memset(void *dst0, int c0, size_t length)
 	 *
 	 * but we use a minimum of 3 here since the overhead of the code
 	 * to do word writes is substantial.
-	 */ 
+	 */
 	if (length < 3 * wsize) {
 		while (length != 0) {
 			*dst++ = VAL;

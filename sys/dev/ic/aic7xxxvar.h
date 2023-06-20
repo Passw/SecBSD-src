@@ -823,7 +823,7 @@ struct seeprom_config {
 #define		CFBIOS_BUSSCAN	0x0008	/* Have the BIOS Scan the Bus */
 #define		CFSM2DRV	0x0010	/* support more than two drives */
 #define		CFSTPWLEVEL	0x0010	/* Termination level control */
-#define		CF284XEXTEND	0x0020	/* extended translation (284x cards) */	
+#define		CF284XEXTEND	0x0020	/* extended translation (284x cards) */
 #define		CFCTRL_A	0x0020	/* BIOS displays Ctrl-A message */
 #define		CFTERM_MENU	0x0040	/* BIOS displays termination menu */
 #define		CFEXTEND	0x0080	/* extended translation enabled */

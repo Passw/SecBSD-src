@@ -356,7 +356,7 @@ if_idxmap_alloc(struct ifnet *ifp)
 		if_map = mallocarray(limit, sizeof(*if_map), M_IFADDR,
 		    M_WAITOK | M_ZERO);
 		if_map[0] = (struct ifnet *)(uintptr_t)limit;
-		
+
 		for (i = 1; i < olimit; i++) {
 			struct ifnet *oifp = SMR_PTR_GET_LOCKED(&oif_map[i]);
 			if (oifp == NULL)
@@ -3506,6 +3506,6 @@ net_tq_barriers(const char *wmesg)
 		refcnt_take(&r);
 		task_add(softnets[i].sn_taskq, &barriers[i]);
 	}
- 
+
 	refcnt_finalize(&r, wmesg);
 }

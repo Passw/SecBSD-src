@@ -219,7 +219,7 @@ etherip_output(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 			return (EIO);
 		}
 	}
- 
+
 	return (ether_output(ifp, m, dst, rt));
 }
 

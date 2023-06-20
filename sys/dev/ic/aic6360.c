@@ -553,7 +553,7 @@ aic_poll(struct aic_softc *sc, struct scsi_xfer *xs, int count)
 	}
 	return 1;
 }
-
+
 /*
  * LOW LEVEL SCSI UTILITIES
  */
@@ -684,7 +684,7 @@ abort:
 	aic_sched_msgout(sc, SEND_ABORT);
 	return (1);
 }
-
+
 /*
  * Schedule a SCSI operation.  This has now been pulled out of the interrupt
  * handler so that we may call it from aic_scsi_cmd and aic_done.  This may
@@ -726,7 +726,7 @@ aic_sched(struct aic_softc *sc)
 	bus_space_write_1(iot, ioh, SIMODE1, ENSCSIRST);
 	bus_space_write_1(iot, ioh, SCSISEQ, ENRESELI);
 }
-
+
 void
 aic_sense(struct aic_softc *sc, struct aic_acb *acb)
 {
@@ -831,7 +831,7 @@ aic_dequeue(struct aic_softc *sc, struct aic_acb *acb)
 		TAILQ_REMOVE(&sc->ready_list, acb, chain);
 	}
 }
-
+
 /*
  * INTERRUPT/PROTOCOL ENGINE
  */
@@ -1305,7 +1305,7 @@ out:
 	/* Disable REQ/ACK protocol. */
 	bus_space_write_1(iot, ioh, SXFRCTL0, CHEN);
 }
-
+
 /* aic_dataout_pio: perform a data transfer using the FIFO datapath in the aic6360
  * Precondition: The SCSI bus should be in the DOUT phase, with REQ asserted
  * and ACK deasserted (i.e. waiting for a data byte).
@@ -1446,7 +1446,7 @@ phasechange:
 
 	return out;
 }
-
+
 /* aic_datain_pio: perform data transfers using the FIFO datapath in the aic6360
  * Precondition: The SCSI bus should be in the DIN phase, with REQ asserted
  * and ACK deasserted (i.e. at least one byte is ready).
@@ -1569,7 +1569,7 @@ phasechange:
 
 	return in;
 }
-
+
 /*
  * This is the workhorse routine of the driver.
  * Deficiencies (for now):
@@ -1992,7 +1992,7 @@ aic_timeout(void *arg)
 
 	splx(s);
 }
-
+
 #ifdef AIC_DEBUG
 /*
  * The following functions are mostly used for debugging purposes, either

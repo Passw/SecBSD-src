@@ -96,7 +96,7 @@ fusefs_lookup(void *v)
 				 */
 				if ((error = VOP_ACCESS(vdp, VWRITE, cred,
 				    cnp->cn_proc)) != 0)
-					return (error); 
+					return (error);
 
 				cnp->cn_flags |= SAVENAME;
 
