@@ -1,7 +1,7 @@
 /* Function declarations for libiberty.
 
    Copyright 2001, 2002, 2005 Free Software Foundation, Inc.
-   
+
    Note - certain prototypes declared in this header file are for
    functions whoes implementation copyright does not belong to the
    FSF.  Those prototypes are present in this file for reference
@@ -23,7 +23,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin Street - Fifth Floor,
    Boston, MA 02110-1301, USA.
-   
+
    Written by Cygnus Support, 1994.
 
    The libiberty library provides a number of functions which are
@@ -184,7 +184,7 @@ extern char * getpwd (void);
 #ifdef __MINGW32__
 /* Forward declaration to avoid #include <sys/time.h>.   */
 struct timeval;
-extern int gettimeofday (struct timeval *, void *); 
+extern int gettimeofday (struct timeval *, void *);
 #endif
 
 /* Get the amount of time the process has run, in microseconds.  */
@@ -349,18 +349,18 @@ extern void hex_init (void);
 
 /* Use pipes for communication between processes, if possible.  */
 #define PEX_USE_PIPES		0x2
-   
+
 /* Save files used for communication between processes.  */
 #define PEX_SAVE_TEMPS		0x4
 
 /* Prepare to execute one or more programs, with standard output of
    each program fed to standard input of the next.
    FLAGS        As above.
-   PNAME        The name of the program to report in error messages. 
+   PNAME        The name of the program to report in error messages.
    TEMPBASE     A base name to use for temporary files; may be NULL to
                 use a random name.
    Returns NULL on error.  */
-                
+
 extern struct pex_obj *pex_init (int flags, const char *pname,
 		const char *tempbase);
 
@@ -387,7 +387,7 @@ extern struct pex_obj *pex_init (int flags, const char *pname,
 
 /* Send program's standard error to standard output.  */
 #define PEX_STDERR_TO_STDOUT	0x8
-   
+
 /* Input file should be opened in binary mode.  This flag is ignored
    on Unix.  */
 #define PEX_BINARY_INPUT 0x10

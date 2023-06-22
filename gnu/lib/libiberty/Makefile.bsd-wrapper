@@ -23,7 +23,7 @@ SRCS=		argv.c choose-temp.c concat.c cplus-dem.c cp-demangle.c \
 		$(HOST_FILES)
 
 # XXX -- These files are generated during the PREREQ variable assignment.
-CLEANFILES+=	config.h config.status needed-list 
+CLEANFILES+=	config.h config.status needed-list
 
 # and more
 CLEANFILES+=	Makefile config.cache config.log stamp-h xhost-mkfrag \
@@ -35,7 +35,7 @@ BUILDFIRST = needed-list
 needed-list: config.status
 	${MAKE} ${XCFLAGS} needed-list
 
-config.status: Makefile.in configure 
+config.status: Makefile.in configure
 	PATH="/bin:/usr/bin:/sbin:/usr/sbin" \
 	INSTALL_PROGRAM="${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP}" \
 	MAKEINFO='makeinfo --no-split' \

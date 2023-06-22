@@ -115,7 +115,7 @@ choose_tmpdir (void)
   base = try_dir (vartmp, base);
   base = try_dir (usrtmp, base);
   base = try_dir (tmp, base);
- 
+
   /* If all else fails, use the current directory!  */
   if (base == 0)
     base = ".";

@@ -25,7 +25,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA. 
+   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /* This code implements a demangler for the g++ V3 ABI.  The ABI is
@@ -3063,7 +3063,7 @@ d_print_comp (struct d_print_info *dpi,
 	      d_append_char (dpi, ' ');
 	  }
 
-	if ((dpi->options & DMGL_RET_POSTFIX) == 0) 
+	if ((dpi->options & DMGL_RET_POSTFIX) == 0)
 	  d_print_function_type (dpi, dc, dpi->modifiers);
 
 	return;
@@ -4004,11 +4004,11 @@ cplus_demangle_v3 (const char* mangled, int options)
   return d_demangle (mangled, options, &alc);
 }
 
-/* Demangle a Java symbol.  Java uses a subset of the V3 ABI C++ mangling 
+/* Demangle a Java symbol.  Java uses a subset of the V3 ABI C++ mangling
    conventions, but the output formatting is a little different.
-   This instructs the C++ demangler not to emit pointer characters ("*"), and 
-   to use Java's namespace separator symbol ("." instead of "::").  It then 
-   does an additional pass over the demangled output to replace instances 
+   This instructs the C++ demangler not to emit pointer characters ("*"), and
+   to use Java's namespace separator symbol ("." instead of "::").  It then
+   does an additional pass over the demangled output to replace instances
    of JArray<TYPE> with TYPE[].  */
 
 char *
@@ -4020,7 +4020,7 @@ java_demangle_v3 (const char* mangled)
   char *from;
   char *to;
 
-  demangled = d_demangle (mangled, DMGL_JAVA | DMGL_PARAMS | DMGL_RET_POSTFIX, 
+  demangled = d_demangle (mangled, DMGL_JAVA | DMGL_PARAMS | DMGL_RET_POSTFIX,
 			  &alc);
 
   if (demangled == NULL)
@@ -4210,7 +4210,7 @@ print_usage (FILE* fp, int exit_value)
 }
 
 /* Option specification for getopt_long.  */
-static const struct option long_options[] = 
+static const struct option long_options[] =
 {
   { "help",	 no_argument, NULL, 'h' },
   { "no-params", no_argument, NULL, 'p' },
@@ -4234,7 +4234,7 @@ main (int argc, char *argv[])
   program_name = argv[0];
 
   /* Parse options.  */
-  do 
+  do
     {
       opt_char = getopt_long (argc, argv, "hpv", long_options, NULL);
       switch (opt_char)
@@ -4258,7 +4258,7 @@ main (int argc, char *argv[])
     }
   while (opt_char != -1);
 
-  if (optind == argc) 
+  if (optind == argc)
     /* No command line arguments were provided.  Filter stdin.  */
     {
       dyn_string_t mangled = dyn_string_new (3);

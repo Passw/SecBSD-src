@@ -1,9 +1,9 @@
-/* A splay-tree datatype.  
+/* A splay-tree datatype.
    Copyright 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
    Contributed by Mark Mitchell (mark@markmitchell.com).
 
 This file is part of GCC.
-   
+
 GCC is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)
@@ -22,7 +22,7 @@ Boston, MA 02110-1301, USA.  */
 /* For an easily readable description of splay-trees, see:
 
      Lewis, Harry R. and Denenberg, Larry.  Data Structures and Their
-     Algorithms.  Harper-Collins, Inc.  1991.  
+     Algorithms.  Harper-Collins, Inc.  1991.
 
    The major feature of splay trees is that all basic tree operations
    are amortized O(log n) time for a tree with n nodes.  */
@@ -136,7 +136,7 @@ extern splay_tree_node splay_tree_min (splay_tree);
 extern int splay_tree_foreach (splay_tree, splay_tree_foreach_fn, void*);
 extern int splay_tree_compare_ints (splay_tree_key, splay_tree_key);
 extern int splay_tree_compare_pointers (splay_tree_key,	splay_tree_key);
-					       
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

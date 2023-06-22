@@ -248,7 +248,7 @@ const struct floatformat floatformat_ia64_quad_little =
   "floatformat_ia64_quad_little",
   floatformat_always_valid
 };
-
+
 /* Extract a field which starts at START and is LEN bits long.  DATA and
    TOTAL_LEN are the thing we are extracting it from, in byteorder ORDER.  */
 static unsigned long
@@ -291,7 +291,7 @@ get_field (const unsigned char *data, enum floatformat_byteorders order,
     }
   return result;
 }
-  
+
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
@@ -413,7 +413,7 @@ floatformat_to_double (const struct floatformat *fmt,
     dto = -dto;
   *to = dto;
 }
-
+
 static void put_field (unsigned char *, enum floatformat_byteorders,
                        unsigned int,
                        unsigned int,

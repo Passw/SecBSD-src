@@ -435,7 +435,7 @@ strsignal (int signo)
       /* In range, and a valid message.  Just return the message. */
       msg = (const char *) sys_siglist[signo];
     }
-  
+
   return (msg);
 }
 

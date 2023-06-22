@@ -1,4 +1,4 @@
-/* An expandable hash tables datatype.  
+/* An expandable hash tables datatype.
    Copyright (C) 1999, 2000, 2002, 2003, 2004 Free Software Foundation, Inc.
    Contributed by Vladimir Makarov (vmakarov@cygnus.com).
 
@@ -60,7 +60,7 @@ typedef int (*htab_eq) PARAMS ((const void *, const void *));
 /* Cleanup function called whenever a live element is removed from
    the hash table.  */
 typedef void (*htab_del) PARAMS ((void *));
-  
+
 /* Function called by htab_traverse for each live element.  The first
    arg is the slot of the element (which can be passed to htab_clear_slot
    if desired), the second arg is the auxiliary pointer handed to
