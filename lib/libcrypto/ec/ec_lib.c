@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_lib.c,v 1.58 2023/06/20 14:37:15 tb Exp $ */
+/* $OpenBSD: ec_lib.c,v 1.61 2023/06/25 18:52:27 tb Exp $ */
 /*
  * Originally written by Bodo Moeller for the OpenSSL project.
  */
@@ -93,8 +93,6 @@ EC_GROUP_new(const EC_METHOD *meth)
 	}
 	ret->meth = meth;
 
-	ret->extra_data = NULL;
-
 	ret->generator = NULL;
 	BN_init(&ret->order);
 	BN_init(&ret->cofactor);
@@ -123,8 +121,6 @@ EC_GROUP_free(EC_GROUP *group)
 	if (group->meth->group_finish != NULL)
 		group->meth->group_finish(group);
 
-	EC_EX_DATA_clear_free_all_data(&group->extra_data);
-
 	EC_POINT_free(group->generator);
 	BN_free(&group->order);
 	BN_free(&group->cofactor);
@@ -142,8 +138,6 @@ EC_GROUP_clear_free(EC_GROUP *group)
 int
 EC_GROUP_copy(EC_GROUP *dest, const EC_GROUP *src)
 {
-	EC_EXTRA_DATA *d;
-
 	if (dest->meth->group_copy == NULL) {
 		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
 		return 0;
@@ -154,18 +148,6 @@ EC_GROUP_copy(EC_GROUP *dest, const EC_GROUP *src)
 	}
 	if (dest == src)
 		return 1;
-
-	EC_EX_DATA_free_all_data(&dest->extra_data);
-
-	for (d = src->extra_data; d != NULL; d = d->next) {
-		void *t = d->dup_func(d->data);
-
-		if (t == NULL)
-			return 0;
-		if (!EC_EX_DATA_set_data(&dest->extra_data, t, d->dup_func,
-		    d->free_func, d->clear_free_func))
-			return 0;
-	}
 
 	if (src->generator != NULL) {
 		if (dest->generator == NULL) {
@@ -667,158 +649,6 @@ ec_point_blind_coordinates(const EC_GROUP *group, EC_POINT *p, BN_CTX *ctx)
 		return 1;
 
 	return group->meth->blind_coordinates(group, p, ctx);
-}
-
-/* this has 'package' visibility */
-int
-EC_EX_DATA_set_data(EC_EXTRA_DATA ** ex_data, void *data,
-    void *(*dup_func) (void *),
-    void (*free_func) (void *),
-    void (*clear_free_func) (void *))
-{
-	EC_EXTRA_DATA *d;
-
-	if (ex_data == NULL)
-		return 0;
-
-	for (d = *ex_data; d != NULL; d = d->next) {
-		if (d->dup_func == dup_func && d->free_func == free_func &&
-		    d->clear_free_func == clear_free_func) {
-			ECerror(EC_R_SLOT_FULL);
-			return 0;
-		}
-	}
-
-	if (data == NULL)
-		/* no explicit entry needed */
-		return 1;
-
-	d = malloc(sizeof *d);
-	if (d == NULL)
-		return 0;
-
-	d->data = data;
-	d->dup_func = dup_func;
-	d->free_func = free_func;
-	d->clear_free_func = clear_free_func;
-
-	d->next = *ex_data;
-	*ex_data = d;
-
-	return 1;
-}
-
-/* this has 'package' visibility */
-void *
-EC_EX_DATA_get_data(const EC_EXTRA_DATA *ex_data,
-    void *(*dup_func) (void *),
-    void (*free_func) (void *),
-    void (*clear_free_func) (void *))
-{
-	const EC_EXTRA_DATA *d;
-
-	for (d = ex_data; d != NULL; d = d->next) {
-		if (d->dup_func == dup_func && d->free_func == free_func && d->clear_free_func == clear_free_func)
-			return d->data;
-	}
-
-	return NULL;
-}
-
-/* this has 'package' visibility */
-void
-EC_EX_DATA_free_data(EC_EXTRA_DATA ** ex_data,
-    void *(*dup_func) (void *),
-    void (*free_func) (void *),
-    void (*clear_free_func) (void *))
-{
-	EC_EXTRA_DATA **p;
-
-	if (ex_data == NULL)
-		return;
-
-	for (p = ex_data; *p != NULL; p = &((*p)->next)) {
-		if ((*p)->dup_func == dup_func &&
-		    (*p)->free_func == free_func &&
-		    (*p)->clear_free_func == clear_free_func) {
-			EC_EXTRA_DATA *next = (*p)->next;
-
-			(*p)->free_func((*p)->data);
-			free(*p);
-
-			*p = next;
-			return;
-		}
-	}
-}
-
-/* this has 'package' visibility */
-void
-EC_EX_DATA_clear_free_data(EC_EXTRA_DATA ** ex_data,
-    void *(*dup_func) (void *),
-    void (*free_func) (void *),
-    void (*clear_free_func) (void *))
-{
-	EC_EXTRA_DATA **p;
-
-	if (ex_data == NULL)
-		return;
-
-	for (p = ex_data; *p != NULL; p = &((*p)->next)) {
-		if ((*p)->dup_func == dup_func &&
-		    (*p)->free_func == free_func &&
-		    (*p)->clear_free_func == clear_free_func) {
-			EC_EXTRA_DATA *next = (*p)->next;
-
-			(*p)->clear_free_func((*p)->data);
-			free(*p);
-
-			*p = next;
-			return;
-		}
-	}
-}
-
-/* this has 'package' visibility */
-void
-EC_EX_DATA_free_all_data(EC_EXTRA_DATA ** ex_data)
-{
-	EC_EXTRA_DATA *d;
-
-	if (ex_data == NULL)
-		return;
-
-	d = *ex_data;
-	while (d) {
-		EC_EXTRA_DATA *next = d->next;
-
-		d->free_func(d->data);
-		free(d);
-
-		d = next;
-	}
-	*ex_data = NULL;
-}
-
-/* this has 'package' visibility */
-void
-EC_EX_DATA_clear_free_all_data(EC_EXTRA_DATA ** ex_data)
-{
-	EC_EXTRA_DATA *d;
-
-	if (ex_data == NULL)
-		return;
-
-	d = *ex_data;
-	while (d) {
-		EC_EXTRA_DATA *next = d->next;
-
-		d->clear_free_func(d->data);
-		free(d);
-
-		d = next;
-	}
-	*ex_data = NULL;
 }
 
 EC_POINT *
@@ -1408,33 +1238,13 @@ EC_POINT_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
 int
 EC_GROUP_precompute_mult(EC_GROUP *group, BN_CTX *ctx_in)
 {
-	BN_CTX *ctx;
-	int ret = 0;
-
-	if (group->meth->precompute_mult == NULL)
-		return 1;
-
-	if ((ctx = ctx_in) == NULL)
-		ctx = BN_CTX_new();
-	if (ctx == NULL)
-		goto err;
-
-	ret = group->meth->precompute_mult(group, ctx);
-
- err:
-	if (ctx != ctx_in)
-		BN_CTX_free(ctx);
-
-	return ret;
+	return 1;
 }
 
 int
 EC_GROUP_have_precompute_mult(const EC_GROUP *group)
 {
-	if (group->meth->have_precompute_mult == NULL)
-		return 0;
-
-	return group->meth->have_precompute_mult(group);
+	return 0;
 }
 
 int
