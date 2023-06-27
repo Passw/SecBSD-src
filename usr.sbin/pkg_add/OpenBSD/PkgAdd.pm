@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # ex:ts=8 sw=4:
-# $OpenBSD: PkgAdd.pm,v 1.141 2023/06/13 09:07:17 espie Exp $
+# $OpenBSD: PkgAdd.pm,v 1.142 2023/06/27 11:11:46 espie Exp $
 #
 # Copyright (c) 2003-2014 Marc Espie <espie@openbsd.org>
 #
@@ -906,12 +906,7 @@ sub newer_is_bad_arch($set, $state)
 
 sub may_tie_files($set, $state)
 {
-<<<<<<< PkgAdd.pm
-	my ($set, $state) = @_;
 	if ($set->newer > 0 && $set->older_to_do > 0 &&
-=======
-	if ($set->newer > 0 && $set->older_to_do > 0 && 
->>>>>>> 1.141
 	    !$state->defines('donttie')) {
 		my $sha = {};
 
@@ -1186,7 +1181,6 @@ sub process_parameters($self, $state)
 
 		if (@ARGV == 0) {
 			@ARGV = sort(installed_packages());
-			$state->{allupdates} = 1;
 		}
 		my $inst = $state->repo->installed;
 		for my $pkgname (@ARGV) {
