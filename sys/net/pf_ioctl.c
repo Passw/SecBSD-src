@@ -1,4 +1,4 @@
-/*	$OpenBSD: pf_ioctl.c,v 1.406 2023/06/26 07:49:48 claudio Exp $ */
+/*	$OpenBSD: pf_ioctl.c,v 1.408 2023/06/27 17:36:56 kn Exp $ */
 
 /*
  * Copyright (c) 2001 Daniel Hartmeier
@@ -2944,11 +2944,11 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 			goto fail;
 		}
 
-		NET_LOCK();
+		NET_LOCK_SHARED();
 		PF_LOCK();
 		pfi_get_ifaces(io->pfiio_name, kif_buf, &io->pfiio_size);
 		PF_UNLOCK();
-		NET_UNLOCK();
+		NET_UNLOCK_SHARED();
 		if (copyout(kif_buf, io->pfiio_buffer, sizeof(*kif_buf) *
 		    io->pfiio_size))
 			error = EFAULT;
@@ -2964,11 +2964,9 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 			goto fail;
 		}
 
-		NET_LOCK();
 		PF_LOCK();
 		error = pfi_set_flags(io->pfiio_name, io->pfiio_flags);
 		PF_UNLOCK();
-		NET_UNLOCK();
 		break;
 	}
 
@@ -2980,11 +2978,9 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 			goto fail;
 		}
 
-		NET_LOCK();
 		PF_LOCK();
 		error = pfi_clear_flags(io->pfiio_name, io->pfiio_flags);
 		PF_UNLOCK();
-		NET_UNLOCK();
 		break;
 	}
 

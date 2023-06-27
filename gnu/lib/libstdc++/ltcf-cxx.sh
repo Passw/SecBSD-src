@@ -532,10 +532,10 @@ case $host_os in
 	if test "$with_gcc" = yes && test "$with_gnu_ld" = no; then
 	  allow_undefined_flag=' ${wl}-expect_unresolved ${wl}\*'
 	  archive_cmds='$CC -shared -nostdlib ${allow_undefined_flag} $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-msym ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
-	  
+
 	  hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
 	  hardcode_libdir_separator=:
-	  
+
 	  # Commands to make compiler produce verbose output that lists
 	  # what "hidden" libraries, object files and flags are used when
 	  # linking a shared library.

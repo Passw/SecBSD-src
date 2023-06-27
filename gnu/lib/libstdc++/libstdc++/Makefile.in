@@ -148,20 +148,20 @@ AUTOMAKE_OPTIONS = 1.3 cygnus
 MAINT_CHARSET = latin1
 
 INCLUDE_SUBDIR=include
-SUBDIRS = ${INCLUDE_SUBDIR} libio libmath libsupc++ src po testsuite 
+SUBDIRS = ${INCLUDE_SUBDIR} libio libmath libsupc++ src po testsuite
 
 mkinstalldirs = $(SHELL) $(toplevel_srcdir)/mkinstalldirs
 
 PWD_COMMAND = $${PWDCMD-pwd}
 
 # Multilib support.
-MAKEOVERRIDES = 
+MAKEOVERRIDES =
 
 # Multilib support variables.
-MULTISRCTOP = 
-MULTIBUILDTOP = 
-MULTIDIRS = 
-MULTISUBDIR = 
+MULTISRCTOP =
+MULTIBUILDTOP =
+MULTIDIRS =
+MULTISUBDIR =
 MULTIDO = true
 MULTICLEAN = true
 
@@ -206,7 +206,7 @@ AM_MAKEFLAGS = \
 	"NM_FOR_BUILD=$(NM_FOR_BUILD)" \
 	"NM_FOR_TARGET=$(NM_FOR_TARGET)" \
 	"DESTDIR=$(DESTDIR)" \
-	"WERROR=$(WERROR)" 
+	"WERROR=$(WERROR)"
 
 
 # Subdir rules rely on $(FLAGS_TO_PASS)
@@ -225,7 +225,7 @@ TAR = gtar
 GZIP_ENV = --best
 all: all-redirect
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
@@ -412,7 +412,7 @@ check-am:
 check: check-recursive
 installcheck-am:
 installcheck: installcheck-recursive
-install-info-am: 
+install-info-am:
 install-info: install-info-recursive
 all-recursive-am: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

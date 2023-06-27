@@ -35,7 +35,7 @@
 #undef _GLIBCPP_CONCEPT_CHECKS
 
 // Define if the atan2f function exists.
-#undef _GLIBCPP_HAVE_ATAN2F 
+#undef _GLIBCPP_HAVE_ATAN2F
 
 // Define if the atan2l function exists.
 #undef _GLIBCPP_HAVE_ATAN2L

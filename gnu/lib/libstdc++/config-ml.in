@@ -755,7 +755,7 @@ if [ -n "${multidirs}" ] && [ -z "${ml_norecursion}" ]; then
     fi
 
     # find compiler flag corresponding to ${ml_dir}
-    for i in `${CC-gcc} --print-multi-lib 2>/dev/null`; do 
+    for i in `${CC-gcc} --print-multi-lib 2>/dev/null`; do
       dir=`echo $i | sed -e 's/;.*$//'`
       if [ "${dir}" = "${ml_dir}" ]; then
         flags=`echo $i | sed -e 's/^[^;]*;//' -e 's/@/ -/g'`

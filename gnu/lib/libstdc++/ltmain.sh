@@ -646,7 +646,7 @@ EOF
 	if test $status -ne 0 && test ! -d ${xdir}$objdir; then
 	  exit $status
         fi
-      fi 
+      fi
 
       if test -z "$output_obj"; then
         # Place PIC objects in $objdir

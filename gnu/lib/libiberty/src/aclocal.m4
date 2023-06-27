@@ -159,7 +159,7 @@ AC_CACHE_CHECK(stack direction for C alloca, ac_cv_c_stack_direction,
 main ()
 {
   exit (find_stack_direction() < 0);
-}], 
+}],
   ac_cv_c_stack_direction=1,
   ac_cv_c_stack_direction=-1,
   ac_cv_c_stack_direction=0)])
