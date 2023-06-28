@@ -96,7 +96,7 @@ sub has_fragment($self, $state, $def, $frag, $location)
 	my $v = $self->value($def);
 
 	if (!defined $v) {
-		$state->fatal("Unknown fragment #1 in #2", 
+		$state->fatal("Unknown fragment #1 in #2",
 		    $frag, $location);
 	} elsif ($v == 1) {
 		return 1;

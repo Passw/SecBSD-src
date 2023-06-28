@@ -185,7 +185,7 @@ if test -n "$with_cross_host" || test x"$build" != x"$host"; then
         machine/endian.h machine/param.h sys/machine.h sys/types.h \
         fp.h locale.h float.h inttypes.h])
       SECTION_FLAGS='-ffunction-sections -fdata-sections'
-      AC_SUBST(SECTION_FLAGS) 
+      AC_SUBST(SECTION_FLAGS)
       GLIBCPP_CHECK_LINKER_FEATURES
       GLIBCPP_CHECK_COMPLEX_MATH_SUPPORT
       GLIBCPP_CHECK_WCHAR_T_SUPPORT
@@ -213,7 +213,7 @@ if test -n "$with_cross_host" || test x"$build" != x"$host"; then
         fp.h locale.h float.h inttypes.h sys/resource.h sys/stat.h \
         sys/time.h unistd.h])
       SECTION_FLAGS='-ffunction-sections -fdata-sections'
-      AC_SUBST(SECTION_FLAGS) 
+      AC_SUBST(SECTION_FLAGS)
       GLIBCPP_CHECK_LINKER_FEATURES
       GLIBCPP_CHECK_COMPLEX_MATH_SUPPORT
       GLIBCPP_CHECK_WCHAR_T_SUPPORT
@@ -253,7 +253,7 @@ changequote(,)dnl
     *-qnx6.[12]*)
 changequote([,])dnl
       SECTION_FLAGS='-ffunction-sections -fdata-sections'
-      AC_SUBST(SECTION_FLAGS) 
+      AC_SUBST(SECTION_FLAGS)
       GLIBCPP_CHECK_LINKER_FEATURES
       GLIBCPP_CHECK_COMPLEX_MATH_SUPPORT
       GLIBCPP_CHECK_WCHAR_T_SUPPORT
@@ -340,8 +340,8 @@ fi
       ;;
     *)
       # GLIBCPP_CHECK_STDLIB_SUPPORT
-      AC_DEFINE(HAVE_STRTOF)        
-      AC_DEFINE(HAVE_STRTOLD)        
+      AC_DEFINE(HAVE_STRTOF)
+      AC_DEFINE(HAVE_STRTOLD)
       # AC_FUNC_MMAP
       AC_DEFINE(HAVE_MMAP)
 
@@ -447,7 +447,7 @@ GLIBCPP_ENABLE_SYMVERS([yes])
 GLIBCPP_CONFIGURE_TESTSUITE
 
 # Propagate the target-specific source directories through the build chain.
-# (Nothing currently uses cpu_include_dir directly; only ATOMICITYH 
+# (Nothing currently uses cpu_include_dir directly; only ATOMICITYH
 # uses it, and it only gets used in this file.)
 OS_INC_SRCDIR=config/${os_include_dir}
 ATOMICITY_INC_SRCDIR=config/${ATOMICITYH}
@@ -457,7 +457,7 @@ AC_SUBST(ATOMICITY_INC_SRCDIR)
 # Set up cross-compile flags
 AC_SUBST(GLIBCPP_IS_CROSS_COMPILING)  dnl Unused so far.
 AM_CONDITIONAL(CANADIAN, test "$CANADIAN" = yes)
- 
+
 AC_CACHE_SAVE
 
 if test "${multilib}" = "yes"; then
@@ -484,7 +484,7 @@ AC_SUBST(LIBSUPCXX_PICFLAGS)
 # Generate the various Makefiles, include files, and scripts.
 # NB: Multilibs need MULTISUBDIR defined correctly in src/Makefile.am
 # libsupc++/Makefile.am and testsuite/Makefile.am so that multilib installs
-# will end up installed in the correct place. To work around this not being 
+# will end up installed in the correct place. To work around this not being
 # passed down from config-ml.in -> top_srcdir/Makefile.am ->
 # top_srcdir/{src,libsupc++}/Makefile.am, manually append it here.
 AC_OUTPUT(Makefile \

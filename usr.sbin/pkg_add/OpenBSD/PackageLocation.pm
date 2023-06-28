@@ -26,9 +26,9 @@ use OpenBSD::Paths;
 
 sub new($class, $repository, $name)
 {
-	return bless { 
-	    repository => $repository, 
-	    name => $repository->canonicalize($name) 
+	return bless {
+	    repository => $repository,
+	    name => $repository->canonicalize($name)
 	    }, $class;
 
 }

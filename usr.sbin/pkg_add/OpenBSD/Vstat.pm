@@ -230,10 +230,10 @@ sub run($class, $state, @args)
 	}
 	if (!close($cmd)) {
 		if ($!) {
-			$state->errsay("Error running #1: #2", $!, 
+			$state->errsay("Error running #1: #2", $!,
 			    join(' ', @args));
 		} else {
-			$state->errsay("Exit status #1 from #2", $?, 
+			$state->errsay("Exit status #1 from #2", $?,
 			    join(' ', @args));
 		}
 	}
@@ -259,7 +259,7 @@ sub ask_df($class, $fname, $state)
 	my $blocksize = 512;
 
 	$class->ask_mount($state) if !defined $devinfo;
-	$class->run($state, OpenBSD::Paths->df, "--", $fname, 
+	$class->run($state, OpenBSD::Paths->df, "--", $fname,
 	    sub($l) {
 		chomp $l;
 		if ($l =~ m/^Filesystem\s+(\d+)\-blocks/o) {

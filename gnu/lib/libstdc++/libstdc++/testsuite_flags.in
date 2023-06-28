@@ -2,7 +2,7 @@
 
 #
 # This script computes the various flags needed to run GNU C++ testsuites
-# (compiler specific as well as library specific). 
+# (compiler specific as well as library specific).
 #
 # Written by Benjamin Kosnik <bkoz@redhat.com>
 #            Gabriel Dos Reis <gdr@codesourcery.com>
@@ -11,7 +11,7 @@
 # Print a message saying how this script is intended to be invoked
 print_usage() {
     cat <<EOF
-Usage: 
+Usage:
     testsuite_flags --install-includes
 		    --build-includes
 		    --build-cxx
@@ -33,8 +33,8 @@ case ${query} in
       ;;
     --build-includes)
       INCLUDES="-nostdinc++ @GLIBCPP_INCLUDES@
-	        -I${SRC_DIR}/libsupc++ -I${SRC_DIR}/libio 
-		-I${SRC_DIR}/include/backward 
+	        -I${SRC_DIR}/libsupc++ -I${SRC_DIR}/libio
+		-I${SRC_DIR}/include/backward
 		-I${SRC_DIR}/testsuite"
       echo ${INCLUDES}
       ;;

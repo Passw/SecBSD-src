@@ -94,7 +94,7 @@ esac
 
 # Now look for the file(s) usually tied to a CPU model, and make
 # default choices for those if they haven't been explicitly set
-# already.  
+# already.
 cpu_include_dir="cpu/${try_cpu}"
 ATOMICITYH=$cpu_include_dir
 abi_baseline_pair=${try_cpu}-${host_os}
