@@ -1,4 +1,4 @@
-/*	$OpenBSD: extern.h,v 1.186 2023/06/26 18:39:53 job Exp $ */
+/*	$OpenBSD: extern.h,v 1.188 2023/06/29 14:33:35 tb Exp $ */
 /*
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -530,9 +530,7 @@ enum stype {
 	STYPE_TOTAL,
 	STYPE_UNIQUE,
 	STYPE_DEC_UNIQUE,
-	STYPE_BOTH,
-	STYPE_ONLY_IPV4,
-	STYPE_ONLY_IPV6,
+	STYPE_PROVIDERS,
 };
 
 struct repo;
@@ -562,8 +560,6 @@ struct repotalstats {
 	uint32_t	 vaps; /* total number of Validated ASPA Payloads */
 	uint32_t	 vaps_uniqs; /* total number of unique VAPs */
 	uint32_t	 vaps_pas; /* total number of providers */
-	uint32_t	 vaps_pas4; /* total number of IPv4 only providers */
-	uint32_t	 vaps_pas6; /* total number of IPv6 only providers */
 	uint32_t	 vrps; /* total number of Validated ROA Payloads */
 	uint32_t	 vrps_uniqs; /* number of unique vrps */
 };
@@ -798,14 +794,6 @@ void		 rrdp_fetch(unsigned int, const char *, const char *,
 		    struct rrdp_session *);
 void		 rrdp_abort(unsigned int);
 void		 rrdp_http_done(unsigned int, enum http_result, const char *);
-
-/* Logging (though really used for OpenSSL errors). */
-
-void		 cryptowarnx(const char *, ...)
-			__attribute__((format(printf, 1, 2)));
-void		 cryptoerrx(const char *, ...)
-			__attribute__((format(printf, 1, 2)))
-			__attribute__((noreturn));
 
 /* Encoding functions for hex and base64. */
 
