@@ -1344,13 +1344,8 @@ smtp_command(struct smtp_session *s, char *line)
 		break;
 
 	case CMD_NOOP:
-<<<<<<< smtp_session.c
-		if (!smtp_check_noparam(s, args))
-			break;
-=======
 		if (!smtp_check_noop(s, args))
 			break;
->>>>>>> 1.435
 		smtp_filter_phase(FILTER_NOOP, s, NULL);
 		break;
 

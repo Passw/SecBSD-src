@@ -424,7 +424,7 @@ test-rcs-oflag: clean
 	    case "$$?" in 1) exit 0;; esac && exit 1
 	@tr '\n' ' ' < blah.c,v | grep -q '[[:space:]]1.5[[:space:]]' || \
 	    case "$$?" in 1) exit 0;; esac && exit 1
-	
+
 test-rcs-lock-unlock: clean
 	@touch file
 	@mkdir -p RCS
@@ -482,7 +482,7 @@ test-co-lock-filemodes:
 	@chmod 754 RCS/blah.c,v
 	@${CO} -q -l blah.c
 	@eval 'test `stat -f%p blah.c` = 100754'
-	
+
 
 # Testing 'co -u blah.c' for permissions inheritance
 test-co-unlock-filemodes: test-co-lock-filemodes
@@ -617,7 +617,7 @@ test-ci-parse-keywords: clean
 	@echo . | ${CI} -q -k test
 
 test-ci-parse-keywords2: clean
-	@echo '$Id: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah' > test 
+	@echo '$Id: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah' > test
 	@echo . | ${CI} -q -k test
 
 # Check for correct EOF handling in rcs parser

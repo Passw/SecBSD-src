@@ -186,7 +186,7 @@
 #define EM_BLACKFIN	106	/* ADI Blackfin */
 #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
 #define EM_CRX		114	/* National Semiconductor CRX */
-#define EM_AARCH64	183 
+#define EM_AARCH64	183
 #define EM_RISCV	243
 
 /* If it is necessary to assign new unofficial EM_* values, please pick large
@@ -313,6 +313,7 @@
 
 #define PT_OPENBSD_RANDOMIZE	0x65a3dbe6 /* Fill with random data. */
 #define PT_OPENBSD_WXNEEDED	0x65a3dbe7 /* Program does W^X violations */
+#define PT_OPENBSD_NOBTCFI	0x65a3dbe8 /* no branch target CFI */
 #define PT_OPENBSD_BOOTDATA	0x65a41be6 /* Section for boot arguments */
 #define PT_OPENBSD_MUTABLE	0x65a3dbe5 /* Like bss, but not immutable */
 

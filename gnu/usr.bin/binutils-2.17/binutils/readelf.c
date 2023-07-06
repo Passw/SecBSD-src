@@ -21,7 +21,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
-
+
 /* The difference between readelf and objdump:
 
   Both programs are capable of displaying the contents of ELF format files,
@@ -40,7 +40,7 @@
   There is also the case that readelf can provide more information about an
   ELF file than is provided by objdump.  In particular it can display DWARF
   debugging information which (at the moment) objdump cannot.  */
-
+
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -976,7 +976,7 @@ slurp_relr_relocs (FILE *file,
 	      while ((val >>= 1) != 0)
 		{
 		  addr += 4;
-		  if (val & 1) 
+		  if (val & 1)
 		    {
 		      rels[j].r_offset = addr;
 		      rels[j].r_info   = ELF32_R_INFO(0, type);
@@ -1041,7 +1041,7 @@ slurp_relr_relocs (FILE *file,
 	      while ((val >>= 1) != 0)
 		{
 		  addr += 8;
-		  if (val & 1) 
+		  if (val & 1)
 		    {
 		      rels[j].r_offset = addr;
 		      rels[j].r_info   = ELF64_R_INFO(0, type);
@@ -2278,7 +2278,7 @@ get_machine_flags (unsigned e_flags, unsigned e_machine)
 	      char const *isa = _("unknown");
 	      char const *mac = _("unknown mac");
 	      char const *additional = NULL;
-      
+
 	      switch (e_flags & EF_M68K_ISA_MASK)
 		{
 		case EF_M68K_ISA_A_NODIV:
@@ -2712,6 +2712,8 @@ get_segment_type (unsigned long p_type)
 			return "OPENBSD_BOOTDATA";
     case PT_OPENBSD_MUTABLE:
 			return "OPENBSD_MUTABLE";
+    case PT_OPENBSD_NOBTCFI:
+			return "OPENBSD_NOBTCFI";
 
     default:
       if ((p_type >= PT_LOPROC) && (p_type <= PT_HIPROC))

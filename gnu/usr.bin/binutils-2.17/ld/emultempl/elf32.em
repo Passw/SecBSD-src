@@ -105,8 +105,8 @@ gld${EMULATION_NAME}_split_lib_name (name, pmaj, pmin)
 
   *pmaj = -1;
   *pmin = -1;
-  
-  if (strncmp(lib, "lib", 3) == 0)   
+
+  if (strncmp(lib, "lib", 3) == 0)
     lib += 3;
 
   s = lib;
@@ -136,7 +136,7 @@ gld${EMULATION_NAME}_split_lib_name (name, pmaj, pmin)
       s += 3;
     }
 
-  
+
   /* lib[name].so.[M].[N] */
   /*  s          ^        */
   s += 1;
@@ -173,12 +173,12 @@ gld${EMULATION_NAME}_search_dir_needed (dirlist, filename)
   char *fnam, *fnam_alloc, *lib;
   char *found = NULL;
   int maj = -1, min = -1;
-  
+
   dlist_alloc = dlist = xstrdup(dirlist);
   fnam_alloc = fnam = xstrdup(filename);
-  
+
   lib = gld${EMULATION_NAME}_split_lib_name(fnam, &maj, &min);
-  
+
   while (lib != NULL && found == NULL)
     {
       dir = strsep(&dlist, ":");
@@ -188,7 +188,7 @@ gld${EMULATION_NAME}_search_dir_needed (dirlist, filename)
 	continue; /* skip dirlist of ...::... */
       found = gld${EMULATION_NAME}_search_dir(dir, lib, maj, min);
     }
-  
+
   free(dlist_alloc);
   free(fnam_alloc);
   return found;
@@ -221,7 +221,7 @@ gld${EMULATION_NAME}_search_dir (dirname, filename, req_maj, req_min)
   if (dir == NULL)
     return NULL;
   dirnamelen = strlen (dirname);
-  
+
   while ((entry = readdir (dir)) != NULL)
     {
       const char *s;
@@ -263,13 +263,13 @@ gld${EMULATION_NAME}_search_dir (dirname, filename, req_maj, req_min)
 	found_maj = strtoul (entry->d_name + 7 + len, &eptr, 10);
 
 	/* do not support libN.so. or libN.so.X */
-	if (*eptr != '.' || ((entry->d_name + 3 + len) == eptr)) 
+	if (*eptr != '.' || ((entry->d_name + 3 + len) == eptr))
 	  continue;
 
 	found_min = strtoul (eptr+1, &eptr1, 10);
 
 	/* do not support libN.so.X. or libN.so.X.Y.[anything] */
-	if (*eptr1 != '\0' || (eptr+1 == eptr1)) 
+	if (*eptr1 != '\0' || (eptr+1 == eptr1))
 	  continue;
       }
 
@@ -2206,6 +2206,8 @@ cat >>e${EMULATION_NAME}.c <<EOF
 	link_info.relro = FALSE;
       else if (strcmp (optarg, "wxneeded") == 0)
 	link_info.wxneeded = TRUE;
+      else if (strcmp (optarg, "nobtcfi") == 0)
+	link_info.nobtcfi = TRUE;
       else if (strcmp (optarg, "notext") == 0)
 	link_info.allow_textrel = TRUE;
       else if (strcmp (optarg, "text") == 0)

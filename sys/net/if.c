@@ -1,4 +1,4 @@
-/*	$OpenBSD: if.c,v 1.701 2023/06/27 21:02:13 mvs Exp $	*/
+/*	$OpenBSD: if.c,v 1.704 2023/07/06 04:55:04 dlg Exp $	*/
 /*	$NetBSD: if.c,v 1.35 1996/05/07 05:26:04 thorpej Exp $	*/
 
 /*
@@ -106,6 +106,9 @@
 #ifdef MROUTING
 #include <netinet/ip_mroute.h>
 #endif
+#include <netinet/tcp.h>
+#include <netinet/tcp_timer.h>
+#include <netinet/tcp_var.h>
 
 #ifdef INET6
 #include <netinet6/in6_var.h>
@@ -802,12 +805,29 @@ if_input_local(struct ifnet *ifp, struct mbuf *m, sa_family_t af)
 	 * is now incorrect, will be calculated before sending.
 	 */
 	keepcksum = m->m_pkthdr.csum_flags & (M_IPV4_CSUM_OUT |
-	    M_TCP_CSUM_OUT | M_UDP_CSUM_OUT | M_ICMP_CSUM_OUT);
+	    M_TCP_CSUM_OUT | M_UDP_CSUM_OUT | M_ICMP_CSUM_OUT |
+	    M_TCP_TSO);
 	m_resethdr(m);
 	m->m_flags |= M_LOOP | keepflags;
 	m->m_pkthdr.csum_flags = keepcksum;
 	m->m_pkthdr.ph_ifidx = ifp->if_index;
 	m->m_pkthdr.ph_rtableid = ifp->if_rdomain;
+
+	if (ISSET(keepcksum, M_TCP_TSO) && m->m_pkthdr.len > ifp->if_mtu) {
+		if (ifp->if_mtu > 0 &&
+		    ((af == AF_INET &&
+		    ISSET(ifp->if_capabilities, IFCAP_TSOv4)) ||
+		    (af == AF_INET6 &&
+		    ISSET(ifp->if_capabilities, IFCAP_TSOv6)))) {
+			tcpstat_inc(tcps_inswlro);
+			tcpstat_add(tcps_inpktlro,
+			    (m->m_pkthdr.len + ifp->if_mtu - 1) / ifp->if_mtu);
+		} else {
+			tcpstat_inc(tcps_inbadlro);
+			m_freem(m);
+			return (EPROTONOSUPPORT);
+		}
+	}
 
 	if (ISSET(keepcksum, M_TCP_CSUM_OUT))
 		m->m_pkthdr.csum_flags |= M_TCP_CSUM_IN_OK;
@@ -1014,14 +1034,6 @@ if_netisr(void *unused)
 		t |= n;
 	}
 
-#if NPFSYNC > 0
-	if (t & (1 << NETISR_PFSYNC)) {
-		KERNEL_LOCK();
-		pfsyncintr();
-		KERNEL_UNLOCK();
-	}
-#endif
-
 	NET_UNLOCK();
 }
 
@@ -1100,7 +1112,7 @@ if_detachhook_del(struct ifnet *ifp, struct task *t)
 }
 
 /*
- * Detach an interface from everything in the kernel.  Also deallocate
+ * Detach an interface from everything in the kernel. Also deallocate
  * private resources.
  */
 void
@@ -3186,7 +3198,7 @@ ifsetlro(struct ifnet *ifp, int on)
 	KERNEL_ASSERT_LOCKED();	/* for if_flags */
 
 	if (on && !ISSET(ifp->if_xflags, IFXF_LRO)) {
-		if (ether_brport_isset(ifp)) {
+		if (ifp->if_type == IFT_ETHER && ether_brport_isset(ifp)) {
 			error = EBUSY;
 			goto out;
 		}

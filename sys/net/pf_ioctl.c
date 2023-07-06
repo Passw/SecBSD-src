@@ -1,4 +1,4 @@
-/*	$OpenBSD: pf_ioctl.c,v 1.411 2023/06/30 09:58:30 mvs Exp $ */
+/*	$OpenBSD: pf_ioctl.c,v 1.415 2023/07/06 04:55:05 dlg Exp $ */
 
 /*
  * Copyright (c) 2001 Daniel Hartmeier
@@ -177,8 +177,11 @@ int			 pf_rtlabel_add(struct pf_addr_wrap *);
 void			 pf_rtlabel_remove(struct pf_addr_wrap *);
 void			 pf_rtlabel_copyout(struct pf_addr_wrap *);
 
-uint64_t trans_ticket = 1;
 LIST_HEAD(, pf_trans)	pf_ioctl_trans = LIST_HEAD_INITIALIZER(pf_trans);
+
+/* counts transactions opened by a device */
+unsigned int pf_tcount[CLONE_MAPSZ * NBBY];
+#define pf_unit2idx(_unit_)	((_unit_) >> CLONE_SHIFT)
 
 void
 pfattach(int num)
@@ -997,13 +1000,14 @@ pf_states_clr(struct pfioc_state_kill *psk)
 	}
 
 	PF_STATE_EXIT_WRITE();
-#if NPFSYNC > 0
-	pfsync_clear_states(pf_status.hostid, psk->psk_ifname);
-#endif	/* NPFSYNC > 0 */
 	PF_UNLOCK();
 	rw_exit(&pf_state_list.pfs_rwl);
 
 	psk->psk_killed = killed;
+
+#if NPFSYNC > 0
+	pfsync_clear_states(pf_status.hostid, psk->psk_ifname);
+#endif	/* NPFSYNC > 0 */
 unlock:
 	NET_UNLOCK();
 
@@ -1145,6 +1149,7 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 		case DIOCGETSRCNODES:
 		case DIOCIGETIFACES:
 		case DIOCGETSYNFLWATS:
+		case DIOCXEND:
 			break;
 		case DIOCRCLRTABLES:
 		case DIOCRADDTABLES:
@@ -1186,6 +1191,7 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 				pf_status.stateid = gettime();
 				pf_status.stateid = pf_status.stateid << 32;
 			}
+			timeout_add_sec(&pf_purge_states_to, 1);
 			timeout_add_sec(&pf_purge_to, 1);
 			pf_create_queues();
 			DPFPRINTF(LOG_NOTICE, "pf: started");
@@ -1492,6 +1498,10 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 		NET_UNLOCK();
 
 		t = pf_open_trans(minor(dev));
+		if (t == NULL) {
+			error = EBUSY;
+			goto fail;
+		}
 		pf_init_tgetrule(t, ruleset->anchor, ruleset_version, rule);
 		pr->ticket = t->pft_ticket;
 
@@ -2775,8 +2785,9 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 			pf_default_rule.timeout[i] =
 			    pf_default_rule_new.timeout[i];
 			if (pf_default_rule.timeout[i] == PFTM_INTERVAL &&
-			    pf_default_rule.timeout[i] < old)
-				task_add(net_tq(0), &pf_purge_task);
+			    pf_default_rule.timeout[i] < old &&
+			    timeout_del(&pf_purge_to))
+				task_add(systqmp, &pf_purge_task);
 		}
 		pfi_xcommit();
 		pf_trans_set_commit();
@@ -2784,6 +2795,18 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 		NET_UNLOCK();
 		free(table, M_PF, sizeof(*table));
 		free(ioe, M_PF, sizeof(*ioe));
+		break;
+	}
+
+	case DIOCXEND: {
+		u_int32_t	*ticket = (u_int32_t *)addr;
+		struct pf_trans	*t;
+
+		t = pf_find_trans(minor(dev), *ticket);
+		if (t != NULL)
+			pf_rollback_trans(t);
+		else
+			error = ENXIO;
 		break;
 	}
 
@@ -3264,9 +3287,14 @@ pf_open_trans(uint32_t unit)
 
 	rw_assert_wrlock(&pfioctl_rw);
 
+	KASSERT(pf_unit2idx(unit) < nitems(pf_tcount));
+	if (pf_tcount[pf_unit2idx(unit)] >= (PF_ANCHOR_STACK_MAX * 8))
+		return (NULL);
+
 	t = malloc(sizeof(*t), M_PF, M_WAITOK|M_ZERO);
 	t->pft_unit = unit;
 	t->pft_ticket = ticket++;
+	pf_tcount[pf_unit2idx(unit)]++;
 
 	LIST_INSERT_HEAD(&pf_ioctl_trans, t, pft_entry);
 
@@ -3320,6 +3348,11 @@ pf_free_trans(struct pf_trans *t)
 		log(LOG_ERR, "%s unknown transaction type: %d\n",
 		    __func__, t->pft_type);
 	}
+
+	KASSERT(pf_unit2idx(t->pft_unit) < nitems(pf_tcount));
+	KASSERT(pf_tcount[pf_unit2idx(t->pft_unit)] >= 1);
+	pf_tcount[pf_unit2idx(t->pft_unit)]--;
+
 	free(t, M_PF, sizeof(*t));
 }
 

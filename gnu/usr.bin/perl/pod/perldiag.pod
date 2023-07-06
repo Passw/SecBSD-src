@@ -7693,15 +7693,15 @@ are automatically rebound to the current values of such variables.
 with alpha parts.
 
 =item Verb pattern '%s' has a mandatory argument in regex; marked by
-S<<-- HERE> in m/%s/ 
+S<<-- HERE> in m/%s/
 
 (F) You used a verb pattern that requires an argument.  Supply an
 argument or check that you are using the right verb.
 
 =item Verb pattern '%s' may not have an argument in regex; marked by
-S<<-- HERE> in m/%s/ 
+S<<-- HERE> in m/%s/
 
-(F) You used a verb pattern that is not allowed an argument.  Remove the 
+(F) You used a verb pattern that is not allowed an argument.  Remove the
 argument or check that you are using the right verb.
 
 =item Version control conflict marker
