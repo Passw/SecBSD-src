@@ -1093,7 +1093,7 @@ greywatcher(void)
 		syslog_r(LOG_ERR, &sdata, "pledge failed (%m)");
 		exit(1);
 	}
-		
+
 	startup = time(NULL);
 	db_pid = fork();
 	switch (db_pid) {

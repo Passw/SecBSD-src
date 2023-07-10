@@ -211,7 +211,7 @@
 #define RL_HWREV_8168GU		0x50800000
 #define RL_HWREV_8168H		0x54000000
 #define RL_HWREV_8168FP		0x54800000
-#define RL_HWREV_8411B		0x5c800000	
+#define RL_HWREV_8411B		0x5c800000
 #define RL_HWREV_8139		0x60000000
 #define RL_HWREV_8139A		0x70000000
 #define RL_HWREV_8139AG		0x70800000
@@ -373,7 +373,7 @@
 
 #define RL_9346_ADDR_LEN	6	/* 93C46 1K: 128x16 */
 #define RL_9356_ADDR_LEN	8	/* 93C56 2K: 256x16 */
- 
+
 #define RL_9346_WRITE		0x5
 #define RL_9346_READ		0x6
 #define RL_9346_ERASE		0x7
@@ -495,7 +495,7 @@
 
 #define RL_BUSFREQ_33MHZ	0x00
 #define RL_BUSFREQ_66MHZ	0x01
-                                        
+
 #define RL_BUSWIDTH_32BITS	0x00
 #define RL_BUSWIDTH_64BITS	0x08
 
@@ -519,7 +519,7 @@
 
 /* C+ early transmit threshold */
 
-#define RL_EARLYTXTHRESH_CNT	0x003F	/* byte count times 8 */ 
+#define RL_EARLYTXTHRESH_CNT	0x003F	/* byte count times 8 */
 
 /*
  * Gigabit PHY access register (8169 only)
@@ -772,7 +772,7 @@ struct re_stats {
 #define RL_ADDR_LO(y)	((u_int64_t) (y) & 0xFFFFFFFF)
 #define RL_ADDR_HI(y)	((u_int64_t) (y) >> 32)
 
-#define RL_JUMBO_FRAMELEN 	(9 * 1024)	
+#define RL_JUMBO_FRAMELEN 	(9 * 1024)
 #define RL_JUMBO_MTU_4K		\
 	((4 * 1024) - ETHER_HDR_LEN - ETHER_CRC_LEN - ETHER_VLAN_ENCAP_LEN)
 #define RL_JUMBO_MTU_6K		\

@@ -636,7 +636,7 @@ fatal:
 			    PORTNAME(sp), pss_masked);
 		}
 		KASSERT(pss_masked == 0);
-		
+
 		/* if we had a timeout on a PMP port, do a portreset.
 		 * exclude the control port here as there isn't a real
 		 * device there to reset.
@@ -692,7 +692,7 @@ fatal:
 		}
 		sp->sp_err_cmds = 0;
 		sp->sp_pmp_error_recovery = 0;
-		
+
 		/*
 		 * Finally, run atascsi completion for any finished CCBs.  If
 		 * we had run these during cmd_done above, any ccbs that their
@@ -1105,19 +1105,19 @@ sili_pmp_portreset(struct sili_softc *sc, int port, int pmp_port)
 	if (sili_pmp_write(sp, pmp_port, SATA_PMREG_SCTL, data))
 		goto err;
 	delay(100000);
-	
+
 	if (sili_pmp_phy_status(sp, pmp_port, &data)) {
 		printf("%s: cannot clear phy status for PMP probe\n",
 			PORTNAME(sp));
 		goto err;
 	}
-	
+
 	sili_pmp_write(sp, pmp_port, SATA_PMREG_SERR, -1);
 	data = SATA_PM_SCTL_IPM_DISABLED | SATA_PM_SCTL_DET_NONE;
 	if (sili_pmp_write(sp, pmp_port, SATA_PMREG_SCTL, data))
 		goto err;
 	delay(100000);
-	
+
 	/* wait for PHYRDY by polling SStatus */
 	for (loop = 3; loop; loop--) {
 		if (sili_pmp_read(sp, pmp_port, SATA_PMREG_SSTS, &data))
@@ -1131,7 +1131,7 @@ sili_pmp_portreset(struct sili_softc *sc, int port, int pmp_port)
 		    PORTNAME(sp), pmp_port);
 		goto err;
 	}
-	
+
 	/* give it a bit more time to complete negotiation */
 	for (loop = 30; loop; loop--) {
 		if (sili_pmp_read(sp, pmp_port, SATA_PMREG_SSTS, &data))
@@ -1208,7 +1208,7 @@ sili_pmp_softreset(struct sili_softc *sc, int port, int pmp_port)
 	ccb->ccb_xa.flags = ATA_F_POLL | ATA_F_GET_RFIS;
 	ccb->ccb_xa.complete = sili_dummy_done;
 	ccb->ccb_xa.pmp_port = pmp_port;
-	
+
 	prb = ccb->ccb_cmd;
 	bzero(prb, sizeof(*prb));
 	fis = (struct ata_fis_h2d *)&prb->fis;
@@ -1770,7 +1770,7 @@ sili_pmp_read(struct sili_port *sp, int target, int which, u_int32_t *datap)
 	ccb->ccb_xa.complete = sili_dummy_done;
 	ccb->ccb_xa.pmp_port = SATA_PMP_CONTROL_PORT;
 	ccb->ccb_xa.state = ATA_S_PENDING;
-	
+
 	prb = ccb->ccb_cmd;
 	bzero(prb, sizeof(*prb));
 	fis = (struct ata_fis_h2d *)&prb->fis;

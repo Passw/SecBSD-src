@@ -526,7 +526,7 @@ dwhdmi_audio_init(struct dwhdmi_softc *sc)
 	val &= ~HDMI_AUD_CONF0_I2S_IN_EN;
 	val |= (1 << 0);					/* XXX 2ch */
 	dwhdmi_write(sc, HDMI_AUD_CONF0, val);
-	
+
 	val = (16 << 0);
 	dwhdmi_write(sc, HDMI_AUD_CONF1, val);
 

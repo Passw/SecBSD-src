@@ -282,7 +282,7 @@
 
 /* Bits for AR_MIRT. */
 #define AR_MIRT_RATE_THRES_M	0x0000ffff
-#define AR_MIRT_RATE_THRES_S	0 
+#define AR_MIRT_RATE_THRES_S	0
 
 /* Bits for AR_TIMT. */
 #define AR_TIMT_LAST_M	0x0000ffff

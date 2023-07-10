@@ -157,7 +157,7 @@ iosf_mbi_mdr_modify(struct iosf_mbi *mbi, uint8_t port, uint8_t op,
 	mdr = (*mbi->mbi_mdr_rd)(mbi, mcr, mcrx);
 
 	CLR(mdr, mask);
-	SET(mdr, bits & mask); 
+	SET(mdr, bits & mask);
 
 	(*mbi->mbi_mdr_wr)(mbi, mcr, mcrx, mdr);
 	mtx_leave(&iosf_mbi_mtx);

@@ -355,7 +355,7 @@ struct wi_apinfo {
 	int			quality;	/* Quality */
 	int			namelen;	/* Length of SSID string */
 	char			name[32];	/* SSID string */
-	int			capinfo;	/* Capability info. */ 
+	int			capinfo;	/* Capability info. */
 	int			interval;	/* BSS Beacon Interval */
 	int			rate;		/* Data Rate */
 };

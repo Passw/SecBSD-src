@@ -39,7 +39,7 @@
 const char ws[] =
 	" \t\f\v"
 ;
-const char alnum[] = 
+const char alnum[] =
 	"0123456789"
 	"abcdefghijklmnopqrstuvwxyz"
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"

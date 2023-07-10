@@ -69,8 +69,8 @@
 #define osiop_read_4(sc, reg)					\
     bus_space_read_4((sc)->sc_bst, (sc)->sc_reg, reg)
 #define osiop_write_4(sc, reg, val)				\
-    bus_space_write_4((sc)->sc_bst, (sc)->sc_reg, reg, val)     
-        
+    bus_space_write_4((sc)->sc_bst, (sc)->sc_reg, reg, val)
+
 /*
  * The largest single request will be MAXPHYS bytes which will require
  * at most MAXPHYS/NBPG+1 chain elements to describe, i.e. if none of

@@ -1,4 +1,4 @@
-/*	$OpenBSD: bn_print.c,v 1.40 2023/07/06 14:37:39 tb Exp $ */
+/*	$OpenBSD: bn_print.c,v 1.42 2023/07/07 07:04:24 tb Exp $ */
 
 /*
  * Copyright (c) 2023 Theo Buehler <tb@openbsd.org>
@@ -41,7 +41,7 @@ bn_print_zero(BIO *bio, const BIGNUM *bn)
 static int
 bn_print_word(BIO *bio, const BIGNUM *bn)
 {
-	BN_ULONG word;
+	unsigned long long word;
 	const char *neg = "";
 
 	if (BN_is_zero(bn) || BN_num_bytes(bn) > BN_BYTES)
@@ -51,7 +51,7 @@ bn_print_word(BIO *bio, const BIGNUM *bn)
 		neg = "-";
 
 	word = BN_get_word(bn);
-	if (BIO_printf(bio, " %s%lu (%s0x%lx)\n", neg, word, neg, word) <= 0)
+	if (BIO_printf(bio, " %s%llu (%s0x%llx)\n", neg, word, neg, word) <= 0)
 		return 0;
 
 	return 1;
@@ -101,6 +101,12 @@ bn_print_bignum(BIO *bio, const BIGNUM *bn, int indent)
 		if (octets++ % 15 == 0) {
 			if (BIO_printf(bio, "\n%*s", indent, "") <= 0)
 				goto err;
+		}
+		/* First nibble has the high bit set. Insert leading 0 octet. */
+		if (octets == 1 && hi >= '8') {
+			if (BIO_printf(bio, "00:") <= 0)
+				goto err;
+			octets++;
 		}
 		if (CBS_len(&cbs) == 0)
 			sep = "";

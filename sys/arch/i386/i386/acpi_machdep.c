@@ -404,7 +404,7 @@ acpi_sleep_cpu(struct acpi_softc *sc, int state)
  * will cause the least number of unexpected side effects.  We re-start
  * the clocks early because we will soon run AML whigh might do DELAY.
  * Then PM, and then further system/CPU work for the BSP cpu.
- */ 
+ */
 void
 acpi_resume_cpu(struct acpi_softc *sc, int state)
 {
@@ -434,7 +434,7 @@ acpi_resume_cpu(struct acpi_softc *sc, int state)
 	cpu_init(&cpu_info_primary);
 	cpu_ucode_apply(&cpu_info_primary);
 	cpu_tsx_disable(&cpu_info_primary);
-	
+
 	/* Re-initialise memory range handling on BSP */
 	if (mem_range_softc.mr_op != NULL)
 		mem_range_softc.mr_op->initAP(&mem_range_softc);
@@ -446,7 +446,7 @@ sleep_mp(void)
 {
 	int i;
 
-	/* 
+	/*
 	 * Wait for cpus to halt so we know their FPU state has been
 	 * saved and their caches have been written back.
 	 */

@@ -85,7 +85,7 @@
 #define RX_DTR_THRESHOLD   9
 
 /*
- * Maximum number of ports per card 
+ * Maximum number of ports per card
  */
 #define	CY_MAX_PORTS		(CD1400_NO_OF_CHANNELS * CY_MAX_CD1400s)
 

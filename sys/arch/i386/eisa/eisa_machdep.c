@@ -142,7 +142,7 @@ eisa_intr_string(eisa_chipset_tag_t ec, eisa_intr_handle_t ih)
 
 	snprintf(irqstr, sizeof irqstr, "irq %d", ih);
 	return (irqstr);
-	
+
 }
 
 void *

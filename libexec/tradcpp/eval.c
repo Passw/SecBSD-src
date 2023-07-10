@@ -475,7 +475,7 @@ tryreduce(void)
 			continue;
 		}
 
-			
+
 		t4 = (num >= 4) ? tokenarray_get(&tokens, num-4) : NULL;
 
 		if (num >= 4 &&

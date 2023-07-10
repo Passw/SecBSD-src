@@ -279,7 +279,7 @@ struct cdevsw	cdevsw[] =
 	cdev_vscsi_init(NVSCSI,vscsi),	/* 90: vscsi */
 	cdev_disk_init(1,diskmap),	/* 91: disk mapper */
 	cdev_pppx_init(NPPPX,pppx),     /* 92: pppx */
-	cdev_fuse_init(NFUSE,fuse),	/* 93: fuse */ 
+	cdev_fuse_init(NFUSE,fuse),	/* 93: fuse */
 	cdev_tun_init(NTUN,tap),	/* 94: Ethernet network tunnel */
 	cdev_pvbus_init(NPVBUS,pvbus),	/* 95: pvbus(4) control interface */
 	cdev_ipmi_init(NIPMI,ipmi),	/* 96: ipmi */

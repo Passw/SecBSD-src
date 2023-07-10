@@ -534,7 +534,7 @@ dc_mii_readreg(struct dc_softc *sc, struct dc_mii_frame *frame)
 	frame->mii_opcode = DC_MII_READOP;
 	frame->mii_turnaround = 0;
 	frame->mii_data = 0;
-	
+
 	/*
 	 * Sync the PHYs.
 	 */
@@ -606,7 +606,7 @@ dc_mii_writereg(struct dc_softc *sc, struct dc_mii_frame *frame)
 
 	/*
 	 * Sync the PHYs.
-	 */	
+	 */
 	dc_mii_sync(sc);
 
 	dc_mii_send(sc, frame->mii_stdelim, 2);
@@ -946,7 +946,7 @@ dc_setfilt_21143(struct dc_softc *sc)
 
 	bus_dmamap_sync(sc->sc_dmat, sc->sc_listmap,
 	    offsetof(struct dc_list_data, dc_sbuf[0]),
-	    sizeof(struct dc_list_data) - 
+	    sizeof(struct dc_list_data) -
 	    offsetof(struct dc_list_data, dc_sbuf[0]),
 	    BUS_DMASYNC_PREREAD | BUS_DMASYNC_PREWRITE);
 
@@ -1592,7 +1592,7 @@ dc_attach(struct dc_softc *sc)
 	case DC_TYPE_21143:
 	case DC_TYPE_21145:
 	case DC_TYPE_ASIX:
-		dc_read_eeprom(sc, (caddr_t)&sc->sc_arpcom.ac_enaddr,	
+		dc_read_eeprom(sc, (caddr_t)&sc->sc_arpcom.ac_enaddr,
 		    DC_EE_NODEADDR, 3, 0);
 		break;
 	case DC_TYPE_AL981:
@@ -1668,7 +1668,7 @@ hasmac:
 	    BUS_DMA_NOWAIT, &sc->sc_rx_sparemap) != 0) {
 		printf(": can't create rx spare map\n");
 		return;
-	}	
+	}
 
 	for (i = 0; i < DC_TX_LIST_CNT; i++) {
 		if (bus_dmamap_create(sc->sc_dmat, MCLBYTES,
@@ -2023,7 +2023,7 @@ dc_pnic_rx_bug_war(struct dc_softc *sc, int idx)
  	 * frame reception.
 	 */
 	dc_newbuf(sc, i, m);
-	bcopy(ptr, mtod(m, char *), total_len);	
+	bcopy(ptr, mtod(m, char *), total_len);
 	cur_rx->dc_status = htole32(rxstat | DC_RXSTAT_FIRSTFRAG);
 }
 
@@ -2148,7 +2148,7 @@ dc_rxeof(struct dc_softc *sc)
 			}
 		}
 
-		/* No errors; receive the packet. */	
+		/* No errors; receive the packet. */
 		total_len -= ETHER_CRC_LEN;
 
 		m0 = m_devget(mtod(m, char *), total_len, ETHER_ALIGN);
@@ -2703,10 +2703,10 @@ dc_init(void *xsc)
 		break;
 	case 16:
 		DC_SETBIT(sc, DC_BUSCTL, DC_CACHEALIGN_16LONG);
-		break; 
+		break;
 	case 8:
 		DC_SETBIT(sc, DC_BUSCTL, DC_CACHEALIGN_8LONG);
-		break;  
+		break;
 	case 0:
 	default:
 		DC_SETBIT(sc, DC_BUSCTL, DC_CACHEALIGN_NONE);

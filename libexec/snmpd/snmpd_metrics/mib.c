@@ -1170,12 +1170,12 @@ mib_ifrcvtable(struct agentx_varbind *vb)
 }
 
 /*
- * Defined in 
+ * Defined in
  * - OPENBSD-PF-MIB.txt
  * - OPENBSD-SENSORS-MIB.txt
  * - OPENBSD-CARP-MIB.txt
  * (http://www.packetmischief.ca/openbsd-snmp-mibs/)
- */ 
+ */
 #define OIDVER_OPENBSD_MEM		1
 
 struct carpif {
@@ -1466,7 +1466,7 @@ mib_pftimeouts(struct agentx_varbind *vb)
 		pt.timeout = PFTM_SRC_NODE;
 	else
 		fatal("%s: Unexpected object", __func__);
-		
+
 	if (ioctl(devpf, DIOCGETTIMEOUT, &pt) == -1) {
 		log_warn("DIOCGETTIMEOUT");
 		agentx_varbind_error(vb);
@@ -1699,7 +1699,7 @@ mib_pftableaddrs(struct agentx_varbind *vb)
 		as.pfras_a.pfra_net = agentx_varbind_get_index_integer(vb,
 		    pfTblAddrMaskIdx);
 
-		if (pfta_get_nextaddr(&as, &tblidx)){ 
+		if (pfta_get_nextaddr(&as, &tblidx)){
 			agentx_varbind_notfound(vb);
 			return;
 		}
@@ -2063,7 +2063,7 @@ static const char * const sensor_drive_s[SENSOR_DRIVE_STATES] = {
 
 static const char * const sensor_unit_s[SENSOR_MAX_TYPES + 1] = {
 	"degC",	"RPM", "V DC", "V AC", "Ohm", "W", "A", "Wh", "Ah",
-	"", "", "%", "lx", "", "sec", "%RH", "Hz", "degree", 
+	"", "", "%", "lx", "", "sec", "%RH", "Hz", "degree",
 	"m", "Pa", "m/s^2", "m/s", ""
 };
 
@@ -3086,16 +3086,16 @@ mib_diskio(struct agentx_varbind *vb)
 	else if (obj == diskIODevice)
 		agentx_varbind_string(vb, stats[idx - 1].ds_name);
 	else if (obj == diskIONRead)
-		agentx_varbind_counter32(vb, 
+		agentx_varbind_counter32(vb,
 		    (u_int32_t)stats[idx - 1].ds_rbytes);
 	else if (obj == diskIONWritten)
-		agentx_varbind_counter32(vb, 
+		agentx_varbind_counter32(vb,
 		    (u_int32_t)stats[idx - 1].ds_wbytes);
 	else if (obj == diskIOReads)
-		agentx_varbind_counter32(vb, 
+		agentx_varbind_counter32(vb,
 		    (u_int32_t)stats[idx - 1].ds_rxfer);
 	else if (obj == diskIOWrites)
-		agentx_varbind_counter32(vb, 
+		agentx_varbind_counter32(vb,
 		    (u_int32_t)stats[idx - 1].ds_wxfer);
 	else if (obj == diskIONReadX)
 		agentx_varbind_counter64(vb, stats[idx - 1].ds_rbytes);
@@ -4339,7 +4339,7 @@ snmp_connect(struct agentx *sa, void *cookie, int close)
 		    snmp_read, sa);
 		event_add(&connev, NULL);
 		init = 1;
-	} else 
+	} else
 		snmp_tryconnect(-1, 0, sa);
 }
 

@@ -210,7 +210,7 @@ dl10019_mii_writereg(struct device *self, int phy, int reg, int val)
 {
 	struct ne2000_softc *nsc = (void *) self;
 	const struct mii_bitbang_ops *ops;
-	
+
 	ops = (nsc->sc_type == NE2000_TYPE_DL10022) ?
 	    &dl10022_mii_bitbang_ops : &dl10019_mii_bitbang_ops;
 

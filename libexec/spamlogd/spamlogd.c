@@ -277,7 +277,7 @@ logpkt_handler(u_char *user, const struct pcap_pkthdr *h, const u_char *sp)
 	if (ipstraddr[0] != '\0') {
 		if (hdr->dir == PF_IN)
 			logmsg(LOG_DEBUG,"inbound %s", ipstraddr);
-		else 
+		else
 			logmsg(LOG_DEBUG,"outbound %s", ipstraddr);
 		dbupdate(PATH_SPAMD_DB, ipstraddr);
 	}

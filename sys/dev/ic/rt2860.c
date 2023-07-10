@@ -2715,7 +2715,7 @@ rt5390_rf_wakeup(struct rt2860_softc *sc)
 {
 	uint32_t tmp;
 	uint8_t rf;
-	
+
 	rf = rt3090_rf_read(sc, 1);
 	rf |= RT3070_RF_BLOCK | RT3070_PLL_PD | RT3070_RX0_PD |
 	    RT3070_TX0_PD;
@@ -3670,7 +3670,7 @@ rt2860_init(struct ifnet *ifp)
 			printf("%s: could not enable wlan\n",
 			    sc->sc_dev.dv_xname);
 			rt2860_stop(ifp, 1);
-			return error;	
+			return error;
 		}
 	}
 

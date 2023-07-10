@@ -358,7 +358,7 @@ pgt_load_firmware(struct pgt_softc *sc)
 	DELAY(PGT_WRITEIO_DELAY);
 
 	free(ucode, M_DEVBUF, 0);
-	
+
 	return (0);
 }
 
@@ -449,7 +449,7 @@ pgt_reset(struct pgt_softc *sc)
 	DELAY(PGT_WRITEIO_DELAY);
 
 	/* await only the initialization interrupt */
-	pgt_write_4_flush(sc, PGT_REG_INT_EN, PGT_INT_STAT_INIT);	
+	pgt_write_4_flush(sc, PGT_REG_INT_EN, PGT_INT_STAT_INIT);
 	DELAY(PGT_WRITEIO_DELAY);
 
 	return (0);
@@ -531,7 +531,7 @@ trying_again:
 			} else {
 				/* await all interrupts */
 				pgt_write_4_flush(sc, PGT_REG_INT_EN,
-				    PGT_INT_STAT_SOURCES);	
+				    PGT_INT_STAT_SOURCES);
 				DELAY(PGT_WRITEIO_DELAY);
 				ic->ic_if.if_flags |= IFF_RUNNING;
 			}
@@ -678,8 +678,8 @@ pgt_update_intr(struct pgt_softc *sc, int hack)
 {
 	/* priority order */
 	enum pgt_queue pqs[PGT_QUEUE_COUNT] = {
-	    PGT_QUEUE_MGMT_TX, PGT_QUEUE_MGMT_RX, 
-	    PGT_QUEUE_DATA_HIGH_TX, PGT_QUEUE_DATA_HIGH_RX, 
+	    PGT_QUEUE_MGMT_TX, PGT_QUEUE_MGMT_RX,
+	    PGT_QUEUE_DATA_HIGH_TX, PGT_QUEUE_DATA_HIGH_RX,
 	    PGT_QUEUE_DATA_LOW_TX, PGT_QUEUE_DATA_LOW_RX
 	};
 	struct mbuf *m;
@@ -756,7 +756,7 @@ pgt_update_intr(struct pgt_softc *sc, int hack)
 
 	/*
 	 * This is the deferred completion for received management frames
-	 * and where we queue network frames for stack input. 
+	 * and where we queue network frames for stack input.
 	 */
 	dirtycount = sc->sc_dirtyq_count[PGT_QUEUE_MGMT_RX];
 	while (!TAILQ_EMPTY(&sc->sc_dirtyq[PGT_QUEUE_MGMT_RX])) {

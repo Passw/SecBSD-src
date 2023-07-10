@@ -82,7 +82,7 @@ struct gdt_ccb {
 	u_int8_t gc_cmd_index;
 	u_int8_t gc_flags;
 #define GDT_GCF_CMD_MASK	0x3
-#define GDT_GCF_UNUSED		0	
+#define GDT_GCF_UNUSED		0
 #define GDT_GCF_INTERNAL	1
 #define GDT_GCF_SCREEN 		2
 #define GDT_GCF_SCSI 		3

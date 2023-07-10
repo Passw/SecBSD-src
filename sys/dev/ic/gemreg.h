@@ -441,7 +441,7 @@
 #define	GEM_MII_SLINK_STATUS	0x905c		/* serial link status */
 
 /* GEM_MII_CONTROL bits */
-/* 
+/*
  * DO NOT TOUCH THIS REGISTER ON ERI -- IT HARD HANGS.
  */
 #define	GEM_MII_CONTROL_RESET	0x00008000

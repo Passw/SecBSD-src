@@ -1341,7 +1341,7 @@ ar5008_swba_intr(struct athn_softc *sc)
 			wh = mtod(m, struct ieee80211_frame *);
 			wh->i_fc[1] |= IEEE80211_FC1_MORE_DATA;
 		}
-		
+
 		if (sc->ops.tx(sc, m, ni, ATHN_TXFLAG_CAB) != 0) {
 			ieee80211_release_node(ic, ni);
 			ifp->if_oerrors++;
@@ -1559,7 +1559,7 @@ ar5008_tx(struct athn_softc *sc, struct mbuf *m, struct ieee80211_node *ni,
 	} else {
 		/* Use fallback table of the node. */
 		int txrate;
-		
+
 		if (ni->ni_flags & IEEE80211_NODE_HT)
 			txrate = ATHN_NUM_LEGACY_RATES + ni->ni_txmcs;
 		else
@@ -1684,7 +1684,7 @@ ar5008_tx(struct athn_softc *sc, struct mbuf *m, struct ieee80211_node *ni,
 				ds->ds_ctl0 |= AR_TXC0_CTS_ENABLE;
 		}
 	}
-	/* 
+	/*
 	 * Disable multi-rate retries when protection is used.
 	 * The RTS/CTS frame's duration field is fixed and won't be
 	 * updated by hardware when the data rate changes.

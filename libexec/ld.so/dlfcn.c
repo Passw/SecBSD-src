@@ -1,4 +1,4 @@
-/*	$OpenBSD: dlfcn.c,v 1.113 2022/11/09 18:44:11 deraadt Exp $ */
+/*	$OpenBSD: dlfcn.c,v 1.114 2023/07/08 14:09:43 jasper Exp $ */
 
 /*
  * Copyright (c) 1998 Per Fogelstrom, Opsycon AB

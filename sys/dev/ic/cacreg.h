@@ -247,5 +247,5 @@ struct cac_sgb {
 	u_int32_t	length;		/* length of S/G segment */
 	u_int32_t	addr;		/* physical address of block */
 } __packed;
-	
+
 #endif	/* !_IC_CACREG_H_ */

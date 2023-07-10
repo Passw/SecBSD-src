@@ -238,8 +238,8 @@ struct nvme_cqe {
 #define NVM_ADMIN_DEL_IOSQ	0x00 /* Delete I/O Submission Queue */
 #define NVM_ADMIN_ADD_IOSQ	0x01 /* Create I/O Submission Queue */
 #define NVM_ADMIN_GET_LOG_PG	0x02 /* Get Log Page */
-#define NVM_ADMIN_DEL_IOCQ	0x04 /* Delete I/O Completion Queue */ 
-#define NVM_ADMIN_ADD_IOCQ	0x05 /* Create I/O Completion Queue */ 
+#define NVM_ADMIN_DEL_IOCQ	0x04 /* Delete I/O Completion Queue */
+#define NVM_ADMIN_ADD_IOCQ	0x05 /* Create I/O Completion Queue */
 #define NVM_ADMIN_IDENTIFY	0x06 /* Identify */
 #define NVM_ADMIN_ABORT		0x08 /* Abort */
 #define NVM_ADMIN_SET_FEATURES	0x09 /* Set Features */

@@ -395,7 +395,7 @@ void
 do_message(FILE *sdc, char *msg)
 {
 	size_t i, bs = 0, bu = 0, len;
-	ssize_t n;	
+	ssize_t n;
 	char *buf = NULL, last, *tmp;
 	int fd;
 

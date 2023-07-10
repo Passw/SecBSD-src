@@ -651,7 +651,7 @@ ar5k_ar5211_reset(struct ath_hal *hal, HAL_OPMODE op_mode, HAL_CHANNEL *channel,
 			ar5k_ar5211_set_gpio_intr(hal, 0, 0);
 	}
 
-	/* 
+	/*
 	 * Disable beacons and reset the register
 	 */
 	AR5K_REG_DISABLE_BITS(AR5K_AR5211_BEACON,

@@ -29,7 +29,7 @@
 /*
  * Intel 82802AB/82802AC Firmware Hub
  *
- * see:	ftp://download.intel.com/design/chipsets/datashts/29065804.pdf	 
+ * see:	ftp://download.intel.com/design/chipsets/datashts/29065804.pdf
  *     and http://www.intel.com/Assets/PDF/manual/298029.pdf
  */
 

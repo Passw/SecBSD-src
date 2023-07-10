@@ -35,17 +35,17 @@
  * All rights reserved.
  *
  * Author: Chris G. Demetriou
- * 
+ *
  * Permission to use, copy, modify and distribute this software and
  * its documentation is hereby granted, provided that both the copyright
  * notice and this permission notice appear in all copies of the
  * software, derivative works or modified versions, and any portions
  * thereof, and that both notices appear in supporting documentation.
- * 
- * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS" 
- * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND 
+ *
+ * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+ * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND
  * FOR ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
- * 
+ *
  * Carnegie Mellon requests users of this software to return to
  *
  *  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU
@@ -978,7 +978,7 @@ vga_scrollback(void *v, void *cookie, int lines)
 			p = st;
 		scr->pcs.visibleoffset = (p + ul) % we;
 	}
-	
+
 	/* update visible position */
 	vga_6845_write(vh, startadrh, scr->pcs.visibleoffset >> 9);
 	vga_6845_write(vh, startadrl, scr->pcs.visibleoffset >> 1);
@@ -1155,7 +1155,7 @@ vga_putchar(void *c, int row, int col, u_int uc, uint32_t attr)
 	struct vgascreen *scr = c;
 	int rc;
 	int s;
-	
+
 	s = spltty();
 	if (scr->pcs.active && scr->pcs.visibleoffset != scr->pcs.dispoffset)
 		vga_scrollback(scr->cfg, scr, 0);
@@ -1196,9 +1196,9 @@ int
 vga_getchar(void *c, int row, int col, struct wsdisplay_charcell *cell)
 {
 	struct vga_config *vc = c;
-	
+
 	return (pcdisplay_getchar(vc->active, row, col, cell));
-}	
+}
 
 void
 vga_save_palette(struct vga_config *vc)

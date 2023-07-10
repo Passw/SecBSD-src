@@ -38,7 +38,7 @@
  *
  * This software is derived from work of Atsushi Onoe; his contribution
  * is greatly appreciated. It has been modified for OpenBSD to use an
- * open source HAL instead of the original binary-only HAL. 
+ * open source HAL instead of the original binary-only HAL.
  */
 
 #include "bpfilter.h"
@@ -1375,7 +1375,7 @@ ath_beacon_config(struct ath_softc *sc)
 		bs.bs_nextdtim = nexttbtt;
 		/*
 		 * Calculate the number of consecutive beacons to miss
-		 * before taking a BMISS interrupt. 
+		 * before taking a BMISS interrupt.
 		 * Note that we clamp the result to at most 7 beacons.
 		 */
 		bs.bs_bmissthreshold = ic->ic_bmissthres;
@@ -1834,7 +1834,7 @@ ath_rx_proc(void *arg, int npending)
 			 * discard the frame.
 			 */
 
-			/* 
+			/*
 			 * Enable this if you want to see error
 			 * frames in Monitor mode.
 			 */
@@ -2011,7 +2011,7 @@ ath_tx_start(struct ath_softc *sc, struct ieee80211_node *ni,
 	pktlen = m0->m_pkthdr.len;
 
 	if (ath_softcrypto && iswep) {
-		k = ieee80211_get_txkey(ic, wh, ni);	
+		k = ieee80211_get_txkey(ic, wh, ni);
 		if ((m0 = ieee80211_encrypt(ic, m0, k)) == NULL)
 			return ENOMEM;
 		wh = mtod(m0, struct ieee80211_frame *);

@@ -640,7 +640,7 @@ wihap_auth_req(struct wi_softc *sc, struct wi_frame *rxfrm,
 			for (i = 0; i < 32; i++)
 				challenge[i] = sta->challenge[i] =
 					arc4random();
-			
+
 			if (sc->sc_ic.ic_if.if_flags & IFF_DEBUG)
 				printf("\tchallenge: 0x%x 0x%x ...\n",
 				   challenge[0], challenge[1]);

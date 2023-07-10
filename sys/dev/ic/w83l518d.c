@@ -109,7 +109,7 @@ wb_detach(struct wb_softc *wb, int flags)
 }
 
 /*
- * intr handler 
+ * intr handler
  */
 int
 wb_intr(void *opaque)

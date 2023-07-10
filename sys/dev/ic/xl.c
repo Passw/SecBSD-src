@@ -128,7 +128,7 @@
 
 #include <dev/ic/xlreg.h>
 
-/* 
+/*
  * TX Checksumming is disabled by default for two reasons:
  * - TX Checksumming will occasionally produce corrupt packets
  * - TX Checksumming seems to reduce performance
@@ -312,7 +312,7 @@ xl_mii_readreg(struct xl_softc *sc, struct xl_mii_frame *frame)
 	frame->mii_opcode = XL_MII_READOP;
 	frame->mii_turnaround = 0;
 	frame->mii_data = 0;
-	
+
 	/*
 	 * Select register window 4.
 	 */
@@ -397,7 +397,7 @@ xl_mii_writereg(struct xl_softc *sc, struct xl_mii_frame *frame)
 	frame->mii_stdelim = XL_MII_STARTDELIM;
 	frame->mii_opcode = XL_MII_WRITEOP;
 	frame->mii_turnaround = XL_MII_TURNAROUND;
-	
+
 	/*
 	 * Select the window 4.
 	 */
@@ -545,7 +545,7 @@ xl_read_eeprom(struct xl_softc *sc, caddr_t dest, int off, int cnt, int swap)
 		if (swap)
 			*ptr = ntohs(word);
 		else
-			*ptr = word;	
+			*ptr = word;
 	}
 
 	return (err ? 1 : 0);
@@ -800,11 +800,11 @@ xl_reset(struct xl_softc *sc)
 	CSR_WRITE_2(sc, XL_COMMAND, XL_CMD_TX_RESET);
 	xl_wait(sc);
 
-	if (sc->xl_flags & XL_FLAG_INVERT_LED_PWR || 
+	if (sc->xl_flags & XL_FLAG_INVERT_LED_PWR ||
 	    sc->xl_flags & XL_FLAG_INVERT_MII_PWR) {
 		XL_SEL_WIN(2);
 		CSR_WRITE_2(sc, XL_W2_RESET_OPTIONS, CSR_READ_2(sc,
-		    XL_W2_RESET_OPTIONS) 
+		    XL_W2_RESET_OPTIONS)
 		    | ((sc->xl_flags & XL_FLAG_INVERT_LED_PWR)?XL_RESETOPT_INVERT_LED:0)
 		    | ((sc->xl_flags & XL_FLAG_INVERT_MII_PWR)?XL_RESETOPT_INVERT_MII:0)
 		    );
@@ -1003,7 +1003,7 @@ xl_list_tx_init_90xB(struct xl_softc *sc)
 			prev = i - 1;
 		cd->xl_tx_chain[i].xl_ptr = &ld->xl_tx_list[i];
 		cd->xl_tx_chain[i].xl_phys =
-		    sc->sc_listmap->dm_segs[0].ds_addr +   
+		    sc->sc_listmap->dm_segs[0].ds_addr +
 		    offsetof(struct xl_list_data, xl_tx_list[i]);
 		cd->xl_tx_chain[i].xl_next = &cd->xl_tx_chain[next];
 		cd->xl_tx_chain[i].xl_prev = &cd->xl_tx_chain[prev];
@@ -1056,7 +1056,7 @@ xl_list_rx_init(struct xl_softc *sc)
 
 void
 xl_fill_rx_ring(struct xl_softc *sc)
-{  
+{
 	struct xl_chain_data    *cd;
 	u_int			slots;
 
@@ -1143,13 +1143,13 @@ again:
 
 	while (if_rxr_inuse(&sc->xl_cdata.xl_rx_ring) > 0) {
 		cur_rx = sc->xl_cdata.xl_rx_cons;
-		bus_dmamap_sync(sc->sc_dmat, sc->sc_listmap,                    
+		bus_dmamap_sync(sc->sc_dmat, sc->sc_listmap,
 		    ((caddr_t)cur_rx->xl_ptr - sc->sc_listkva),
 		    sizeof(struct xl_list),
 		    BUS_DMASYNC_POSTREAD | BUS_DMASYNC_POSTWRITE);
 		if ((rxstat = letoh32(sc->xl_cdata.xl_rx_cons->xl_ptr->xl_status)) == 0)
 			break;
-		m = cur_rx->xl_mbuf;  
+		m = cur_rx->xl_mbuf;
 		cur_rx->xl_mbuf = NULL;
 		sc->xl_cdata.xl_rx_cons = cur_rx->xl_next;
 		if_rxr_put(&sc->xl_cdata.xl_rx_ring, 1);
@@ -1582,7 +1582,7 @@ reload:
 				return (1);
 			}
 		}
-		m_copydata(m_head, 0, m_head->m_pkthdr.len,	
+		m_copydata(m_head, 0, m_head->m_pkthdr.len,
 		    mtod(m_new, caddr_t));
 		m_new->m_pkthdr.len = m_new->m_len = m_head->m_pkthdr.len;
 		m_freem(m_head);
@@ -2655,7 +2655,7 @@ xl_wol(struct ifnet *ifp, int enable)
 		CSR_WRITE_2(sc, XL_W7_BM_PME, 0);
 		sc->xl_flags &= ~XL_FLAG_WOL;
 	}
-	return (0);	
+	return (0);
 }
 #endif
 

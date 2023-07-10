@@ -116,7 +116,7 @@ commandline_macros_cleanup(void)
 		dofree(cm, sizeof(*cm));
 	}
 	array_setsize(&commandline_macros, 0);
-	
+
 	array_cleanup(&commandline_macros);
 }
 

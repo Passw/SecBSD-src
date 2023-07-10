@@ -329,7 +329,7 @@ STATIC_LDFLAGS = $static_ldflags
 LDLIBPTH = $ldlibpth
 
 # Sometimes running an executable is an adventure.
-RUN = 
+RUN =
 
 # When cross-compiling we want to use a (mini)perl built for the host, not the target
 HOST_PERL = $hostperl
@@ -614,7 +614,7 @@ esac
 
 $spitshell >>$Makefile <<'!NO!SUBS!'
 
-perltoc_pod_prereqs = extra.pods pod/perl5360delta.pod pod/perlapi.pod pod/perlintern.pod pod/perlmodlib.pod
+perltoc_pod_prereqs = extra.pods pod/perl5361delta.pod pod/perlapi.pod pod/perlintern.pod pod/perlmodlib.pod
 generated_pods = pod/perltoc.pod $(perltoc_pod_prereqs)
 generated_headers = uudmap.h bitcount.h mg_data.h
 
@@ -650,7 +650,7 @@ lintflags = \
     -erroff=E_STATIC_UNUSED \
     -erroff=E_TRUE_LOGICAL_EXPR
 
-.c$(OBJ_EXT): 
+.c$(OBJ_EXT):
 	@echo `$(CCCMD)` $(PLDLFLAGS) $*.c
 	@`$(CCCMD)` $(PLDLFLAGS) $*.c
 
@@ -843,9 +843,9 @@ aix)
 LIBPERLEXPORT		= perl.exp
 
 !NO!SUBS!
-		
+
 		;;
-	*)	
+	*)
 		$spitshell >>$Makefile <<'!NO!SUBS!'
 
 PERLEXPORT		= perl.exp
@@ -1129,9 +1129,9 @@ pod/perlintern.pod: $(MINIPERL_EXE) autodoc.pl embed.fnc
 pod/perlmodlib.pod: $(MINIPERL_EXE) pod/perlmodlib.PL MANIFEST
 	$(MINIPERL) pod/perlmodlib.PL -q
 
-pod/perl5360delta.pod: pod/perldelta.pod
-	$(RMS) pod/perl5360delta.pod
-	$(LNS) perldelta.pod pod/perl5360delta.pod
+pod/perl5361delta.pod: pod/perldelta.pod
+	$(RMS) pod/perl5361delta.pod
+	$(LNS) perldelta.pod pod/perl5361delta.pod
 
 extra.pods: $(MINIPERL_EXE)
 	-@test ! -f extra.pods || rm -f `cat extra.pods`

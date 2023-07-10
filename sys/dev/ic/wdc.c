@@ -185,7 +185,7 @@ wdc_log(struct channel_softc *chp, enum wdcevent_type type,
 	if (log_size < 0) log_size += wdc_log_cap;
 
 	if (log_size + request_size >= wdc_log_cap) {
-		int nb = 0; 
+		int nb = 0;
 		int rec_size;
 
 		while (nb <= (request_size * 2)) {
@@ -963,7 +963,7 @@ wdcintr(void *arg)
 		}
 		chp->ch_flags &= ~WDCF_DMA_WAIT;
 	}
-		
+
 	chp->ch_flags &= ~WDCF_IRQ_WAIT;
 	ret = xfer->c_intr(chp, xfer, 1);
 	if (ret == 0)	/* irq was not for us, still waiting for irq */
@@ -1728,7 +1728,7 @@ __wdccommand_start(struct channel_softc *chp, struct wdc_xfer *xfer)
 	__wdccommand_intr(chp, xfer, 0);
 	return;
 
-timeout:	
+timeout:
 	wdc_c->flags |= AT_TIMEOU;
 	__wdccommand_done(chp, xfer);
 }

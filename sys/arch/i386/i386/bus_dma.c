@@ -128,7 +128,7 @@ void
 _bus_dmamap_destroy(bus_dma_tag_t t, bus_dmamap_t map)
 {
 	size_t mapsize;
-	
+
 	mapsize = sizeof(struct bus_dmamap) +
 		(sizeof(bus_dma_segment_t) * (map->_dm_segcnt - 1));
 	free(map, M_DEVBUF, mapsize);

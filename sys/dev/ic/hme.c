@@ -41,7 +41,7 @@
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/kernel.h>
-#include <sys/mbuf.h> 
+#include <sys/mbuf.h>
 #include <sys/syslog.h>
 #include <sys/socket.h>
 #include <sys/device.h>
@@ -220,7 +220,7 @@ hme_config(struct hme_softc *sc)
 
 	/* Initialize ifmedia structures and MII info */
 	mii->mii_ifp = ifp;
-	mii->mii_readreg = hme_mii_readreg; 
+	mii->mii_readreg = hme_mii_readreg;
 	mii->mii_writereg = hme_mii_writereg;
 	mii->mii_statchg = hme_mii_statchg;
 
@@ -533,7 +533,7 @@ hme_init(struct hme_softc *sc)
 	/*
 	 * Init seed for backoff
 	 * (source suggested by manual: low 10 bits of MAC address)
-	 */ 
+	 */
 	v = ((ea[4] << 8) | ea[5]) & 0x3fff;
 	bus_space_write_4(t, mac, HME_MACI_RANDSEED, v);
 
@@ -980,7 +980,7 @@ hme_mii_readreg(struct device *self, int phy, int reg)
 		v |= HME_MIF_CFG_PHY;
 	bus_space_write_4(t, mif, HME_MIFI_CFG, v);
 
-	/* Enable MII drivers on external transceiver */ 
+	/* Enable MII drivers on external transceiver */
 	v = xif_cfg = bus_space_read_4(t, mac, HME_MACI_XIF);
 	if (phy == HME_PHYAD_EXTERNAL)
 		v |= HME_MAC_XIF_MIIENABLE;
@@ -1037,7 +1037,7 @@ hme_mii_writereg(struct device *self, int phy, int reg, int val)
 		v |= HME_MIF_CFG_PHY;
 	bus_space_write_4(t, mif, HME_MIFI_CFG, v);
 
-	/* Enable MII drivers on external transceiver */ 
+	/* Enable MII drivers on external transceiver */
 	v = xif_cfg = bus_space_read_4(t, mac, HME_MACI_XIF);
 	if (phy == HME_PHYAD_EXTERNAL)
 		v |= HME_MAC_XIF_MIIENABLE;
@@ -1233,7 +1233,7 @@ hme_iff(struct hme_softc *sc)
 		ETHER_FIRST_MULTI(step, ac, enm);
 		while (enm != NULL) {
 			crc = ether_crc32_le(enm->enm_addrlo,
-			    ETHER_ADDR_LEN) >> 26; 
+			    ETHER_ADDR_LEN) >> 26;
 
 			/* Set the corresponding bit in the filter. */
 			hash[crc >> 4] |= 1 << (crc & 0xf);

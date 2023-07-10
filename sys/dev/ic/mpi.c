@@ -1358,7 +1358,7 @@ mpi_scsi_cmd(struct scsi_xfer *xs)
 	if (sc->sc_porttype != MPI_PORTFACTS_PORTTYPE_SCSI &&
 	    (link->quirks & SDEV_NOTAGS))
 		io->tagging = MPI_SCSIIO_ATTR_UNTAGGED;
-	else 
+	else
 		io->tagging = MPI_SCSIIO_ATTR_SIMPLE_Q;
 
 	memcpy(io->cdb, &xs->cmd, xs->cmdlen);

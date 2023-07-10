@@ -159,8 +159,8 @@ const struct lm_sensor w83627ehf_sensors[] = {
 	{ NULL }
 };
 
-/* 
- * w83627dhg is almost identical to w83627ehf, except that 
+/*
+ * w83627dhg is almost identical to w83627ehf, except that
  * it has 9 instead of 10 voltage sensors
  */
 const struct lm_sensor w83627dhg_sensors[] = {
@@ -859,7 +859,7 @@ wb_refresh_fanrpm(struct lm_softc *sc, int n)
 	struct ksensor *sensor = &sc->sensors[n];
 	int fan, data, divisor = 0;
 
-	/* 
+	/*
 	 * This is madness; the fan divisor bits are scattered all
 	 * over the place.
 	 */

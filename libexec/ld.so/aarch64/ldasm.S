@@ -1,4 +1,4 @@
-/*	$OpenBSD: ldasm.S,v 1.10 2023/04/24 22:06:05 kettenis Exp $ */
+/*	$OpenBSD: ldasm.S,v 1.11 2023/07/08 14:09:43 jasper Exp $ */
 
 /*
  * Copyright (c) 2016 Dale Rahn

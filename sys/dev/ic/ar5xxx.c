@@ -1160,7 +1160,7 @@ ar5k_ar5111_chan2athchan(u_int ieee, struct ar5k_athchan_2ghz *athchan)
 {
 	int channel;
 
-	/* Cast this value to catch negative channel numbers (>= -19) */ 
+	/* Cast this value to catch negative channel numbers (>= -19) */
 	channel = (int)ieee;
 
 	/*

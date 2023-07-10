@@ -1162,7 +1162,7 @@ cominit(bus_space_tag_t iot, bus_space_handle_t ioh, int rate, int frequency)
 }
 
 #ifdef COM_CONSOLE
-void  
+void
 comcnprobe(struct consdev *cp)
 {
 	bus_space_handle_t ioh;

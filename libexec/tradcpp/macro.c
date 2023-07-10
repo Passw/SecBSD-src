@@ -890,7 +890,7 @@ expand_domacro(struct expstate *es, struct place *p)
 		name = stringarray_get(&es->args, 0);
 		m = macrotable_find(name, false);
 		val = (m != NULL) ? "1" : "0";
-		debuglog(p, "defined(%s): %s", name, val); 
+		debuglog(p, "defined(%s): %s", name, val);
 		expand_send(es, p, val, 1);
 		expstate_destroyargs(es);
 		return;

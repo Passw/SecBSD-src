@@ -465,7 +465,7 @@ pcic_event_process(struct pcic_handle *h, struct pcic_event *pe)
 			}
 		}
 		splx(s);
-				
+
 		DPRINTF(("%s: insertion event\n", h->ph_parent->dv_xname));
 		pcic_attach_card(h);
 		break;
@@ -824,7 +824,7 @@ pcic_power(int why, void *arg)
 	}
 }
 
-int 
+int
 pcic_chip_mem_alloc(pcmcia_chipset_handle_t pch, bus_size_t size,
     struct pcmcia_mem_handle *pcmhp)
 {
@@ -862,7 +862,7 @@ pcic_chip_mem_alloc(pcmcia_chipset_handle_t pch, bus_size_t size,
 			pcmhp->size = size;
 			pcmhp->mhandle = mhandle;
 			pcmhp->realsize = sizepg * PCIC_MEM_PAGESIZE;
-	
+
 			DPRINTF(("pcic_chip_mem_alloc bus addr 0x%lx+0x%lx\n",
 			    (u_long) addr, (u_long) size));
 
@@ -873,7 +873,7 @@ pcic_chip_mem_alloc(pcmcia_chipset_handle_t pch, bus_size_t size,
 	return (1);
 }
 
-void 
+void
 pcic_chip_mem_free(pcmcia_chipset_handle_t pch, struct pcmcia_mem_handle *pcmhp)
 {
 	struct pcic_handle *h = (struct pcic_handle *) pch;
@@ -938,7 +938,7 @@ static struct mem_map_index_st {
 	},
 };
 
-void 
+void
 pcic_chip_do_mem_map(struct pcic_handle *h, int win)
 {
 	int reg;
@@ -992,7 +992,7 @@ pcic_chip_do_mem_map(struct pcic_handle *h, int win)
 #endif
 }
 
-int 
+int
 pcic_chip_mem_map(pcmcia_chipset_handle_t pch, int kind, bus_addr_t card_addr,
     bus_size_t size, struct pcmcia_mem_handle *pcmhp, bus_size_t *offsetp,
     int *windowp)
@@ -1057,7 +1057,7 @@ pcic_chip_mem_map(pcmcia_chipset_handle_t pch, int kind, bus_addr_t card_addr,
 	return (0);
 }
 
-void 
+void
 pcic_chip_mem_unmap(pcmcia_chipset_handle_t pch, int window)
 {
 	struct pcic_handle *h = (struct pcic_handle *) pch;
@@ -1073,7 +1073,7 @@ pcic_chip_mem_unmap(pcmcia_chipset_handle_t pch, int window)
 	h->memalloc &= ~(1 << window);
 }
 
-int 
+int
 pcic_chip_io_alloc(pcmcia_chipset_handle_t pch, bus_addr_t start,
     bus_size_t size, bus_size_t align, struct pcmcia_io_handle *pcihp)
 {
@@ -1158,7 +1158,7 @@ pcic_chip_io_alloc(pcmcia_chipset_handle_t pch, bus_addr_t start,
 	return (0);
 }
 
-void 
+void
 pcic_chip_io_free(pcmcia_chipset_handle_t pch, struct pcmcia_io_handle *pcihp)
 {
 	bus_space_tag_t iot = pcihp->iot;
@@ -1215,7 +1215,7 @@ static struct io_map_index_st {
 	},
 };
 
-void 
+void
 pcic_chip_do_io_map(struct pcic_handle *h, int win)
 {
 	int reg;
@@ -1243,7 +1243,7 @@ pcic_chip_do_io_map(struct pcic_handle *h, int win)
 	pcic_write(h, PCIC_ADDRWIN_ENABLE, reg);
 }
 
-int 
+int
 pcic_chip_io_map(pcmcia_chipset_handle_t pch, int width, bus_addr_t offset,
     bus_size_t size, struct pcmcia_io_handle *pcihp, int *windowp)
 {
@@ -1288,7 +1288,7 @@ pcic_chip_io_map(pcmcia_chipset_handle_t pch, int width, bus_addr_t offset,
 	return (0);
 }
 
-void 
+void
 pcic_chip_io_unmap(pcmcia_chipset_handle_t pch, int window)
 {
 	struct pcic_handle *h = (struct pcic_handle *) pch;
@@ -1337,7 +1337,7 @@ pcic_chip_socket_enable(pcmcia_chipset_handle_t pch)
 
 	pcic_write(h, PCIC_PWRCTL, 0);
 
-	/* 
+	/*
 	 * wait 300ms until power fails (Tpf).  Then, wait 100ms since
 	 * we are changing Vcc (Toff).
 	 */

@@ -409,7 +409,7 @@ typedef struct {
 /*
  * Ring control block structure. The rules for the max_len field
  * are as follows:
- * 
+ *
  * For the send ring, max_len indicates the number of entries in the
  * ring (128, 256 or 512).
  *
@@ -1059,7 +1059,7 @@ struct ti_ring_data {
  * chosen to make the total struct size an even power of two. It's
  * critical that no TxCB be split across a page boundary since
  * no attempt is made to allocate physically contiguous memory.
- * 
+ *
  */
 #ifdef __LP64__
 #define TI_NTXSEG      30

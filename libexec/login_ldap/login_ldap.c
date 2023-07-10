@@ -246,7 +246,7 @@ auth_ldap(char *user, char *class, char *pass)
 		}
 		dlog(1, "group filter matched!");
 	}
-	
+
 
 	if (ctx.basedn != NULL) {
 		if (!bind_password(&ctx, ctx.userdn, pass)) {

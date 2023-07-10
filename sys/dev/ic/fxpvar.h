@@ -1,19 +1,19 @@
 /*	$OpenBSD: fxpvar.h,v 1.38 2022/01/09 05:42:38 jsg Exp $	*/
 /*	$NetBSD: if_fxpvar.h,v 1.1 1997/06/05 02:01:58 thorpej Exp $	*/
 
-/*                  
+/*
  * Copyright (c) 1995, David Greenman
  * All rights reserved.
- *              
+ *
  * Modifications to support NetBSD:
  * Copyright (c) 1997 Jason R. Thorpe.  All rights reserved.
- *                  
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met:             
+ * are met:
  * 1. Redistributions of source code must retain the above copyright
  *    notice unmodified, this list of conditions, and the following
- *    disclaimer.  
+ *    disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
@@ -46,7 +46,7 @@
 #define FXP_NTXCB	128
 
 /*
- * Minimum and maximum number of receive frame area buffers. 
+ * Minimum and maximum number of receive frame area buffers.
  */
 #define FXP_NRFABUFS_MIN	4
 #define FXP_NRFABUFS_MAX	64	/* These are large so choose wisely. */
@@ -57,7 +57,7 @@
  * microcode is loaded.
  */
 #ifndef FXP_INT_DELAY
-#define FXP_INT_DELAY 128 
+#define FXP_INT_DELAY 128
 #endif
 
 /*
@@ -69,7 +69,7 @@
 #define FXP_BUNDLE_MAX 16
 #endif
 
-/* 
+/*
  * Bit-mask describing minimum size frame that will be bundled.
  * This is only effective if the Intel microcode is loaded.
  * This is not present in all microcode revisions. Disabled by default,
@@ -137,7 +137,7 @@ struct fxp_softc {
 	struct fxp_ctrl *sc_ctrl;
 	bus_dmamap_t sc_rxmaps[FXP_NRFABUFS_MAX];
 	int sc_rxfree;
-	u_int32_t sc_revision;		/* chip revision */ 
+	u_int32_t sc_revision;		/* chip revision */
 	u_int16_t sc_int_delay;		/* interrupt delay value for ucode */
 	u_int16_t sc_bundle_max;	/* max # frames per interrupt (ucode) */
 	u_int16_t sc_min_size_mask;	/* bit-mask describing the minimum
@@ -190,7 +190,7 @@ void fxp_wakeup(struct fxp_softc *);
 
 #define	FXP_STATS_SYNC(sc, p)						\
     bus_dmamap_sync((sc)->sc_dmat, (sc)->tx_cb_map,			\
-	offsetof(struct fxp_ctrl, stats), sizeof(struct fxp_stats), (p)) 
+	offsetof(struct fxp_ctrl, stats), sizeof(struct fxp_stats), (p))
 
 #define	FXP_MBUF_SYNC(sc, m, p)						\
     bus_dmamap_sync((sc)->sc_dmat, (m), 0, (m)->dm_mapsize, (p))

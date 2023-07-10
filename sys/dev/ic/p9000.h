@@ -161,7 +161,7 @@
 
 /*
  * Parameter engine
- */ 
+ */
 
 /* Status register */
 #define	P9000_PE_STATUS					0x00000000

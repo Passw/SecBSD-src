@@ -2,14 +2,14 @@
 
 /*
  * Copyright (c) 2007 The DragonFly Project.  All rights reserved.
- * 
+ *
  * This code is derived from software contributed to The DragonFly Project
  * by Sepherosa Ziehau <sepherosa@gmail.com>
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -19,7 +19,7 @@
  * 3. Neither the name of The DragonFly Project nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific, prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,7 +32,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * $DragonFly: src/sys/dev/netif/bwi/if_bwivar.h,v 1.1 2007/09/08 06:15:54 sephe Exp $
  */
 
@@ -553,7 +553,7 @@ struct bwi_softc {
 	struct timeout		 sc_led_blink_end_ch;
 	int			 sc_led_blink_offdur;
 	struct bwi_led		 sc_leds[BWI_LED_MAX];
- 
+
 	enum bwi_bus_space	 sc_bus_space;
 
 	/* bounce buffers for 30 bit bus space devices */
@@ -596,7 +596,7 @@ struct bwi_softc {
 
 	void			 (*sc_txeof_status)(struct bwi_softc *);
 
-	int			 (*sc_enable)(struct bwi_softc *); 
+	int			 (*sc_enable)(struct bwi_softc *);
 	void			 (*sc_disable)(struct bwi_softc *);
 
 	void			 (*sc_conf_write)(void *, uint32_t, uint32_t);
@@ -610,14 +610,14 @@ struct bwi_softc {
 
 #if NBPFILTER > 0
         caddr_t                  sc_drvbpf;
- 
+
         union {
                 struct bwi_rx_radiotap_hdr th;
                 uint8_t pad[64];
         }                        sc_rxtapu;
 #define sc_rxtap                 sc_rxtapu.th
         int                      sc_rxtap_len;
- 
+
         union {
                 struct bwi_tx_radiotap_hdr th;
                 uint8_t pad[64];

@@ -258,6 +258,6 @@
 						 *        the result of
 						 *        calibration (VCOCAL).
 						 *        0 = highest
-						 *        frequencies 
+						 *        frequencies
 						 */
 #endif /* _DEV_IC_SA2400REG_H_ */

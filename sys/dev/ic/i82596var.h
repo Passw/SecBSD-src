@@ -278,7 +278,7 @@ struct ie_softc {
 int 	i82596_intr(void *);
 int 	i82596_probe(struct ie_softc *);
 int 	i82596_proberam(struct ie_softc *);
-void 	i82596_attach(struct ie_softc *, const char *, u_int8_t *, 
+void 	i82596_attach(struct ie_softc *, const char *, u_int8_t *,
 	    uint64_t *, int, uint64_t);
 int 	i82596_start_cmd(struct ie_softc *, int, int, int, int);
 

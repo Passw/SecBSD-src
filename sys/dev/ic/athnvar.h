@@ -82,7 +82,7 @@ struct athn_tx_buf {
 	int				bf_txmcs;
 	int				bf_txflags;
 #define ATHN_TXFLAG_PAPRD	(1 << 0)
-#define ATHN_TXFLAG_CAB		(1 << 1) 
+#define ATHN_TXFLAG_CAB		(1 << 1)
 };
 
 struct athn_txq {

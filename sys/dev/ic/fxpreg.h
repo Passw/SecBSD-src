@@ -263,7 +263,7 @@ struct fxp_stats {
 };
 #define FXP_STATS_DUMP_COMPLETE	0xa005
 #define FXP_STATS_DR_COMPLETE	0xa007
-	
+
 /*
  * Serial EEPROM control register bits
  */
@@ -343,7 +343,7 @@ struct fxp_cb_ucode {
 	volatile u_int32_t ucode[MAXUCODESIZE];
 };
 
-/* 
+/*
  * Chip revision values.
  */
 #define FXP_REV_82557_A		0	/* 82557 A */

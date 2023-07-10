@@ -415,7 +415,7 @@ rt2661_wakeup(void *xsc)
 	struct ifnet *ifp = &sc->sc_ic.ic_if;
 
 	if (ifp->if_flags & IFF_UP)
-		rt2661_init(ifp);	
+		rt2661_init(ifp);
 }
 
 int

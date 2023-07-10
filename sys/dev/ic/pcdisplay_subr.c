@@ -6,17 +6,17 @@
  * All rights reserved.
  *
  * Author: Chris G. Demetriou
- * 
+ *
  * Permission to use, copy, modify and distribute this software and
  * its documentation is hereby granted, provided that both the copyright
  * notice and this permission notice appear in all copies of the
  * software, derivative works or modified versions, and any portions
  * thereof, and that both notices appear in supporting documentation.
- * 
- * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS" 
- * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND 
+ *
+ * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+ * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND
  * FOR ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
- * 
+ *
  * Carnegie Mellon requests users of this software to return to
  *
  *  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU
@@ -99,7 +99,7 @@ pcdisplay_cursor(void *id, int on, int row, int col)
 		else
 			scr->mem[off] = scr->cursortmp;
 	}
-		
+
 	scr->vc_crow = row;
 	scr->vc_ccol = col;
 
@@ -175,13 +175,13 @@ pcdisplay_getchar(void *id, int row, int col, struct wsdisplay_charcell *cell)
 	int off;
 	int s;
 	u_int16_t data;
-	
+
 	off = row * scr->type->ncols + col;
 	/* XXX bounds check? */
-	
+
 	s = spltty();
 	if (scr->active)
-		data = (bus_space_read_2(memt, memh, 
+		data = (bus_space_read_2(memt, memh,
 					scr->dispoffset + off * 2));
 	else
 		data = (scr->mem[off]);

@@ -104,7 +104,7 @@ struct cac_softc {
 	const struct cac_linkage	*sc_cl;
 	caddr_t			sc_ccbs;
 	paddr_t			sc_ccbs_paddr;
-	SIMPLEQ_HEAD(, cac_ccb)	sc_ccb_free;	
+	SIMPLEQ_HEAD(, cac_ccb)	sc_ccb_free;
 	SIMPLEQ_HEAD(, cac_ccb)	sc_ccb_queue;
 	struct cac_drive_info	*sc_dinfos;
 	int			(*sc_ioctl)(struct device *, u_long, caddr_t);

@@ -35,7 +35,7 @@
  */
 
 /*
- * Structure defining a record for a user.  All fields 
+ * Structure defining a record for a user.  All fields
  * stored in ascii to facilitate backup/reconstruction.
  * A null byte is required after the share secret field.
  */
@@ -68,7 +68,7 @@ typedef	struct	{
 #define	TOKEN_GROUP	"_token"	/* group that owns token database */
 
 /*
- * Function prototypes for routines which manipulate the 
+ * Function prototypes for routines which manipulate the
  * database for the token.  These routines have no knowledge
  * of DES or encryption.  However, they will manipulate the
  * flags field of the database record with complete abandon.

@@ -160,7 +160,7 @@ struct pgt_softc {
 #define	SC_DEBUG_RXFRAG		0x00000200
 #define	SC_DEBUG_RXETHER	0x00000400
 	bus_space_tag_t		sc_iotag;
-	bus_space_handle_t	sc_iohandle; 
+	bus_space_handle_t	sc_iohandle;
 	bus_dma_tag_t		sc_dmat;
 
 	bus_dmamap_t		sc_cbdmam;

@@ -159,7 +159,7 @@ cy_probe_common(bus_space_tag_t memt, bus_space_handle_t memh, int bustype)
 		}
 #ifdef CY_DEBUG
 		printf("firmware version 0x%x\n", firmware_ver);
-#endif      
+#endif
 
 		if ((firmware_ver & 0xf0) != 0x40)
 			break;
@@ -216,7 +216,7 @@ cy_attach(struct device *parent, struct device *self)
 		/* Set cy_clock depending on firmware version */
 		if (cd_read_reg_sc(sc, cy_chip, CD1400_GFRCR) <= 0x46)
 			cy_clock = CY_CLOCK;
-		else 
+		else
 			cy_clock = CY_CLOCK_60;
 
 		/* set up a receive timeout period (1ms) */
@@ -964,7 +964,7 @@ cy_poll(void *arg)
 			    doesn't change RTS if RTSCTS is on */
 			cd_write_reg(cy, CD1400_CAR,
 			    port & CD1400_CAR_CHAN);
-	      
+
 			if ((cd_read_reg(cy,
 			    CD1400_MSVR1) & CD1400_MSVR1_RTS) == 0) {
 				cd_write_reg(cy, CD1400_MSVR1,

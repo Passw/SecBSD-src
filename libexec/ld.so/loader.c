@@ -1,4 +1,4 @@
-/*	$OpenBSD: loader.c,v 1.212 2023/02/20 00:51:57 gnezdo Exp $ */
+/*	$OpenBSD: loader.c,v 1.213 2023/07/08 14:09:43 jasper Exp $ */
 
 /*
  * Copyright (c) 1998 Per Fogelstrom, Opsycon AB

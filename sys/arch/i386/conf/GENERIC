@@ -87,7 +87,7 @@ ppb*	at pci?			# PCI-PCI bridges
 pci*	at ppb?
 pci*	at pchb?
 pcib*	at pci?			# PCI-ISA bridge
-amdpcib* at pci?		# AMD 8111 LPC bridge 
+amdpcib* at pci?		# AMD 8111 LPC bridge
 tcpcib*	at pci?			# Intel Atom E600 LPC bridge
 ichpcib* at pci?		# Intel ICHx/ICHx-M LPC bridges
 gscpcib* at pci?		# NS Geode SC1100 PCI-ISA bridge
@@ -386,7 +386,7 @@ agp*		at amdagp?	# AGP bridges
 agp*		at intelagp?	# AGP bridges
 agp*		at sisagp?	# AGP bridges
 agp*		at viaagp?	# AGP bridges
-#agp*		at mmuagp?	
+#agp*		at mmuagp?
 
 inteldrm*	at pci?		# Intel i915, i945 DRM driver
 intagp*		at inteldrm?
@@ -407,7 +407,7 @@ com0	at isa? port 0x3f8 irq 4	# standard PC serial ports
 com1	at isa? port 0x2f8 irq 3
 com2	at isa? port 0x3e8 irq 5
 com3	at isa? disable port 0x2e8 irq 9 # (conflicts with some video cards)
-#com4	at isa? port 0x220 irq 4	# Fujitsu Stylistic Touchscreen 
+#com4	at isa? port 0x220 irq 4	# Fujitsu Stylistic Touchscreen
 ast0	at isa? port 0x1a0 irq 5	# AST 4-port serial card
 #ast1	at isa? port 0x2a0 irq 6	# 2nd AST 4-port serial card
 com*	at ast?

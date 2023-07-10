@@ -797,7 +797,7 @@ atw_attach(struct atw_softc *sc)
 #ifndef IEEE80211_STA_ONLY
 	ic->ic_caps |= IEEE80211_C_IBSS;
 #endif
-	ic->ic_sup_rates[IEEE80211_MODE_11B] = ieee80211_std_rateset_11b;	
+	ic->ic_sup_rates[IEEE80211_MODE_11B] = ieee80211_std_rateset_11b;
 
 	/*
 	 * Call MI attach routines.
@@ -3442,7 +3442,7 @@ atw_compute_duration1(int len, int use_ack, uint32_t flags, int rate,
  *
  * wh:      802.11 header
  *
- * len: packet length 
+ * len: packet length
  *
  * rate:    MSDU speed, units 500kb/s
  *
@@ -3620,7 +3620,7 @@ atw_start(struct ifnet *ifp)
 				m0 = ieee80211_encrypt(ic, m0, k);
 				if (m0 == NULL) {
 					ifp->if_oerrors++;
-					break;	
+					break;
 				}
 			}
 		}

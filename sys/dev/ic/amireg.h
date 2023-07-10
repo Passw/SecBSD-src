@@ -47,7 +47,7 @@
 #define AMI_MAXIOCTLCMDS 1		/* number of parallel ioctl calls */
 #define AMI_MAXPROCS	 2		/* number of processors on a channel */
 #define AMI_MAXRAWCMDS	 2		/* number of parallel processor cmds */
- 
+
 #define	AMI_MAXFER	(AMI_MAXOFFSETS * PAGE_SIZE)
 
 #define	AMI_QIDB	0x20

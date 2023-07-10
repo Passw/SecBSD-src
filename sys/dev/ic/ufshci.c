@@ -1444,7 +1444,7 @@ ufshci_hexdump(void *buf, int len, char *title, int dbglvl)
 
 		for (j = 0; j < sizeof(b); j++) {
 			if (j % 2 == 0)
-				printf(" "); 
+				printf(" ");
 			if (j % 8 == 0)
 				printf(" ");
 			if (j < l)
@@ -1796,7 +1796,7 @@ ufshci_scsi_capacity(struct scsi_xfer *xs)
 		}
 		goto error2;
 	}
- 
+
 	return;
 
 error2:

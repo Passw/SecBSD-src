@@ -172,7 +172,7 @@ struct meteor_video {
 #define	METEOR_SIG_FIELD	0x00010000	/* signal every field */
 
 	/* following structure is used to coordinate the synchronous */
-	   
+
 struct meteor_mem {
 		/* kernel write only  */
 	int	frame_size;	 /* row*columns*depth */
@@ -296,7 +296,7 @@ struct eeProm {
 #define	TVTUNER_GETSTATUS  _IOR('x', 34, unsigned int)	/* get tuner status */
 #define	TVTUNER_SETFREQ    _IOW('x', 35, unsigned int)	/* set frequency */
 #define	TVTUNER_GETFREQ    _IOR('x', 36, unsigned int)	/* get frequency */
- 
+
 
 #define BT848_SHUE	_IOW('x', 37, int)		/* set hue */
 #define BT848_GHUE	_IOR('x', 37, int)		/* get hue */
@@ -333,9 +333,9 @@ struct eeProm {
 
 /* Read/Write the BT848's I2C bus directly
  * b7-b0:    data (read/write)
- * b15-b8:   internal peripheral register (write)   
+ * b15-b8:   internal peripheral register (write)
  * b23-b16:  i2c addr (write)
- * b31-b24:  1 = write, 0 = read 
+ * b31-b24:  1 = write, 0 = read
  */
 #define BT848_I2CWR     _IOWR('x', 57, u_int)    /* i2c read-write */
 
@@ -460,10 +460,10 @@ struct bktr_remote {
                                                             /*control receiver*/
                                                             /*returns raw data*/
 
- 
+
 /*
  * Direct access to GPIO pins. You must add BKTR_GPIO_ACCESS to your kernel
- * configuration file to use these 
+ * configuration file to use these
  */
 #define BT848_GPIO_SET_EN      _IOW('x', 72, int)      /* set gpio_out_en */
 #define BT848_GPIO_GET_EN      _IOR('x', 73, int)      /* get gpio_out_en */

@@ -269,7 +269,7 @@ siop_setuptables(struct siop_common_cmd *siop_cmd)
 
 		if ((sc->features & SF_CHIP_GEBUG) &&
 		    (*targ_flags & TARF_WIDE) == 0)
-			/* 
+			/*
 			 * 1010 workaround: can't do disconnect if not wide,
 			 * so can't do tag
 			 */

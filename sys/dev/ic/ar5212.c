@@ -828,7 +828,7 @@ ar5k_ar5212_reset(struct ath_hal *hal, HAL_OPMODE op_mode, HAL_CHANNEL *channel,
 	AR5K_REG_WRITE(AR5K_AR5212_PHY_SDELAY, AR5K_AR5212_PHY_SDELAY_32MHZ);
 	AR5K_REG_WRITE(AR5K_AR5212_PHY_SPENDING, hal->ah_phy_spending);
 
-	/* 
+	/*
 	 * Disable beacons and reset the register
 	 */
 	AR5K_REG_DISABLE_BITS(AR5K_AR5212_BEACON,
@@ -2998,7 +2998,7 @@ ar5k_ar5212_txpower(struct ath_hal *hal, HAL_CHANNEL *channel, u_int txpower)
 	/* Initialize TX power table */
 	ar5k_txpower_table(hal, channel, txpower);
 
-	/* 
+	/*
 	 * Write TX power values
 	 */
 	for (i = 0; i < (AR5K_EEPROM_POWER_TABLE_SIZE / 2); i++) {

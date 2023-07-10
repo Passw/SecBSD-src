@@ -543,7 +543,7 @@ done:
 		    cmd->c_blklen, cmd->c_datalen, cmd->c_resid);
 	}
 }
-				      
+
 void
 wb_sdmmc_card_intr_mask(sdmmc_chipset_handle_t sch, int enable)
 {
@@ -557,7 +557,7 @@ wb_sdmmc_card_intr_ack(sdmmc_chipset_handle_t sch)
 }
 
 /*
- * intr handler 
+ * intr handler
  */
 int
 wb_sdmmc_intr(struct wb_softc *wb)

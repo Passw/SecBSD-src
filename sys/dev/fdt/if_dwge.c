@@ -475,7 +475,7 @@ dwge_attach(struct device *parent, struct device *self, void *aux)
 			sc->sc_fixed_media = IFM_ETHER | IFM_AUTO;
 			break;
 		}
-		
+
 		if (OF_getpropbool(node, "full-duplex")) {
 			ifp->if_link_state = LINK_STATE_FULL_DUPLEX;
 			sc->sc_fixed_media |= IFM_FDX;

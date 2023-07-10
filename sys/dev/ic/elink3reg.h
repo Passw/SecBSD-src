@@ -104,7 +104,7 @@
 #define EP_W2_ADDR_1		0x01
 #define EP_W2_ADDR_0		0x00
 
-/* 
+/*
  * Window 3 registers.  FIFO Management.
  */
 	/* Read */
@@ -234,7 +234,7 @@
 #define SET_TX_AVAIL_THRESH	(u_short) (0x12<<11)
 #define SET_TX_START_THRESH	(u_short) (0x13<<11)
 #define START_DMA		(u_short) (0x14<<11)	/* busmaster-only */
-#  define START_DMA_TX		(START_DMA | 0x0))	/* busmaster-only */
+#  define START_DMA_TX		(START_DMA | 0x0)	/* busmaster-only */
 #  define START_DMA_RX		(START_DMA | 0x1)	/* busmaster-only */
 #define STATS_ENABLE		(u_short) (0x15<<11)
 #define STATS_DISABLE		(u_short) (0x16<<11)
@@ -350,7 +350,7 @@
  *       4-5:    ram speed
  *       6-7:    rom size
  *      8-15:   reserved
- *          
+ *
  *     16-17:   ram split (5:3, 3:1, or 1:1).
  *     18-19:   reserved
  *     20-22:   selected media type

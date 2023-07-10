@@ -349,7 +349,7 @@ gpiodcf_mg_probe(void *xsc)
 	if (gettime() - sc->sc_last_mg < 57) {
 		DPRINTF(("\nunexpected gap, resync\n"));
 		sc->sc_sync = sc->sc_minute = 1;
-		goto cleanbits;	
+		goto cleanbits;
 	}
 
 	/* extract bits w/o parity */

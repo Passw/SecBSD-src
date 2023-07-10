@@ -84,7 +84,7 @@
 #define GDT_RELEASE_ALL 17		/* release all devices */
 #define GDT_RESET_BUS	18		/* reset bus */
 #define GDT_SCAN_START	19		/* start device scan */
-#define GDT_SCAN_END	20		/* stop device scan */	
+#define GDT_SCAN_END	20		/* stop device scan */
 
 /* IOCTL command defines */
 #define GDT_SCSI_DR_INFO	0x00	/* SCSI drive info */

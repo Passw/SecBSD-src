@@ -573,7 +573,7 @@ struct dc_mii_frame {
 /*
  * Special ASIX-specific bits in the ASIX NETCFG register (CSR6).
  */
-#define DC_AX_NETCFG_RX_BROAD	0x00000100 
+#define DC_AX_NETCFG_RX_BROAD	0x00000100
 
 /*
  * RX Filter Index Register values
@@ -665,7 +665,7 @@ struct dc_mii_frame {
 		DC_SETBIT(sc, DC_PN_GPIO, ((r) << 4));	\
 		DC_CLRBIT(sc, DC_PN_GPIO, (r));		\
 	}
-	
+
 /* shortcut MII access register */
 #define DC_PN_MII_DATA		0x0000FFFF
 #define DC_PN_MII_RESERVER	0x00020000

@@ -362,7 +362,7 @@ NENTRY(hibernate_activate_resume_pt_machdep)
 	andl	$(~CR4_PGE), %eax
 	movl	%eax, %cr4
 
-	/* 
+	/*
 	 * Switch to the hibernate resume pagetable if we're running
 	 * in non-PAE mode.  If we're running in PAE mode, this will
 	 * switch to the PTPDEs we stashed into the hibernate resume

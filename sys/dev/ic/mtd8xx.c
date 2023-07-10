@@ -908,7 +908,7 @@ mtd_rxeof(struct mtd_softc *sc)
 			}
 		}
 
-		/* No errors; receive the packet. */	
+		/* No errors; receive the packet. */
 		total_len -= ETHER_CRC_LEN;
 
 		bus_dmamap_sync(sc->sc_dmat, sc->mtd_cdata.mtd_rx_chain[i].sd_map,

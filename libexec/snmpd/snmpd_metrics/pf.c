@@ -89,7 +89,7 @@ pfr_get_astats(struct pfr_table *tbl, struct pfr_astats *addr, int *size,
 	extern int		 devpf;
 
 	if (tbl == NULL || size == NULL || *size < 0 ||
-	    (*size && addr == NULL)) 
+	    (*size && addr == NULL))
 		return (-1);
 
 	bzero(&io, sizeof io);
@@ -98,7 +98,7 @@ pfr_get_astats(struct pfr_table *tbl, struct pfr_astats *addr, int *size,
 	io.pfrio_buffer = addr;
 	io.pfrio_esize = sizeof(*addr);
 	io.pfrio_size = *size;
-	if (ioctl(devpf, DIOCRGETASTATS, &io) == -1) 
+	if (ioctl(devpf, DIOCRGETASTATS, &io) == -1)
 		return (-1);
 	*size = io.pfrio_size;
 	return (0);
@@ -168,7 +168,7 @@ pfr_buf_next(struct pfr_buffer *b, const void *prev)
 		return (NULL);
 	if (b->pfrb_size == 0)
 		return (NULL);
-	if (prev == NULL) 
+	if (prev == NULL)
 		return (b->pfrb_caddr);
 	bs = buf_esize[b->pfrb_type];
 	if ((((const char *)prev)-((char *)b->pfrb_caddr)) / bs >=
@@ -274,7 +274,7 @@ pft_get(struct pfr_buffer *b, struct pfr_table *filter)
 {
 	bzero(b, sizeof(struct pfr_buffer));
 	b->pfrb_type = PFRB_TSTATS;
-	
+
 	for (;;) {
 		pfr_buf_grow(b, b->pfrb_size);
 		b->pfrb_size = b->pfrb_msize;
@@ -298,7 +298,7 @@ pft_get_table(struct pfr_tstats *rts, int idx)
 		free(b.pfrb_caddr);
 		return (-1);
 	}
- 
+
 	PFRB_FOREACH(ts, &b) {
 		if (!(ts->pfrts_flags & PFR_TFLAG_ACTIVE))
 			continue;
@@ -355,7 +355,7 @@ pfta_get(struct pfr_buffer *b, struct pfr_table *filter)
 		if (b->pfrb_size <= b->pfrb_msize)
 			break;
 	}
-	
+
 	return (0);
 }
 

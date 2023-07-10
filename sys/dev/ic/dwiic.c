@@ -176,7 +176,7 @@ dwiic_init(struct dwiic_softc *sc)
 		sc->tx_fifo_depth = tx_fifo_depth;
 	if (rx_fifo_depth > 1 && rx_fifo_depth < sc->rx_fifo_depth)
 		sc->rx_fifo_depth = rx_fifo_depth;
-		
+
 	dwiic_write(sc, DW_IC_TX_TL, sc->tx_fifo_depth / 2);
 	dwiic_write(sc, DW_IC_RX_TL, 0);
 

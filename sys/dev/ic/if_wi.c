@@ -157,7 +157,7 @@ STATIC int wi_get_txpower(struct wi_softc *, struct ieee80211_txpower *);
 STATIC int wi_get_debug(struct wi_softc *, struct wi_req *);
 STATIC int wi_set_debug(struct wi_softc *, struct wi_req *);
 
-STATIC void wi_do_hostencrypt(struct wi_softc *, caddr_t, int);                
+STATIC void wi_do_hostencrypt(struct wi_softc *, caddr_t, int);
 STATIC int wi_do_hostdecrypt(struct wi_softc *, caddr_t, int);
 
 STATIC int wi_alloc_nicmem_io(struct wi_softc *, int, int *);
@@ -674,7 +674,7 @@ wi_rxeof(struct wi_softc *sc)
 				    "wi_status=0x%x)\n", sc->sc_dev.dv_xname,
 				    rxlen, letoh16(rx_frame.wi_status));
 				m_freem(m);
-				ifp->if_ierrors++;  
+				ifp->if_ierrors++;
 				return;
 			}
 
@@ -776,7 +776,7 @@ wi_rxeof(struct wi_softc *sc)
 					if (sc->sc_ic.ic_if.if_flags & IFF_DEBUG)
 						printf(WI_PRT_FMT ": Error decrypting incoming packet.\n", WI_PRT_ARG(sc));
 					m_freem(m);
-					ifp->if_ierrors++;  
+					ifp->if_ierrors++;
 					return;
 				}
 				len -= IEEE80211_WEP_IVLEN +
@@ -900,7 +900,7 @@ wi_update_stats(struct wi_softc *sc)
 		if (sc->wi_flags & WI_FLAGS_BUS_USB) {
 			wi_read_data(sc, id, 4 + i*2, (char *)&t, 2);
 			t = letoh16(t);
-		} else 
+		} else
 			t = CSR_READ_2(sc, WI_DATA1);
 #ifdef WI_HERMES_STATS_WAR
 		if (t > 0xF000)
@@ -2046,7 +2046,7 @@ wi_scan_timeout(void *arg)
 		    WI_PRT_ARG(sc), sc->wi_scan_lock);
 
 	/* Wakeup the userland */
-	wakeup(&sc->wi_scan_lock);	
+	wakeup(&sc->wi_scan_lock);
 	sc->wi_scan_lock = 0;
 }
 
@@ -2566,7 +2566,7 @@ wi_detach(struct wi_softc *sc)
 
 	if (ifp->if_flags & IFF_RUNNING)
 		wi_stop(sc);
-	
+
 	if (sc->wi_flags & WI_FLAGS_ATTACHED) {
 		sc->wi_flags &= ~WI_FLAGS_ATTACHED;
 	}
@@ -2966,7 +2966,7 @@ wi_set_txpower(struct wi_softc *sc, struct ieee80211_txpower *txpower)
 			sc->wi_flags |= WI_FLAGS_TXPOWER;
 			sc->wi_txpower = txpower->i_val;
 		}
-	}	
+	}
 
 	/* Set ALC */
 	cmd = WI_CMD_DEBUG | (WI_DEBUG_CONFBITS << 8);
@@ -3035,7 +3035,7 @@ wi_get_txpower(struct wi_softc *sc, struct ieee80211_txpower *txpower)
 		txpower->i_mode = IEEE80211_TXPOWER_MODE_FIXED;
 	else
 		txpower->i_mode = IEEE80211_TXPOWER_MODE_AUTO;
-	
+
 	return (0);
 }
 

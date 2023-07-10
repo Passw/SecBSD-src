@@ -29,7 +29,7 @@
  */
 
  /* This code was derived from and originally located in sys/dev/pci/
-  *	 NetBSD: tga_bt485.c,v 1.4 1999/03/24 05:51:21 mrg Exp 
+  *	 NetBSD: tga_bt485.c,v 1.4 1999/03/24 05:51:21 mrg Exp
   */
 
 #include <sys/param.h>
@@ -93,7 +93,7 @@ struct bt485data {
 					 * around, and is probably
 					 * struct tga_devconfig *
 					 */
-	
+
 	int             (*ramdac_sched_update)(void *, void (*)(void *));
 	void            (*ramdac_wr)(void *, u_int, u_int8_t);
 	u_int8_t        (*ramdac_rd)(void *, u_int);
@@ -576,7 +576,7 @@ bt485_update(vp)
 		for (i = 0; i < count; i++)
 			data->ramdac_wr(data->cookie, BT485_REG_CURSOR_RAM,
 			    data->curimage[i]);
-		
+
 		/*
 		 * Write the cursor mask data:
 		 *	set addr[9:8] to 2,

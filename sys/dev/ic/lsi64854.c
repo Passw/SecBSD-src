@@ -307,7 +307,7 @@ lsi64854_setup(struct lsi64854_softc *sc, caddr_t *addr, size_t *len,
 	DPRINTF(LDB_ANY, ("dma_setup: dmasize = %ld\n", (long)sc->sc_dmasize));
 
 	/*
-	 * XXX what length? 
+	 * XXX what length?
 	 */
 	if (sc->sc_rev == DMAREV_HME) {
 
@@ -322,7 +322,7 @@ lsi64854_setup(struct lsi64854_softc *sc, caddr_t *addr, size_t *len,
 		sc->sc_dvmaaddr = *sc->sc_dmaaddr;
 		if (bus_dmamap_load(sc->sc_dmatag, sc->sc_dmamap,
 				*sc->sc_dmaaddr, sc->sc_dmasize,
-				NULL /* kernel address */,   
+				NULL /* kernel address */,
 		                BUS_DMA_NOWAIT | BUS_DMA_STREAMING))
 			panic("%s: cannot allocate DVMA address",
 			      sc->sc_dev.dv_xname);
@@ -563,7 +563,7 @@ lsi64854_setup_pp(struct lsi64854_softc *sc, caddr_t *addr, size_t *len,
 		sc->sc_dvmaaddr = *sc->sc_dmaaddr;
 		if (bus_dmamap_load(sc->sc_dmatag, sc->sc_dmamap,
 				*sc->sc_dmaaddr, sc->sc_dmasize,
-				NULL /* kernel address */,   
+				NULL /* kernel address */,
 				    BUS_DMA_NOWAIT/*|BUS_DMA_COHERENT*/))
 			panic("%s: pp cannot allocate DVMA address",
 			      sc->sc_dev.dv_xname);

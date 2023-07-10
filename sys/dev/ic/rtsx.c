@@ -31,7 +31,7 @@
 #include <dev/sdmmc/sdmmcvar.h>
 #include <dev/sdmmc/sdmmc_ioreg.h>
 
-/* 
+/*
  * We use three DMA buffers: a command buffer, a data buffer, and a buffer for
  * ADMA transfer descriptors which describe scatter-gather (SG) I/O operations.
  *
@@ -232,7 +232,7 @@ rtsx_attach(struct rtsx_softc *sc, bus_space_tag_t iot,
 	/* Now handle cards discovered during attachment. */
 	if (ISSET(sc->flags, RTSX_F_CARD_PRESENT))
 		rtsx_card_insert(sc);
-	
+
 	return 0;
 
 unmap_adma:
@@ -729,7 +729,7 @@ rtsx_read(struct rtsx_softc *sc, u_int16_t addr, u_int8_t *val)
 {
 	int tries = 1024;
 	u_int32_t reg;
-	
+
 	WRITE4(sc, RTSX_HAIMR, RTSX_HAIMR_BUSY |
 	    (u_int32_t)((addr & 0x3FFF) << 16));
 
@@ -783,10 +783,10 @@ rtsx_read_phy(struct rtsx_softc *sc, u_int8_t addr, u_int16_t *val)
 		if (!(rwctl & RTSX_PHY_BUSY))
 			break;
 	}
-	
+
 	if (timeout == 0)
 		return ETIMEDOUT;
-		
+
 	RTSX_READ(sc, RTSX_PHY_DATA0, &data0);
 	RTSX_READ(sc, RTSX_PHY_DATA1, &data1);
 	*val = data0 | (data1 << 8);
@@ -811,10 +811,10 @@ rtsx_write_phy(struct rtsx_softc *sc, u_int8_t addr, u_int16_t val)
 		if (!(rwctl & RTSX_PHY_BUSY))
 			break;
 	}
-	
+
 	if (timeout == 0)
 		return ETIMEDOUT;
-		
+
 	return 0;
 }
 
@@ -837,7 +837,7 @@ rtsx_read_cfg(struct rtsx_softc *sc, u_int8_t func, u_int16_t addr,
 
 	if (tries == 0)
 		return EIO;
-	
+
 	RTSX_READ(sc, RTSX_CFGDATA0, &data0);
 	RTSX_READ(sc, RTSX_CFGDATA1, &data1);
 	RTSX_READ(sc, RTSX_CFGDATA2, &data2);
@@ -880,7 +880,7 @@ rtsx_write_cfg(struct rtsx_softc *sc, u_int8_t func, u_int16_t addr,
 
 	if (tries == 0)
 		return EIO;
-	
+
 	return 0;
 }
 #endif
@@ -1050,7 +1050,7 @@ rtsx_xfer(struct rtsx_softc *sc, struct sdmmc_command *cmd, u_int32_t *cmdbuf)
 	ncmd = 0;
 
 	rtsx_hostcmd(cmdbuf, &ncmd, RTSX_WRITE_REG_CMD, RTSX_SD_CFG2,
-	    0xff, cfg2); 
+	    0xff, cfg2);
 
 	/* Queue commands to configure data transfer size. */
 	rtsx_hostcmd(cmdbuf, &ncmd,
@@ -1262,7 +1262,7 @@ rtsx_exec_command(sdmmc_chipset_handle_t sch, struct sdmmc_command *cmd)
 
 	/* Queue commands to set SD command index and argument. */
 	rtsx_hostcmd(cmdbuf, &ncmd,
-	    RTSX_WRITE_REG_CMD, RTSX_SD_CMD0, 0xff, 0x40 | cmd->c_opcode); 
+	    RTSX_WRITE_REG_CMD, RTSX_SD_CMD0, 0xff, 0x40 | cmd->c_opcode);
 	rtsx_hostcmd(cmdbuf, &ncmd,
 	    RTSX_WRITE_REG_CMD, RTSX_SD_CMD1, 0xff, cmd->c_arg >> 24);
 	rtsx_hostcmd(cmdbuf, &ncmd,

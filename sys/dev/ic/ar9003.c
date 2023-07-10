@@ -1291,7 +1291,7 @@ ar9003_swba_intr(struct athn_softc *sc)
 			wh = mtod(m, struct ieee80211_frame *);
 			wh->i_fc[1] |= IEEE80211_FC1_MORE_DATA;
 		}
-		
+
 		if (sc->ops.tx(sc, m, ni, ATHN_TXFLAG_CAB) != 0) {
 			ieee80211_release_node(ic, ni);
 			ifp->if_oerrors++;
@@ -1610,7 +1610,7 @@ ar9003_tx(struct athn_softc *sc, struct mbuf *m, struct ieee80211_node *ni,
 				ds->ds_ctl11 |= AR_TXC11_CTS_ENABLE;
 		}
 	}
-	/* 
+	/*
 	 * Disable multi-rate retries when protection is used.
 	 * The RTS/CTS frame's duration field is fixed and won't be
 	 * updated by hardware when the data rate changes.

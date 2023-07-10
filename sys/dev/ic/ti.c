@@ -403,14 +403,14 @@ ti_loadfw(struct ti_softc *sc)
 		    sc->sc_dv.dv_xname);
 		return;
 	}
-	
+
 	error = loadfirmware(name, &buf, &buflen);
 	if (error)
 		return;
 	/* convert firmware to host byte order */
 	b = (u_int32_t *)buf;
 	cnt = buflen / sizeof(u_int32_t);
-	for (i = 0; i < cnt; i++) 
+	for (i = 0; i < cnt; i++)
 		b[i] = letoh32(b[i]);
 
 	tf = (struct tigon_firmware *)buf;
@@ -979,7 +979,7 @@ ti_iff(struct ti_softc *sc)
 	TI_DO_CMD(TI_CMD_SET_PROMISC_MODE, TI_CMD_CODE_PROMISC_DIS, 0);
 	ifp->if_flags &= ~IFF_ALLMULTI;
 
-	if (ifp->if_flags & IFF_PROMISC || ac->ac_multirangecnt > 0) {  
+	if (ifp->if_flags & IFF_PROMISC || ac->ac_multirangecnt > 0) {
 		ifp->if_flags |= IFF_ALLMULTI;
 		if (ifp->if_flags & IFF_PROMISC) {
 			TI_DO_CMD(TI_CMD_SET_PROMISC_MODE,

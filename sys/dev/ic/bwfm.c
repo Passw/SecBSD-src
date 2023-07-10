@@ -656,7 +656,7 @@ bwfm_rate2vhtmcs(int *mcs, int *ss, uint32_t txrate)
 {
 	const struct ieee80211_vht_rateset *rs;
 	int i, j;
-	
+
 	*mcs = -1;
 	*ss = -1;
 	/* TODO: Select specific ratesets based on BSS channel width. */
@@ -677,7 +677,7 @@ bwfm_rate2htmcs(uint32_t txrate)
 {
 	const struct ieee80211_ht_rateset *rs;
 	int i, j;
-	
+
 	/* TODO: Select specific ratesets based on BSS channel width. */
 	for (i = 0; i < IEEE80211_HT_NUM_RATESETS; i++) {
 		rs = &ieee80211_std_ratesets_11n[i];

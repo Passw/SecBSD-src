@@ -26,7 +26,7 @@
 #define LM_FAN2		0x29	/* FAN2 reading */
 #define LM_FAN3		0x2a	/* FAN3 reading */
 
-#define LM_CONFIG	0x40	/* Configuration */ 
+#define LM_CONFIG	0x40	/* Configuration */
 #define LM_ISR1		0x41	/* Interrupt Status 1 */
 #define LM_ISR2		0x42	/* Interrupt Status 2 */
 #define LM_SMI1		0x43	/* SMI# Mask 1 */

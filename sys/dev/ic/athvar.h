@@ -161,8 +161,8 @@ struct ath_tx_radiotap_header {
 	u_int8_t	wt_antenna;
 } __packed;
 
-/* 
- * driver-specific node 
+/*
+ * driver-specific node
  */
 struct ath_node {
 	struct ieee80211_node		an_node;	/* base class */
@@ -289,7 +289,7 @@ struct ath_softc {
 	gpio_pin_t		sc_gpio_pins[ATH_MAXGPIO];
 };
 
-/* unaligned little endian access */     
+/* unaligned little endian access */
 #define LE_READ_2(p)							\
 	((u_int16_t)							\
 	 ((((u_int8_t *)(p))[0]      ) | (((u_int8_t *)(p))[1] <<  8)))

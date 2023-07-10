@@ -80,7 +80,7 @@ struct ramdac_funcs ibm561_funcsstruct = {
 	NULL,			/* check_curcmap; not needed */
 	NULL,			/* set_curcmap; not needed */
 	NULL,			/* get_curcmap; not needed */
-	ibm561_set_dotclock, 
+	ibm561_set_dotclock,
 };
 
 /*

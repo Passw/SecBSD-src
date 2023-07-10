@@ -90,7 +90,7 @@
  * set of indices that gives the index (modulo queue size) of the current
  * progress in each.  Nearly all configuration is done from the management
  * queue interface.  Almost every structure is little-endian.
- */ 
+ */
 enum pgt_queue {
 	PGT_QUEUE_DATA_LOW_RX =		0,
 	PGT_QUEUE_DATA_LOW_TX =		1,

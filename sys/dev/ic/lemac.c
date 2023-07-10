@@ -349,17 +349,17 @@ lemac_read_macaddr(unsigned char *hwaddr, const bus_space_tag_t iot,
 {
 	int cksum, rom_cksum;
 	unsigned char addrbuf[6];
-    
+
 	if (!skippat) {
 		int idx, idx2, found, octet;
 		static u_char testpat[] = {
 			0xFF, 0, 0x55, 0xAA, 0xFF, 0, 0x55, 0xAA
 		};
 		idx2 = found = 0;
-    
+
 		for (idx = 0; idx < 32; idx++) {
 			octet = bus_space_read_1(iot, ioh, ioreg);
-	    
+
 			if (octet == testpat[idx2]) {
 				if (++idx2 == sizeof(testpat)) {
 					++found;
@@ -423,7 +423,7 @@ lemac_read_macaddr(unsigned char *hwaddr, const bus_space_tag_t iot,
 
 	rom_cksum = bus_space_read_1(iot, ioh, ioreg);
 	rom_cksum |= bus_space_read_1(iot, ioh, ioreg) << 8;
-	
+
 	if (cksum != rom_cksum)
 		return (-1);
 	return (0);
@@ -489,7 +489,7 @@ lemac_multicast_filter(struct lemac_softc *sc)
 	sc->sc_if.if_flags &= ~IFF_ALLMULTI;
 }
 
-/* 
+/*
  * Do a hard reset of the board;
  */
 void
@@ -512,7 +512,7 @@ lemac_reset(struct lemac_softc *const sc)
 	 * is important because functions hereafter may rely on information
 	 * read from the EEPROM.
 	 */
-	if ((data = lemac_read_eeprom(sc)) != LEMAC_EEP_CKSUM) { 
+	if ((data = lemac_read_eeprom(sc)) != LEMAC_EEP_CKSUM) {
 		printf("%s: reset: EEPROM checksum failed (0x%x)\n",
 		    sc->sc_if.if_xname, data);
 		return;
@@ -621,7 +621,7 @@ lemac_init(struct lemac_softc *const sc)
 	}
 }
 
-void 
+void
 lemac_ifstart(struct ifnet *ifp)
 {
 	struct lemac_softc *const sc = LEMAC_IFP_TO_SOFTC(ifp);
@@ -976,7 +976,7 @@ lemac_ifattach(struct lemac_softc *sc)
 
 	lemac_read_macaddr(sc->sc_arpcom.ac_enaddr, sc->sc_iot, sc->sc_ioh,
 	    LEMAC_REG_APD, 0);
-	
+
 	printf(": %s\n", sc->sc_prodname);
 
 	printf("%s: address %s, %dKB RAM, %s\n", ifp->if_xname,

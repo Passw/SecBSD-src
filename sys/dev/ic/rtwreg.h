@@ -553,7 +553,7 @@
 					 * allow RTW_ANAPARM writes.
 					 */
 #define RTW_CONFIG3_MAGIC	(1<<5)	/* Valid when RTW_CONFIG1_PMEN is
-					 * set. If set, RTL8180 wakes up 
+					 * set. If set, RTL8180 wakes up
 					 * OS when Magic Packet is Rx'd.
 					 */
 #define RTW_CONFIG3_CARDBEN	(1<<3)	/* Cardbus-related registers
@@ -627,11 +627,11 @@
 #define RTW8180_SCR_KM_WEP40	LSHIFT(0, RTW8180_SCR_KM_MASK)
 #define RTW8180_SCR_TXSECON		(1<<1)	/* Enable Tx WEP. Invalid if
 					 * neither RTW_CONFIG0_WEP40 nor
-					 * RTW_CONFIG0_WEP104 is set. 
+					 * RTW_CONFIG0_WEP104 is set.
 					 */
 #define RTW8180_SCR_RXSECON		(1<<0)	/* Enable Rx WEP. Invalid if
 					 * neither RTW_CONFIG0_WEP40 nor
-					 * RTW_CONFIG0_WEP104 is set. 
+					 * RTW_CONFIG0_WEP104 is set.
 					 */
 
 #define RTW8185_RFPARM	0x60	/* RF Parameter Register, 32b */
@@ -959,9 +959,9 @@
 #define RTW_SR_TXPOWER13	0x2c
 #define RTW_SR_TXPOWER14	0x2d
 #define RTW_SR_CHANNELPLAN	0x2e	/* bitmap of channels to scan */
-#define RTW_SR_ENERGYDETTHR	0x2f	/* energy-detect threshold */ 
-#define RTW_SR_ENERGYDETTHR_DEFAULT	0x0c	/* use this if old SROM */ 
-#define RTW_SR_CISPOINTER	0x30	/* 16b */ 
+#define RTW_SR_ENERGYDETTHR	0x2f	/* energy-detect threshold */
+#define RTW_SR_ENERGYDETTHR_DEFAULT	0x0c	/* use this if old SROM */
+#define RTW_SR_CISPOINTER	0x30	/* 16b */
 #define RTW_SR_RFPARM		0x32	/* RF-specific parameter */
 #define RTW_SR_RFPARM_DIGPHY	(1<<0)		/* 1: digital PHY */
 #define RTW_SR_RFPARM_DFLANTB	(1<<1)		/* 1: antenna B is default */
@@ -978,7 +978,7 @@
 /* the first descriptor in each ring must be on a 256-byte boundary */
 #define RTW_DESC_ALIGNMENT 256
 
-/* Tx descriptor */ 
+/* Tx descriptor */
 struct rtw_txdesc {
 	u_int32_t	td_ctl0;
 	u_int32_t	td_ctl1;
@@ -1040,7 +1040,7 @@ struct rtw_txdesc {
 
 #define RTW_TXLEN_LENGTH_MASK	0xfff	/* Tx buffer length in bytes */
 
-/* Rx descriptor */ 
+/* Rx descriptor */
 struct rtw_rxdesc {
     u_int32_t	rd_ctl;
     u_int32_t	rd_rsvd0;

@@ -357,12 +357,12 @@ tcic_attach(struct tcic_softc *sc)
 		/* XXX make more clear what happens here -chb */
 		tcic_sel_sock(&sc->handle[i]);
 		tcic_write_ind_2(&sc->handle[i], TCIC_IR_SCF1_N(i), 0);
-		tcic_write_ind_2(&sc->handle[i], TCIC_IR_SCF2_N(i), 
+		tcic_write_ind_2(&sc->handle[i], TCIC_IR_SCF2_N(i),
 		    (TCIC_SCF2_MCD|TCIC_SCF2_MWP|TCIC_SCF2_MRDY
 #if 1		/* XXX explain byte routing issue */
-		    |TCIC_SCF2_MLBAT2|TCIC_SCF2_MLBAT1|TCIC_SCF2_IDBR));
+		    |TCIC_SCF2_MLBAT2|TCIC_SCF2_MLBAT1|TCIC_SCF2_IDBR);
 #else
-		    |TCIC_SCF2_MLBAT2|TCIC_SCF2_MLBAT1));
+		    |(TCIC_SCF2_MLBAT2|TCIC_SCF2_MLBAT1));
 #endif
 		tcic_write_1(&sc->handle[i], TCIC_R_MODE, 0);
 		reg = tcic_read_aux_2(sc->iot, sc->ioh, TCIC_AR_SYSCFG);
@@ -757,7 +757,7 @@ tcic_deactivate_card(struct tcic_handle *h)
 }
 
 /* XXX the following routine may need to be rewritten. -chb */
-int 
+int
 tcic_chip_mem_alloc(pcmcia_chipset_handle_t pch, bus_size_t size,
     struct pcmcia_mem_handle *pcmhp)
 {
@@ -820,7 +820,7 @@ tcic_chip_mem_alloc(pcmcia_chipset_handle_t pch, bus_size_t size,
 }
 
 /* XXX the following routine may need to be rewritten. -chb */
-void 
+void
 tcic_chip_mem_free(pcmcia_chipset_handle_t pch, struct pcmcia_mem_handle *pcmhp)
 {
 	struct tcic_handle *h = (struct tcic_handle *) pch;
@@ -828,7 +828,7 @@ tcic_chip_mem_free(pcmcia_chipset_handle_t pch, struct pcmcia_mem_handle *pcmhp)
 	h->sc->subregionmask |= pcmhp->mhandle;
 }
 
-void 
+void
 tcic_chip_do_mem_map(struct tcic_handle *h, int win)
 {
 	int reg, hwwin, wscnt;
@@ -907,7 +907,7 @@ tcic_chip_do_mem_map(struct tcic_handle *h, int win)
 }
 
 /* XXX needs work */
-int 
+int
 tcic_chip_mem_map(pcmcia_chipset_handle_t pch, int kind, bus_addr_t card_addr,
     bus_size_t size, struct pcmcia_mem_handle *pcmhp, bus_size_t *offsetp,
     int *windowp)
@@ -975,7 +975,7 @@ tcic_chip_mem_map(pcmcia_chipset_handle_t pch, int kind, bus_addr_t card_addr,
 	return (0);
 }
 
-void 
+void
 tcic_chip_mem_unmap(pcmcia_chipset_handle_t pch, int window)
 {
 	struct tcic_handle *h = (struct tcic_handle *) pch;
@@ -992,7 +992,7 @@ tcic_chip_mem_unmap(pcmcia_chipset_handle_t pch, int window)
 	h->memalloc &= ~(1 << window);
 }
 
-int 
+int
 tcic_chip_io_alloc(pcmcia_chipset_handle_t pch, bus_addr_t start,
     bus_size_t size, bus_size_t align, struct pcmcia_io_handle *pcihp)
 {
@@ -1054,7 +1054,7 @@ tcic_chip_io_alloc(pcmcia_chipset_handle_t pch, bus_addr_t start,
 	return (0);
 }
 
-void 
+void
 tcic_chip_io_free(pcmcia_chipset_handle_t pch, struct pcmcia_io_handle *pcihp)
 {
 	bus_space_tag_t iot = pcihp->iot;
@@ -1070,7 +1070,7 @@ tcic_chip_io_free(pcmcia_chipset_handle_t pch, struct pcmcia_io_handle *pcihp)
 static int tcic_iowidth_map[] =
     { TCIC_ICTL_AUTOSZ, TCIC_ICTL_B8, TCIC_ICTL_B16 };
 
-void 
+void
 tcic_chip_do_io_map(struct tcic_handle *h, int win)
 {
 	int reg, size2, iotiny, wbase, hwwin, wscnt;
@@ -1126,7 +1126,7 @@ tcic_chip_do_io_map(struct tcic_handle *h, int win)
 #endif
 }
 
-int 
+int
 tcic_chip_io_map(pcmcia_chipset_handle_t pch, int width, bus_addr_t offset,
     bus_size_t size, struct pcmcia_io_handle *pcihp, int *windowp)
 {
@@ -1176,7 +1176,7 @@ tcic_chip_io_map(pcmcia_chipset_handle_t pch, int width, bus_addr_t offset,
 	return (0);
 }
 
-void 
+void
 tcic_chip_io_unmap(pcmcia_chipset_handle_t pch, int window)
 {
 	struct tcic_handle *h = (struct tcic_handle *) pch;

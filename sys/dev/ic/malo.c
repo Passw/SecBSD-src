@@ -1922,7 +1922,7 @@ malo_hexdump(void *buf, int len)
 		printf("%4i:", i);
 		l = min(sizeof(b), len - i);
 		bcopy(buf + i, b, l);
-		
+
 		for (j = 0; j < sizeof(b); j++) {
 			if (j % 2 == 0)
 				printf(" ");

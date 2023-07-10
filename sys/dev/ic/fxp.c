@@ -283,7 +283,7 @@ int
 fxp_activate(struct device *self, int act)
 {
 	struct fxp_softc *sc = (struct fxp_softc *)self;
-	struct ifnet *ifp = &sc->sc_arpcom.ac_if;	
+	struct ifnet *ifp = &sc->sc_arpcom.ac_if;
 	int rv = 0;
 
 	switch (act) {
@@ -794,7 +794,7 @@ fxp_intr(void *arg)
 	while ((statack = CSR_READ_2(sc, FXP_CSR_SCB_STATUS)) &
 	    FXP_SCB_STATACK_MASK) {
 		claimed = 1;
-		rnr = (statack & (FXP_SCB_STATACK_RNR | 
+		rnr = (statack & (FXP_SCB_STATACK_RNR |
 		                  FXP_SCB_STATACK_SWI)) ? 1 : 0;
 		/*
 		 * First ACK all the interrupts in this pass.
@@ -1414,7 +1414,7 @@ fxp_init(void *xsc)
 	ifq_clr_oactive(&ifp->if_snd);
 
 	/*
-	 * Request a software generated interrupt that will be used to 
+	 * Request a software generated interrupt that will be used to
 	 * (re)start the RU processing.  If we direct the chip to start
 	 * receiving from the start of queue now, instead of letting the
 	 * interrupt handler first process all received packets, we run
@@ -1707,7 +1707,7 @@ fxp_mc_setup(struct fxp_softc *sc, int doit)
 	if (doit == 0)
 		return;
 
-	/* 
+	/*
 	 * Initialize multicast setup descriptor.
 	 */
 	mcsp->cb_status = htole16(0);
@@ -1763,13 +1763,13 @@ struct ucode {
 } const ucode_table[] = {
 	{ FXP_REV_82558_A4, D101_CPUSAVER_DWORD,
 	  0, 0,
-	  "fxp-d101a" }, 
+	  "fxp-d101a" },
 
 	{ FXP_REV_82558_B0, D101_CPUSAVER_DWORD,
 	  0, 0,
 	  "fxp-d101b0" },
 
-	{ FXP_REV_82559_A0, D101M_CPUSAVER_DWORD, 
+	{ FXP_REV_82559_A0, D101M_CPUSAVER_DWORD,
 	  D101M_CPUSAVER_BUNDLE_MAX_DWORD, D101M_CPUSAVER_MIN_SIZE_DWORD,
 	  "fxp-d101ma" },
 
@@ -1792,7 +1792,7 @@ struct ucode {
 	{ FXP_REV_82551_10, D102_E_CPUSAVER_DWORD,
 	  D102_E_CPUSAVER_BUNDLE_MAX_DWORD, D102_E_CPUSAVER_MIN_SIZE_DWORD,
 	  "fxp-d102e" },
-	
+
 	{ 0, 0,
 	  0, 0,
 	  NULL }
@@ -1862,7 +1862,7 @@ reloadit:
 	if (uc->min_size_mask_offset)
 		*((u_int16_t *)&cbp->ucode[uc->min_size_mask_offset]) =
 			htole16(sc->sc_min_size_mask);
-	
+
 	FXP_UCODE_SYNC(sc, BUS_DMASYNC_PREREAD|BUS_DMASYNC_PREWRITE);
 
 	/*

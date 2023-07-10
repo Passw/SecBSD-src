@@ -401,7 +401,7 @@ cpu_init(struct cpu_info *ci)
 	 * what we do.
 	 */
 	patinit(ci);
- 
+
 	/*
 	 * Enable ring 0 write protection.
 	 */
@@ -495,7 +495,7 @@ patinit(struct cpu_info *ci)
 	if ((ci->ci_feature_flags & CPUID_PAT) == 0)
 		return;
 
-	/* 
+	/*
 	 * Set up PAT bits.
 	 * The default pat table is the following:
 	 * WB, WT, UC- UC, WB, WT, UC-, UC

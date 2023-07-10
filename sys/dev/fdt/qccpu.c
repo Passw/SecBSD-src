@@ -279,7 +279,7 @@ qccpu_refresh_sensor(void *arg)
 
 	for (idx = 0; idx < NUM_GROUP; idx++) {
 		ioh = sc->sc_ioh[idx];
-		
+
 		lval = (bus_space_read_4(iot, ioh, CPUF_DOMAIN_STATE)
 		    >> CPUF_DOMAIN_STATE_LVAL_S) & CPUF_DOMAIN_STATE_LVAL_M;
 		sc->sc_hz_sensor[idx].value = 1000000ULL * lval * XO_FREQ_HZ;

@@ -134,7 +134,7 @@ static const uint8_t amd64_errata_set7[] = {
 static const uint8_t amd64_errata_set8[] = {
 	BH_E4, CH_CG, CH_CG, CH_D0, CH_D0, DH_CG, DH_CG, DH_CG,
 	DH_D0, DH_D0, DH_E3, DH_E3, DH_E6, DH_E6, JH_E1, JH_E6,
-	JH_E6, SH_B0, SH_B3, SH_C0, SH_C0, SH_CG, SH_CG, SH_CG, 
+	JH_E6, SH_B0, SH_B3, SH_C0, SH_C0, SH_CG, SH_CG, SH_CG,
 	SH_D0, SH_D0, SH_D0, SH_E4, SH_E4, SH_E5, OINK
 };
 
@@ -257,7 +257,7 @@ static errata_t errata[] = {
 	},
 };
 
-int 
+int
 amd64_errata_testmsr(struct cpu_info *ci, errata_t *e)
 {
 	uint64_t val;
@@ -272,7 +272,7 @@ amd64_errata_testmsr(struct cpu_info *ci, errata_t *e)
 	return 1;			/* found */
 }
 
-int 
+int
 amd64_errata_setmsr(struct cpu_info *ci, errata_t *e)
 {
 	uint64_t val;

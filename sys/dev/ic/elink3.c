@@ -65,7 +65,7 @@
 #include <dev/ic/elink3reg.h>
 
 /*
- * Structure to map media-present bits in boards to 
+ * Structure to map media-present bits in boards to
  * ifmedia codes and printable media names. Used for table-driven
  * ifmedia initialization.
  */
@@ -79,11 +79,11 @@ struct ep_media {
 
 /*
  * ep_media table for Vortex/Demon/Boomerang:
- * map from media-present bits in register RESET_OPTIONS+2 
+ * map from media-present bits in register RESET_OPTIONS+2
  * to  ifmedia "media words" and printable names.
  *
  * XXX indexed directly by INTERNAL_CONFIG default_media field,
- * (i.e., EPMEDIA_ constants)  forcing order of entries. 
+ * (i.e., EPMEDIA_ constants)  forcing order of entries.
  *  Note that 3 is reserved.
  */
 const struct ep_media ep_vortex_media[] = {
@@ -288,14 +288,14 @@ epconfig(struct ep_softc *sc, u_short chipset, u_int8_t *enaddr)
 	 * packets.  Commands only take an 11-bit parameter, and  11 bits
 	 * isn't enough to hold a full-size packet length.
 	 * Commands to these cards implicitly upshift a packet size
-	 * or threshold by 2 bits. 
+	 * or threshold by 2 bits.
 	 * To detect  cards with large-packet support, we probe by setting
 	 * the transmit threshold register, then change windows and
 	 * read back the threshold register directly, and see if the
 	 * threshold value was shifted or not.
 	 */
 	bus_space_write_2(iot, ioh, EP_COMMAND,
-			  SET_TX_AVAIL_THRESH | EP_LARGEWIN_PROBE ); 
+			  SET_TX_AVAIL_THRESH | EP_LARGEWIN_PROBE );
 	GO_WINDOW(5);
 	i = bus_space_read_2(iot, ioh, EP_W5_TX_AVAIL_THRESH);
 	GO_WINDOW(1);
@@ -319,7 +319,7 @@ epconfig(struct ep_softc *sc, u_short chipset, u_int8_t *enaddr)
 	timeout_set(&sc->sc_epmbuffill_tmo, epmbuffill, sc);
 
 	/*
-	 * Ensure Tx-available interrupts are enabled for 
+	 * Ensure Tx-available interrupts are enabled for
 	 * start the interface.
 	 * XXX should be in epinit()?
 	 */
@@ -340,7 +340,7 @@ epconfig(struct ep_softc *sc, u_short chipset, u_int8_t *enaddr)
 	ether_ifattach(ifp);
 
 	/*
-	 * Finish configuration: 
+	 * Finish configuration:
 	 * determine chipset if the front-end couldn't do so,
 	 * show board details, set media.
 	 */
@@ -545,11 +545,11 @@ ep_vortex_probemedia(struct ep_softc *sc)
 	       medium_name, (autoselect) ? "/autoselect" : "");
 /*	sc->sc_media = ep_vortex_media[default_media].epm_ifdata;*/
 
-#ifdef notyet	
+#ifdef notyet
 	/*
 	 * Set default: either the active interface the card
 	 * reads  from the EEPROM, or if autoselect is true,
-	 * whatever we find is actually connected. 
+	 * whatever we find is actually connected.
 	 *
 	 * XXX autoselect not yet implemented.
 	 */
@@ -666,7 +666,7 @@ epinit(struct ep_softc *sc)
 }
 
 /*
- * Set multicast receive filter. 
+ * Set multicast receive filter.
  * elink3 hardware has no selective multicast filter in hardware.
  * Enable reception of all multicasts and filter in software.
  */
@@ -818,7 +818,7 @@ epsetmedia(struct ep_softc *sc, int medium)
 		printf("%s unknown media 0x%x\n", sc->sc_dev.dv_xname, medium);
 #endif
 		break;
-		
+
 	}
 
 	/*
@@ -839,7 +839,7 @@ epsetmedia(struct ep_softc *sc, int medium)
 #endif
 		config1 = config1 & ~CONFIG_MEDIAMASK;
 		config1 |= (medium << CONFIG_MEDIAMASK_SHIFT);
-		
+
 #if defined(EP_DEBUG)
 		printf("epsetmedia: %s: medium 0x%x, 0x%x to EP_W3_CONFIG\n",
 		    sc->sc_dev.dv_xname, medium, config1);
@@ -888,7 +888,7 @@ ep_media_status(struct ifnet *ifp, struct ifmediareq *req)
 
 	/* XXX read from softc when we start autosensing media */
 	req->ifm_active = sc->sc_mii.mii_media.ifm_cur->ifm_media;
-	
+
 	switch (sc->ep_chipset) {
 	case EP_CHIPSET_VORTEX:
 	case EP_CHIPSET_BOOMERANG:
@@ -898,7 +898,7 @@ ep_media_status(struct ifnet *ifp, struct ifmediareq *req)
 		config1 = bus_space_read_2(iot, ioh, EP_W3_INTERNAL_CONFIG + 2);
 		GO_WINDOW(1);
 
-		config1 = 
+		config1 =
 		    (config1 & CONFIG_MEDIAMASK) >> CONFIG_MEDIAMASK_SHIFT;
 		req->ifm_active = ep_default_to_media[config1];
 
@@ -1056,7 +1056,7 @@ readcheck:
 		if ((status & S_INTR_LATCH) == 0) {
 			/*
 			 * No interrupt, read the packet and continue
-			 * Is  this supposed to happen? Is my motherboard 
+			 * Is  this supposed to happen? Is my motherboard
 			 * completely busted?
 			 */
 			epread(sc);
@@ -1227,7 +1227,7 @@ epintr(void *arg)
 			eptxstat(sc);
 			epstart(ifp);
 		}
-	}	
+	}
 
 	/* no more interrupts */
 	return (ret);

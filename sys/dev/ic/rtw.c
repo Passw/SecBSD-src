@@ -680,7 +680,7 @@ rtw_srom_read(struct rtw_regs *regs, u_int32_t flags, struct rtw_srom *sr,
 	sd.sd_CS = RTW_9346CR_EECS;
 	sd.sd_DI = RTW_9346CR_EEDO;
 	sd.sd_DO = RTW_9346CR_EEDI;
-	/* make read_seeprom enter EEPROM read/write mode */ 
+	/* make read_seeprom enter EEPROM read/write mode */
 	sd.sd_MS = ecr;
 	sd.sd_RDY = 0;
 
@@ -692,7 +692,7 @@ rtw_srom_read(struct rtw_regs *regs, u_int32_t flags, struct rtw_srom *sr,
 		return -1;	/* XXX */
 	}
 
-	/* end EEPROM read/write mode */ 
+	/* end EEPROM read/write mode */
 	RTW_WRITE8(regs, RTW_9346CR,
 	    (ecr & ~RTW_9346CR_EEM_MASK) | RTW_9346CR_EEM_NORMAL);
 	RTW_WBRW(regs, RTW_9346CR, RTW_9346CR);
@@ -1970,7 +1970,7 @@ rtw_maxim_pwrstate(struct rtw_regs *regs, enum rtw_pwrstate power,
 }
 
 /* XXX I am using the RFMD settings gleaned from the reference
- * driver.  They agree 
+ * driver.  They agree
  */
 void
 rtw_rfmd_pwrstate(struct rtw_regs *regs, enum rtw_pwrstate power,
@@ -2462,7 +2462,7 @@ rtw_led_init(struct rtw_regs *regs)
 	rtw_set_access(regs, RTW_ACCESS_NONE);
 }
 
-/* 
+/*
  * IEEE80211_S_INIT: 		LED1 off
  *
  * IEEE80211_S_AUTH,
@@ -2961,7 +2961,7 @@ rtw_compute_duration1(int len, int use_ack, uint32_t flags, int rate,
  *
  * wh:      802.11 header
  *
- * len: packet length 
+ * len: packet length
  *
  * rate:    MSDU speed, units 500kb/s
  *

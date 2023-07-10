@@ -2,7 +2,7 @@
  * THIS FILE AUTOMATICALLY GENERATED.  DO NOT EDIT.
  *
  * generated from:
- *	OpenBSD: pcidevs,v 1.2041 2023/06/29 07:58:15 jsg Exp 
+ *	OpenBSD: pcidevs,v 1.2043 2023/07/08 09:11:51 kettenis Exp 
  */
 
 /*	$NetBSD: pcidevs,v 1.30 1997/06/24 06:20:24 thorpej Exp $	*/
@@ -25172,6 +25172,10 @@ static const struct pci_known_product pci_known_products[] = {
 	    "Core 13G xHCI",
 	},
 	{
+	    PCI_VENDOR_INTEL, PCI_PRODUCT_INTEL_RPL_TBT_PCIE3,
+	    "Core 13G PCIE",
+	},
+	{
 	    PCI_VENDOR_INTEL, PCI_PRODUCT_INTEL_RPL_P_GT_1,
 	    "Graphics",
 	},
@@ -25202,6 +25206,10 @@ static const struct pci_known_product pci_known_products[] = {
 	{
 	    PCI_VENDOR_INTEL, PCI_PRODUCT_INTEL_RPL_TBT_DMA0,
 	    "Core 13G TBT",
+	},
+	{
+	    PCI_VENDOR_INTEL, PCI_PRODUCT_INTEL_RPL_TBT_PCIE1,
+	    "Core 13G PCIE",
 	},
 	{
 	    PCI_VENDOR_INTEL, PCI_PRODUCT_INTEL_RPL_PCIE_3,
@@ -29686,6 +29694,10 @@ static const struct pci_known_product pci_known_products[] = {
 	{
 	    PCI_VENDOR_PLATFORM, PCI_PRODUCT_PLATFORM_ES1849,
 	    "ES1849",
+	},
+	{
+	    PCI_VENDOR_PLDA, PCI_PRODUCT_PLDA_XR_AXI,
+	    "XpressRICH-AXI",
 	},
 	{
 	    PCI_VENDOR_PLX, PCI_PRODUCT_PLX_1076,
@@ -35870,6 +35882,10 @@ static const struct pci_known_vendor pci_known_vendors[] = {
 	{
 	    PCI_VENDOR_TERRATEC,
 	    "TerraTec",
+	},
+	{
+	    PCI_VENDOR_PLDA,
+	    "PLDA",
 	},
 	{
 	    PCI_VENDOR_PERLE,

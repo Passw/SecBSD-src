@@ -2,14 +2,14 @@
 
 /*
  * Copyright (c) 2007 The DragonFly Project.  All rights reserved.
- * 
+ *
  * This code is derived from software contributed to The DragonFly Project
  * by Sepherosa Ziehau <sepherosa@gmail.com>
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -19,7 +19,7 @@
  * 3. Neither the name of The DragonFly Project nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific, prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,7 +32,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * $DragonFly: src/sys/dev/netif/bwi/bwimac.c,v 1.1 2007/09/08 06:15:54 sephe Exp $
  */
 
@@ -7044,7 +7044,7 @@ bwi_init_statechg(struct bwi_softc *sc, int statechg)
 		goto back;
 
 	bwi_bbp_power_on(sc, BWI_CLOCK_MODE_DYN);
-	
+
 	IEEE80211_ADDR_COPY(ic->ic_myaddr, LLADDR(ifp->if_sadl));
 
 	bwi_set_bssid(sc, bwi_zero_addr);	/* Clear BSSID */
@@ -7514,7 +7514,7 @@ bwi_dma_alloc(struct bwi_softc *sc)
 
 	switch (sc->sc_bus_space) {
 	case BWI_BUS_SPACE_30BIT:
-		/* 
+		/*
 		 * 30bit devices must use bounce buffers but
 		 * otherwise work like 32bit devices.
 		 */
@@ -8701,7 +8701,7 @@ bwi_ack_rate(struct ieee80211_node *ni, uint8_t rate)
 
 	for (i = 0; i < rs->rs_nrates; ++i) {
 		uint8_t rate1 = rs->rs_rates[i] & IEEE80211_RATE_VAL;
-		
+
 		if (rate1 > rate) {
 			if (ack_rate != 0)
 				return ack_rate;
@@ -8759,7 +8759,7 @@ bwi_ack_rate(struct ieee80211_node *ni, uint8_t rate)
 #define IEEE80211_OFDM_SIGNAL_TIME		4
 
 #define IEEE80211_OFDM_PLCP_SERVICE_NBITS	16
-#define IEEE80211_OFDM_TAIL_NBITS		6	
+#define IEEE80211_OFDM_TAIL_NBITS		6
 
 #define IEEE80211_OFDM_NBITS(frmlen)		\
 	(IEEE80211_OFDM_PLCP_SERVICE_NBITS +	\

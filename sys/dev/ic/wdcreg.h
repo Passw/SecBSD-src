@@ -122,7 +122,7 @@
 /* security mode commands */
 #define WDCC_SEC_SET_PASSWORD		0xf1 /* set user or master password */
 #define WDCC_SEC_UNLOCK			0xf2 /* authenticate */
-#define WDCC_SEC_ERASE_PREPARE		0xf3 
+#define WDCC_SEC_ERASE_PREPARE		0xf3
 #define WDCC_SEC_ERASE_UNIT		0xf4 /* erase all user data */
 #define WDCC_SEC_FREEZE_LOCK		0xf5 /* prevent password changes */
 #define WDCC_SEC_DISABLE_PASSWORD	0xf6

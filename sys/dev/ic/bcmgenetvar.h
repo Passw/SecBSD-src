@@ -64,7 +64,7 @@ struct genet_softc {
 	enum genet_phy_mode	sc_phy_mode;
 
 	void			*sc_ih;
-	
+
 	struct arpcom		sc_ac;
 #define sc_lladdr	sc_ac.ac_enaddr
 	struct mii_data		sc_mii;

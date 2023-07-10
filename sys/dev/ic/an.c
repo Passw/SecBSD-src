@@ -205,7 +205,7 @@ an_attach(struct an_softc *sc)
 		return(EIO);
 	}
 
-	an_swap16((u_int16_t *)&sc->sc_config.an_macaddr, 3); 
+	an_swap16((u_int16_t *)&sc->sc_config.an_macaddr, 3);
 
 	/* Read the card capabilities */
 	buflen = sizeof(sc->sc_caps);
@@ -214,7 +214,7 @@ an_attach(struct an_softc *sc)
 		return(EIO);
 	}
 
-	an_swap16((u_int16_t *)&sc->sc_caps.an_oemaddr, 3); 
+	an_swap16((u_int16_t *)&sc->sc_caps.an_oemaddr, 3);
 	an_swap16((u_int16_t *)&sc->sc_caps.an_rates, 4);
 
 	/* Read WEP settings from persistent memory */
@@ -222,8 +222,8 @@ an_attach(struct an_softc *sc)
 	buflen = sizeof(struct an_rid_wepkey);
 	rid = AN_RID_WEP_VOLATILE;	/* first persistent key */
 	while (an_read_rid(sc, rid, akey, &buflen) == 0) {
-		an_swap16((u_int16_t *)&akey->an_mac_addr, 3); 
-		an_swap16((u_int16_t *)&akey->an_key, 8); 
+		an_swap16((u_int16_t *)&akey->an_mac_addr, 3);
+		an_swap16((u_int16_t *)&akey->an_key, 8);
 		kid = akey->an_key_index;
 		DPRINTF(("an_attach: wep rid=0x%x len=%d(%d) index=0x%04x "
 		    "mac[0]=%02x keylen=%d\n",
@@ -260,7 +260,7 @@ an_attach(struct an_softc *sc)
 		printf("unknown (%x)", sc->sc_config.an_radiotype);
 
 	printf(", address %s\n", ether_sprintf(ic->ic_myaddr));
-	
+
 	ifp->if_softc = sc;
 	ifp->if_flags = IFF_BROADCAST | IFF_SIMPLEX | IFF_MULTICAST;
 	ifp->if_ioctl = an_ioctl;
@@ -783,14 +783,14 @@ an_mwrite_bap(struct an_softc *sc, int id, int off, struct mbuf *m, int totlen)
 		if ((mtod(m, u_long) & 0x1) || (len & 0x1)) {
 			m_copydata(m, 0, totlen, &sc->sc_buf.sc_txbuf);
 			cnt = (totlen + 1) / 2;
-			an_swap16((u_int16_t *)&sc->sc_buf.sc_txbuf, cnt); 
+			an_swap16((u_int16_t *)&sc->sc_buf.sc_txbuf, cnt);
 			CSR_WRITE_MULTI_STREAM_2(sc, AN_DATA0,
 			    sc->sc_buf.sc_val, cnt);
 			off += cnt * 2;
 			break;
 		}
 		cnt = len / 2;
-		an_swap16((u_int16_t *)mtod(m, u_int16_t *), cnt); 
+		an_swap16((u_int16_t *)mtod(m, u_int16_t *), cnt);
 		CSR_WRITE_MULTI_STREAM_2(sc, AN_DATA0, mtod(m, u_int16_t *),
 		    cnt);
 		off += len;
@@ -961,7 +961,7 @@ an_init(struct ifnet *ifp)
 	sc->sc_txcur = sc->sc_txnext = 0;
 
 	IEEE80211_ADDR_COPY(sc->sc_config.an_macaddr, ic->ic_myaddr);
-	an_swap16((u_int16_t *)&sc->sc_config.an_macaddr, 3); 
+	an_swap16((u_int16_t *)&sc->sc_config.an_macaddr, 3);
 	sc->sc_config.an_scanmode = AN_SCANMODE_ACTIVE;
 	sc->sc_config.an_authtype = AN_AUTHTYPE_OPEN;	/*XXX*/
 	if (ic->ic_flags & IEEE80211_F_WEPON) {
@@ -1014,7 +1014,7 @@ an_init(struct ifnet *ifp)
 	if (ic->ic_des_esslen)
 		memcpy(sc->sc_buf.sc_ssidlist.an_entry[0].an_ssid,
 		    ic->ic_des_essid, ic->ic_des_esslen);
-	an_swap16((u_int16_t *)&sc->sc_buf.sc_ssidlist.an_entry[0].an_ssid, 16); 
+	an_swap16((u_int16_t *)&sc->sc_buf.sc_ssidlist.an_entry[0].an_ssid, 16);
 	if ((error = an_write_rid(sc, AN_RID_SSIDLIST, &sc->sc_buf,
 	    sizeof(sc->sc_buf.sc_ssidlist)))) {
 		printf("%s: failed to write ssid list\n", ifp->if_xname);
@@ -1172,7 +1172,7 @@ an_start(struct ifnet *ifp)
 			struct mbuf mb;
 			struct an_tx_radiotap_header *tap = &sc->sc_txtap;
 
-			tap->at_rate = 
+			tap->at_rate =
 			    ic->ic_bss->ni_rates.rs_rates[ic->ic_bss->ni_txrate];
 			tap->at_chan_freq =
 			    ic->ic_bss->ni_chan->ic_freq;
@@ -1556,9 +1556,9 @@ an_write_wepkey(struct an_softc *sc, int type, struct an_wepkey *keys, int kid)
 		akey->an_key_len = keys[i].an_wep_keylen;
 		akey->an_key_index = i;
 		akey->an_mac_addr[0] = 1;	/* default mac */
-		an_swap16((u_int16_t *)&akey->an_mac_addr, 3); 
+		an_swap16((u_int16_t *)&akey->an_mac_addr, 3);
 		memcpy(akey->an_key, keys[i].an_wep_key, keys[i].an_wep_keylen);
-		an_swap16((u_int16_t *)&akey->an_key, 8); 
+		an_swap16((u_int16_t *)&akey->an_key, 8);
 		if ((error = an_write_rid(sc, type, akey, sizeof(*akey))) != 0)
 			return error;
 	}
@@ -1566,7 +1566,7 @@ an_write_wepkey(struct an_softc *sc, int type, struct an_wepkey *keys, int kid)
 		memset(akey, 0, sizeof(struct an_rid_wepkey));
 		akey->an_key_index = 0xffff;
 		akey->an_mac_addr[0] = kid;
-		an_swap16((u_int16_t *)&akey->an_mac_addr, 3); 
+		an_swap16((u_int16_t *)&akey->an_mac_addr, 3);
 		akey->an_key_len = 0;
 		memset(akey->an_key, 0, sizeof(akey->an_key));
 		error = an_write_rid(sc, type, akey, sizeof(*akey));
@@ -1594,8 +1594,8 @@ an_newstate(struct ieee80211com *ic, enum ieee80211_state nstate, int arg)
 	case IEEE80211_S_RUN:
 		buflen = sizeof(sc->sc_buf);
 		an_read_rid(sc, AN_RID_STATUS, &sc->sc_buf, &buflen);
-		an_swap16((u_int16_t *)&sc->sc_buf.sc_status.an_cur_bssid, 3); 
-		an_swap16((u_int16_t *)&sc->sc_buf.sc_status.an_ssid, 16); 
+		an_swap16((u_int16_t *)&sc->sc_buf.sc_status.an_cur_bssid, 3);
+		an_swap16((u_int16_t *)&sc->sc_buf.sc_status.an_ssid, 16);
 		IEEE80211_ADDR_COPY(ni->ni_bssid,
 		    sc->sc_buf.sc_status.an_cur_bssid);
 		IEEE80211_ADDR_COPY(ni->ni_macaddr, ni->ni_bssid);
