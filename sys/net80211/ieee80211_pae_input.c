@@ -197,7 +197,7 @@ ieee80211_recv_4way_msg1(struct ieee80211com *ic,
 	    ic->ic_opmode != IEEE80211_M_IBSS)
 		return;
 #endif
-	/* 
+	/*
 	 * Message 1 is always expected while RSN is active since some
 	 * APs will rekey the PTK by sending Msg1/4 after some time.
 	 */
@@ -340,7 +340,7 @@ ieee80211_recv_4way_msg2(struct ieee80211com *ic,
 }
 #endif	/* IEEE80211_STA_ONLY */
 
-/* 
+/*
  * Check if a group key must be updated with a new GTK from an EAPOL frame.
  * Manipulated group key handshake messages could trick clients into
  * reinstalling an already used group key and hence lower or reset the
@@ -534,7 +534,7 @@ ieee80211_recv_4way_msg3(struct ieee80211com *ic,
 	if (ieee80211_send_4way_msg4(ic, ni) != 0)
 		return;	/* ..authenticator will retry */
 
-	/* 
+	/*
 	 * Only install a new pairwise key if we are still expecting a new key,
 	 * as indicated by the NODE_RSN_NEW_PTK flag. An adversary could be
 	 * sending manipulated retransmissions of message 3 of the 4-way

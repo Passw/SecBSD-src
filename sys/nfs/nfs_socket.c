@@ -155,7 +155,7 @@ nfs_init_rtt(struct nfsmount *nmp)
 /*
  * Update a mount point's RTT estimator state using data from the
  * passed-in request.
- * 
+ *
  * Use a gain of 0.125 on the mean and a gain of 0.25 on the deviation.
  *
  * NB: Since the timer resolution of NFS_HZ is so course, it can often
@@ -244,7 +244,7 @@ nfs_connect(struct nfsmount *nmp, struct nfsreq *rep)
 
 	nmp->nm_so = NULL;
 	saddr = mtod(nmp->nm_nam, struct sockaddr *);
-	error = socreate(saddr->sa_family, &nmp->nm_so, nmp->nm_sotype, 
+	error = socreate(saddr->sa_family, &nmp->nm_so, nmp->nm_sotype,
 	    nmp->nm_soproto);
 	if (error) {
 		nfs_disconnect(nmp);
@@ -557,7 +557,7 @@ tryagain:
 		}
 		so = rep->r_nmp->nm_so;
 		if (!so) {
-			error = nfs_reconnect(rep); 
+			error = nfs_reconnect(rep);
 			if (error) {
 				nfs_sndunlock(&rep->r_nmp->nm_flag);
 				return (error);
@@ -771,7 +771,7 @@ nfs_reply(struct nfsreq *myrep)
 			return (error);
 		}
 		m_freem(nam);
-	
+
 		/*
 		 * Get the xid and check that it is an rpc reply
 		 */

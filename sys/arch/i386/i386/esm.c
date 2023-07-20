@@ -1033,7 +1033,7 @@ esm_cmd(struct esm_softc *sc, void *cmd, size_t cmdlen, void *resp,
 		/* Set host busy semaphore and clear doorbell */
 		ECTRLWR(sc, ESM2_TC_HOSTBUSY);
 		ECTRLWR(sc, ESM2_TC_EC2HDB);
-	
+
 		/* Read response data from port */
 		ECTRLWR(sc, ESM2_TC_CLR_RPTR);
 		for (i = 0; i < resplen; i++) {

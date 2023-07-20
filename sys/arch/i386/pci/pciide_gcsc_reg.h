@@ -27,7 +27,7 @@
  */
 
 
-/* 
+/*
  * 6.4 - ATA-5 Controller Register Definitions.
  */
 #define GCSC_MSR_ATAC_BASE 		0x51300000

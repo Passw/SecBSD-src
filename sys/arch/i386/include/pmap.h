@@ -349,7 +349,7 @@ vaddr_t pmap_tmpmap_pa_pae(paddr_t);
 void pmap_tmpunmap_pa_pae(void);
 
 
-/* 
+/*
  * functions for flushing the cache for vaddrs and pages.
  * these functions are not part of the MI pmap interface and thus
  * should not be used as such.

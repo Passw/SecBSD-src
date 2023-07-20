@@ -66,7 +66,7 @@ struct vm_anon {
  */
 
 /*
- * processes reference anonymous virtual memory maps with an anonymous 
+ * processes reference anonymous virtual memory maps with an anonymous
  * reference structure:
  * Note that the offset field indicates which part of the amap we are
  * referencing.

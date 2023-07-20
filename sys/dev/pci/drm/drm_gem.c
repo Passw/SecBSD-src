@@ -102,7 +102,7 @@ drm_fault(struct uvm_faultinfo *ufi, vaddr_t vaddr, vm_page_t *pps,
 	 * we do not allow device mappings to be mapped copy-on-write
 	 * so we kill any attempt to do so here.
 	 */
-	
+
 	if (UVM_ET_ISCOPYONWRITE(entry)) {
 		uvmfault_unlockall(ufi, ufi->entry->aref.ar_amap, uobj);
 		return(VM_PAGER_ERROR);
@@ -144,7 +144,7 @@ drm_fault(struct uvm_faultinfo *ufi, vaddr_t vaddr, vm_page_t *pps,
 	return (ret);
 }
 
-boolean_t	
+boolean_t
 drm_flush(struct uvm_object *uobj, voff_t start, voff_t stop, int flags)
 {
 	return (TRUE);
@@ -309,10 +309,10 @@ int drm_gem_object_init(struct drm_device *dev,
 		printf("%s size too big %lu\n", __func__, size);
 		return -ENOMEM;
 	}
-	
+
 	obj->uao = uao_create(size, 0);
 	uvm_obj_init(&obj->uobj, &drm_pgops, 1);
-	
+
 	return 0;
 }
 

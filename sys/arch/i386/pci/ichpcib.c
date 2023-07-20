@@ -187,7 +187,7 @@ ichss_present(struct pci_attach_args *pa)
 	/*
 	 * This form of SpeedStep works only with certain Intel processors.
 	 * However, other processors can be coupled with these ICH southbridges
-	 * causing false positives. This heuristic comes partly from the 
+	 * causing false positives. This heuristic comes partly from the
 	 * Linux speedstep-ich driver.
 	 */
 	if (PCI_PRODUCT(pa->pa_id) == PCI_PRODUCT_INTEL_82801DBM_LPC ||

@@ -798,7 +798,7 @@ gif_input(struct gif_tunnel *key, struct mbuf **mp, int *offp, int proto,
 		m->m_flags &= ~M_TUNNEL;
 		return (-1);
 	}
-	
+
 	key->t_rtableid = m->m_pkthdr.ph_rtableid;
 
 	sc = gif_find(key);
@@ -864,7 +864,7 @@ gif_input(struct gif_tunnel *key, struct mbuf **mp, int *offp, int proto,
 
 		shim = *mtod(m, uint32_t *) & MPLS_EXP_MASK;
 		itos = (ntohl(shim) >> MPLS_EXP_OFFSET) << 5;
-	
+
 		m->m_pkthdr.ph_family = AF_MPLS;
 		break;
 	}

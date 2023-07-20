@@ -760,14 +760,14 @@ trunk_ioctl(struct ifnet *ifp, u_long cmd, caddr_t data)
 				break;
 			case TRUNK_OPT_LACP_SYS_PRIO:
 				if (tro->to_lacpopts.lacp_prio == 0) {
-					error = EINVAL;	
+					error = EINVAL;
 					break;
 				}
 				lsc->lsc_sys_prio = tro->to_lacpopts.lacp_prio;
 				break;
 			case TRUNK_OPT_LACP_PORT_PRIO:
 				if (tro->to_lacpopts.lacp_portprio == 0) {
-					error = EINVAL;	
+					error = EINVAL;
 					break;
 				}
 				lsc->lsc_port_prio =
@@ -776,7 +776,7 @@ trunk_ioctl(struct ifnet *ifp, u_long cmd, caddr_t data)
 			case TRUNK_OPT_LACP_IFQ_PRIO:
 				if (tro->to_lacpopts.lacp_ifqprio >
 				    IFQ_MAXPRIO) {
-					error = EINVAL;	
+					error = EINVAL;
 					break;
 				}
 				lsc->lsc_ifq_prio =

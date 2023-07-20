@@ -137,7 +137,7 @@ static __inline u_int32_t
 ioapic_read_ul(struct ioapic_softc *sc,int regid)
 {
 	u_int32_t val;
-	
+
 	*(sc->sc_reg) = regid;
 	val = *sc->sc_data;
 
@@ -493,7 +493,7 @@ apic_vectorset(struct ioapic_softc *sc, int pin, int minlevel, int maxlevel)
 {
 	struct ioapic_pin *pp = &sc->sc_pins[pin];
 	int nvector, ovector = pp->ip_vector;
-	
+
 	if (maxlevel == 0) {
 		/* no vector needed. */
 		pp->ip_minlevel = 0xff; /* XXX magic */
@@ -593,7 +593,7 @@ ioapic_enable(void)
 		for (p = 0; p < sc->sc_apic_sz; p++) {
 			maxlevel = 0;	 /* magic */
 			minlevel = 0xff; /* magic */
-				
+
 			for (q = sc->sc_pins[p].ip_handler; q != NULL;
 			     q = q->ih_next) {
 				if (q->ih_level > maxlevel)

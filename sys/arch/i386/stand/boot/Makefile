@@ -54,7 +54,7 @@ SRCS+=	aes_xts.c bcrypt_pbkdf.c blowfish.c explicit_bzero.c hmac_sha1.c \
 .endif
 
 .PATH:	${S}/lib/libkern
-SRCS+=	ashldi3.c ashrdi3.c divdi3.c lshrdi3.c moddi3.c qdivrem.c 
+SRCS+=	ashldi3.c ashrdi3.c divdi3.c lshrdi3.c moddi3.c qdivrem.c
 SRCS+=	strlcpy.c
 
 .PATH:	${S}/lib/libz

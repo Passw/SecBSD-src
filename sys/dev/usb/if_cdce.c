@@ -225,7 +225,7 @@ cdce_attach(struct device *parent, struct device *self, void *aux)
 		}
 		switch(desc->bDescriptorSubtype) {
 		case UDESCSUB_CDC_UNION:
-			ud = (struct usb_cdc_union_descriptor *)desc; 
+			ud = (struct usb_cdc_union_descriptor *)desc;
 			if ((sc->cdce_flags & CDCE_SWAPUNION) == 0 &&
 			    ud->bMasterInterface == ctl_ifcno)
 				data_ifcno = ud->bSlaveInterface[0];
@@ -290,10 +290,10 @@ cdce_attach(struct device *parent, struct device *self, void *aux)
 
 	for (j = 0; j < numalts; j++) {
 		if (usbd_set_interface(sc->cdce_data_iface, j)) {
-			printf("%s: interface alternate setting %d failed\n", 
+			printf("%s: interface alternate setting %d failed\n",
 			    sc->cdce_dev.dv_xname, j);
 			return;
-		} 
+		}
 		/* Find endpoints. */
 		id = usbd_get_interface_descriptor(sc->cdce_data_iface);
 		sc->cdce_bulkin_no = sc->cdce_bulkout_no = -1;
@@ -330,7 +330,7 @@ cdce_attach(struct device *parent, struct device *self, void *aux)
 			goto found;
 		}
 	}
-	
+
 	if (sc->cdce_bulkin_no == -1) {
 		printf("%s: could not find data bulk in\n",
 		    sc->cdce_dev.dv_xname);
@@ -385,7 +385,7 @@ found:
 int
 cdce_detach(struct device *self, int flags)
 {
-	struct cdce_softc	*sc = (struct cdce_softc *)self;	
+	struct cdce_softc	*sc = (struct cdce_softc *)self;
 	struct ifnet		*ifp = GET_IFP(sc);
 	int			 s;
 

@@ -41,10 +41,10 @@
 #define RELOC_GOTOFF    	9   /* 32 bit offset to GOT */
 #define RELOC_GOTPC     	10  /* 32 bit PC relative offset to GOT */
 #define RELOC_TLS_TPOFF		14  /* negative offset in static TLS block */
-#define RELOC_16        	20 
-#define RELOC_PC16      	21 
-#define RELOC_8         	22 
-#define RELOC_PC8       	23 
+#define RELOC_16        	20
+#define RELOC_PC16      	21
+#define RELOC_8         	22
+#define RELOC_PC8       	23
 #define RELOC_TLS_DTPMOD32	35 /* ID of module containing symbol */
 #define RELOC_TLS_DTPOFF32	36 /* Offset in TLS block */
 #define RELOC_TLS_TPOFF32	37 /* Offset in static TLS block */

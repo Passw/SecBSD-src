@@ -297,7 +297,7 @@ uvm_pageout(void *arg)
 		}
 
 		if (pma != NULL) {
-			/* 
+			/*
 			 * XXX If UVM_PMA_FREED isn't set, no pages
 			 * were freed.  Should we set UVM_PMA_FAIL in
 			 * that case?
@@ -716,7 +716,7 @@ uvmpd_scan_inactive(struct uvm_pmalloc *pma, struct pglist *pglst)
 		 *
 		 * note locking semantics of uvm_pager_put with PGO_PDFREECLUST:
 		 *  IN: locked: page queues
-		 * OUT: locked: 
+		 * OUT: locked:
 		 *     !locked: pageqs
 		 */
 

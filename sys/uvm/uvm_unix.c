@@ -3,7 +3,7 @@
 
 /*
  * Copyright (c) 1997 Charles D. Cranor and Washington University.
- * Copyright (c) 1991, 1993 The Regents of the University of California.  
+ * Copyright (c) 1991, 1993 The Regents of the University of California.
  * Copyright (c) 1988 University of Utah.
  *
  * All rights reserved.
@@ -320,7 +320,7 @@ uvm_coredump_walkmap(struct proc *p, uvm_coredump_setup_cb *setup,
 
 	/*
 	 * Okay, we have a count in nsegment.  Prepare to
-	 * walk it again, then invoke the setup callback. 
+	 * walk it again, then invoke the setup callback.
 	 */
 	entry = RBT_MIN(uvm_map_addr, &map->addr);
 	error = (*setup)(nsegment, cookie);

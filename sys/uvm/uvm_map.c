@@ -4213,7 +4213,7 @@ check_copyin_add(struct vm_map *map, vaddr_t start, vaddr_t end)
 	map->check_copyin_count++;
 }
 
-/* 
+/*
  * uvm_map_check_copyin_add: remember regions which are X-only for copyin(),
  * copyinstr(), uiomove(), and others
  *
@@ -4235,7 +4235,7 @@ uvm_map_check_copyin_add(struct vm_map *map, vaddr_t start, vaddr_t end)
 }
 #endif /* PMAP_CHECK_COPYIN */
 
-/* 
+/*
  * uvm_map_syscall: permit system calls for range of addrs in map.
  *
  * => map must be unlocked
@@ -4277,7 +4277,7 @@ uvm_map_syscall(struct vm_map *map, vaddr_t start, vaddr_t end)
 	return (0);
 }
 
-/* 
+/*
  * uvm_map_immutable: block mapping/mprotect for range of addrs in map.
  *
  * => map must be unlocked
@@ -4483,7 +4483,7 @@ uvm_map_extract(struct vm_map *srcmap, vaddr_t start, vsize_t len,
 		}
 		kernel_map->size += cp_len;
 
-		/* Figure out the best protection */ 
+		/* Figure out the best protection */
 		if ((flags & UVM_EXTRACT_FIXPROT) &&
 		    newentry->protection != PROT_NONE)
 			newentry->protection = newentry->max_protection;

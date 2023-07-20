@@ -37,9 +37,9 @@
 
 #include <machine/apicvar.h>
 
-struct ioapic_pin 
+struct ioapic_pin
 {
-	struct intrhand		*ip_handler; 
+	struct intrhand		*ip_handler;
 	struct ioapic_pin	*ip_next; /* next pin on this vector */
 	struct mp_intr_map 	*ip_map;
 	int			ip_vector; /* IDT vector */
@@ -60,7 +60,7 @@ struct ioapic_softc {
 	volatile u_int32_t	*sc_reg;	/* KVA of ioapic addr */
 	volatile u_int32_t	*sc_data;	/* KVA of ioapic data */
 	struct ioapic_pin	*sc_pins;	/* sc_apic_sz entries */
-};      
+};
 
 /*
  * MP: intr_handle_t is bitfielded.
@@ -82,7 +82,7 @@ struct ioapic_softc {
 #define APIC_IRQ_PIN(x) ((x & APIC_INT_PIN_MASK) >> APIC_INT_PIN_SHIFT)
 
 void   *apic_intr_establish(int, int, int, int (*)(void *), void *,
-    const char *); 
+    const char *);
 void	apic_intr_disestablish(void *);
 
 void	ioapic_print_redir(struct ioapic_softc *, char *, int);

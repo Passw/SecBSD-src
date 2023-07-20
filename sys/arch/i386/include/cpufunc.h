@@ -65,11 +65,11 @@ static __inline void wrmsr(u_int, u_int64_t);
 static __inline u_int64_t rdmsr(u_int);
 static __inline void breakpoint(void);
 
-static __inline void 
+static __inline void
 invlpg(u_int addr)
-{ 
+{
         __asm volatile("invlpg (%0)" : : "r" (addr) : "memory");
-}  
+}
 
 static __inline void
 lidt(void *p)
@@ -257,14 +257,14 @@ mwait(u_long extensions, u_int hints)
 	__asm volatile("mwait" : : "a" (hints), "c" (extensions));
 }
 
-/* 
+/*
  * Some of the undocumented AMD64 MSRs need a 'passcode' to access.
  *
  * See LinuxBIOSv2: src/cpu/amd/model_fxx/model_fxx_init.c
  */
 
 #define	OPTERON_MSR_PASSCODE	0x9c5a203a
- 
+
 static __inline u_int64_t
 rdmsr_locked(u_int msr, u_int code)
 {

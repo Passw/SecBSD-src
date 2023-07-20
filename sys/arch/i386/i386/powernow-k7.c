@@ -359,9 +359,9 @@ k7pnow_acpi_init(struct k7pnow_cpu_state *cstate, uint64_t status)
 		return 0;
 
 	curs = k7pnow_acpi_states(cstate, pss, cstate->n_states, status);
-	/* 
+	/*
 	 * XXX: Some BIOS supplied _PSS implementations have the wrong
-	 * maximum frequency, if we encounter one of these punt and 
+	 * maximum frequency, if we encounter one of these punt and
 	 * hope the legacy tables have correct values.
 	 */
 	mfid = PN7_STA_MFID(status);

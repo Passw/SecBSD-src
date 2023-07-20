@@ -359,7 +359,7 @@ nfs_kqwatch(struct vnode *vp)
 	 * Fetch current attributes. It's only needed when the vnode
 	 * is not watched yet, but we need to do this without lock
 	 * held. This is likely cheap due to attrcache, so do it now.
-	 */ 
+	 */
 	memset(&attr, 0, sizeof(attr));
 	(void) VOP_GETATTR(vp, &attr, p->p_ucred, p);
 

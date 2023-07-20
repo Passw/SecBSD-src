@@ -1,4 +1,4 @@
-/*	$OpenBSD: drm_linux.c,v 1.99 2023/06/28 08:23:25 claudio Exp $	*/
+/*	$OpenBSD: drm_linux.c,v 1.101 2023/07/18 06:58:59 claudio Exp $	*/
 /*
  * Copyright (c) 2013 Jonathan Gray <jsg@openbsd.org>
  * Copyright (c) 2015, 2016 Mark Kettenis <kettenis@openbsd.org>
@@ -98,30 +98,30 @@ tasklet_run(void *arg)
 struct mutex atomic64_mtx = MUTEX_INITIALIZER(IPL_HIGH);
 #endif
 
-struct mutex sch_mtx = MUTEX_INITIALIZER(IPL_SCHED);
-volatile struct proc *sch_proc;
-volatile void *sch_ident;
-int sch_priority;
-
 void
 set_current_state(int state)
 {
-	if (sch_ident != curproc)
-		mtx_enter(&sch_mtx);
-	MUTEX_ASSERT_LOCKED(&sch_mtx);
-	sch_ident = sch_proc = curproc;
-	sch_priority = state;
+	int prio = state;
+
+	KASSERT(state != TASK_RUNNING);
+	/* check if already on the sleep list */
+	if (curproc->p_wchan != NULL)
+		return;
+	sleep_setup(curproc, prio, "schto");
 }
 
 void
 __set_current_state(int state)
 {
+	struct proc *p = curproc;
+	int s;
+
 	KASSERT(state == TASK_RUNNING);
-	if (sch_ident == curproc) {
-		MUTEX_ASSERT_LOCKED(&sch_mtx);
-		sch_ident = NULL;
-		mtx_leave(&sch_mtx);
-	}
+	SCHED_LOCK(s);
+	unsleep(p);
+	p->p_stat = SONPROC;
+	atomic_clearbits_int(&p->p_flag, P_WSLEEP);
+	SCHED_UNLOCK(s);
 }
 
 void
@@ -133,33 +133,18 @@ schedule(void)
 long
 schedule_timeout(long timeout)
 {
-	struct sleep_state sls;
 	unsigned long deadline;
-	int wait, spl, prio, timo = 0;
+	int timo = 0;
 
-	MUTEX_ASSERT_LOCKED(&sch_mtx);
 	KASSERT(!cold);
 
 	if (timeout != MAX_SCHEDULE_TIMEOUT)
 		timo = timeout;
-	prio = sch_priority;
-	sleep_setup(&sls, sch_ident, prio, "schto");
-
-	wait = (sch_proc == curproc && timeout > 0);
-
-	spl = MUTEX_OLDIPL(&sch_mtx);
-	MUTEX_OLDIPL(&sch_mtx) = splsched();
-	mtx_leave(&sch_mtx);
-
 	if (timeout != MAX_SCHEDULE_TIMEOUT)
 		deadline = jiffies + timeout;
-	sleep_finish(&sls, prio, timo, wait);
+	sleep_finish(timo, timeout > 0);
 	if (timeout != MAX_SCHEDULE_TIMEOUT)
 		timeout = deadline - jiffies;
-
-	mtx_enter(&sch_mtx);
-	MUTEX_OLDIPL(&sch_mtx) = spl;
-	sch_ident = curproc;
 
 	return timeout > 0 ? timeout : 0;
 }
@@ -177,10 +162,41 @@ wake_up_process(struct proc *p)
 	int s, rv;
 
 	SCHED_LOCK(s);
-	atomic_cas_ptr(&sch_proc, p, NULL);
 	rv = wakeup_proc(p, NULL, 0);
 	SCHED_UNLOCK(s);
 	return rv;
+}
+
+int
+autoremove_wake_function(struct wait_queue_entry *wqe, unsigned int mode,
+    int sync, void *key)
+{
+	if (wqe->private)
+		wake_up_process(wqe->private);
+	list_del_init(&wqe->entry);
+	return 0;
+}
+
+void
+prepare_to_wait(wait_queue_head_t *wqh, wait_queue_entry_t *wqe, int state)
+{
+	mtx_enter(&wqh->lock);
+	if (list_empty(&wqe->entry))
+		__add_wait_queue(wqh, wqe);
+	mtx_leave(&wqh->lock);
+
+	set_current_state(state);
+}
+
+void
+finish_wait(wait_queue_head_t *wqh, wait_queue_entry_t *wqe)
+{
+	__set_current_state(TASK_RUNNING);
+
+	mtx_enter(&wqh->lock);
+	if (!list_empty(&wqe->entry))
+		list_del_init(&wqe->entry);
+	mtx_leave(&wqh->lock);
 }
 
 void
@@ -257,7 +273,7 @@ kthread_run(int (*func)(void *), void *data, const char *name)
 	thread->func = func;
 	thread->data = data;
 	thread->flags = 0;
-	
+
 	if (kthread_create(kthread_func, thread, &thread->proc, name)) {
 		free(thread, M_DRM, sizeof(*thread));
 		return ERR_PTR(-ENOMEM);
@@ -278,7 +294,7 @@ kthread_create_worker(unsigned int flags, const char *fmt, ...)
 	vsnprintf(name, sizeof(name), fmt, ap);
 	va_end(ap);
 	w->tq = taskq_create(name, 1, IPL_HIGH, 0);
-	
+
 	return w;
 }
 
@@ -287,7 +303,7 @@ kthread_destroy_worker(struct kthread_worker *worker)
 {
 	taskq_destroy(worker->tq);
 	free(worker, M_DRM, sizeof(*worker));
-	
+
 }
 
 void
@@ -557,7 +573,7 @@ __free_pages(struct vm_page *page, unsigned int order)
 {
 	struct pglist mlist;
 	int i;
-	
+
 	TAILQ_INIT(&mlist);
 	for (i = 0; i < (1 << order); i++)
 		TAILQ_INSERT_TAIL(&mlist, &page[i], pageq);
@@ -629,7 +645,7 @@ void
 kunmap_atomic(void *addr)
 {
 	KASSERT(kmap_atomic_inuse);
-	
+
 	pmap_kremove(kmap_atomic_va, PAGE_SIZE);
 	kmap_atomic_inuse = 0;
 }
@@ -1199,7 +1215,7 @@ retry:
 int
 i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 {
-	int ret; 
+	int ret;
 
 	if (adap->lock_ops)
 		adap->lock_ops->lock_bus(adap, 0);
@@ -1503,7 +1519,7 @@ backlight_device_register(const char *name, void *kdev, void *data,
 	bd->data = data;
 
 	task_set(&bd->task, backlight_do_update_status, bd);
-	
+
 	return bd;
 }
 
@@ -1726,7 +1742,7 @@ dma_fence_wait(struct dma_fence *fence, bool intr)
 	ret = dma_fence_wait_timeout(fence, intr, MAX_SCHEDULE_TIMEOUT);
 	if (ret < 0)
 		return ret;
-	
+
 	return 0;
 }
 
@@ -1886,7 +1902,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 		list_del(&cb.base.node);
 out:
 	mtx_leave(fence->lock);
-	
+
 	return ret;
 }
 
@@ -1932,7 +1948,7 @@ dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
 	cb = mallocarray(count, sizeof(*cb), M_DRM, M_WAITOK|M_CANFAIL|M_ZERO);
 	if (cb == NULL)
 		return -ENOMEM;
-	
+
 	for (i = 0; i < count; i++) {
 		struct dma_fence *fence = fences[i];
 		cb[i].proc = curproc;
@@ -2028,7 +2044,7 @@ dma_fence_array_cb_func(struct dma_fence *f, struct dma_fence_cb *cb)
 	struct dma_fence_array_cb *array_cb =
 	    container_of(cb, struct dma_fence_array_cb, cb);
 	struct dma_fence_array *dfa = array_cb->array;
-	
+
 	if (atomic_dec_and_test(&dfa->num_pending))
 		timeout_add(&dfa->to, 1);
 	else
@@ -2052,7 +2068,7 @@ dma_fence_array_enable_signaling(struct dma_fence *fence)
 				return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -2532,7 +2548,7 @@ pcie_get_speed_cap(struct pci_dev *pdev)
 	tag = pdev->tag;
 
 	if (!pci_get_capability(pc, tag, PCI_CAP_PCIEXPRESS,
-	    &pos, NULL)) 
+	    &pos, NULL))
 		return PCI_SPEED_UNKNOWN;
 
 	id = pci_conf_read(pc, tag, PCI_ID_REG);
@@ -2588,7 +2604,7 @@ pcie_get_width_cap(struct pci_dev *pdev)
 	int			bus, device, function;
 
 	if (!pci_get_capability(pc, tag, PCI_CAP_PCIEXPRESS,
-	    &pos, NULL)) 
+	    &pos, NULL))
 		return PCIE_LNK_WIDTH_UNKNOWN;
 
 	id = pci_conf_read(pc, tag, PCI_ID_REG);
@@ -2613,25 +2629,14 @@ pcie_aspm_enabled(struct pci_dev *pdev)
 	pcireg_t		lcsr;
 
 	if (!pci_get_capability(pc, tag, PCI_CAP_PCIEXPRESS,
-	    &pos, NULL)) 
+	    &pos, NULL))
 		return false;
 
 	lcsr = pci_conf_read(pc, tag, pos + PCI_PCIE_LCSR);
 	if ((lcsr & (PCI_PCIE_LCSR_ASPM_L0S | PCI_PCIE_LCSR_ASPM_L1)) != 0)
 		return true;
-	
-	return false;
-}
 
-int
-autoremove_wake_function(struct wait_queue_entry *wqe, unsigned int mode,
-    int sync, void *key)
-{
-	wakeup(wqe);
-	if (wqe->private)
-		wake_up_process(wqe->private);
-	list_del_init(&wqe->entry);
-	return 0;
+	return false;
 }
 
 static wait_queue_head_t bit_waitq;
@@ -2902,7 +2907,7 @@ interval_tree_iter_first(struct rb_root_cached *root, unsigned long start,
 
 void
 interval_tree_remove(struct interval_tree_node *node,
-    struct rb_root_cached *root) 
+    struct rb_root_cached *root)
 {
 	rb_erase_cached(&node->rb, root);
 }
@@ -3027,7 +3032,7 @@ fput(struct file *fp)
 {
 	if (fp->f_type != DTYPE_SYNC)
 		return;
-	
+
 	FRELE(fp, curproc);
 }
 

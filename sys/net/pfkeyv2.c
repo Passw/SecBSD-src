@@ -367,7 +367,7 @@ pfkeyv2_send(struct socket *so, struct mbuf *m, struct mbuf *nam,
 		error = EOPNOTSUPP;
 		goto out;
 	}
-	
+
 	if (nam) {
 		error = EISCONN;
 		goto out;

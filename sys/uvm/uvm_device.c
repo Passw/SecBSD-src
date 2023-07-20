@@ -121,7 +121,7 @@ udv_attach(dev_t device, vm_prot_t accessprot, voff_t off, vsize_t size)
 	/*
 	 * Check that the specified range of the device allows the
 	 * desired protection.
-	 * 
+	 *
 	 * XXX clobbers off and size, but nothing else here needs them.
 	 */
 	while (size != 0) {
@@ -219,7 +219,7 @@ udv_attach(dev_t device, vm_prot_t accessprot, voff_t off, vsize_t size)
 	}
 	/*NOTREACHED*/
 }
-	
+
 /*
  * udv_reference
  *
@@ -387,7 +387,7 @@ udv_fault(struct uvm_faultinfo *ufi, vaddr_t vaddr, vm_page_t *pps, int npages,
 			    uobj);
 
 			/* sync what we have so far */
-			pmap_update(ufi->orig_map->pmap);      
+			pmap_update(ufi->orig_map->pmap);
 			uvm_wait("udv_fault");
 			return (VM_PAGER_REFAULT);
 		}

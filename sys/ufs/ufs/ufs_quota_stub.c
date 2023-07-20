@@ -21,13 +21,13 @@ getinoquota(struct inode *ip) {
 }
 
 int
-ufs_quota_alloc_blocks2(struct inode *ip, daddr_t change, 
+ufs_quota_alloc_blocks2(struct inode *ip, daddr_t change,
     struct ucred *cred, enum ufs_quota_flags flags) {
 	return (0);
 }
 
 int
-ufs_quota_free_blocks2(struct inode *ip, daddr_t change, 
+ufs_quota_free_blocks2(struct inode *ip, daddr_t change,
     struct ucred *cred, enum ufs_quota_flags flags) {
 	return (0);
 }

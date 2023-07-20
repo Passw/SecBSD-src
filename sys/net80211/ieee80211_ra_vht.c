@@ -140,7 +140,7 @@ ieee80211_ra_vht_use_sgi(struct ieee80211_node *ni)
 		if (ni->ni_flags & IEEE80211_NODE_VHT_SGI80)
 			return 1;
 	}
-	
+
 	return 0;
 }
 

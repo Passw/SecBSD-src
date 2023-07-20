@@ -106,7 +106,7 @@ tasklet_hi_schedule(struct tasklet_struct *ts)
 	task_add(taskletq, &ts->task);
 }
 
-static inline void 
+static inline void
 tasklet_disable_nosync(struct tasklet_struct *ts)
 {
 	atomic_inc(&ts->count);

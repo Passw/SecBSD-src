@@ -167,7 +167,7 @@ struct glxsb_softc {
 	struct glxsb_session	*sc_sessions;
 #endif /* CRYPTO */
 
-	uint64_t		save_gld_msr;	
+	uint64_t		save_gld_msr;
 };
 
 int	glxsb_match(struct device *, void *, void *);
@@ -624,7 +624,7 @@ glxsb_crypto_swauth(struct cryptop *crp, struct cryptodesc *crd,
 		type = CRYPTO_BUF_MBUF;
 	else
 		type = CRYPTO_BUF_IOV;
-		
+
 	return (swcr_authcompute(crp, crd, sw, buf, type));
 }
 
@@ -638,7 +638,7 @@ glxsb_crypto_swenc(struct cryptop *crp, struct cryptodesc *crd,
 		type = CRYPTO_BUF_MBUF;
 	else
 		type = CRYPTO_BUF_IOV;
-		
+
 	return (swcr_encdec(crd, sw, buf, type));
 }
 

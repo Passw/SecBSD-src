@@ -329,7 +329,7 @@ viac3_crypto_swauth(struct cryptop *crp, struct cryptodesc *crd,
 		type = CRYPTO_BUF_MBUF;
 	else
 		type= CRYPTO_BUF_IOV;
-		
+
 	return (swcr_authcompute(crp, crd, sw, buf, type));
 }
 

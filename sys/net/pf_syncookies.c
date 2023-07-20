@@ -43,7 +43,7 @@
  * We leave synflood mode when the number of half-open states - including
  * in-flight syncookies - drops far enough again
  */
- 
+
 /*
  * syncookie enabled Initial Sequence Number:
  *  24 bit MAC
@@ -284,7 +284,7 @@ pf_syncookie_newkey(void)
  * [An Analysis of TCP Maximum Segment Sizes, S. Alcock and R. Nelson, 2011]
  *   .2%  .3%   5%    7%    7%    20%   15%   45%
  */
-static int pf_syncookie_msstab[] = 
+static int pf_syncookie_msstab[] =
     { 216, 536, 1200, 1360, 1400, 1440, 1452, 1460 };
 
 /*

@@ -1248,11 +1248,11 @@ ehci_dump_sqtds(struct ehci_soft_qtd *sqtd)
 void
 ehci_dump_sqtd(struct ehci_soft_qtd *sqtd)
 {
-	usb_syncmem(&sqtd->dma, sqtd->offs, 
+	usb_syncmem(&sqtd->dma, sqtd->offs,
 	    sizeof(sqtd->qtd), BUS_DMASYNC_POSTWRITE | BUS_DMASYNC_POSTREAD);
 	printf("QTD(%p) at 0x%08x:\n", sqtd, sqtd->physaddr);
 	ehci_dump_qtd(&sqtd->qtd);
-	usb_syncmem(&sqtd->dma, sqtd->offs, 
+	usb_syncmem(&sqtd->dma, sqtd->offs,
 	    sizeof(sqtd->qtd), BUS_DMASYNC_PREREAD);
 }
 

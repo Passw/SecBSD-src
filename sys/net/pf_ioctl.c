@@ -1947,7 +1947,7 @@ pfioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 		break;
 	}
 
-	case DIOCGETSTATES: 
+	case DIOCGETSTATES:
 		error = pf_states_get((struct pfioc_states *)addr);
 		break;
 

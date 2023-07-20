@@ -690,7 +690,7 @@ sys_swapctl(struct proc *p, void *v, register_t *retval)
 				if (count >= misc)
 					continue;
 
-				sdp->swd_inuse = 
+				sdp->swd_inuse =
 				    btodb((u_int64_t)sdp->swd_npginuse <<
 				    PAGE_SHIFT);
 				error = copyout(&sdp->swd_se, sep,
@@ -1963,7 +1963,7 @@ swapmount(void)
 	} else
 #endif
 	if (bdevvp(swap_dev, &vp)) {
-		rw_exit_write(&swap_syscall_lock);	
+		rw_exit_write(&swap_syscall_lock);
 		return;
 	}
 

@@ -420,13 +420,13 @@ struct ieee80211_node {
 #define IEEE80211_NODE_SA_QUERY		0x0800	/* SA Query in progress */
 #define IEEE80211_NODE_SA_QUERY_FAILED	0x1000	/* last SA Query failed */
 #define IEEE80211_NODE_RSN_NEW_PTK	0x2000	/* expecting a new PTK */
-#define IEEE80211_NODE_HT_SGI20		0x4000	/* SGI on 20 MHz negotiated */ 
-#define IEEE80211_NODE_HT_SGI40		0x8000	/* SGI on 40 MHz negotiated */ 
+#define IEEE80211_NODE_HT_SGI20		0x4000	/* SGI on 20 MHz negotiated */
+#define IEEE80211_NODE_HT_SGI40		0x8000	/* SGI on 40 MHz negotiated */
 #define IEEE80211_NODE_VHT		0x10000	/* VHT negotiated */
 #define IEEE80211_NODE_HTCAP		0x20000	/* claims to support HT */
 #define IEEE80211_NODE_VHTCAP		0x40000	/* claims to support VHT */
-#define IEEE80211_NODE_VHT_SGI80	0x80000	/* SGI on 80 MHz negotiated */ 
-#define IEEE80211_NODE_VHT_SGI160	0x100000 /* SGI on 160 MHz negotiated */ 
+#define IEEE80211_NODE_VHT_SGI80	0x80000	/* SGI on 80 MHz negotiated */
+#define IEEE80211_NODE_VHT_SGI160	0x100000 /* SGI on 160 MHz negotiated */
 
 	/* If not NULL, this function gets called when ni_refcnt hits zero. */
 	void			(*ni_unref_cb)(struct ieee80211com *,
@@ -484,7 +484,7 @@ ieee80211_unref_node(struct ieee80211_node **ni)
 	*ni = NULL;			/* guard against use */
 }
 
-/* 
+/*
  * Check if the peer supports HT.
  * Require a HT capabilities IE and at least one of the mandatory MCS.
  * MCS 0-7 are mandatory but some APs have particular MCS disabled.
@@ -521,7 +521,7 @@ ieee80211_node_supports_ht_chan40(struct ieee80211_node *ni)
 	    (ni->ni_htop0 & IEEE80211_HTOP0_CHW));
 }
 
-/* 
+/*
  * Check if the peer supports VHT.
  * Require a VHT capabilities IE and support for VHT MCS with a single
  * spatial stream.
@@ -565,8 +565,8 @@ ieee80211_node_supports_vht_chan80(struct ieee80211_node *ni)
 
 	cap_chan_width = (ni->ni_vhtcaps & IEEE80211_VHTCAP_CHAN_WIDTH_MASK) >>
 	    IEEE80211_VHTCAP_CHAN_WIDTH_SHIFT;
-	if (cap_chan_width != IEEE80211_VHTCAP_CHAN_WIDTH_80 &&	 
-	    cap_chan_width != IEEE80211_VHTCAP_CHAN_WIDTH_160 &&	 
+	if (cap_chan_width != IEEE80211_VHTCAP_CHAN_WIDTH_80 &&
+	    cap_chan_width != IEEE80211_VHTCAP_CHAN_WIDTH_160 &&
 	    cap_chan_width != IEEE80211_VHTCAP_CHAN_WIDTH_160_8080)
 		return 0;
 

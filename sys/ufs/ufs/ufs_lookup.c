@@ -684,7 +684,7 @@ ufs_makedirentry(struct inode *ip, struct componentname *cnp,
 	} else
 		newdirp->d_type = IFTODT(DIP(ip, mode));
 }
-  
+
 /*
  * Write a directory entry after a call to namei, using the parameters
  * that it left in nameidata. The argument dirp is the new directory
@@ -814,7 +814,7 @@ ufs_direnter(struct vnode *dvp, struct vnode *tvp, struct direct *dirp,
 	/*
 	 * Get the block containing the space for the new directory entry.
 	 */
-	if ((error = UFS_BUFATOFF(dp, (off_t)dp->i_offset, &dirbuf, &bp)) 
+	if ((error = UFS_BUFATOFF(dp, (off_t)dp->i_offset, &dirbuf, &bp))
 	    != 0) {
 		if (DOINGSOFTDEP(dvp) && newdirbp != NULL)
 			bdwrite(newdirbp);
@@ -862,7 +862,7 @@ ufs_direnter(struct vnode *dvp, struct vnode *tvp, struct direct *dirp,
 #endif
 		if (DOINGSOFTDEP(dvp))
 			softdep_change_directoryentry_offset(dp, dirbuf,
-			    (caddr_t)nep, (caddr_t)ep, dsize); 
+			    (caddr_t)nep, (caddr_t)ep, dsize);
 		else
 			memmove(ep, nep, dsize);
 	}

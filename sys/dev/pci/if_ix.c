@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_ix.c,v 1.198 2023/07/08 09:01:30 jmatthew Exp $	*/
+/*	$OpenBSD: if_ix.c,v 1.200 2023/07/18 16:01:20 bluhm Exp $	*/
 
 /******************************************************************************
 
@@ -36,6 +36,12 @@
 
 #include <dev/pci/if_ix.h>
 #include <dev/pci/ixgbe_type.h>
+
+/*
+ * Our TCP/IP Stack could not handle packets greater than MAXMCLBYTES.
+ * This interface could not handle packets greater than IXGBE_TSO_SIZE.
+ */
+CTASSERT(MAXMCLBYTES <= IXGBE_TSO_SIZE);
 
 /*********************************************************************
  *  Driver version
@@ -1925,8 +1931,10 @@ ixgbe_setup_interface(struct ix_softc *sc)
 	ifp->if_capabilities |= IFCAP_CSUM_IPv4;
 
 	ifp->if_capabilities |= IFCAP_TSOv4 | IFCAP_TSOv6;
-	if (sc->hw.mac.type != ixgbe_mac_82598EB)
+	if (sc->hw.mac.type != ixgbe_mac_82598EB) {
+		ifp->if_xflags |= IFXF_LRO;
 		ifp->if_capabilities |= IFCAP_LRO;
+	}
 
 	/*
 	 * Specify the media types supported by this sc and register
@@ -2263,7 +2271,7 @@ ixgbe_allocate_transmit_buffers(struct tx_ring *txr)
 	/* Create the descriptor buffer dma maps */
 	for (i = 0; i < sc->num_tx_desc; i++) {
 		txbuf = &txr->tx_buffers[i];
-		error = bus_dmamap_create(txr->txdma.dma_tag, IXGBE_TSO_SIZE,
+		error = bus_dmamap_create(txr->txdma.dma_tag, MAXMCLBYTES,
 			    sc->num_segs, PAGE_SIZE, 0,
 			    BUS_DMA_NOWAIT, &txbuf->map);
 

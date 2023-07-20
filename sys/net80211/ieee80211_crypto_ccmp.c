@@ -114,7 +114,7 @@ ieee80211_ccmp_phase1(AES_CTX *ctx, const struct ieee80211_frame *wh,
 		aad += IEEE80211_ADDR_LEN;
 	}
 	if (ieee80211_has_qos(wh)) {
-		/* 
+		/*
 		 * XXX 802.11-2012 11.4.3.3.3 g says the A-MSDU present bit
 		 * must be set here if both STAs are SPP A-MSDU capable.
 		 */

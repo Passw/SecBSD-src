@@ -388,7 +388,7 @@ again:
 			}
 			nfs_del_committed_range(vp, bp);
 			rw_exit_write(&np->n_commitlock);
-		} else 
+		} else
 			bp->b_flags &= ~B_NEEDCOMMIT;
 
 		if (ioflag & IO_SYNC) {

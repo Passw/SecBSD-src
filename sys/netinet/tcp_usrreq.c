@@ -586,7 +586,7 @@ tcp_listen(struct socket *so)
 	if (inp->inp_lport == 0)
 		if ((error = in_pcbbind(inp, NULL, curproc)))
 			goto out;
-	
+
 	/*
 	 * If the in_pcbbind() above is called, the tp->pf
 	 * should still be whatever it was before.

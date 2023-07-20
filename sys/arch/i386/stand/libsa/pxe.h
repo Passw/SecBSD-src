@@ -87,7 +87,7 @@ typedef struct {
 	uint16_t	UNDIDataSize;	/* UNDI Data segment size (bytes) */
 	SEGSEL_t	UNDICodeSeg;	/* UNDI Code segment address */
 	uint16_t	UNDICodeSize;	/* UNDI Code segment size (bytes) */
-	SEGOFF16_t	PXEPtr;		/* SEG:OFF to !PXE struct, 
+	SEGOFF16_t	PXEPtr;		/* SEG:OFF to !PXE struct,
 					   only present when Version > 2.1 */
 } __packed pxenv_t;
 
@@ -151,7 +151,7 @@ typedef struct {
 	MAC_ADDR	McastAddr[MAXNUM_MCADDR];
 } __packed t_PXENV_UNDI_MCAST_ADDRESS;
 
-#define	PXENV_UNDI_RESET_ADAPTER	0x0004		
+#define	PXENV_UNDI_RESET_ADAPTER	0x0004
 typedef struct {
 	PXENV_STATUS_t	Status;
 	t_PXENV_UNDI_MCAST_ADDRESS R_Mcast_Buf;
@@ -463,7 +463,7 @@ typedef struct {
 } __packed t_PXENV_GET_CACHED_INFO;
 
 
-/* structure filled in by PXENV_GET_CACHED_INFO 
+/* structure filled in by PXENV_GET_CACHED_INFO
  * (how we determine which IP we downloaded the initial bootstrap from)
  * words can't describe...
  */

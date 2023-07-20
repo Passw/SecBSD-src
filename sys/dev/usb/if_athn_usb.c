@@ -618,7 +618,7 @@ athn_usb_do_async(struct athn_usb_softc *usc,
 		printf("%s: host cmd queue overrun\n", usc->usb_dev.dv_xname);
 		return;	/* XXX */
 	}
-	
+
 	s = splusb();
 	cmd = &ring->cmd[ring->cur];
 	cmd->cb = cb;
@@ -897,7 +897,7 @@ athn_usb_wmi_xcmd(struct athn_usb_softc *usc, uint16_t cmd_id, void *ibuf,
 	}
 	usc->obuf = obuf;
 	usc->wait_cmd_id = cmd_id;
-	/* 
+	/*
 	 * Wait for WMI command complete interrupt. In case it does not fire
 	 * wait until the USB transfer times out to avoid racing the transfer.
 	 */
@@ -911,7 +911,7 @@ athn_usb_wmi_xcmd(struct athn_usb_softc *usc, uint16_t cmd_id, void *ibuf,
 		}
 	}
 
-	/* 
+	/*
 	 * Both the WMI command and transfer are done or have timed out.
 	 * Allow other threads to enter this function and use data->xfer.
 	 */
@@ -1260,7 +1260,7 @@ athn_usb_newauth(struct ieee80211com *ic, struct ieee80211_node *ni,
 		return ENOSPC;
 	}
 
-	/* 
+	/*
 	 * In a process context, try to add this node to the
 	 * firmware table and confirm the AUTH request.
 	 */
@@ -1280,7 +1280,7 @@ athn_usb_node_free(struct ieee80211com *ic, struct ieee80211_node *ni)
 	struct athn_usb_softc *usc = ic->ic_softc;
 	struct athn_node *an = (struct athn_node *)ni;
 
-	/* 
+	/*
 	 * Remove the node from the firmware table in a process context.
 	 * Pass an index rather than the pointer which we will free.
 	 */
@@ -1378,7 +1378,7 @@ athn_usb_clean_nodes(void *arg, struct ieee80211_node *ni)
 	struct ieee80211com *ic = &usc->sc_sc.sc_ic;
 	struct athn_node *an = (struct athn_node *)ni;
 
-	/* 
+	/*
 	 * Don't remove the default node (used for management frames).
 	 * Nodes which are not in the firmware table also have index zero.
 	 */
@@ -1392,7 +1392,7 @@ athn_usb_clean_nodes(void *arg, struct ieee80211_node *ni)
 		return;
 	}
 
-	/* 
+	/*
 	 * Kick off inactive associated nodes. This won't help
 	 * immediately but will help if the new STA retries later.
 	 */

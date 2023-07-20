@@ -68,7 +68,7 @@ mcount(void)								\
 #ifdef _KERNEL
 /*
  * We inline the code that splhigh and splx would do here as otherwise we would
- * call recursively into mcount() as machdep.c is compiled with -pg on a 
+ * call recursively into mcount() as machdep.c is compiled with -pg on a
  * profiling build.
  */
 #define	MCOUNT_ENTER	_SPLRAISE(s, IPL_HIGH); __splbarrier()

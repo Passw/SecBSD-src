@@ -287,7 +287,7 @@ int			uvm_vslock_device(struct proc *, void *, size_t,
 void			uvm_vsunlock_device(struct proc *, void *, size_t,
 			    void *);
 void			uvm_pause(void);
-void			uvm_init(void);	
+void			uvm_init(void);
 void			uvm_init_percpu(void);
 int			uvm_io(vm_map_t, struct uio *, int);
 
@@ -396,12 +396,12 @@ void			km_free(void *, size_t, const struct kmem_va_mode *,
 int			uvm_map(vm_map_t, vaddr_t *, vsize_t,
 			    struct uvm_object *, voff_t, vsize_t, unsigned int);
 int			uvm_mapanon(vm_map_t, vaddr_t *, vsize_t, vsize_t, unsigned int);
-int			uvm_map_pageable(vm_map_t, vaddr_t, 
+int			uvm_map_pageable(vm_map_t, vaddr_t,
 			    vaddr_t, boolean_t, int);
 int			uvm_map_pageable_all(vm_map_t, int, vsize_t);
 boolean_t		uvm_map_checkprot(vm_map_t, vaddr_t,
 			    vaddr_t, vm_prot_t);
-int			uvm_map_protect(vm_map_t, vaddr_t, 
+int			uvm_map_protect(vm_map_t, vaddr_t,
 			    vaddr_t, vm_prot_t, int etype, boolean_t, boolean_t);
 struct vmspace		*uvmspace_alloc(vaddr_t, vaddr_t,
 			    boolean_t, boolean_t);
@@ -415,13 +415,13 @@ struct vmspace		*uvmspace_share(struct process *);
 int			uvm_share(vm_map_t, vaddr_t, vm_prot_t,
 			    vm_map_t, vaddr_t, vsize_t);
 void			uvm_meter(void);
-int			uvm_sysctl(int *, u_int, void *, size_t *, 
+int			uvm_sysctl(int *, u_int, void *, size_t *,
 			    void *, size_t, struct proc *);
 struct vm_page		*uvm_pagealloc(struct uvm_object *,
 			    voff_t, struct vm_anon *, int);
 int			uvm_pagealloc_multi(struct uvm_object *, voff_t,
     			    vsize_t, int);
-void			uvm_pagerealloc(struct vm_page *, 
+void			uvm_pagerealloc(struct vm_page *,
 			    struct uvm_object *, voff_t);
 int			uvm_pagerealloc_multi(struct uvm_object *, voff_t,
 			    vsize_t, int, struct uvm_constraint_range *);

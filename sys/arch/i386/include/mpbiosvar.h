@@ -43,7 +43,7 @@
 
 #include <machine/mpbiosreg.h>
 
-struct mp_bus 
+struct mp_bus
 {
 	char *mb_name;		/* XXX bus name */
 	int mb_idx;		/* XXX bus index */

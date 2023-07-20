@@ -94,5 +94,5 @@ extern int intr_shared_edge;	/* This system has shared edge interrupts */
 
 #endif /* _LOCORE */
 #endif /* _KERNEL */
- 
+
 #endif /* !_MACHINE_PSL_H_ */

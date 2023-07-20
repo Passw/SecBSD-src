@@ -236,7 +236,7 @@ mmmmap(dev_t dev, off_t off, int prot)
 		default:
 			return -1;
 		}
-			
+
 #endif
 	default:
 		return -1;
@@ -276,7 +276,7 @@ mem_ioctl(dev_t dev, u_long cmd, caddr_t data, int flags, struct proc *p)
 	int nd, error = 0;
 	struct mem_range_op *mo = (struct mem_range_op *)data;
 	struct mem_range_desc *md;
-	
+
 	/* is this for us? */
 	if ((cmd != MEMRANGE_GET) &&
 	    (cmd != MEMRANGE_SET))
@@ -306,7 +306,7 @@ mem_ioctl(dev_t dev, u_long cmd, caddr_t data, int flags, struct proc *p)
 		}
 		mo->mo_arg[0] = nd;
 		break;
-		
+
 	case MEMRANGE_SET:
 		md = malloc(sizeof(struct mem_range_desc), M_MEMDESC, M_WAITOK);
 		error = copyin(mo->mo_desc, md, sizeof(struct mem_range_desc));

@@ -545,7 +545,7 @@ axe_ax88178_init(struct axe_softc *sc)
 		AXE_GPIO_WRITE(AXE_GPIO1_EN, 30);
 		AXE_GPIO_WRITE(AXE_GPIO1_EN | AXE_GPIO1, 30);
 	} else {
-		val = gpio0 == 1 ? AXE_GPIO0 | AXE_GPIO0_EN : 
+		val = gpio0 == 1 ? AXE_GPIO0 | AXE_GPIO0_EN :
 	    	    AXE_GPIO1 | AXE_GPIO1_EN;
 		AXE_GPIO_WRITE(val | AXE_GPIO2 | AXE_GPIO2_EN, 30);
 		AXE_GPIO_WRITE(val | AXE_GPIO2_EN, 300);

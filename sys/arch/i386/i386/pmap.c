@@ -577,7 +577,7 @@ pmap_exec_account(struct pmap *pm, vaddr_t va,
 
 	if ((opte ^ npte) & PG_X)
 		pmap_tlb_shootpage(pm, va);
-			
+
 	if (cpu_pae)
 		return;
 
@@ -1437,7 +1437,7 @@ pmap_destroy(struct pmap *pmap)
 		return;
 
 #ifdef MULTIPROCESSOR
-	pmap_tlb_droppmap(pmap);	
+	pmap_tlb_droppmap(pmap);
 #endif
 
 	mtx_enter(&pmaps_lock);
@@ -1639,7 +1639,7 @@ pmap_flush_cache(vaddr_t addr, vsize_t len)
 		wbinvd_on_all_cpus();
 		return;
 	}
-	
+
 	mfence();
 	for (i = addr; i < addr + len; i += curcpu()->ci_cflushsz)
 		clflush(i);
@@ -1660,7 +1660,7 @@ pmap_flush_page(paddr_t pa)
 	if (cpu_pae) {
 		pmap_flush_page_pae(pa);
 		return;
-	}	
+	}
 
 	pte = PTESLEW(flsh_pte, id);
 	va = VASLEW(pmap_flshp, id);
@@ -2864,7 +2864,7 @@ pmap_tlb_shootrange(struct pmap *pm, vaddr_t sva, vaddr_t eva)
 	vaddr_t va;
 
 	for (va = sva; va < eva; va += PAGE_SIZE)
-		pmap_update_pg(va);	
+		pmap_update_pg(va);
 }
 
 void

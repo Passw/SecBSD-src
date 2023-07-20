@@ -132,7 +132,7 @@ cd9660_ihashins(struct iso_node *ip)
 		    iq->i_number == ip->i_number)
 			return (EEXIST);
 	}
-			      
+
 	if ((iq = *ipp) != NULL)
 		iq->i_prev = &ip->i_next;
 	ip->i_next = iq;
@@ -155,7 +155,7 @@ cd9660_ihashrem(struct iso_node *ip)
 
 	if (ip->i_prev == NULL)
 		return;
-	
+
 	/* XXX locking lock hash list? */
 	if ((iq = ip->i_next) != NULL)
 		iq->i_prev = ip->i_prev;
@@ -183,7 +183,7 @@ cd9660_inactive(void *v)
 	if (prtactive && vp->v_usecount != 0)
 		vprint("cd9660_inactive: pushing active", vp);
 #endif
-	
+
 	ip->i_flag = 0;
 	VOP_UNLOCK(vp);
 	/*
@@ -239,7 +239,7 @@ cd9660_defattr(struct iso_directory_record *isodir, struct iso_node *inop,
 	struct iso_mnt *imp;
 	struct iso_extended_attributes *ap = NULL;
 	int off;
-	
+
 	if (isonum_711(isodir->flags)&2) {
 		inop->inode.iso_mode = S_IFDIR;
 		/*
@@ -260,7 +260,7 @@ cd9660_defattr(struct iso_directory_record *isodir, struct iso_node *inop,
 	}
 	if (bp) {
 		ap = (struct iso_extended_attributes *)bp->b_data;
-		
+
 		if (isonum_711(ap->version) == 1) {
 			if (!(ap->perm[1]&0x10))
 				inop->inode.iso_mode |= S_IRUSR;
@@ -300,7 +300,7 @@ cd9660_deftstamp(struct iso_directory_record *isodir, struct iso_node *inop,
 	struct iso_mnt *imp;
 	struct iso_extended_attributes *ap = NULL;
 	int off;
-	
+
 	if (!bp
 	    && ((imp = inop->i_mnt)->im_flags & ISOFSMNT_EXTATT)
 	    && (off = isonum_711(isodir->ext_attr_length))) {
@@ -310,7 +310,7 @@ cd9660_deftstamp(struct iso_directory_record *isodir, struct iso_node *inop,
 	}
 	if (bp) {
 		ap = (struct iso_extended_attributes *)bp->b_data;
-		
+
 		if (isonum_711(ap->version) == 1) {
 			if (!cd9660_tstamp_conv17(ap->ftime,&inop->inode.iso_atime))
 				cd9660_tstamp_conv17(ap->ctime,&inop->inode.iso_atime);
@@ -336,7 +336,7 @@ cd9660_tstamp_conv7(u_char *pi, struct timespec *pu)
 	int crtime, days;
 	int y, m, d, hour, minute, second;
 	signed char tz;
-	
+
 	y = pi[0] + 1900;
 	m = pi[1];
 	d = pi[2];
@@ -344,7 +344,7 @@ cd9660_tstamp_conv7(u_char *pi, struct timespec *pu)
 	minute = pi[4];
 	second = pi[5];
 	tz = (signed char) pi[6];
-	
+
 	if (y < 1970) {
 		pu->tv_sec  = 0;
 		pu->tv_nsec = 0;
@@ -362,7 +362,7 @@ cd9660_tstamp_conv7(u_char *pi, struct timespec *pu)
 		days = 367*(y-1960)-7*(y+(m+9)/12)/4-3*((y+(m+9)/12-1)/100+1)/4+275*m/9+d-239;
 #endif
 		crtime = ((((days * 24) + hour) * 60 + minute) * 60) + second;
-		
+
 		/* timezone offset is unreliable on some disks */
 		if (-48 <= tz && tz <= 52)
 			crtime -= tz * 15 * 60;
@@ -376,7 +376,7 @@ static u_int
 cd9660_chars2ui(u_char *begin, int len)
 {
 	u_int rc;
-	
+
 	for (rc = 0; --len >= 0;) {
 		rc *= 10;
 		rc += *begin++ - '0';
@@ -388,28 +388,28 @@ int
 cd9660_tstamp_conv17(u_char *pi, struct timespec *pu)
 {
 	u_char buf[7];
-	
+
 	/* year:"0001"-"9999" -> -1900  */
 	buf[0] = cd9660_chars2ui(pi,4) - 1900;
-	
+
 	/* month: " 1"-"12"      -> 1 - 12 */
 	buf[1] = cd9660_chars2ui(pi + 4,2);
-	
+
 	/* day:   " 1"-"31"      -> 1 - 31 */
 	buf[2] = cd9660_chars2ui(pi + 6,2);
-	
+
 	/* hour:  " 0"-"23"      -> 0 - 23 */
 	buf[3] = cd9660_chars2ui(pi + 8,2);
-	
+
 	/* minute:" 0"-"59"      -> 0 - 59 */
 	buf[4] = cd9660_chars2ui(pi + 10,2);
-	
+
 	/* second:" 0"-"59"      -> 0 - 59 */
 	buf[5] = cd9660_chars2ui(pi + 12,2);
-	
+
 	/* difference of GMT */
 	buf[6] = pi[16];
-	
+
 	return (cd9660_tstamp_conv7(buf,pu));
 }
 

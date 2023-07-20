@@ -1,9 +1,9 @@
 /*	$OpenBSD: uvm_km.c,v 1.151 2022/08/01 14:15:46 mpi Exp $	*/
 /*	$NetBSD: uvm_km.c,v 1.42 2001/01/14 02:10:01 thorpej Exp $	*/
 
-/* 
+/*
  * Copyright (c) 1997 Charles D. Cranor and Washington University.
- * Copyright (c) 1991, 1993, The Regents of the University of California.  
+ * Copyright (c) 1991, 1993, The Regents of the University of California.
  *
  * All rights reserved.
  *
@@ -40,17 +40,17 @@
  *
  * Copyright (c) 1987, 1990 Carnegie-Mellon University.
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify and distribute this software and
  * its documentation is hereby granted, provided that both the copyright
  * notice and this permission notice appear in all copies of the
  * software, derivative works or modified versions, and any portions
  * thereof, and that both notices appear in supporting documentation.
- * 
- * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS" 
- * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND 
+ *
+ * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+ * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND
  * FOR ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
- * 
+ *
  * Carnegie Mellon requests users of this software to return to
  *
  *  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU
@@ -73,11 +73,11 @@
  * starts at a machine-dependent address and is VM_KERNEL_SPACE_SIZE bytes
  * large.
  *
- * the kernel_map has several "submaps."   submaps can only appear in 
+ * the kernel_map has several "submaps."   submaps can only appear in
  * the kernel_map (user processes can't use them).   submaps "take over"
  * the management of a sub-range of the kernel's address space.  submaps
  * are typically allocated at boot time and are never released.   kernel
- * virtual address space that is mapped by a submap is locked by the 
+ * virtual address space that is mapped by a submap is locked by the
  * submap's lock -- not the kernel_map's lock.
  *
  * thus, the useful feature of submaps is that they allow us to break
@@ -97,7 +97,7 @@
  * the kernel allocates its private memory out of special uvm_objects whose
  * reference count is set to UVM_OBJ_KERN (thus indicating that the objects
  * are "special" and never die).   all kernel objects should be thought of
- * as large, fixed-sized, sparsely populated uvm_objects.   each kernel 
+ * as large, fixed-sized, sparsely populated uvm_objects.   each kernel
  * object is equal to the size of kernel virtual address space (i.e.
  * VM_KERNEL_SPACE_SIZE).
  *
@@ -107,8 +107,8 @@
  *
  * note that just because a kernel object spans the entire kernel virtual
  * address space doesn't mean that it has to be mapped into the entire space.
- * large chunks of a kernel object's space go unused either because 
- * that area of kernel VM is unmapped, or there is some other type of 
+ * large chunks of a kernel object's space go unused either because
+ * that area of kernel VM is unmapped, or there is some other type of
  * object mapped into that range (e.g. a vnode).    for submap's kernel
  * objects, the only part of the object that can ever be populated is the
  * offsets that are managed by the submap.
@@ -120,7 +120,7 @@
  *   uvm_km_alloc(kernel_map, PAGE_SIZE) [allocate 1 wired down page in the
  *   kernel map].    if uvm_km_alloc returns virtual address 0xf8235000,
  *   then that means that the page at offset 0x235000 in kernel_object is
- *   mapped at 0xf8235000.   
+ *   mapped at 0xf8235000.
  *
  * kernel objects have one other special property: when the kernel virtual
  * memory mapping them is unmapped, the backing memory in the object is
@@ -165,7 +165,7 @@ uvm_km_init(vaddr_t base, vaddr_t start, vaddr_t end)
 	uvm.kernel_object = uao_create(VM_KERNEL_SPACE_SIZE, UAO_FLAG_KERNOBJ);
 
 	/*
-	 * init the map and reserve already allocated kernel space 
+	 * init the map and reserve already allocated kernel space
 	 * before installing.
 	 */
 
@@ -181,7 +181,7 @@ uvm_km_init(vaddr_t base, vaddr_t start, vaddr_t end)
 	    UVM_MAPFLAG(PROT_READ | PROT_WRITE, PROT_READ | PROT_WRITE,
 	    MAP_INHERIT_NONE, MADV_RANDOM, UVM_FLAG_FIXED)) != 0)
 		panic("uvm_km_init: could not reserve space for kernel");
-	
+
 	kernel_map = &kernel_map_store;
 }
 
@@ -496,7 +496,7 @@ uvm_km_alloc1(struct vm_map *map, vsize_t size, vsize_t align, boolean_t zeroit)
 		size -= PAGE_SIZE;
 	}
 	pmap_update(map->pmap);
-	
+
 	/*
 	 * zero on request (note that "size" is now zero due to the above loop
 	 * so we need to subtract kva from loopva to reconstruct the size).
@@ -757,7 +757,7 @@ km_alloc(size_t sz, const struct kmem_va_mode *kv,
 
 	if (uvm_pglistalloc(sz, kp->kp_constraint->ucr_low,
 	    kp->kp_constraint->ucr_high, pla_align, kp->kp_boundary,
-	    &pgl, pla_maxseg, pla_flags)) {	
+	    &pgl, pla_maxseg, pla_flags)) {
 		return (NULL);
 	}
 

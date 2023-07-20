@@ -135,7 +135,7 @@ struct ar_htc_target_rate {
 #define AR_RC_SGI_FLAG		0x00000004
 #define AR_RC_HT_FLAG		0x00000008
 #define AR_RC_STBC_FLAG		0x00000030 /* 2 bits */
-#define AR_RC_WEP_TKIP_FLAG	0x00000100 
+#define AR_RC_WEP_TKIP_FLAG	0x00000100
 
 	struct ar_htc_rateset	lg_rates;
 	struct ar_htc_rateset	ht_rates;
@@ -181,7 +181,7 @@ struct ar_htc_cap_target {
 struct ar_wmi_evt_txstatus {
 	uint8_t		cookie;
 
-	/* 
+	/*
 	 * Legacy rates are indicated as rate array indices.
 	 * HT rates are indicated as MCS indices.
 	 */
@@ -475,7 +475,7 @@ struct athn_usb_softc {
 	uint8_t				ep_mgmt;
 	uint8_t				ep_data[EDCA_NUM_AC];
 
-	/* 
+	/*
 	 * Firmware cannot handle more than 8 STAs.
 	 * We use a bitmask to keep track of available slots in the firmware's
 	 * node array. A 1 bit at index N, as determined by ffs(3), means the

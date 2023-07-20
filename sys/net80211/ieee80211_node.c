@@ -648,7 +648,7 @@ ieee80211_switch_ess(struct ieee80211com *ic)
 }
 
 void
-ieee80211_set_ess(struct ieee80211com *ic, struct ieee80211_ess *ess, 
+ieee80211_set_ess(struct ieee80211com *ic, struct ieee80211_ess *ess,
     struct ieee80211_node *ni)
 {
 	memset(ic->ic_des_essid, 0, IEEE80211_NWID_LEN);
@@ -967,7 +967,7 @@ ieee80211_create_ibss(struct ieee80211com* ic, struct ieee80211_channel *chan)
 		struct ieee80211_edca_ac_params *ac;
 		int aci;
 
-		/* 
+		/*
 		 * Configure HT protection. This will be updated later
 		 * based on the number of non-HT nodes in the node cache.
 		 */
@@ -1199,14 +1199,14 @@ ieee80211_node_tx_stopped(struct ieee80211com *ic,
 	if ((ic->ic_flags & IEEE80211_F_BGSCAN) == 0)
 		return;
 
-	/* 
+	/*
 	 * Install a callback which will switch us to the new AP once
 	 * the de-auth frame has been processed by hardware.
 	 * Pass on the existing ni->ni_unref_arg argument.
 	 */
 	ic->ic_bss->ni_unref_cb = ieee80211_node_switch_bss;
 
-	/* 
+	/*
 	 * All data frames queued to hardware have been flushed and
 	 * A-MPDU Tx has been stopped. We are now going to switch APs.
 	 * Queue a de-auth frame addressed at our current AP.
@@ -1234,7 +1234,7 @@ ieee80211_node_tx_flushed(struct ieee80211com *ic, struct ieee80211_node *ni)
 
 	/* All data frames queued to hardware have been flushed. */
 	if (ic->ic_caps & IEEE80211_C_TX_AMPDU) {
-		/* 
+		/*
 		 * Install a callback which will switch us to the
 		 * new AP once Tx agg sessions have been stopped,
 		 * which involves sending a DELBA frame.
@@ -1351,7 +1351,7 @@ ieee80211_node_join_bss(struct ieee80211com *ic, struct ieee80211_node *selbs)
 		timeout_del(&ic->ic_bgscan_timeout);
 		ic->ic_flags &= ~IEEE80211_F_BGSCAN;
 
-		/* 
+		/*
 		 * After a background scan, we have now switched APs.
 		 * Pretend we were just de-authed, which makes
 		 * ieee80211_new_state() try to re-auth and thus send
@@ -1375,7 +1375,7 @@ struct ieee80211_node *
 ieee80211_node_choose_bss(struct ieee80211com *ic, int bgscan,
     struct ieee80211_node **curbs)
 {
-	struct ieee80211_node *ni, *nextbs, *selbs = NULL, 
+	struct ieee80211_node *ni, *nextbs, *selbs = NULL,
 	    *selbs2 = NULL, *selbs5 = NULL;
 	uint8_t min_5ghz_rssi;
 
@@ -1530,7 +1530,7 @@ ieee80211_end_scan(struct ifnet *ifp)
 			goto notfound;
 		}
 
-		/* 
+		/*
 		 * After a background scan we might end up choosing the
 		 * same AP again. Or the newly selected AP's RSSI level
 		 * might be low enough to trigger another background scan.
@@ -1562,7 +1562,7 @@ ieee80211_end_scan(struct ifnet *ifp)
 				    ieee80211_chan2mode(ic, ni->ni_chan));
 			return;
 		}
-	
+
 		arg = malloc(sizeof(*arg), M_DEVBUF, M_NOWAIT | M_ZERO);
 		if (arg == NULL) {
 			ic->ic_flags &= ~IEEE80211_F_BGSCAN;
@@ -1587,7 +1587,7 @@ ieee80211_end_scan(struct ifnet *ifp)
 			return;
 		}
 
-		/* 
+		/*
 		 * Install a callback which will switch us to the new AP once
 		 * all dispatched frames have been processed by hardware.
 		 */
@@ -1990,7 +1990,7 @@ ieee80211_needs_rxnode(struct ieee80211com *ic,
 	return monitor || rc;
 }
 
-/* 
+/*
  * Drivers call this, so increase the reference count before returning
  * the node.
  */
@@ -2283,7 +2283,7 @@ ieee80211_clean_nodes(struct ieee80211com *ic, int cache_timeout)
 		}
 	}
 
-	/* 
+	/*
 	 * During a cache timeout we iterate over all nodes.
 	 * Check for node leaks by comparing the actual number of cached
 	 * nodes with the ic_nnodes count, which is maintained while adding
@@ -2371,7 +2371,7 @@ ieee80211_setup_htcaps(struct ieee80211_node *ni, const uint8_t *data,
 }
 
 #ifndef IEEE80211_STA_ONLY
-/* 
+/*
  * Handle nodes switching from 11n into legacy modes.
  */
 void
@@ -2466,7 +2466,7 @@ ieee80211_setup_vhtop(struct ieee80211_node *ni, const uint8_t *data,
 }
 
 #ifndef IEEE80211_STA_ONLY
-/* 
+/*
  * Handle nodes switching from 11ac into legacy modes.
  */
 void

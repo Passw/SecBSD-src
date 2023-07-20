@@ -51,7 +51,7 @@ struct nfsm_info {
 	struct mbuf	 *nmi_mb;
 	caddr_t		  nmi_dpos;
 
-	int		  nmi_v3;  
+	int		  nmi_v3;
 };
 
 #define nfsm_dissect(a, c, s) {						\

@@ -1,6 +1,6 @@
 /*	$OpenBSD: ieeefp.h,v 1.3 2011/03/23 16:54:35 pirofti Exp $	*/
 
-/* 
+/*
  * Written by J.T. Conklin, Apr 6, 1995
  * Public domain.
  */

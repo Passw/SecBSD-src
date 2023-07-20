@@ -51,7 +51,7 @@ mem_range_attach(void)
 	     (model == 0x8 &&
 	      step > 0x7))) {
 		mem_range_softc.mr_op = &k6_mrops;
-		
+
 		/* Try for i686 MTRRs */
 	} else if (((strcmp(cpu_vendor, "GenuineIntel") == 0) ||
 		    (strcmp(cpu_vendor, "CentaurHauls") == 0) ||

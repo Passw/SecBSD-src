@@ -169,7 +169,7 @@ isa_defaultirq(void)
 	for (i = 0; i < ICU_LEN; i++)
 		setgate(&idt[ICU_OFFSET + i], IDTVEC(intr)[i], 0,
 		    SDT_SYS386IGT, SEL_KPL, GICODE_SEL);
-  
+
 	/* initialize 8259's */
 	outb(IO_ICU1, 0x11);		/* reset; program device, four bytes */
 	outb(IO_ICU1+1, ICU_OFFSET);	/* starting at this vector index */
@@ -783,7 +783,7 @@ _isa_bus_dmamap_load(bus_dma_tag_t t, bus_dmamap_t map, void *buf,
 		cookie->id_origbuflen = buflen;
 		error = _bus_dmamap_load(t, map, cookie->id_bouncebuf,
 		    buflen, p, flags);
-		
+
 		if (error) {
 			/*
 			 * Free the bounce pages, unless our resources
@@ -799,7 +799,7 @@ _isa_bus_dmamap_load(bus_dma_tag_t t, bus_dmamap_t map, void *buf,
 		/*
 		 * Just use the generic load function.
 		 */
-		error = _bus_dmamap_load(t, map, buf, buflen, p, flags); 
+		error = _bus_dmamap_load(t, map, buf, buflen, p, flags);
 	}
 
 	return (error);

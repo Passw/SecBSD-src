@@ -941,7 +941,7 @@ again:
 #if NBPFILTER > 0
 	    {
 		struct ifnet *ifp;
-		
+
 		if ((ifp = if_get(session->ifindex)) != NULL) {
 			if (ifp->if_bpf && ifp->if_type == IFT_PPP)
 				bpf_mtap(ifp->if_bpf, m0, BPF_DIRECTION_IN);
@@ -1585,7 +1585,7 @@ pipex_pptp_input(struct mbuf *m0, struct pipex_session *session)
 	 * deep within if the packet will be consumed. In the error
 	 * path lock will be held all the time. So increment `rcv_gap'
 	 * here, and on the error path back it out, no atomicity will
-	 * be lost in all cases. 
+	 * be lost in all cases.
 	 */
 	if (!rewind)
 		session->proto.pptp.rcv_gap += nseq;
@@ -2068,7 +2068,7 @@ pipex_l2tp_input(struct mbuf *m0, int off0, struct pipex_session *session,
 	 * deep within if the packet will be consumed. In the error
 	 * path lock will be held all the time. So increment `nr_gap'
 	 * here, and on the error path back it out, no atomicity will
-	 * be lost in all cases. 
+	 * be lost in all cases.
 	 */
 	if (!rewind)
 		session->proto.l2tp.nr_gap += nseq;
@@ -2520,7 +2520,7 @@ pipex_mppe_input(struct mbuf *m0, struct pipex_session *session)
 
 			/* Send CCP ResetReq */
 			PIPEX_DBG((session, LOG_DEBUG, "CCP SendResetReq"));
-		
+
 			mtx_enter(&session->pxs_mtx);
 			ccp_id = session->ccp_id;
 			session->ccp_id++;

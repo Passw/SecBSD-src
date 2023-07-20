@@ -417,7 +417,7 @@ ufs_setattr(void *v)
 		if (cred->cr_uid != DIP(ip, uid) &&
 		    !vnoperm(vp) &&
 		    (error = suser_ucred(cred)) &&
-		    ((vap->va_vaflags & VA_UTIMES_NULL) == 0 || 
+		    ((vap->va_vaflags & VA_UTIMES_NULL) == 0 ||
 		    (error = VOP_ACCESS(vp, VWRITE, cred, ap->a_p))))
 			return (error);
 		if (vap->va_mtime.tv_nsec != VNOVAL)
@@ -514,7 +514,7 @@ ufs_chown(struct vnode *vp, uid_t uid, gid_t gid, struct ucred *cred)
 
 	if (ouid == uid)
 		quota_flags |= UFS_QUOTA_NOUID;
-	
+
 	if (ogid == gid)
 		quota_flags |= UFS_QUOTA_NOGID;
 
@@ -530,14 +530,14 @@ ufs_chown(struct vnode *vp, uid_t uid, gid_t gid, struct ucred *cred)
 	if ((error = getinoquota(ip)) != 0)
 		goto error;
 
-	if ((error = ufs_quota_alloc_blocks2(ip, change, cred, 
-		 quota_flags)) != 0) 
+	if ((error = ufs_quota_alloc_blocks2(ip, change, cred,
+		 quota_flags)) != 0)
 		goto error;
 
 	if ((error = ufs_quota_alloc_inode2(ip, cred ,
 		 quota_flags)) != 0) {
-		(void)ufs_quota_free_blocks2(ip, change, cred, 
-		    quota_flags);		
+		(void)ufs_quota_free_blocks2(ip, change, cred,
+		    quota_flags);
 		goto error;
 	}
 
@@ -561,7 +561,7 @@ error:
 	DIP_ASSIGN(ip, uid, ouid);
 
 	if (getinoquota(ip) == 0) {
-		(void) ufs_quota_alloc_blocks2(ip, change, cred, 
+		(void) ufs_quota_alloc_blocks2(ip, change, cred,
 		    quota_flags | UFS_QUOTA_FORCE);
 		(void) ufs_quota_alloc_inode2(ip, cred,
 		    quota_flags | UFS_QUOTA_FORCE);
@@ -863,7 +863,7 @@ abortit:
 	 * directory hierarchy above the target, as this would
 	 * orphan everything below the source directory. Also
 	 * the user must have write permission in the source so
-	 * as to be able to change "..". We must repeat the call 
+	 * as to be able to change "..". We must repeat the call
 	 * to namei, as the parent directory is unlocked by the
 	 * call to checkpath().
 	 */
@@ -899,7 +899,7 @@ abortit:
 	}
 	/*
 	 * 2) If target doesn't exist, link the target
-	 *    to the source and unlink the source. 
+	 *    to the source and unlink the source.
 	 *    Otherwise, rewrite the target directory
 	 *    entry to reference the source inode and
 	 *    expunge the original entry's existence.
@@ -922,7 +922,7 @@ abortit:
 			dp->i_flag |= IN_CHANGE;
 			if (DOINGSOFTDEP(tdvp))
 				softdep_change_linkcnt(dp, 0);
-			if ((error = UFS_UPDATE(dp, !DOINGSOFTDEP(tdvp))) 
+			if ((error = UFS_UPDATE(dp, !DOINGSOFTDEP(tdvp)))
 			    != 0) {
 				dp->i_effnlink--;
 				DIP_ADD(dp, nlink, -1);
@@ -987,7 +987,7 @@ abortit:
 			error = EISDIR;
 			goto bad;
 		}
-		
+
 		if ((error = ufs_dirrewrite(dp, xp, ip->i_number,
 		    IFTODT(DIP(ip, mode)), (doingdirectory && newparent) ?
 		    newparent : doingdirectory)) != 0)
@@ -1062,7 +1062,7 @@ abortit:
 	 * changed while the new name has been entered. If the source is
 	 * a file then the entry may have been unlinked or renamed. In
 	 * either case there is no further work to be done. If the source
-	 * is a directory then it cannot have been rmdir'ed; the IN_RENAME 
+	 * is a directory then it cannot have been rmdir'ed; the IN_RENAME
 	 * flag ensures that it cannot be moved by another rename or removed
 	 * by a rmdir.
 	 */
@@ -1173,7 +1173,7 @@ ufs_mkdir(void *v)
 
 	/*
 	 * Bump link count in parent directory to reflect work done below.
-	 * Should be done before reference is create so cleanup is 
+	 * Should be done before reference is create so cleanup is
 	 * possible if we crash.
 	 */
 	dp->i_effnlink++;
@@ -1184,7 +1184,7 @@ ufs_mkdir(void *v)
 	if ((error = UFS_UPDATE(dp, !DOINGSOFTDEP(dvp))) != 0)
 		goto bad;
 
-	/* 
+	/*
 	 * Initialize directory with "." and ".." from static template.
 	 */
 	if (dp->i_ump->um_maxsymlinklen > 0)
@@ -1236,7 +1236,7 @@ ufs_mkdir(void *v)
 		goto bad;
 	ufs_makedirentry(ip, cnp, &newdir);
 	error = ufs_direnter(dvp, tvp, &newdir, cnp, bp);
-  
+
 bad:
 	if (error == 0) {
 		VN_KNOTE(dvp, NOTE_WRITE | NOTE_LINK);
@@ -1391,7 +1391,7 @@ ufs_symlink(void *v)
 
 /*
  * Vnode op for reading directories.
- * 
+ *
  * This routine converts the on-disk struct direct entries to the
  * struct dirent entries expected by userland and the rest of the kernel.
  */
@@ -1941,7 +1941,7 @@ filt_ufsread(struct knote *kn, long hint)
 	struct inode *ip = VTOI(vp);
 
 	/*
-	 * filesystem is gone, so set the EOF flag and schedule 
+	 * filesystem is gone, so set the EOF flag and schedule
 	 * the knote for deletion.
 	 */
 	if (hint == NOTE_REVOKE) {
@@ -1970,7 +1970,7 @@ int
 filt_ufswrite(struct knote *kn, long hint)
 {
 	/*
-	 * filesystem is gone, so set the EOF flag and schedule 
+	 * filesystem is gone, so set the EOF flag and schedule
 	 * the knote for deletion.
 	 */
 	if (hint == NOTE_REVOKE) {

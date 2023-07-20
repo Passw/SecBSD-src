@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # ex:ts=8 sw=4:
-# $OpenBSD: PkgCreate.pm,v 1.194 2023/07/04 14:03:16 espie Exp $
+# $OpenBSD: PkgCreate.pm,v 1.195 2023/07/20 17:56:37 espie Exp $
 #
 # Copyright (c) 2003-2014 Marc Espie <espie@openbsd.org>
 #
@@ -594,7 +594,7 @@ sub makesum_plist($self, $state, $plist)
 	my $fname = $self->fullname;
 	for (my $i = 1; ; $i++) {
 		if (-e "$state->{base}/$fname-$i") {
-			my $e = OpenBSD::PackingElement::File->add($plist, 
+			my $e = OpenBSD::PackingElement::File->add($plist,
 			    $self->name."-".$i);
 			$e->compute_checksum($e, $state, $state->{base});
 		} else {
@@ -773,7 +773,7 @@ sub check_version($self, $state, $unsubst)
 	if (defined $l[0]) {
 		if (!$unsubst =~ m/\$\{LIB$l[0]_VERSION\}/) {
 			$state->error(
-			    "Incorrectly versioned shared library: #1", 
+			    "Incorrectly versioned shared library: #1",
 			    $unsubst);
 		}
 	} else {
@@ -1571,6 +1571,14 @@ sub validate_pkgname($self, $state, $pkgname)
 	}
 	my $okay_flavors = {map {($_, 1)} split(/\s+/, $flavor_list) };
 	my $v = OpenBSD::PackageName->from_string($pkgname);
+
+	# first check we got a non buggy pkgname, since otherwise
+	# the parts we test won't even exist !
+	if ($v->has_issues) {
+		$state->errsay("Error FULLPKGNAME #1 #2", $pkgname,
+		    $v->has_issues);
+		$state->fatal("Can't continue");
+	}
 	my $errors = 0;
 	if ($v->{version}->p != $revision) {
 		$state->errsay("REVISION mismatch (REVISION=#1)", $revision);

@@ -179,7 +179,7 @@ getinoquota(struct inode *ip)
 /*
  * Update disk usage, and take corrective action.
  */
-int 
+int
 ufs_quota_alloc_blocks2(struct inode *ip, daddr_t change,
     struct ucred *cred, enum ufs_quota_flags flags)
 {
@@ -194,10 +194,10 @@ ufs_quota_alloc_blocks2(struct inode *ip, daddr_t change,
 	if (change == 0)
 		return (0);
 
-	if ((flags & UFS_QUOTA_FORCE) == 0 && 
+	if ((flags & UFS_QUOTA_FORCE) == 0 &&
 	    (cred != NOCRED && cred->cr_uid != 0)) {
 		for (i = 0; i < MAXQUOTAS; i++) {
-			if (flags & (1 << i)) 
+			if (flags & (1 << i))
 				continue;
 			if ((dq = ip->i_dquot[i]) == NODQUOT)
 				continue;
@@ -228,11 +228,11 @@ ufs_quota_free_blocks2(struct inode *ip, daddr_t change,
 	int i;
 
 #ifdef DIAGNOSTIC
-	if (!VOP_ISLOCKED(ITOV(ip))) 
+	if (!VOP_ISLOCKED(ITOV(ip)))
 		panic ("ufs_quota_free_blocks2: vnode is not locked");
 #endif
 
-	if (change == 0) 
+	if (change == 0)
 		return (0);
 
 	for (i = 0; i < MAXQUOTAS; i++) {
@@ -322,7 +322,7 @@ ufs_quota_alloc_inode2(struct inode *ip, struct ucred *cred,
 
 	if ((flags & UFS_QUOTA_FORCE) == 0 && cred->cr_uid != 0) {
 		for (i = 0; i < MAXQUOTAS; i++) {
-			if (flags & (1 << i)) 
+			if (flags & (1 << i))
 				continue;
 			if ((dq = ip->i_dquot[i]) == NODQUOT)
 				continue;
@@ -331,7 +331,7 @@ ufs_quota_alloc_inode2(struct inode *ip, struct ucred *cred,
 		}
 	}
 	for (i = 0; i < MAXQUOTAS; i++) {
-		if (flags & (1 << i)) 
+		if (flags & (1 << i))
 			continue;
 		if ((dq = ip->i_dquot[i]) == NODQUOT)
 			continue;
@@ -353,12 +353,12 @@ ufs_quota_free_inode2(struct inode *ip, struct ucred *cred,
 	int i;
 
 #ifdef DIAGNOSTIC
-	if (!VOP_ISLOCKED(ITOV(ip))) 
+	if (!VOP_ISLOCKED(ITOV(ip)))
 		panic ("ufs_quota_free_blocks2: vnode is not locked");
 #endif
 
 	for (i = 0; i < MAXQUOTAS; i++) {
-		if (flags & (1 << i)) 
+		if (flags & (1 << i))
 			continue;
 		if ((dq = ip->i_dquot[i]) == NODQUOT)
 			continue;
@@ -437,9 +437,9 @@ chkdquot(struct inode *ip)
 	int i;
 	struct vnode *vp = ITOV(ip);
 
-	if (!VOP_ISLOCKED(vp)) 
+	if (!VOP_ISLOCKED(vp))
 		panic ("chkdquot: vnode is not locked");
-		
+
 	for (i = 0; i < MAXQUOTAS; i++) {
 		if (ump->um_quotas[i] == NULLVP ||
 		    (ump->um_qflags[i] & (QTF_OPENING|QTF_CLOSING)))
@@ -457,7 +457,7 @@ chkdquot(struct inode *ip)
  */
 
 int
-quotaon_vnode(struct vnode *vp, void *arg) 
+quotaon_vnode(struct vnode *vp, void *arg)
 {
 	int error;
 
@@ -470,7 +470,7 @@ quotaon_vnode(struct vnode *vp, void *arg)
 
 	error = getinoquota(VTOI(vp));
 	vput(vp);
-	
+
 	return (error);
 }
 
@@ -555,7 +555,7 @@ struct quotaoff_arg {
 };
 
 int
-quotaoff_vnode(struct vnode *vp, void *arg) 
+quotaoff_vnode(struct vnode *vp, void *arg)
 {
 	struct quotaoff_arg *qa = (struct quotaoff_arg *)arg;
 	struct inode *ip;
@@ -584,7 +584,7 @@ quotaoff(struct proc *p, struct mount *mp, int type)
 	struct ufsmount *ump = VFSTOUFS(mp);
 	struct quotaoff_arg qa;
 	int error;
-	
+
 #ifdef DIAGNOSTIC
 	if (!vfs_isbusy(mp))
 		panic ("quotaoff: mount point not busy");
@@ -757,7 +757,7 @@ qsync_vnode(struct vnode *vp, void *arg)
 {
 	int i;
 	struct dquot *dq;
-	    
+
 	if (vp->v_type == VNON)
 		return (0);
 
@@ -1062,7 +1062,7 @@ ufs_quotactl(struct mount *mp, int cmds, uid_t uid, caddr_t arg,
 
 	if (vfs_busy(mp, VB_READ|VB_NOWAIT))
 		return (0);
- 
+
 
 	switch (cmd) {
 

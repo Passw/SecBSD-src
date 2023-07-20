@@ -236,7 +236,7 @@ attach	axen at uhub
 file	dev/usb/if_axen.c		axen
 
 # SMSC LAN95xx
-device	smsc: ether, ifnet, mii, ifmedia 
+device	smsc: ether, ifnet, mii, ifmedia
 attach	smsc at uhub
 file	dev/usb/if_smsc.c		smsc
 

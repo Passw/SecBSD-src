@@ -81,7 +81,7 @@ struct mpbios_fps {
 	u_int32_t	signature;
 /* string defined by the Intel MP Spec as identifying the MP table */
 #define MP_FP_SIG		0x5f504d5f	/* _MP_ */
-	
+
 	u_int32_t 	pap;
 	u_int8_t  	length;
 	u_int8_t  	spec_rev;
@@ -98,7 +98,7 @@ struct mpbios_fps {
 struct mpbios_cth {
 	u_int32_t	signature;
 #define MP_CT_SIG		0x504d4350 	/* PCMP */
-	
+
 	u_int16_t 	base_len;
 	u_int8_t  	spec_rev;
 	u_int8_t  	checksum;

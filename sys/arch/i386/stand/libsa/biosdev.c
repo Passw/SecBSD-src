@@ -578,7 +578,7 @@ biosopen(struct open_file *f, ...)
 		return 0;
 	}
 #endif
- 
+
 	for (maj = 0; maj < nbdevs &&
 	    strncmp(dev, bdevs[maj], devlen); maj++);
 	if (maj >= nbdevs) {

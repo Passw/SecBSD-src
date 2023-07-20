@@ -353,7 +353,7 @@ uvm_mk_pcluster(struct uvm_object *uobj, struct vm_page **pps, int *npages,
 	voff_t lo, hi, curoff;
 	int center_idx, forward, incr;
 
-	/* 
+	/*
 	 * center page should already be busy and write protected.  XXX:
 	 * suppose page is wired?  if we lock, then a process could
 	 * fault/block on it.  if we don't lock, a process could write the
@@ -381,8 +381,8 @@ uvm_mk_pcluster(struct uvm_object *uobj, struct vm_page **pps, int *npages,
 	*npages = 1;
 
 	/*
-	 * attempt to cluster around the left [backward], and then 
-	 * the right side [forward].    
+	 * attempt to cluster around the left [backward], and then
+	 * the right side [forward].
 	 *
 	 * note that for inactive pages (pages that have been deactivated)
 	 * there are no valid mappings and PG_CLEAN should be up to date.
@@ -451,7 +451,7 @@ uvm_mk_pcluster(struct uvm_object *uobj, struct vm_page **pps, int *npages,
 			(*npages)++;
 		}
 	}
-	
+
 	/*
 	 * done!  return the cluster array to the caller!!!
 	 */
@@ -552,7 +552,7 @@ ReTry:
 	 * we have attempted the I/O.
 	 *
 	 * if the I/O was a success then:
-	 * 	if !PGO_PDFREECLUST, we return the cluster to the 
+	 * 	if !PGO_PDFREECLUST, we return the cluster to the
 	 *		caller (who must un-busy all pages)
 	 *	else we un-busy cluster pages for the pagedaemon
 	 *
@@ -634,12 +634,12 @@ ReTry:
 	 * was one).    give up!   the caller only has one page ("pg")
 	 * to worry about.
 	 */
-	
+
 	return result;
 }
 
 /*
- * uvm_pager_dropcluster: drop a cluster we have built (because we 
+ * uvm_pager_dropcluster: drop a cluster we have built (because we
  * got an error, or, if PGO_PDFREECLUST we are un-busying the
  * cluster pages on behalf of the pagedaemon).
  *
@@ -649,7 +649,7 @@ ReTry:
  * => ppsp/npages is our current cluster
  * => flags: PGO_PDFREECLUST: pageout was a success: un-busy cluster
  *	pages on behalf of the pagedaemon.
- *           PGO_REALLOCSWAP: drop previously allocated swap slots for 
+ *           PGO_REALLOCSWAP: drop previously allocated swap slots for
  *		clustered swap-backed pages (except for "pg" if !NULL)
  *		"swblk" is the start of swap alloc (e.g. for ppsp[0])
  *		[only meaningful if swap-backed (uobj == NULL)]
@@ -668,7 +668,7 @@ uvm_pager_dropcluster(struct uvm_object *uobj, struct vm_page *pg,
 		/* skip "pg" or empty slot */
 		if (ppsp[lcv] == pg || ppsp[lcv] == NULL)
 			continue;
-	
+
 		/*
 		 * Note that PQ_ANON bit can't change as long as we are holding
 		 * the PG_BUSY bit (so there is no need to lock the page
@@ -711,7 +711,7 @@ uvm_pager_dropcluster(struct uvm_object *uobj, struct vm_page *pg,
 		}
 
 		/*
-		 * if we are operating on behalf of the pagedaemon and we 
+		 * if we are operating on behalf of the pagedaemon and we
 		 * had a successful pageout update the page!
 		 */
 		if (flags & PGO_PDFREECLUST) {

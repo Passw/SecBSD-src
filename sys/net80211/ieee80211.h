@@ -1107,7 +1107,7 @@ enum {
  */
 enum ieee80211_htprot {
 	IEEE80211_HTPROT_NONE = 0,	/* only 20/40MHz HT STAs exist */
-	IEEE80211_HTPROT_NONMEMBER,	/* non-HT STA overlaps our channel */ 
+	IEEE80211_HTPROT_NONMEMBER,	/* non-HT STA overlaps our channel */
 	IEEE80211_HTPROT_20MHZ,		/* 20MHz HT STA on a 40MHz channel */
 	IEEE80211_HTPROT_NONHT_MIXED	/* non-HT STA associated to our BSS */
 };

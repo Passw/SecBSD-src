@@ -184,7 +184,7 @@ ieee80211_disable_wep(struct ieee80211com *ic)
 {
 	struct ieee80211_key *k;
 	int i;
-	
+
 	for (i = 0; i < IEEE80211_WEP_NKID; i++) {
 		k = &ic->ic_nw_keys[i];
 		if (k->k_cipher != IEEE80211_CIPHER_NONE)
@@ -534,7 +534,7 @@ ieee80211_ioctl(struct ifnet *ifp, u_long cmd, caddr_t data)
 			    memcmp(join.i_nwid, ic->ic_des_essid,
 			    join.i_len) == 0)
 				update_ic = 1;
-			if (join.i_flags & IEEE80211_JOIN_DEL_ALL && 
+			if (join.i_flags & IEEE80211_JOIN_DEL_ALL &&
 			    ieee80211_get_ess(ic, ic->ic_des_essid,
 			    ic->ic_des_esslen) != NULL)
 				update_ic = 1;

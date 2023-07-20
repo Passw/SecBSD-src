@@ -67,7 +67,7 @@ static char amap_small_pool_names[UVM_AMAP_CHUNK][9];
 
 static struct vm_amap *amap_alloc1(int, int, int);
 static inline void amap_list_insert(struct vm_amap *);
-static inline void amap_list_remove(struct vm_amap *);   
+static inline void amap_list_remove(struct vm_amap *);
 
 struct vm_amap_chunk *amap_chunk_get(struct vm_amap *, int, int, int);
 void amap_chunk_free(struct vm_amap *, struct vm_amap_chunk *);
@@ -693,7 +693,7 @@ amap_copy(struct vm_map *map, struct vm_map_entry *entry, int waitf,
 		srcamap->am_flags &= ~AMAP_SHARED;   /* clear shared flag */
 #ifdef UVM_AMAP_PPREF
 	if (srcamap->am_ppref && srcamap->am_ppref != PPREF_NONE) {
-		amap_pp_adjref(srcamap, entry->aref.ar_pageoff, 
+		amap_pp_adjref(srcamap, entry->aref.ar_pageoff,
 		    (entry->end - entry->start) >> PAGE_SHIFT, -1);
 	}
 #endif

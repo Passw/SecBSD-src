@@ -564,7 +564,7 @@ pf_map_addr(sa_family_t af, struct pf_rule *r, struct pf_addr *saddr,
 					break;
 				pf_addr_inc(&rpool->counter, af);
 			} while (1);
- 
+
 			weight = rpool->weight;
 		}
 

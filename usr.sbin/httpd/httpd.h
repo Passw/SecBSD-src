@@ -1,4 +1,4 @@
-/*	$OpenBSD: httpd.h,v 1.162 2022/10/24 15:02:01 jmc Exp $	*/
+/*	$OpenBSD: httpd.h,v 1.163 2023/07/12 12:37:27 tb Exp $	*/
 
 /*
  * Copyright (c) 2006 - 2015 Reyk Floeter <reyk@openbsd.org>
@@ -45,7 +45,7 @@
 
 #define CONF_FILE		"/etc/httpd.conf"
 #define HTTPD_USER		"www"
-#define HTTPD_SERVERNAME	"Windows 3.11"
+#define HTTPD_SERVERNAME	"Tezcatlipoca"
 #define HTTPD_DOCROOT		"/htdocs"
 #define HTTPD_ERRDOCTEMPLATE	"err" /* 3-char name */
 #define HTTPD_ERRDOCROOT_MAX	(PATH_MAX - sizeof("000.html"))
@@ -352,6 +352,7 @@ struct client {
 	int			 clt_inflight;
 	struct range_data	 clt_ranges;
 	struct fcgi_data	 clt_fcgi;
+	const char		*clt_fcgi_error;
 	char			*clt_remote_user;
 	struct evbuffer		*clt_srvevb;
 

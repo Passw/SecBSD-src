@@ -1596,11 +1596,11 @@ pf_purge_states_tick(void *null)
 		timeout_add_sec(&pf_purge_states_to, 1);
 		return;
 	}
- 
+
 	/*
 	 * process a fraction of the state table every second
 	 */
- 
+
 	if (interval > 1)
 		limit /= interval;
 
@@ -1653,12 +1653,12 @@ pf_purge(void *null)
 	pf_purge_expired_src_nodes();
 
 	PF_UNLOCK();
- 
+
 	/*
 	 * Fragments don't require PF_LOCK(), they use their own lock.
 	 */
 	pf_purge_expired_fragments();
- 
+
 	/* interpret the interval as idle time between runs */
 	timeout_add_sec(&pf_purge_to, interval);
 }

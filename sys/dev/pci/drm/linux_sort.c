@@ -56,7 +56,7 @@ static __inline void	 swapfunc(char *, char *, size_t, int);
 static __inline void
 swapfunc(char *a, char *b, size_t n, int swaptype)
 {
-	if (swaptype <= 1) 
+	if (swaptype <= 1)
 		swapcode(long, a, b, n)
 	else
 		swapcode(char, a, b, n)
@@ -167,7 +167,7 @@ loop:	SWAPINIT(a, es);
 
 void
 sort(void *a, size_t n, size_t es, int (*cmp)(const void *, const void *),
-    void *x)    
+    void *x)
 {
 	KASSERT(x == NULL);
 	qsort(a, n, es, cmp);

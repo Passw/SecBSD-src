@@ -41,7 +41,7 @@
  * XXX in various arrays of our implementation.  We are hoping that
  * XXX the context will provide enough information to not make this
  * XXX sloppy naming a real problem.
- * 
+ *
  * There are tty, network and disk drivers that use free() at interrupt
  * time, so imp > (tty | net | bio).
  *

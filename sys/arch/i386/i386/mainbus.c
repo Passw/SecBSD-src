@@ -231,7 +231,7 @@ mainbus_attach(struct device *parent, struct device *self, void *aux)
 #if NPCI > 0
 	if (pci_mode_detect() != 0) {
 		pci_init_extents();
-		
+
 		bzero(&mba.mba_pba, sizeof(mba.mba_pba));
 		mba.mba_pba.pba_busname = "pci";
 		mba.mba_pba.pba_iot = I386_BUS_SPACE_IO;

@@ -65,7 +65,7 @@ int	ntfs_sync(struct mount *, int, int, struct ucred *,
 int	ntfs_unmount(struct mount *, int, struct proc *);
 int	ntfs_vget(struct mount *mp, ino_t ino,
 			       struct vnode **vpp);
-int	ntfs_mountfs(struct vnode *, struct mount *, 
+int	ntfs_mountfs(struct vnode *, struct mount *,
 				  struct ntfs_args *, struct proc *);
 int	ntfs_vptofh(struct vnode *, struct fid *);
 
@@ -339,9 +339,9 @@ ntfs_mountfs(struct vnode *devvp, struct mount *mp, struct ntfs_args *argsp,
 	    ntmp->ntm_uid, ntmp->ntm_gid, ntmp->ntm_mode);
 
 	/*
-	 * We read in some system nodes to do not allow 
+	 * We read in some system nodes to do not allow
 	 * reclaim them and to have everytime access to them.
-	 */ 
+	 */
 	{
 		int pi[3] = { NTFS_MFTINO, NTFS_ROOTINO, NTFS_BITMAPINO };
 		for (i=0; i<3; i++) {
@@ -368,7 +368,7 @@ ntfs_mountfs(struct vnode *devvp, struct mount *mp, struct ntfs_args *argsp,
 
 	/*
 	 * Read and translate to internal format attribute
-	 * definition file. 
+	 * definition file.
 	 */
 	{
 		int num,j;
@@ -376,7 +376,7 @@ ntfs_mountfs(struct vnode *devvp, struct mount *mp, struct ntfs_args *argsp,
 
 		/* Open $AttrDef */
 		error = VFS_VGET(mp, NTFS_ATTRDEFINO, &vp );
-		if(error) 
+		if(error)
 			goto out1;
 
 		/* Count valid entries */
@@ -446,7 +446,7 @@ out:
 	vn_lock(devvp, LK_EXCLUSIVE | LK_RETRY);
 	(void)VOP_CLOSE(devvp, FREAD, NOCRED, p);
 	VOP_UNLOCK(devvp);
-	
+
 	return (error);
 }
 
@@ -663,7 +663,7 @@ ntfs_vptofh(struct vnode *vp, struct fid *fhp)
 
 int
 ntfs_vgetex(struct mount *mp, ntfsino_t ino, u_int32_t attrtype, char *attrname,
-    u_long lkflags, u_long flags, struct vnode **vpp) 
+    u_long lkflags, u_long flags, struct vnode **vpp)
 {
 	int error;
 	struct ntfsmount *ntmp;
@@ -713,9 +713,9 @@ ntfs_vgetex(struct mount *mp, ntfsino_t ino, u_int32_t attrtype, char *attrname,
 			f_type = VNON;
 			fp->f_size = fp->f_allocated = 0;
 		} else {
-			f_type = VREG;	
+			f_type = VREG;
 
-			error = ntfs_filesize(ntmp, fp, 
+			error = ntfs_filesize(ntmp, fp,
 					      &fp->f_size, &fp->f_allocated);
 			if (error) {
 				ntfs_ntput(ip);
@@ -773,7 +773,7 @@ ntfs_vgetex(struct mount *mp, ntfsino_t ino, u_int32_t attrtype, char *attrname,
 }
 
 int
-ntfs_vget(struct mount *mp, ino_t ino, struct vnode **vpp) 
+ntfs_vget(struct mount *mp, ino_t ino, struct vnode **vpp)
 {
 	if (ino > (ntfsino_t)-1)
 		panic("ntfs_vget: alien ino_t %llu", (unsigned long long)ino);

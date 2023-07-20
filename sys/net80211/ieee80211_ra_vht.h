@@ -17,7 +17,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* 
+/*
  * Goodput statistics struct. Measures the effective data rate of a rate.
  * All uint64_t numbers in this struct use fixed-point arithmetic.
  */

@@ -153,7 +153,7 @@ extern struct pf_state_tree_id tree_id;
  * - pfsync bulk send operations
  * - bulk state fetches via the DIOCGETSTATES ioctl
  * - bulk state clearing via the DIOCCLRSTATES ioctl
- * 
+ *
  * states are inserted into the global pf_state_list once it has also
  * been successfully added to the various trees that make up the state
  * table. states are only removed from the pf_state_list by the garbage
@@ -212,7 +212,7 @@ extern struct pf_state_tree_id tree_id;
  *	rw_exit_read(&pf_state_list.pfs_rwl);
  *
  * removing an item from the list:
- * 
+ *
  *	// wait for iterators (readers) to get out
  *	rw_enter_write(&pf_state_list.pfs_rwl);
  *

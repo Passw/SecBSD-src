@@ -161,7 +161,7 @@ struct atu_cdata {
 	struct atu_list_head	atu_tx_free;
 
 	u_int8_t		atu_tx_inuse;
-	u_int8_t		atu_tx_last_idx;	
+	u_int8_t		atu_tx_last_idx;
 };
 
 #define MAX_SSID_LEN		32
@@ -190,11 +190,11 @@ struct atu_softc {
 	struct atu_cdata	atu_cdata;
 
 	struct timeval		atu_rx_notice;
-	
+
 	u_int8_t		atu_bssid[ETHER_ADDR_LEN];
 	enum atu_radio_type	atu_radio;
 	u_int16_t		atu_quirk;
-	
+
 	u_int8_t		atu_channel;
 	u_int16_t		atu_desired_channel;
 	u_int8_t		atu_mode;
@@ -297,7 +297,7 @@ struct atu_cmd_card_config {
 	uByte			Cmd;
 	uByte			Reserved;
 	uWord			Size;
-		
+
 	uByte			ExcludeUnencrypted;
 	uByte			PromiscuousMode;
 	uByte			ShortRetryLimit;
@@ -321,7 +321,7 @@ struct atu_cmd_do_scan {
 	uByte			Cmd;
 	uByte			Reserved;
 	uWord			Size;
-	
+
 	uByte			BSSID[ETHER_ADDR_LEN];
 	uByte			SSID[MAX_SSID_LEN];
 	uByte			ScanType;
@@ -330,7 +330,7 @@ struct atu_cmd_do_scan {
 	uWord			MinChannelTime;
 	uWord			MaxChannelTime;
 	uByte			SSID_Len;
-	uByte			InternationalScan;  
+	uByte			InternationalScan;
 } __packed;
 
 #define ATU_SCAN_ACTIVE		0x00
@@ -341,7 +341,7 @@ struct atu_cmd_join {
 	uByte			Cmd;
 	uByte			Reserved;
 	uWord			Size;
-	
+
 	uByte			bssid[ETHER_ADDR_LEN];
 	uByte			essid[32];
 	uByte			bss_type;
@@ -356,13 +356,13 @@ struct atu_cmd_start_ibss {
 	uByte		Cmd;
 	uByte		Reserved;
 	uWord		Size;
-	
+
 	uByte		BSSID[ETHER_ADDR_LEN];
 	uByte		SSID[32];
-	uByte		BSSType; 
-	uByte		Channel; 
+	uByte		BSSType;
+	uByte		Channel;
 	uByte		SSIDSize;
-	uByte		Res[3];  
+	uByte		Res[3];
 } __packed;
 
 /*
@@ -406,7 +406,7 @@ struct atu_fw {
 	u_int8_t		patch;
 	u_int8_t		build;
 } __packed;
-        
+
 /*
  * The header the AT76c503 puts in front of RX packets (for both management &
  * data)

@@ -212,7 +212,7 @@ isonum_721(u_char *p)
 }
 
 /* 7.2.2: unsigned big-endian 16-bit value.  NOT USED IN KERNEL. */
-static __inline int     
+static __inline int
 isonum_722(unsigned char *p)
 {
 #if !defined(__STRICT_ALIGNMENT) && (BYTE_ORDER == BIG_ENDIAN)
@@ -220,7 +220,7 @@ isonum_722(unsigned char *p)
 #else
 	return ((char)*p << 8)|p[1];
 #endif
-} 
+}
 
 /* 7.2.3: unsigned both-endian (little, then big) 16-bit value */
 static __inline int

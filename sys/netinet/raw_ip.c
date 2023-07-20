@@ -537,7 +537,7 @@ rip_bind(struct socket *so, struct mbuf *nam, struct proc *p)
 
 	if ((error = in_nam2sin(nam, &addr)))
 		return (error);
-	
+
 	if (!((so->so_options & SO_BINDANY) ||
 	    addr->sin_addr.s_addr == INADDR_ANY ||
 	    addr->sin_addr.s_addr == INADDR_BROADCAST ||
@@ -546,7 +546,7 @@ rip_bind(struct socket *so, struct mbuf *nam, struct proc *p)
 		return (EADDRNOTAVAIL);
 
 	inp->inp_laddr = addr->sin_addr;
-	
+
 	return (0);
 }
 
@@ -561,7 +561,7 @@ rip_connect(struct socket *so, struct mbuf *nam)
 
 	if ((error = in_nam2sin(nam, &addr)))
 		return (error);
-	
+
 	inp->inp_faddr = addr->sin_addr;
 	soisconnected(so);
 
@@ -593,7 +593,7 @@ rip_shutdown(struct socket *so)
 
 	soassertlocked(so);
 	socantsendmore(so);
-	
+
 	return (0);
 }
 

@@ -505,7 +505,7 @@ udf_transname(char *cs0string, char *destname, int len, struct umount *ump)
 }
 
 /*
- * Compare a CS0 dstring with a name passed in from the VFS layer.  Return
+ * Compare a CS0 dstring with a name passed in from the VFS layer. Return
  * 0 on a successful match, nonzero otherwise.  Unicode work may need to be
  * done here also.
  */
@@ -1175,7 +1175,7 @@ udf_reclaim(void *v)
 		pool_put(&unode_pool, up);
 		vp->v_data = NULL;
 	}
-	
+
 	return (0);
 }
 
@@ -1297,7 +1297,7 @@ udf_bmap_internal(struct unode *up, off_t offset, daddr_t *sector,
 				    ad_offset, l_ad);
 				return (EINVAL);
 			}
-			
+
 			if (udf_checktag(&up->u_fentry->tag, TAGID_EXTFENTRY) == 0)
 				icb = GETICB(short_ad, xfentry, l_ea + ad_offset);
 			else

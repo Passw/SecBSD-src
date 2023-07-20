@@ -127,7 +127,7 @@ swap_encrypt(struct swap_key *key, caddr_t src, caddr_t dst, u_int64_t block,
 	count /= sizeof(u_int32_t);
 
 	iv[0] = block >> 32; iv[1] = block; iv[2] = ~iv[0]; iv[3] = ~iv[1];
-	rijndael_encrypt(&swap_ctxt, (u_char *)iv, (u_char *)iv); 
+	rijndael_encrypt(&swap_ctxt, (u_char *)iv, (u_char *)iv);
 	iv1 = iv[0]; iv2 = iv[1]; iv3 = iv[2]; iv4 = iv[3];
 
 	for (; count > 0; count -= 4) {
@@ -172,7 +172,7 @@ swap_decrypt(struct swap_key *key, caddr_t src, caddr_t dst, u_int64_t block,
 	count /= sizeof(u_int32_t);
 
 	iv[0] = block >> 32; iv[1] = block; iv[2] = ~iv[0]; iv[3] = ~iv[1];
-	rijndael_encrypt(&swap_ctxt, (u_char *)iv, (u_char *)iv); 
+	rijndael_encrypt(&swap_ctxt, (u_char *)iv, (u_char *)iv);
 	iv1 = iv[0]; iv2 = iv[1]; iv3 = iv[2]; iv4 = iv[3];
 
 	for (; count > 0; count -= 4) {

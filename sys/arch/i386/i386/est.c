@@ -1138,7 +1138,7 @@ est_init(struct cpu_info *ci, int vendor)
 			 * disable EST: - A lowest clock ratio of 0, which
 			 * seems to happen on all Pentium 4's that report EST.
 			 * - An equal highest and lowest clock ratio, which
-			 * happens on at least the Core 2 Duo X6800, maybe on 
+			 * happens on at least the Core 2 Duo X6800, maybe on
 			 * newer models too.
 			 */
 			return;

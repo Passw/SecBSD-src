@@ -508,7 +508,7 @@ cd9660_readdir(void *v)
 			if (idp->current.d_namlen == 1 && ep->name[0] == 0) {
 				idp->current.d_namlen = 1;
 				error = iso_uiodir(idp,&idp->current,idp->curroff);
-			} else if (idp->current.d_namlen == 1 && 
+			} else if (idp->current.d_namlen == 1 &&
 			    ep->name[0] == 1) {
 				idp->current.d_namlen = 2;
 				error = iso_uiodir(idp,&idp->current,idp->curroff);
@@ -614,7 +614,7 @@ cd9660_readlink(void *v)
 		symname = uio->uio_iov->iov_base;
 	else
 		symname = pool_get(&namei_pool, PR_WAITOK);
-	
+
 	/*
 	 * Ok, we just gathering a symbolic name in SL record.
 	 */
@@ -981,7 +981,7 @@ filt_cd9660read(struct knote *kn, long hint)
 	struct iso_node *node = VTOI(vp);
 
 	/*
-	 * filesystem is gone, so set the EOF flag and schedule 
+	 * filesystem is gone, so set the EOF flag and schedule
 	 * the knote for deletion.
 	 */
 	if (hint == NOTE_REVOKE) {
@@ -1005,7 +1005,7 @@ int
 filt_cd9660write(struct knote *kn, long hint)
 {
 	/*
-	 * filesystem is gone, so set the EOF flag and schedule 
+	 * filesystem is gone, so set the EOF flag and schedule
 	 * the knote for deletion.
 	 */
 	if (hint == NOTE_REVOKE) {

@@ -84,7 +84,7 @@ ufs_root(struct mount *mp, struct vnode **vpp)
  */
 int
 ufs_check_export(struct mount *mp, struct mbuf *nam, int *exflagsp,
-    struct ucred **credanonp) 
+    struct ucred **credanonp)
 {
 	struct netcred *np;
 	struct ufsmount *ump = VFSTOUFS(mp);

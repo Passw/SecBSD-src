@@ -520,7 +520,7 @@ nfsm_reqhead(int hsiz)
 	if (hsiz > MLEN)
 		MCLGET(mb, M_WAIT);
 	mb->m_len = 0;
-	
+
 	/* Finally, return values */
 	return (mb);
 }
@@ -981,7 +981,7 @@ nfs_loadattrcache(struct vnode **vpp, struct mbuf **mdp, caddr_t *dposp,
 
 	/*
 	 * If v_type == VNON it is a new node, so fill in the v_type,
-	 * n_mtime fields. Check to see if it represents a special 
+	 * n_mtime fields. Check to see if it represents a special
 	 * device, and if so, check for a possible alias. Once the
 	 * correct vnode has been obtained, fill in the rest of the
 	 * information.

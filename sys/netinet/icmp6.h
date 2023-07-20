@@ -202,7 +202,7 @@ struct nd_router_advert {	/* router advertisement */
 
 #define ND_RA_FLAG_RTPREF_MASK	0x18	/* 00011000 */
 
-#define ND_RA_FLAG_RTPREF_HIGH	0x08	/* 00001000 */ 
+#define ND_RA_FLAG_RTPREF_HIGH	0x08	/* 00001000 */
 #define ND_RA_FLAG_RTPREF_MEDIUM	0x00	/* 00000000 */
 #define ND_RA_FLAG_RTPREF_LOW	0x18	/* 00011000 */
 #define ND_RA_FLAG_RTPREF_RSV	0x10	/* 00010000 */

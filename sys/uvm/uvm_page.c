@@ -727,7 +727,7 @@ uvm_pagealloc_pg(struct vm_page *pg, struct uvm_object *obj, voff_t off,
  *	low		the low address of the allowed allocation range.
  *	high		the high address of the allowed allocation range.
  *	alignment	memory must be aligned to this power-of-two boundary.
- *	boundary	no segment in the allocation may cross this 
+ *	boundary	no segment in the allocation may cross this
  *			power-of-two boundary (relative to zero).
  * => flags:
  *	UVM_PLA_NOWAIT	fail if allocation fails

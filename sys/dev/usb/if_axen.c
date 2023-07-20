@@ -382,7 +382,7 @@ axen_iff(struct axen_softc *sc)
 		}
 	}
 
-	axen_cmd(sc, AXEN_CMD_MAC_WRITE_FILTER, 8, AXEN_FILTER_MULTI, 
+	axen_cmd(sc, AXEN_CMD_MAC_WRITE_FILTER, 8, AXEN_FILTER_MULTI,
 	    (void *)&hashtbl);
 	USETW(wval, rxmode);
 	axen_cmd(sc, AXEN_CMD_MAC_WRITE2, 2, AXEN_MAC_RXCTL, &wval);
@@ -394,7 +394,7 @@ axen_reset(struct axen_softc *sc)
 {
 	if (usbd_is_dying(sc->axen_udev))
 		return;
-	
+
 	axen_ax88179_init(sc);
 
 	/* Wait a little while for the chip to get its brains in order. */
@@ -625,19 +625,19 @@ axen_attach(struct device *parent, struct device *self, void *aux)
 	/* decide on what our bufsize will be */
 	switch (sc->axen_udev->speed) {
 	case USB_SPEED_FULL:
-	    	sc->axen_bufsz = AXEN_BUFSZ_LS * 1024; 
+	    	sc->axen_bufsz = AXEN_BUFSZ_LS * 1024;
 		break;
 	case USB_SPEED_HIGH:
-	    	sc->axen_bufsz = AXEN_BUFSZ_HS * 1024; 
+	    	sc->axen_bufsz = AXEN_BUFSZ_HS * 1024;
 		break;
 	case USB_SPEED_SUPER:
-	    	sc->axen_bufsz = AXEN_BUFSZ_SS * 1024; 
+	    	sc->axen_bufsz = AXEN_BUFSZ_SS * 1024;
 		break;
 	default:
 		printf("%s: not supported usb bus type", sc->axen_dev.dv_xname);
 		return;
 	}
-		
+
 	/* Find endpoints. */
 	for (i = 0; i < id->bNumEndpoints; i++) {
 		ed = usbd_interface2endpoint_descriptor(sc->axen_iface, i);
@@ -914,7 +914,7 @@ axen_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 		goto done;
 	}
 
-	/* 
+	/*
 	 * buffer map
 	 * [packet #0]...[packet #n][pkt hdr#0]..[pkt hdr#n][recv_hdr]
 	 * each packet has 0xeeee as pseudo header..
@@ -945,9 +945,9 @@ axen_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 	 */
 
 #if 1 /* XXX: paranoiac check. need to remove later */
-#define AXEN_MAX_PACKED_PACKET 200 
+#define AXEN_MAX_PACKED_PACKET 200
 	if (pkt_count > AXEN_MAX_PACKED_PACKET) {
-		DPRINTF(("Too many packets (%d) in a transaction, discard.\n", 
+		DPRINTF(("Too many packets (%d) in a transaction, discard.\n",
 		    pkt_count));
 		goto done;
 	}
@@ -988,7 +988,7 @@ axen_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 
 #ifdef AXEN_TOE
 		/* checksum err */
-		if ((pkt_hdr & AXEN_RXHDR_L3CSUM_ERR) || 
+		if ((pkt_hdr & AXEN_RXHDR_L3CSUM_ERR) ||
 		    (pkt_hdr & AXEN_RXHDR_L4CSUM_ERR)) {
 			printf("%s: checksum err (pkt#%d)\n",
 			    sc->axen_dev.dv_xname, pkt_count);
@@ -998,11 +998,11 @@ axen_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 		}
 
 		int l4_type;
-		l4_type = (pkt_hdr & AXEN_RXHDR_L4_TYPE_MASK) >> 
+		l4_type = (pkt_hdr & AXEN_RXHDR_L4_TYPE_MASK) >>
 		    AXEN_RXHDR_L4_TYPE_OFFSET;
 
 		if ((l4_type == AXEN_RXHDR_L4_TYPE_TCP) ||
-		    (l4_type == AXEN_RXHDR_L4_TYPE_UDP)) 
+		    (l4_type == AXEN_RXHDR_L4_TYPE_UDP))
 			m->m_pkthdr.csum_flags |= M_TCP_CSUM_IN_OK |
 			    M_UDP_CSUM_IN_OK;
 #endif
@@ -1013,7 +1013,7 @@ axen_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 
 nextpkt:
 		/*
-		 * prepare next packet 
+		 * prepare next packet
 		 * as each packet will be aligned 8byte boundary,
 		 * need to fix up the start point of the buffer.
 		 */

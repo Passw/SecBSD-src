@@ -411,7 +411,7 @@ void
 pfi_group_addmember(const char *group)
 {
 	PF_LOCK();
-	pfi_group_change(group);	
+	pfi_group_change(group);
 	pfi_xcommit();
 	PF_UNLOCK();
 }

@@ -188,7 +188,7 @@ struct pfsync_del_c {
 	u_int32_t			creatorid;
 } __packed;
 
-/* 
+/*
  * INS_F, DEL_F
  */
 

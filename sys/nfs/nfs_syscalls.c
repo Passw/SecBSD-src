@@ -248,7 +248,7 @@ nfssvc_addsock(struct file *fp, struct mbuf *mynam)
 	else
 		siz = NFS_MAXPACKET;
 	solock(so);
-	error = soreserve(so, siz, siz); 
+	error = soreserve(so, siz, siz);
 	if (error) {
 		sounlock(so);
 		m_freem(mynam);
@@ -592,7 +592,7 @@ nfssvc_iod(void *arg)
 	if (nfs_bufqmax > bcstats.kvaslots / 4) {
 		nfs_bufqmax = bcstats.kvaslots / 4;
 		bufcount = 0;
-	} 
+	}
 	if (nfs_bufqmax > bcstats.numbufs / 4) {
 		nfs_bufqmax = bcstats.numbufs / 4;
 		bufcount = 0;
@@ -616,7 +616,7 @@ nfssvc_iod(void *arg)
 		    (void) nfs_doio(bp, NULL);
 		else do {
 		    /*
-		     * Look for a delayed write for the same vnode, so I can do 
+		     * Look for a delayed write for the same vnode, so I can do
 		     * it now. We must grab it before calling nfs_doio() to
 		     * avoid any risk of the vnode getting vclean()'d while
 		     * we are doing the write rpc.
@@ -659,7 +659,7 @@ void
 nfs_getset_niothreads(int set)
 {
 	int i, have, start;
-	
+
 	for (have = 0, i = 0; i < NFS_MAXASYNCDAEMON; i++)
 		if (nfs_asyncdaemon[i] != NULL)
 			have++;

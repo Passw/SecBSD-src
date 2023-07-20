@@ -135,7 +135,7 @@ mem_range_match(struct mem_range_softc *sc, struct mem_range_desc *mrd)
 {
 	struct mem_range_desc	*cand;
 	int			 i;
-	
+
 	for (i = 0, cand = sc->mr_desc; i < sc->mr_ndesc; i++, cand++)
 		if ((cand->mr_base == mrd->mr_base) &&
 		    (cand->mr_len == mrd->mr_len))
@@ -159,7 +159,7 @@ mrfetch(struct mem_range_softc *sc)
 
 	/* We should never be fetching MTRRs from an AP */
 	KASSERT(CPU_IS_PRIMARY(curcpu()));
-	
+
 	/* Get fixed-range MTRRs, if the CPU supports them */
 	if (sc->mr_cap & MR_FIXMTRR) {
 		msr = MSR_MTRRfix64K_00000;
@@ -242,9 +242,9 @@ int
 mtrrtype(u_int64_t flags)
 {
 	int i;
-	
+
 	flags &= MDF_ATTRMASK;
-	
+
 	for (i = 0; i < nitems(mtrrtomrt); i++) {
 		if (mtrrtomrt[i] == MDF_UNKNOWN)
 			continue;
@@ -295,9 +295,9 @@ mrstoreone(struct mem_range_softc *sc)
 	u_int64_t		 msrv;
 	int			 i, j, msr;
 	u_int			 cr4save;
-	
+
 	mrd = sc->mr_desc;
-	
+
 	cr4save = rcr4();	/* save cr4 */
 	if (cr4save & CR4_PGE)
 		lcr4(cr4save & ~CR4_PGE);
@@ -306,7 +306,7 @@ mrstoreone(struct mem_range_softc *sc)
 	wbinvd();
 	lcr0((rcr0() & ~CR0_NW) | CR0_CD);
 	wrmsr(MSR_MTRRdefType, rdmsr(MSR_MTRRdefType) & ~MTRRdefType_ENABLE);
-	
+
 	/* Set fixed-range MTRRs */
 	if (sc->mr_cap & MR_FIXMTRR) {
 		msr = MSR_MTRRfix64K_00000;
@@ -340,7 +340,7 @@ mrstoreone(struct mem_range_softc *sc)
 			mrd += 8;
 		}
 	}
-	
+
 	/* Set remainder which must be variable MTRRs */
 	msr = MSR_MTRRvarBase;
 	for (; (mrd - sc->mr_desc) < sc->mr_ndesc; msr += 2, mrd++) {
@@ -350,8 +350,8 @@ mrstoreone(struct mem_range_softc *sc)
 		} else
 			msrv = 0;
 
-		wrmsr(msr, msrv);	
-		
+		wrmsr(msr, msrv);
+
 		/* mask/active register */
 		if (mrd->mr_flags & MDF_ACTIVE) {
 			msrv = 0x800 | (~(mrd->mr_len - 1) & mtrrmask);
@@ -375,7 +375,7 @@ mtrrfixsearch(struct mem_range_softc *sc, u_int64_t addr)
 {
 	struct mem_range_desc *mrd;
 	int			i;
-	
+
 	for (i = 0, mrd = sc->mr_desc; i < (MTRR_N64K + MTRR_N16K + MTRR_N4K); i++, mrd++)
 		if ((addr >= mrd->mr_base) && (addr < (mrd->mr_base + mrd->mr_len)))
 			return(mrd);
@@ -399,7 +399,7 @@ mrsetlow(struct mem_range_softc *sc, struct mem_range_desc *mrd, int *arg)
 	if (((first_md = mtrrfixsearch(sc, mrd->mr_base)) == NULL) ||
 	    ((last_md = mtrrfixsearch(sc, mrd->mr_base + mrd->mr_len - 1)) == NULL))
 		return(EINVAL);
-	
+
 	/* check we aren't doing something risky */
 	if (!(mrd->mr_flags & MDF_FORCE))
 		for (curr_md = first_md; curr_md <= last_md; curr_md++) {
@@ -412,7 +412,7 @@ mrsetlow(struct mem_range_softc *sc, struct mem_range_desc *mrd, int *arg)
 		curr_md->mr_flags = mrcopyflags(curr_md->mr_flags & ~MDF_FIRMWARE, mrd->mr_flags);
 		bcopy(mrd->mr_owner, curr_md->mr_owner, sizeof(mrd->mr_owner));
 	}
-	
+
 	return(0);
 }
 
@@ -464,7 +464,7 @@ mrsetvariable(struct mem_range_softc *sc, struct mem_range_desc *mrd, int *arg)
 	/* got somewhere to put it? */
 	if (free_md == NULL)
 		return(ENOSPC);
-	
+
 	/* Set up new descriptor */
 	free_md->mr_base = mrd->mr_base;
 	free_md->mr_len = mrd->mr_len;
@@ -488,7 +488,7 @@ mrset(struct mem_range_softc *sc, struct mem_range_desc *mrd, int *arg)
 		if (!mrvalid(mrd->mr_base, mrd->mr_len) ||
 		    mtrrtype(mrd->mr_flags) == -1)
 			return(EINVAL);
-		
+
 		/* are the "low memory" conditions applicable? */
 		if ((sc->mr_cap & MR_FIXMTRR) &&
 		    ((mrd->mr_base + mrd->mr_len) <= FIXTOP)) {
@@ -500,7 +500,7 @@ mrset(struct mem_range_softc *sc, struct mem_range_desc *mrd, int *arg)
 				return(error);
 		}
 		break;
-		
+
 	case MEMRANGE_SET_REMOVE:
 		if ((targ = mem_range_match(sc, mrd)) == NULL)
 			return(ENOENT);
@@ -509,11 +509,11 @@ mrset(struct mem_range_softc *sc, struct mem_range_desc *mrd, int *arg)
 		targ->mr_flags &= ~MDF_ACTIVE;
 		targ->mr_owner[0] = 0;
 		break;
-		
+
 	default:
 		return(EOPNOTSUPP);
 	}
-	
+
 	/* update the hardware */
 	mrstore(sc);
 	return(0);
@@ -533,7 +533,7 @@ mrinit(struct mem_range_softc *sc)
 
 	mtrrcap = rdmsr(MSR_MTRRcap);
 	mtrrdef = rdmsr(MSR_MTRRdefType);
-	
+
 	/* For now, bail out if MTRRs are not enabled */
 	if (!(mtrrdef & MTRRdefType_ENABLE)) {
 		printf("mtrr: CPU supports MTRRs but not enabled by BIOS\n");
@@ -541,9 +541,9 @@ mrinit(struct mem_range_softc *sc)
 	}
 	nmdesc = mtrrcap & 0xff;
 	printf("mtrr: Pentium Pro MTRR support, %d var ranges", nmdesc);
-	
+
 	/* If fixed MTRRs supported and enabled */
-	if ((mtrrcap & MTRRcap_FIXED) && 
+	if ((mtrrcap & MTRRcap_FIXED) &&
 	    (mtrrdef & MTRRdefType_FIXED_ENABLE)) {
 		sc->mr_cap = MR_FIXMTRR;
 		nmdesc += MTRR_N64K + MTRR_N16K + MTRR_N4K;
@@ -551,13 +551,13 @@ mrinit(struct mem_range_softc *sc)
 	}
 
 	printf("\n");
-	
+
 	sc->mr_desc = mallocarray(nmdesc, sizeof(struct mem_range_desc),
 	     M_MEMDESC, M_WAITOK|M_ZERO);
 	sc->mr_ndesc = nmdesc;
-	
+
 	mrd = sc->mr_desc;
-	
+
 	/* Populate the fixed MTRR entries' base/length */
 	if (sc->mr_cap & MR_FIXMTRR) {
 		for (i = 0; i < MTRR_N64K; i++, mrd++) {
@@ -578,7 +578,7 @@ mrinit(struct mem_range_softc *sc)
 			mrd->mr_flags = MDF_FIXBASE | MDF_FIXLEN | MDF_FIXACTIVE;
 		}
 	}
-	
+
 	/*
 	 * Fetch maximum physical address size supported by the
 	 * processor as supported by CPUID leaf function 0x80000008.

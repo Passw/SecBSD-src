@@ -738,7 +738,7 @@ static ssize_t radeon_hwmon_show_sclk(struct device *dev,
 	if (rdev->asic->dpm.get_current_sclk)
 		sclk = radeon_dpm_get_current_sclk(rdev);
 
-	/* Value returned by dpm is in 10 KHz units, need to convert it into Hz 
+	/* Value returned by dpm is in 10 KHz units, need to convert it into Hz
 	   for hwmon */
 	sclk *= 10000;
 

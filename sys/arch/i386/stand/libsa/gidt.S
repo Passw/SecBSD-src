@@ -13,8 +13,8 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
@@ -195,7 +195,7 @@ pmm_init:
 	idte(mc)
 	idte(xx); idte(xx); idte(xx);  idte(xx); idte(xx); idte(xx)
 	idte(xx); idte(xx); idte(xx);  idte(xx); idte(xx); idte(xx)
-	idte(xx) 
+	idte(xx)
 	/* BIOS entry points (32-63) */
 	idtb(0);  idtb(1);  idtb(2);  idtb(3);  idtb(4);  idtb(5)
 	idtb(6);  idtb(7);  idtb(8);  idtb(9);  idtb(10); idtb(11)

@@ -258,9 +258,9 @@ ntfs_loadntnode(struct ntfsmount *ntmp, struct ntnode *ip)
 	struct attr	*ap;
 	daddr_t		bn;
  	int		error,off;
- 
+
  	DPRINTF("ntfs_loadntnode: loading ino: %u\n", ip->i_number);
- 
+
 	KASSERT((ip->i_flag & IN_LOADED) == 0);
 
 	if (ntmp->ntm_ntnodes >= LOADED_NTNODE_HI) {
@@ -279,7 +279,7 @@ ntfs_loadntnode(struct ntfsmount *ntmp, struct ntnode *ip)
 	}
 
  	mfrp = malloc(ntfs_bntob(ntmp->ntm_bpmftrec), M_TEMP, M_WAITOK);
- 
+
 	if (ip->i_number < NTFS_SYSNODESNUM) {
 		struct buf     *bp;
 
@@ -324,7 +324,7 @@ ntfs_loadntnode(struct ntfsmount *ntmp, struct ntnode *ip)
 	ap = (struct attr *) ((caddr_t)mfrp + off);
 
 	LIST_INIT(&ip->i_valist);
-	
+
 	while (ap->a_hdr.a_type != -1) {
 		error = ntfs_attrtontvattr(ntmp, &vap, ap);
 		if (error)
@@ -478,7 +478,7 @@ ntfs_ntput(struct ntnode *ip)
 }
 
 /*
- * increment usecount of ntnode 
+ * increment usecount of ntnode
  */
 void
 ntfs_ntref(struct ntnode *ip)
@@ -697,7 +697,7 @@ ntfs_uastrcmp(struct ntfsmount *ntmp, const wchar *ustr, size_t ustrlen,
 		return 1;
 }
 
-/* 
+/*
  * Search fnode in ntnode, if not found allocate and preinitialize.
  *
  * ntnode should be locked on entry.
@@ -767,7 +767,7 @@ ntfs_frele(struct fnode *fp)
 }
 
 /*
- * Lookup attribute name in format: [[:$ATTR_TYPE]:$ATTR_NAME], 
+ * Lookup attribute name in format: [[:$ATTR_TYPE]:$ATTR_NAME],
  * $ATTR_TYPE is searched in attrdefs read from $AttrDefs.
  * If $ATTR_TYPE not specified, ATTR_A_DATA assumed.
  */
@@ -796,7 +796,7 @@ ntfs_ntlookupattr(struct ntfsmount *ntmp, const char *name, int namelen,
 
 		adp = ntmp->ntm_ad;
 		for (i = 0; i < ntmp->ntm_adnum; i++, adp++){
-			if (syslen != adp->ad_namelen || 
+			if (syslen != adp->ad_namelen ||
 			    strncmp(sys, adp->ad_name, syslen) != 0)
 				continue;
 
@@ -894,7 +894,7 @@ ntfs_ntlookupfile(struct ntfsmount *ntmp, struct vnode *vp,
 		{
 			DDPRINTF("scan: %u, %u\n", iep->ie_number,
 			    iep->ie_fnametype);
- 
+
 			/* check the name - the case-insensitive check
 			 * has to come first, to break from this for loop
 			 * if needed, so we can dive correctly */
@@ -978,9 +978,9 @@ ntfs_ntlookupfile(struct ntfsmount *ntmp, struct vnode *vp,
 			if((nfp->f_fflag & NTFS_FFLAG_DIR) &&
 			   (nfp->f_attrtype == NTFS_A_DATA) &&
 			   (nfp->f_attrname == NULL))
-				f_type = VDIR;	
+				f_type = VDIR;
 			else
-				f_type = VREG;	
+				f_type = VREG;
 
 			nvp->v_type = f_type;
 
@@ -1035,7 +1035,7 @@ ntfs_ntlookupfile(struct ntfsmount *ntmp, struct vnode *vp,
 				"$I30", ntfs_cntob(cn), rdsize, rdbuf, NULL);
 			if (error)
 				goto fail;
-			
+
 			if (cn != 0) {
 				error = ntfs_procfixups(ntmp, NTFS_INDXMAGIC,
 						rdbuf, rdsize);
@@ -1299,8 +1299,8 @@ ntfs_nttimetounix(u_int64_t nt)
 }
 
 /*
- * Get file sizes from corresponding attribute. 
- * 
+ * Get file sizes from corresponding attribute.
+ *
  * ntnode under fnode should be locked.
  */
 int
@@ -1440,7 +1440,7 @@ ntfs_readntvattr_plain(struct ntfsmount *ntmp, struct ntnode *ip,
 						if (error != 0)
 							break;
 					}
-				} else 
+				} else
 					bzero(data, tocopy);
 				data = data + tocopy;
 			}
@@ -1454,7 +1454,7 @@ ntfs_readntvattr_plain(struct ntfsmount *ntmp, struct ntnode *ip,
 		}
 	} else {
 		DDPRINTF("ntfs_readnvattr_plain: data is in mft record\n");
-		if (uio) 
+		if (uio)
 			error = uiomove(vap->va_datap + roff, rsize, uio);
 		else
 			memcpy(rdata, vap->va_datap + roff, rsize);
@@ -1667,7 +1667,7 @@ ntfs_procfixups(struct ntfsmount *ntmp, u_int32_t magic, caddr_t buf,
 	}
 	if ((fhp->fh_fnum - 1) * ntmp->ntm_bps != len) {
 		printf("ntfs_procfixups: " \
-		       "bad fixups number: %d for %ld bytes block\n", 
+		       "bad fixups number: %d for %ld bytes block\n",
 		       fhp->fh_fnum, (long)len);	/* XXX printf kludge */
 		return (EINVAL);
 	}
@@ -1790,7 +1790,7 @@ ntfs_toupper_unuse(struct proc *p)
 			ntfs_toupper_usecount);
 	}
 #endif
-	
+
 	/* release the lock */
 	rw_exit_write(&ntfs_toupper_lock);
 }

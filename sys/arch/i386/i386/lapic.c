@@ -151,7 +151,7 @@ lapic_set_lvt(void)
 		 * the local APIC timer dead, so we disable it by reading
 		 * the Interrupt Pending Message register and clearing both
 		 * C1eOnCmpHalt (bit 28) and SmiOnCmpHalt (bit 27).
-		 * 
+		 *
 		 * Reference:
 		 *   "BIOS and Kernel Developer's Guide for AMD NPT
 		 *    Family 0Fh Processors"

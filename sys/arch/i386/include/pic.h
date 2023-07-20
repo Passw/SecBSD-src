@@ -9,7 +9,7 @@
 
 struct cpu_info;
 
-/* 
+/*
  * Structure common to all PIC softcs
  */
 struct pic {

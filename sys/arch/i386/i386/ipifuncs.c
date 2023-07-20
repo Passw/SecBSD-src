@@ -190,7 +190,7 @@ i386_broadcast_ipi(int ipimask)
 	if (!count)
 		return;
 
-	i386_ipi(LAPIC_IPI_VECTOR, LAPIC_DEST_ALLEXCL, LAPIC_DLMODE_FIXED); 
+	i386_ipi(LAPIC_IPI_VECTOR, LAPIC_DEST_ALLEXCL, LAPIC_DLMODE_FIXED);
 }
 
 void

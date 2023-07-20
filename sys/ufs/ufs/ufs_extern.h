@@ -133,7 +133,7 @@ void ufs_itimes(struct vnode *);
 int ufs_makeinode(int, struct vnode *, struct vnode **,
 		  struct componentname *);
 
- 
+
 /*
  * Soft dependency function prototypes.
  */

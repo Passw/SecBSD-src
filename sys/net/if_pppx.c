@@ -617,7 +617,7 @@ pppx_if_find(struct pppx_dev *pxd, int session_id, int protocol)
 
 	if ((pxi = pppx_if_find_locked(pxd, session_id, protocol)))
 		refcnt_take(&pxi->pxi_refcnt);
-	
+
 	return pxi;
 }
 

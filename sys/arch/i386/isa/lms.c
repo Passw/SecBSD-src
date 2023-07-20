@@ -82,7 +82,7 @@ lmsprobe(struct device *parent, void *match, void *aux)
 	bus_space_tag_t iot = ia->ia_iot;
 	bus_space_handle_t ioh;
 	int rv;
-	
+
 	/* Disallow wildcarded i/o base. */
 	if (ia->ia_iobase == IOBASEUNK)
 		return 0;

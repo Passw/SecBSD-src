@@ -53,13 +53,13 @@
 /*
  * forward definition of vm_amap structure.  only amap
  * implementation-specific code should directly access the fields of
- * this structure.  
+ * this structure.
  */
 
 struct vm_amap;
 
 /*
- * prototypes for the amap interface 
+ * prototypes for the amap interface
  */
 
 					/* ensure amap can store anon */
@@ -192,7 +192,7 @@ struct vm_amap {
 
 /*
  * defines for handling of large sparce amaps:
- * 
+ *
  * one of the problems of array-based amaps is that if you allocate a
  * large sparcely-used area of virtual memory you end up allocating
  * large arrays that, for the most part, don't get used.  this is a
@@ -205,15 +205,15 @@ struct vm_amap {
  * it makes sense for it to live in an amap, but if we allocated an
  * amap for the entire stack range we could end up wasting a large
  * amount of malloc'd KVM.
- * 
- * for example, on the i386 at boot time we allocate two amaps for the stack 
- * of /sbin/init: 
+ *
+ * for example, on the i386 at boot time we allocate two amaps for the stack
+ * of /sbin/init:
  *  1. a 7680 slot amap at protection PROT_NONE (reserve space for stack)
  *  2. a 512 slot amap at protection PROT_READ|PROT_WRITE (top of stack)
  *
- * most of the array allocated for the amaps for this is never used.  
+ * most of the array allocated for the amaps for this is never used.
  * the amap interface provides a way for us to avoid this problem by
- * allowing amap_copy() to break larger amaps up into smaller sized 
+ * allowing amap_copy() to break larger amaps up into smaller sized
  * chunks (controlled by the "canchunk" option).   we use this feature
  * to reduce our memory usage with the BSD stack management.  if we
  * are asked to create an amap with more than UVM_AMAP_LARGE slots in it,

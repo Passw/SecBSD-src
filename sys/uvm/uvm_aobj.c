@@ -129,7 +129,7 @@ struct uvm_aobj {
 	 * Either an array or hashtable (array of bucket heads) of
 	 * offset -> swapslot mappings for the aobj.
 	 */
-#define u_swslots	u_swap.slot_array 
+#define u_swslots	u_swap.slot_array
 #define u_swhash	u_swap.slot_hash
 	union swslots {
 		int			*slot_array;
@@ -622,7 +622,7 @@ uao_grow_convert(struct uvm_object *uobj, int pages)
 
 	/* Set these now, so we can use uao_find_swhash_elt(). */
 	old_swslots = aobj->u_swslots;
-	aobj->u_swhash = new_swhash;		
+	aobj->u_swhash = new_swhash;
 	aobj->u_swhashmask = new_hashmask;
 
 	for (i = 0; i < aobj->u_pages; i++) {
@@ -1050,7 +1050,7 @@ uao_get(struct uvm_object *uobj, voff_t offset, struct vm_page **pps,
 				if (lcv == centeridx ||
 				    (flags & PGO_ALLPAGES) != 0)
 					/* need to do a wait or I/O! */
-					done = FALSE;	
+					done = FALSE;
 				continue;
 			}
 
@@ -1071,7 +1071,7 @@ uao_get(struct uvm_object *uobj, voff_t offset, struct vm_page **pps,
 		*npagesp = gotpages;
 		if (done)
 			/* bingo! */
-			return VM_PAGER_OK;	
+			return VM_PAGER_OK;
 		else
 			/* EEK!   Need to unlock and I/O */
 			return VM_PAGER_UNLOCK;
@@ -1135,7 +1135,7 @@ uao_get(struct uvm_object *uobj, voff_t offset, struct vm_page **pps,
 				 */
 				atomic_setbits_int(&ptmp->pg_flags, PQ_AOBJ);
 
-				/* 
+				/*
 				 * got new page ready for I/O.  break pps while
 				 * loop.  pps[lcv] is still NULL.
 				 */
@@ -1167,7 +1167,7 @@ uao_get(struct uvm_object *uobj, voff_t offset, struct vm_page **pps,
 			continue;			/* next lcv */
 
 		/*
- 		 * we have a "fake/busy/clean" page that we just allocated.  
+ 		 * we have a "fake/busy/clean" page that we just allocated.
  		 * do the needed "i/o", either reading from swap or zeroing.
  		 */
 		swslot = uao_find_swslot(uobj, pageidx);
@@ -1255,7 +1255,7 @@ uao_dropswap(struct uvm_object *uobj, int pageidx)
 
 /*
  * page in every page in every aobj that is paged-out to a range of swslots.
- * 
+ *
  * => aobj must be locked and is returned locked.
  * => returns TRUE if pagein was aborted due to lack of memory.
  */

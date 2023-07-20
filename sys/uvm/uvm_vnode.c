@@ -350,9 +350,9 @@ uvn_detach(struct uvm_object *uobj)
 	/*
 	 * given the structure of this pager, the above flush request will
 	 * create the following state: all the pages that were in the object
-	 * have either been free'd or they are marked PG_BUSY and in the 
+	 * have either been free'd or they are marked PG_BUSY and in the
 	 * middle of an async io. If we still have pages we set the "relkill"
-	 * state, so that in the case the vnode gets terminated we know 
+	 * state, so that in the case the vnode gets terminated we know
 	 * to leave it alone. Otherwise we'll kill the vnode when it's empty.
 	 */
 	uvn->u_flags |= UVM_VNODE_RELKILL;
@@ -1491,7 +1491,7 @@ uvm_vnp_sync(struct mount *mp)
 
 	/*
 	 * step 2: build up a simpleq of uvns of interest based on the
-	 * write list.   we gain a reference to uvns of interest. 
+	 * write list.   we gain a reference to uvns of interest.
 	 */
 	SIMPLEQ_INIT(&uvn_sync_q);
 	LIST_FOREACH(uvn, &uvn_wlist, u_wlist) {

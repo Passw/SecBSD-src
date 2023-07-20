@@ -177,7 +177,7 @@ pctrioctl(dev_t dev, u_long cmd, caddr_t data, int fflag, struct proc *p)
 	case PCIOCRD:
 	{
 		struct pctrst *st = (struct pctrst *)data;
-		
+
 		if (usepctr)
 			pctrrd(st);
 		else if (usep5ctr)

@@ -2230,10 +2230,10 @@ again:
 				txdr_hyper(dp->d_fileno, tl);
 			else
 				*tl = txdr_unsigned((u_int32_t)dp->d_fileno);
-	
+
 			/* And copy the name */
 			nfsm_strtombuf(&info.nmi_mb, dp->d_name, nlen);
-	
+
 			/* Finish off the record */
 			if (info.nmi_v3) {
 				tl = nfsm_build(&info.nmi_mb, 2*NFSX_UNSIGNED);
@@ -2405,7 +2405,7 @@ again:
 	 *     entryplus3  *entries;
 	 *     bool eof;
 	 *  }
-	 */	
+	 */
 	dirlen = len = NFSX_V3POSTOPATTR + NFSX_V3COOKIEVERF + 2 * NFSX_UNSIGNED;
 	nfsm_reply(cnt);
 	nfsm_srvpostop_attr(nfsd, getret, &at, &info);
@@ -2519,7 +2519,7 @@ nfsrv_commit(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	int error = 0, rdonly, for_ret = 1, aft_ret = 1, cnt;
 	char *cp2;
 	u_quad_t off;
-	
+
 	info.nmi_mreq = NULL;
 	info.nmi_mrep = nfsd->nd_mrep;
 	info.nmi_md = nfsd->nd_md;
@@ -2803,7 +2803,7 @@ nfsrv_null(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 int
 nfsrv_noop(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
     struct proc *procp, struct mbuf **mrq)
-{	
+{
 	struct nfsm_info	info;
 	int error;
 

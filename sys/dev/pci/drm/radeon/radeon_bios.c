@@ -92,7 +92,7 @@ static bool igp_read_bios_from_vram(struct radeon_device *rdev)
 	bus_size_t size = 256 * 1024; /* ??? */
 	bus_space_handle_t bsh;
 	bus_space_tag_t bst = rdev->memt;
-	
+
 	if (!(rdev->flags & RADEON_IS_IGP))
 		if (!radeon_card_posted(rdev))
 			return false;
@@ -170,7 +170,7 @@ static bool radeon_read_bios(struct radeon_device *rdev)
 		printf(": can't map PCI ROM (%d)\n", rc);
 		return false;
 	}
-	
+
 	rdev->bios = kmalloc(size, GFP_KERNEL);
 	bus_space_read_region_1(rdev->memt, romh, 0, rdev->bios, size);
 	bus_space_unmap(rdev->memt, romh, size);
@@ -224,7 +224,7 @@ static bool radeon_read_platform_bios(struct radeon_device *rdev)
 	bus_size_t size = 256 * 1024; /* ??? */
 	uint8_t *found = NULL;
 	int i;
-	
+
 	if (!(rdev->flags & RADEON_IS_IGP))
 		if (!radeon_card_posted(rdev))
 			return false;
@@ -244,7 +244,7 @@ static bool radeon_read_platform_bios(struct radeon_device *rdev)
 			found = bios + i;
 			break;
 		}
-			
+
 	}
 	if (found == NULL) {
 		DRM_ERROR("bios size zero or checksum mismatch\n");
@@ -524,7 +524,7 @@ static bool r600_read_disabled_bios(struct radeon_device *rdev)
 	uint32_t ctxsw_vid_lower_gpio_cntl;
 	uint32_t lower_gpio_enable;
 	bool r;
-	
+
 	/*
 	 * Some machines with RV610 running amd64 pass initial checks but later
 	 * fail atombios specific checks.  Return early here so the bios will be

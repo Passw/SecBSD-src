@@ -150,7 +150,7 @@ ahc_isa_irq(bus_space_tag_t iot, bus_space_handle_t ioh)
 	int irq;
 	u_char intdef;
 	u_char hcntrl;
-	
+
 	/* Pause the card preserving the IRQ type */
 	hcntrl = bus_space_read_1(iot, ioh, HCNTRL) & IRQMS;
 	bus_space_write_1(iot, ioh, HCNTRL, hcntrl | PAUSE);
@@ -284,7 +284,7 @@ ahc_isa_match(struct isa_attach_args *ia, bus_addr_t iobase)
  */
 int
 ahc_isa_probe(struct device *parent, void *match, void *aux)
-{       
+{
 	struct isa_attach_args *ia = aux;
 	struct ahc_isa_slot *as;
 
@@ -341,15 +341,15 @@ ahc_isa_attach(struct device *parent, struct device *self, void *aux)
 	char idstring[EISA_IDSTRINGLEN];
 	const char *model;
 	u_int intdef;
-	
+
 	ahc_set_name(ahc, ahc->sc_dev.dv_xname);
 	ahc_set_unit(ahc, ahc->sc_dev.dv_unit);
-	
+
 	/* set dma tags */
 	ahc->parent_dmat = ia->ia_dmat;
-	
-	ahc->chip = AHC_VL; /* We are a VL Bus Controller */  
-	
+
+	ahc->chip = AHC_VL; /* We are a VL Bus Controller */
+
 	if (bus_space_map(iot, ia->ia_iobase, ia->ia_iosize, 0, &ioh))
 		panic("ahc_isa_attach: can't map slot i/o addresses");
 	if (!ahc_isa_idstring(iot, ioh, idstring))
@@ -365,13 +365,13 @@ ahc_isa_attach(struct device *parent, struct device *self, void *aux)
 		panic("ahc_isa_attach: Unknown device type %s", idstring);
 	}
 	printf(": %s\n", model);
-	
+
 	ahc->channel = 'A';
 	ahc->chip = AHC_AIC7770;
 	ahc->features = AHC_AIC7770_FE;
 	ahc->bugs |= AHC_TMODE_WIDEODD_BUG;
 	ahc->flags |= AHC_PAGESCBS;
-	
+
 	/* set tag and handle */
 	ahc->tag = iot;
 	ahc->bsh = ioh;
@@ -387,26 +387,26 @@ ahc_isa_attach(struct device *parent, struct device *self, void *aux)
 
 	if (ahc_reset(ahc, /*reinit*/FALSE) != 0)
 		return;
-	
+
 	/* See if we are edge triggered */
 	intdef = ahc_inb(ahc, INTDEF);
 	if ((intdef & EDGE_TRIG) != 0)
 		ahc->flags |= AHC_EDGE_INTERRUPT;
 
 	/*
-	 * Now that we know we own the resources we need, do the 
+	 * Now that we know we own the resources we need, do the
 	 * card initialization.
 	 */
 	aha2840_load_seeprom(ahc);
 
-	/*      
+	/*
 	 * See if we have a Rev E or higher aic7770. Anything below a
 	 * Rev E will have a R/O autoflush disable configuration bit.
 	 * It's still not clear exactly what is different about the Rev E.
 	 * We think it allows 8 bit entries in the QOUTFIFO to support
 	 * "paging" SCBs so you can have more than 4 commands active at
 	 * once.
-	 */     
+	 */
 	{
 		char *id_string;
 		u_char sblkctl;
@@ -448,7 +448,7 @@ ahc_isa_attach(struct device *parent, struct device *self, void *aux)
 		ahc_free(ahc);
 		return;
 	}
-	
+
 	/*
 	 * Link this softc in with all other ahc instances.
 	 */
@@ -474,7 +474,7 @@ ahc_isa_attach(struct device *parent, struct device *self, void *aux)
 	}
 
 	ahc_intr_enable(ahc, TRUE);
-	
+
 	/* Attach sub-devices - always succeeds */
 	ahc_attach(ahc);
 }
@@ -496,7 +496,7 @@ aha2840_load_seeprom(struct ahc_softc *ahc)
 	sd.sd_regsize = 1;
 	sd.sd_control_offset = SEECTL_2840;
 	sd.sd_status_offset = STATUS_2840;
-	sd.sd_dataout_offset = STATUS_2840;		
+	sd.sd_dataout_offset = STATUS_2840;
 	sd.sd_chip = C46;
 	sd.sd_MS = 0;
 	sd.sd_RDY = EEPROM_TF;
@@ -508,7 +508,7 @@ aha2840_load_seeprom(struct ahc_softc *ahc)
 	if (bootverbose)
 		printf("%s: Reading SEEPROM...", ahc_name(ahc));
 	have_seeprom = read_seeprom(&sd, 
-				    (u_int16_t *)&sc, 
+				    (u_int16_t *)&sc,
 				    /*start_addr*/0,
 				    sizeof(sc)/2);
 
@@ -565,7 +565,7 @@ aha2840_load_seeprom(struct ahc_softc *ahc)
 		if (sc.adapter_control & CFRESETB)
 			scsi_conf |= RESET_SCSI;
 
-		if (sc.bios_control & CF284XEXTEND)		
+		if (sc.bios_control & CF284XEXTEND)
 			ahc->flags |= AHC_EXTENDED_TRANS_A;
 		/* Set SCSICONF info */
 		ahc_outb(ahc, SCSICONF, scsi_conf);

@@ -219,7 +219,7 @@ ntfs_reclaim(void *v)
 
 	if ((error = ntfs_ntget(ip)) != 0)
 		return (error);
-	
+
 	/* Purge old data structures associated with the inode. */
 	cache_purge(vp);
 
@@ -579,7 +579,7 @@ ntfs_lookup(void *v)
 		DPRINTF("ntfs_lookup: parentdir: %u\n",
 		    vap->va_a_name->n_pnumber);
 		error = VFS_VGET(ntmp->ntm_mountp,
-				 vap->va_a_name->n_pnumber,ap->a_vpp); 
+				 vap->va_a_name->n_pnumber,ap->a_vpp);
 		ntfs_ntvattrrele(vap);
 		if (error) {
 			if (vn_lock(dvp, LK_EXCLUSIVE | LK_RETRY) == 0)

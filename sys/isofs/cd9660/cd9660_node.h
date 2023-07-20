@@ -76,7 +76,7 @@ struct iso_node {
 	doff_t	iso_start;
 
 	ISO_RRIP_INODE  inode;
-	struct cluster_info i_ci; 
+	struct cluster_info i_ci;
 };
 
 #define	i_forw		i_chain[0]

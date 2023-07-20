@@ -135,7 +135,7 @@ ieee80211_ra_use_ht_sgi(struct ieee80211_node *ni)
 			return 1;
 	} else if (ni->ni_flags & IEEE80211_NODE_HT_SGI20)
 		return 1;
-	
+
 	return 0;
 }
 

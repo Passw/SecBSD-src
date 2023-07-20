@@ -146,7 +146,7 @@ gcsc_chip_map(struct pciide_softc *sc, struct pci_attach_args *pa)
 		pciide_unmap_compat_intr(pa, cp, 0, interface);
 		return;
 	}
-	
+
 	gcsc_setup_channel(&cp->wdc_channel);
 }
 

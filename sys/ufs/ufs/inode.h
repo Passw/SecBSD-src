@@ -130,10 +130,10 @@ struct inode {
 };
 
 struct inode_vtbl {
-	int (* iv_truncate)(struct inode *, off_t, int, 
+	int (* iv_truncate)(struct inode *, off_t, int,
 	    struct ucred *);
 	int (* iv_update)(struct inode *, int waitfor);
-	int (* iv_inode_alloc)(struct inode *, mode_t mode, 
+	int (* iv_inode_alloc)(struct inode *, mode_t mode,
 	    struct ucred *, struct vnode **);
 	int (* iv_inode_free)(struct inode *, ufsino_t ino, mode_t mode);
 	int (* iv_buf_alloc)(struct inode *, off_t, int, struct ucred *,
@@ -157,7 +157,7 @@ struct inode_vtbl {
 #define UFS_BUF_ALLOC(ip, startoffset, size, cred, flags, bpp) \
     ((ip)->i_vtbl->iv_buf_alloc)((ip), (startoffset), (size), (cred), \
         (flags), (bpp))
- 
+
 #define UFS_BUFATOFF(ip, offset, res, bpp) \
     ((ip)->i_vtbl->iv_bufatoff)((ip), (offset), (res), (bpp))
 

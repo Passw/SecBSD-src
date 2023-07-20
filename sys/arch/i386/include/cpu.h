@@ -84,8 +84,8 @@ struct cpu_info {
 	struct schedstate_percpu ci_schedstate; /* scheduler state */
 	struct cpu_info *ci_next;	/* next cpu */
 
-	/* 
-	 * Public members. 
+	/*
+	 * Public members.
 	 */
 	struct proc *ci_curproc; 	/* current owner of the processor */
 	cpuid_t ci_cpuid; 		/* our CPU ID */
@@ -178,7 +178,7 @@ struct cpu_info {
  * roles (mostly relating to hardclock handling); we distinguish
  * between the processor which booted us, and the processor currently
  * holding the "primary" role just to give us the flexibility later to
- * change primaries should we be sufficiently twisted.  
+ * change primaries should we be sufficiently twisted.
  */
 
 #define	CPUF_BSP	0x0001		/* CPU is the original BSP */
@@ -473,7 +473,7 @@ void	mp_setperf_init(void);
 int	cpu_paenable(void *);
 #endif /* _KERNEL */
 
-/* 
+/*
  * CTL_MACHDEP definitions.
  */
 #define	CPU_CONSDEV		1	/* dev_t: console terminal device */

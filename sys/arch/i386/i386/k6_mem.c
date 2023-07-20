@@ -108,7 +108,7 @@ k6_mrinit(struct mem_range_softc *sc)
 	reg = rdmsr(UWCCR);
 	for (d = 0; d < sc->mr_ndesc; d++) {
 		u_int32_t one = (reg & (0xffffffff << (32 * d))) >> (32 * d);
-		
+
 		k6_reg_get(one, addr, mask, wc, uc);
 		sc->mr_desc[d].mr_base = addr;
 		sc->mr_desc[d].mr_len = ffs(mask) << 17;
@@ -117,7 +117,7 @@ k6_mrinit(struct mem_range_softc *sc)
 		if (uc)
 			sc->mr_desc[d].mr_flags |= MDF_UNCACHEABLE;
 	}
-	
+
 	printf("mtrr: K6-family MTRR support (%d registers)\n", sc->mr_ndesc);
 }
 
@@ -160,7 +160,7 @@ k6_mrset(struct mem_range_softc *sc, struct mem_range_desc *desc, int *arg)
 	}
 
 out:
-	
+
 	s = intr_disable();
 	wbinvd();
 	reg = rdmsr(UWCCR);

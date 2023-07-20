@@ -128,7 +128,7 @@ db_write_text(vaddr_t addr, size_t size, char *data)
 		 */
 		pmap_update_pg(pgva);
 		pmap_pte_setbits(addr, bits, PG_RW);
-		
+
 	} while (size != 0);
 }
 

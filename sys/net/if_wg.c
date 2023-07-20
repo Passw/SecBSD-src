@@ -1577,7 +1577,7 @@ wg_decap(struct wg_softc *sc, struct mbuf *m)
 	peer = t->t_peer;
 
 	/*
-	 * Likewise to wg_encap, we pass a buf and buf length to 
+	 * Likewise to wg_encap, we pass a buf and buf length to
 	 * noise_remote_decrypt. Again, possible to teach it about mbufs
 	 * but need to get over the p_decap_queue situation first. However,
 	 * we do not need to allocate a new mbuf as the decrypted packet is

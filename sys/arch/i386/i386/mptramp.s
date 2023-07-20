@@ -151,7 +151,7 @@ _TRMP_LABEL(.Lmp_startup)
 	movl	%cr4,%eax
 	orl	$CR4_PAE,%eax
 	movl	%eax, %cr4
-	
+
 	movl	$MSR_EFER,%ecx
 	rdmsr
 	orl	$EFER_NXE, %eax

@@ -55,7 +55,7 @@ enum ieee80211_akm {
 
 #define IEEE80211_PMK_LEN	32
 
-#ifdef _KERNEL 
+#ifdef _KERNEL
 
 static __inline int
 ieee80211_is_8021x_akm(enum ieee80211_akm akm)

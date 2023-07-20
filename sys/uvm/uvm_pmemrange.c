@@ -486,7 +486,7 @@ uvm_pmr_insert(struct uvm_pmemrange *pmr, struct vm_page *pg, int no_join)
  * => pg: the range at which to start the search.
  * => boundary: the page number boundary specification (0 = no boundary).
  * => pmr: the pmemrange of the page.
- * 
+ *
  * This function returns 1 before the next range, so if you want to have the
  * next range, you need to run TAILQ_NEXT(result, pageq) after calling.
  * The reason is that this way, the length of the segment is easily
@@ -548,7 +548,7 @@ uvm_pmr_findnextsegment(struct uvm_pmemrange *pmr,
  * => pg: the range at which to start the search.
  * => boundary: the page number boundary specification (0 = no boundary).
  * => pmr: the pmemrange of the page.
- * 
+ *
  * This function returns 1 after the previous range, so if you want to have the
  * previous range, you need to run TAILQ_NEXT(result, pageq) after calling.
  * The reason is that this way, the length of the segment is easily
@@ -1678,7 +1678,7 @@ uvm_pmr_init(void)
 	/* By default, one range for the entire address space. */
 	new_pmr = uvm_pmr_allocpmr();
 	new_pmr->low = 0;
-	new_pmr->high = atop((paddr_t)-1) + 1; 
+	new_pmr->high = atop((paddr_t)-1) + 1;
 
 	RBT_INSERT(uvm_pmemrange_addr, &uvm.pmr_control.addr, new_pmr);
 	uvm_pmemrange_use_insert(&uvm.pmr_control.use, new_pmr);

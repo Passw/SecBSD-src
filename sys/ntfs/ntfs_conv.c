@@ -144,5 +144,5 @@ ntfs_utf8_wcmp(wchar wc1, wchar wc2)
 	if (wc1 == wc2)
 		return 0;
 	else
-		return (int) wc1 - (int) wc2; 
+		return (int) wc1 - (int) wc2;
 }

@@ -171,7 +171,7 @@ dkcsumattach(void)
 #ifdef DEBUG
 			printf("dkcsum: %s has no matching BIOS drive\n",
 			    dv->dv_xname);
-#endif	
+#endif
 			continue;
 		}
 

@@ -110,7 +110,7 @@ mfs_mount(struct mount *mp, const char *path, void *data,
 			fs->fs_ronly = 0;
 #ifdef EXPORTMFS
 		if (args && args->fspec == NULL)
-			return (vfs_export(mp, &ump->um_export, 
+			return (vfs_export(mp, &ump->um_export,
 			    &args->export_info));
 #endif
 		return (0);

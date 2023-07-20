@@ -175,7 +175,7 @@ struct {
  */
 struct bus_dma_tag pci_bus_dma_tag = {
 	NULL,			/* _cookie */
-	_bus_dmamap_create, 
+	_bus_dmamap_create,
 	_bus_dmamap_destroy,
 	_bus_dmamap_load,
 	_bus_dmamap_load_mbuf,
@@ -595,7 +595,7 @@ pci_mode_detect(void)
 	return (pci_mode);
 not1:
 	outl(PCI_MODE1_ADDRESS_REG, sav);
- 
+
 	/*
 	 * This mode 2 check is quite weak (and known to give false
 	 * positives on some Compaq machines).
@@ -865,7 +865,7 @@ pci_intr_establish(pci_chipset_tag_t pc, pci_intr_handle_t ih, int level,
 
 #if NIOAPIC > 0
 	if (l != -1 && ih.line & APIC_INT_VIA_APIC)
-		return (apic_intr_establish(ih.line, IST_LEVEL, level, func, 
+		return (apic_intr_establish(ih.line, IST_LEVEL, level, func,
 		    arg, what));
 #endif
 	if (l == 0 || l >= ICU_LEN || l == 2)
@@ -888,7 +888,7 @@ pci_intr_disestablish(pci_chipset_tag_t pc, void *cookie)
 		pcitag_t tag = { .mode1 = ih->ih_pin };
 		pcireg_t reg;
 		int off;
-		
+
 		if (pci_get_capability(pc, tag, PCI_CAP_MSI, &off, &reg))
 			pci_conf_write(pc, tag, off, reg &= ~PCI_MSI_MC_MSIE);
 

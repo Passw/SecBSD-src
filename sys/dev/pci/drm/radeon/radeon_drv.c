@@ -726,7 +726,7 @@ const struct cfattach radeondrm_ca = {
         radeondrm_detach_kms, radeondrm_activate_kms
 };
 
-struct cfdriver radeondrm_cd = { 
+struct cfdriver radeondrm_cd = {
 	NULL, "radeondrm", DV_DULL
 };
 
@@ -757,7 +757,7 @@ radeondrm_detach_kms(struct device *self, int flags)
 #endif
 
 	radeon_acpi_fini(rdev);
-	
+
 	radeon_modeset_fini(rdev);
 	radeon_device_fini(rdev);
 

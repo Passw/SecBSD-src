@@ -344,7 +344,7 @@ process_sstep(struct proc *p, int sstep)
 		tf->tf_eflags |= PSL_T;
 	else
 		tf->tf_eflags &= ~PSL_T;
-	
+
 	return (0);
 }
 

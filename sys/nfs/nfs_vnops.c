@@ -589,7 +589,7 @@ nfs_getattr(void *v)
 	if (!error)
 		nfsm_loadattr(vp, ap->a_vap);
 	m_freem(info.nmi_mrep);
-nfsmout: 
+nfsmout:
 	return (error);
 }
 
@@ -732,7 +732,7 @@ nfs_setattrrpc(struct vnode *vp, struct vattr *vap, struct ucred *cred,
 		nfsm_loadattr(vp, NULL);
 
 	m_freem(info.nmi_mrep);
-nfsmout: 
+nfsmout:
 	return (error);
 }
 
@@ -970,7 +970,7 @@ dorpc:
 	*vpp = newvp;
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	if (error) {
 		/*
 		 * We get here only because of errors returned by
@@ -1099,7 +1099,7 @@ nfs_readlinkrpc(struct vnode *vp, struct uio *uiop, struct ucred *cred)
 
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	return (error);
 }
 
@@ -1364,7 +1364,7 @@ nfs_mknodrpc(struct vnode *dvp, struct vnode **vpp, struct componentname *cnp,
 		nfsm_wcc_data(dvp, wccflag);
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	if (error) {
 		if (newvp)
 			vput(newvp);
@@ -1472,7 +1472,7 @@ again:
 		nfsm_wcc_data(dvp, wccflag);
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	if (error) {
 		if (newvp) {
 			vput(newvp);
@@ -1623,7 +1623,7 @@ nfs_removerpc(struct vnode *dvp, char *name, int namelen, struct ucred *cred,
 		nfsm_wcc_data(dvp, wccflag);
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	VTONFS(dvp)->n_flag |= NMODIFIED;
 	if (!wccflag)
 		NFS_INVALIDATE_ATTRCACHE(VTONFS(dvp));
@@ -1741,7 +1741,7 @@ nfs_renamerpc(struct vnode *fdvp, char *fnameptr, int fnamelen,
 	}
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	VTONFS(fdvp)->n_flag |= NMODIFIED;
 	VTONFS(tdvp)->n_flag |= NMODIFIED;
 	if (!fwccflag)
@@ -1803,7 +1803,7 @@ nfs_link(void *v)
 		nfsm_wcc_data(dvp, wccflag);
 	}
 	m_freem(info.nmi_mrep);
-nfsmout: 
+nfsmout:
 	pool_put(&namei_pool, cnp->cn_pnbuf);
 	VTONFS(dvp)->n_flag |= NMODIFIED;
 	if (!attrflag)
@@ -1868,7 +1868,7 @@ nfs_symlink(void *v)
 	}
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	if (newvp)
 		vput(newvp);
 	pool_put(&namei_pool, cnp->cn_pnbuf);
@@ -1931,7 +1931,7 @@ nfs_mkdir(void *v)
 		nfsm_wcc_data(dvp, wccflag);
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	VTONFS(dvp)->n_flag |= NMODIFIED;
 	if (!wccflag)
 		NFS_INVALIDATE_ATTRCACHE(VTONFS(dvp));
@@ -1990,7 +1990,7 @@ nfs_rmdir(void *v)
 		nfsm_wcc_data(dvp, wccflag);
 	m_freem(info.nmi_mrep);
 
-nfsmout: 
+nfsmout:
 	pool_put(&namei_pool, cnp->cn_pnbuf);
 	VTONFS(dvp)->n_flag |= NMODIFIED;
 	if (!wccflag)
@@ -2012,7 +2012,7 @@ nfsmout:
 
 
 /*
- * The readdir logic below has a big design bug. It stores the NFS cookie in 
+ * The readdir logic below has a big design bug. It stores the NFS cookie in
  * the returned uio->uio_offset but does not store the verifier (it cannot).
  * Instead, the code stores the verifier in the nfsnode and applies that
  * verifies to all cookies, no matter what verifier was originally with
@@ -2058,7 +2058,7 @@ nfs_readdir(void *v)
 	/*
 	 * First, check for hit on the EOF offset cache
 	 */
-	if (np->n_direofoffset != 0 && 
+	if (np->n_direofoffset != 0 &&
 	    uio->uio_offset == np->n_direofoffset) {
 		if (VOP_GETATTR(vp, &vattr, ap->a_cred, uio->uio_procp) == 0 &&
 		    timespeccmp(&np->n_mtime, &vattr.va_mtime, ==)) {

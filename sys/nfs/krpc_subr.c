@@ -179,7 +179,7 @@ krpc_portmap(struct sockaddr_in *sin, u_int prog, u_int vers, u_int16_t *portp)
 	sin->sin_port = htons(PMAPPORT);
 	error = krpc_call(sin, PMAPPROG, PMAPVERS,
 	    PMAPPROC_GETPORT, &m, NULL, -1);
-	if (error) 
+	if (error)
 		return error;
 
 	if (m->m_len < sizeof(*rdata)) {

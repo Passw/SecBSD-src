@@ -1265,7 +1265,7 @@ struct pfsync_q {
 static struct pfsync_slice *
 pfsync_slice_enter(struct pfsync_softc *sc, const struct pf_state *st)
 {
-	unsigned int idx = st->key[0]->hash % nitems(sc->sc_slices); 
+	unsigned int idx = st->key[0]->hash % nitems(sc->sc_slices);
 	struct pfsync_slice *s = &sc->sc_slices[idx];
 
 	if (!mtx_enter_try(&s->s_mtx)) {

@@ -178,7 +178,7 @@ nfs_statfs(struct mount *mp, struct statfs *sbp, struct proc *p)
 	}
 	copy_statfs_info(sbp, mp);
 	m_freem(info.nmi_mrep);
-nfsmout: 
+nfsmout:
 	vput(vp);
 	crfree(cred);
 	return (error);
@@ -245,7 +245,7 @@ nfs_fsinfo(struct nfsmount *nmp, struct vnode *vp, struct ucred *cred,
 	nmp->nm_flag |= NFSMNT_GOTFSINFO;
 
 	m_freem(info.nmi_mrep);
-nfsmout: 
+nfsmout:
 	return (error);
 }
 

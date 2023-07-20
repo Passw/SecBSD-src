@@ -261,7 +261,7 @@ udf_mountfs(struct vnode *devvp, struct mount *mp, uint32_t lb, struct proc *p)
 
 	bsize = 2048;	/* Should probe the media for its size. */
 
-	/* 
+	/*
 	 * Get the Anchor Volume Descriptor Pointer from sector 256.
 	 * Should also check sector n - 256, n, and 512.
 	 */
@@ -284,7 +284,7 @@ udf_mountfs(struct vnode *devvp, struct mount *mp, uint32_t lb, struct proc *p)
 	mvds_start = letoh32(avdp.main_vds_ex.loc);
 	mvds_end = mvds_start + (letoh32(avdp.main_vds_ex.len) - 1) / bsize;
 	for (sector = mvds_start; sector < mvds_end; sector++) {
-		if ((error = bread(devvp, sector * btodb(bsize), bsize, 
+		if ((error = bread(devvp, sector * btodb(bsize), bsize,
 				   &bp)) != 0) {
 			printf("Can't read sector %d of VDS\n", sector);
 			goto bail;
@@ -308,7 +308,7 @@ udf_mountfs(struct vnode *devvp, struct mount *mp, uint32_t lb, struct proc *p)
 			ump->um_start = ump->um_realstart = letoh32(pd->start_loc);
 		}
 
-		brelse(bp); 
+		brelse(bp);
 		bp = NULL;
 		if ((part_found) && (logvol_found))
 			break;
@@ -371,7 +371,7 @@ udf_mountfs(struct vnode *devvp, struct mount *mp, uint32_t lb, struct proc *p)
 	 */
 
 	if (ISSET(ump->um_flags, UDF_MNT_USES_META))
-		sector = ump->um_meta_start; 
+		sector = ump->um_meta_start;
 	else
 		sector = fsd_offset;
 	udf_vat_map(ump, &sector);
@@ -385,7 +385,7 @@ udf_mountfs(struct vnode *devvp, struct mount *mp, uint32_t lb, struct proc *p)
 		bcopy(&fsd->rootdir_icb, &ump->um_root_icb,
 		    sizeof(struct long_ad));
 		if (ISSET(ump->um_flags, UDF_MNT_USES_META)) {
-			ump->um_root_icb.loc.lb_num += ump->um_meta_start; 
+			ump->um_root_icb.loc.lb_num += ump->um_meta_start;
 			ump->um_root_icb.loc.part_num = part_num;
 		}
 	}
@@ -619,7 +619,7 @@ udf_vget(struct mount *mp, ino_t ino, struct vnode **vpp)
 		bcopy(bp->b_data, up->u_fentry, size + UDF_EXTFENTRY_SIZE);
 	else
 		bcopy(bp->b_data, up->u_fentry, size + UDF_FENTRY_SIZE);
-	
+
 	brelse(bp);
 	bp = NULL;
 

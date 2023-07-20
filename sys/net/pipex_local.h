@@ -205,7 +205,7 @@ struct pipex_session {
 	int ccp_id;				/* [s] CCP packet id */
 	struct pipex_mppe
 	    mppe_recv,				/* MPPE context for incoming */
-	    mppe_send;				/* MPPE context for outgoing */ 
+	    mppe_send;				/* MPPE context for outgoing */
 #endif /*PIPEXMPPE */
 
 	struct cpumem	*stat_counters;

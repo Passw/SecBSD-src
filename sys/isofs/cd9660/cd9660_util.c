@@ -103,7 +103,7 @@ isofncmp(const u_char *fn, int fnlen, const u_char *isofn, int isolen,
 	int i, j;
 	u_char c;
 	const u_char *fnend = fn + fnlen, *isoend = isofn + isolen;
-	
+
 	for (; fn != fnend; fn++) {
 		if (isofn == isoend)
 			return *fn;
@@ -161,14 +161,14 @@ isofntrans(u_char *infn, int infnlen, u_char *outfn, u_short *outfnlen,
 {
 	int fnidx = 0;
 	u_char c, d = '\0', *infnend = infn + infnlen;
-	
+
 	if (assoc) {
 		*outfn++ = ASSOCCHAR;
 		fnidx++;
 	}
 	for (; infn != infnend; fnidx++) {
 		infn += isochar(infn, infnend, joliet_level, &c);
-		
+
 		if (!original && c == ';') {
 			fnidx -= (d == '.');
 			break;

@@ -95,7 +95,7 @@ drmm_kfree(struct drm_device *dev, void *p)
 		}
 	}
 	mtx_leave(&dev->managed.lock);
-	
+
 	if (m != NULL) {
 		free(m->p, M_DRM, m->size);
 		free(m, M_DRM, sizeof(*m));

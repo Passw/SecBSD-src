@@ -135,7 +135,7 @@ pci_read_config_dword(struct pci_dev *pdev, int reg, u32 *val)
 {
 	*val = pci_conf_read(pdev->pc, pdev->tag, reg);
 	return 0;
-} 
+}
 
 static inline int
 pci_read_config_word(struct pci_dev *pdev, int reg, u16 *val)
@@ -145,7 +145,7 @@ pci_read_config_word(struct pci_dev *pdev, int reg, u16 *val)
 	v = pci_conf_read(pdev->pc, pdev->tag, (reg & ~0x2));
 	*val = (v >> ((reg & 0x2) * 8));
 	return 0;
-} 
+}
 
 static inline int
 pci_read_config_byte(struct pci_dev *pdev, int reg, u8 *val)
@@ -155,14 +155,14 @@ pci_read_config_byte(struct pci_dev *pdev, int reg, u8 *val)
 	v = pci_conf_read(pdev->pc, pdev->tag, (reg & ~0x3));
 	*val = (v >> ((reg & 0x3) * 8));
 	return 0;
-} 
+}
 
 static inline int
 pci_write_config_dword(struct pci_dev *pdev, int reg, u32 val)
 {
 	pci_conf_write(pdev->pc, pdev->tag, reg, val);
 	return 0;
-} 
+}
 
 static inline int
 pci_write_config_word(struct pci_dev *pdev, int reg, u16 val)
@@ -174,7 +174,7 @@ pci_write_config_word(struct pci_dev *pdev, int reg, u16 val)
 	v |= (val << ((reg & 0x2) * 8));
 	pci_conf_write(pdev->pc, pdev->tag, (reg & ~0x2), v);
 	return 0;
-} 
+}
 
 static inline int
 pci_write_config_byte(struct pci_dev *pdev, int reg, u8 val)
@@ -319,7 +319,7 @@ static inline int
 pcie_set_readrq(struct pci_dev *pdev, int rrq)
 {
 	uint16_t val;
-	
+
 	pcie_capability_read_word(pdev, PCI_PCIE_DCSR, &val);
 	val &= ~PCI_PCIE_DCSR_MPS;
 	val |= (ffs(rrq) - 8) << 12;

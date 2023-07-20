@@ -174,7 +174,7 @@ nfs_set_naiod(int howmany)
 	want = howmany - nfs_numaiods;
 
 	if (want > 0) {
-		/* Add more. */	
+		/* Add more. */
 		want = min(want, NFS_MAXASYNCDAEMON);
 		while (want > 0) {
 			error = kthread_create(nfs_aiod, NULL, NULL, "nfsaio");

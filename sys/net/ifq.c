@@ -824,7 +824,7 @@ ifiq_process(void *arg)
 }
 
 int
-net_ifiq_sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, 
+net_ifiq_sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp,
     void *newp, size_t newlen)
 {
 	int error = EOPNOTSUPP;

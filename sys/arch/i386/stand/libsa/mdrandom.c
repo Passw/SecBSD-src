@@ -1,7 +1,7 @@
 /*	$OpenBSD: mdrandom.c,v 1.3 2020/06/19 15:00:45 naddy Exp $	*/
 
 /*
- * Copyright (c) 2020 Theo de Raadt 
+ * Copyright (c) 2020 Theo de Raadt
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above

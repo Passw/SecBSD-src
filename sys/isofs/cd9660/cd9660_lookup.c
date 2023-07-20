@@ -131,7 +131,7 @@ cd9660_lookup(void *v)
 	dp = VTOI(vdp);
 	imp = dp->i_mnt;
 	lockparent = flags & LOCKPARENT;
-	
+
 	/*
 	 * Check accessibility of directory.
 	 */
@@ -141,7 +141,7 @@ cd9660_lookup(void *v)
 	if ((flags & ISLASTCN) && (vdp->v_mount->mnt_flag & MNT_RDONLY) &&
 	    (cnp->cn_nameiop == DELETE || cnp->cn_nameiop == RENAME))
 		return (EROFS);
-	
+
 	/*
 	 * We now have a segment name to search for, and a directory to search.
 	 *
@@ -162,7 +162,7 @@ cd9660_lookup(void *v)
 		len--;
 		name++;
 	}
-	
+
 	/*
 	 * If there is cached information on a previous search of
 	 * this directory, pick up where we last left off.
@@ -183,14 +183,14 @@ cd9660_lookup(void *v)
 	} else {
 		dp->i_offset = dp->i_diroff;
 		if ((entryoffsetinblock = dp->i_offset & bmask) &&
-		    (error = cd9660_bufatoff(dp, (off_t)dp->i_offset, NULL, 
+		    (error = cd9660_bufatoff(dp, (off_t)dp->i_offset, NULL,
 			&bp)))
 				return (error);
 		numdirpasses = 2;
 		iso_nchstats.ncs_2passes++;
 	}
 	endsearch = dp->i_size;
-	
+
 searchloop:
 	while (dp->i_offset < endsearch) {
 		/*
@@ -212,7 +212,7 @@ searchloop:
 		 */
 		ep = (struct iso_directory_record *)
 			((char *)bp->b_data + entryoffsetinblock);
-		
+
 		reclen = isonum_711(ep->length);
 		if (reclen == 0) {
 			/* skip to next block, if any */
@@ -220,21 +220,21 @@ searchloop:
 			    (dp->i_offset & ~bmask) + imp->logical_block_size;
 			continue;
 		}
-		
+
 		if (reclen < ISO_DIRECTORY_RECORD_SIZE)
 			/* illegal entry, stop */
 			break;
-		
+
 		if (entryoffsetinblock + reclen > imp->logical_block_size)
 			/* entries are not allowed to cross boundaries */
 			break;
-		
+
 		namelen = isonum_711(ep->name_len);
-		
+
 		if (reclen < ISO_DIRECTORY_RECORD_SIZE + namelen)
 			/* illegal entry, stop */
 			break;
-		
+
 		/*
 		 * Check for a name match.
 		 */
@@ -256,7 +256,7 @@ searchloop:
 					if (namelen != 1
 					    || ep->name[0] != 0)
 						goto notfound;
-				} else if (!(res = isofncmp(name, len, 
+				} else if (!(res = isofncmp(name, len,
 				    ep->name, namelen, imp->joliet_level))) {
 					if (isonum_711(ep->flags)&2)
 						ino = isodirino(ep, imp);
@@ -335,11 +335,11 @@ notfound:
 	if (nameiop == CREATE || nameiop == RENAME)
 		return (EJUSTRETURN);
 	return (ENOENT);
-	
+
 found:
 	if (numdirpasses == 2)
 		iso_nchstats.ncs_pass2++;
-	
+
 	/*
 	 * Found component in pathname.
 	 * If the final component of path name, save information
@@ -347,7 +347,7 @@ found:
 	 */
 	if ((flags & ISLASTCN) && nameiop == LOOKUP)
 		dp->i_diroff = dp->i_offset;
-	
+
 	/*
 	 * Step through the translation in the name.  We do not `iput' the
 	 * directory because we may need it again if a symbolic link
@@ -407,7 +407,7 @@ found:
 		}
 		*vpp = tdp;
 	}
-	
+
 	/*
 	 * Insert name into cache if appropriate.
 	 */
@@ -422,7 +422,7 @@ found:
  * remaining space in the directory.
  */
 int
-cd9660_bufatoff(struct iso_node *ip, off_t offset, char **res, 
+cd9660_bufatoff(struct iso_node *ip, off_t offset, char **res,
     struct buf **bpp)
 {
 	struct iso_mnt *imp;
@@ -434,7 +434,7 @@ cd9660_bufatoff(struct iso_node *ip, off_t offset, char **res,
 	imp = ip->i_mnt;
 	lbn = lblkno(imp, offset);
 	bsize = blksize(imp, ip, lbn);
-	
+
 	if ((error = bread(vp, lbn, bsize, &bp)) != 0) {
 		brelse(bp);
 		*bpp = NULL;

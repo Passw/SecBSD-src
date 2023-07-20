@@ -123,7 +123,7 @@ struct uvm_pagerops {
 void		uvm_pager_dropcluster(struct uvm_object *, struct vm_page *,
 		    struct vm_page **, int *, int);
 void		uvm_pager_init(void);
-int		uvm_pager_put(struct uvm_object *, struct vm_page *, 
+int		uvm_pager_put(struct uvm_object *, struct vm_page *,
 		    struct vm_page ***, int *, int, voff_t, voff_t);
 
 

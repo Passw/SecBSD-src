@@ -27,10 +27,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * 
+ *
  * Extended and adapted for UDFv2.50+ bij Reinoud Zandijk based on the
  * original by Scott Long.
- * 
+ *
  * 20030508 Made some small typo and explanatory comments
  * 20030510 Added UDF 2.01 structures
  * 20030519 Added/correct comments on multi-partitioned logical volume space

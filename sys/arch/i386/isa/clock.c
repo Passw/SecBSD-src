@@ -182,7 +182,7 @@ startclocks(void)
 
 	/* Check diagnostic status */
 	if ((s = mc146818_read(NULL, NVRAM_DIAG)) != 0)	/* XXX softc */
-		printf("RTC BIOS diagnostic error %b\n", (unsigned int) s, 
+		printf("RTC BIOS diagnostic error %b\n", (unsigned int) s,
 		    NVRAM_DIAG_BITS);
 }
 
@@ -578,7 +578,7 @@ rtcgettime(struct todr_chip_handle *handle, struct timeval *tv)
 	mc_todregs rtclk;
 	struct clock_ymdhms dt;
 	int s;
-	
+
 	s = splclock();
 	if (rtcget(&rtclk)) {
 		splx(s);

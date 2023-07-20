@@ -167,7 +167,7 @@ ieee80211_input_hwdecrypt(struct ieee80211com *ic, struct ieee80211_node *ni,
 	k = ieee80211_get_rxkey(ic, m, ni);
 	if (k == NULL)
 		return NULL;
-	
+
 	wh = mtod(m, struct ieee80211_frame *);
 	hdrlen = ieee80211_get_hdrlen(wh);
 
@@ -343,7 +343,7 @@ ieee80211_inputm(struct ifnet *ifp, struct mbuf *m, struct ieee80211_node *ni,
 			}
 		}
 #endif
-		/* 
+		/*
 		 * If Block Ack was explicitly requested, check
 		 * if we have a BA agreement for this RA/TID.
 		 */
@@ -359,7 +359,7 @@ ieee80211_inputm(struct ifnet *ifp, struct mbuf *m, struct ieee80211_node *ni,
 			goto err;
 		}
 
-		/* 
+		/*
 		 * Check if we have an explicit or implicit
 		 * Block Ack Request for a valid BA agreement.
 		 */
@@ -841,11 +841,11 @@ ieee80211_input_ba(struct ieee80211com *ic, struct mbuf *m,
 		ic->ic_stats.is_ht_rx_frame_above_ba_winend++;
 		count = (sn - ba->ba_winend) & 0xfff;
 		if (count > ba->ba_winsize) {
-			/* 
+			/*
 			 * Check whether we're consistently behind the window,
 			 * and let the window move forward if necessary.
 			 */
-			if (ba->ba_winmiss < IEEE80211_BA_MAX_WINMISS) { 
+			if (ba->ba_winmiss < IEEE80211_BA_MAX_WINMISS) {
 				if (ba->ba_missedsn == ((sn - 1) & 0xfff))
 					ba->ba_winmiss++;
 				else
@@ -893,7 +893,7 @@ ieee80211_input_ba(struct ieee80211com *ic, struct mbuf *m,
 	ieee80211_input_ba_flush(ic, ni, ba, ml);
 }
 
-/* 
+/*
  * Forward buffered frames with sequence number lower than max_seq.
  * See 802.11-2012 9.21.7.6.2 b.
  */
@@ -961,7 +961,7 @@ ieee80211_input_ba_flush(struct ieee80211com *ic, struct ieee80211_node *ni,
 		timeout_add_msec(&ba->ba_gap_to, IEEE80211_BA_GAP_TIMEOUT);
 }
 
-/* 
+/*
  * Forcibly move the BA window forward to remove a leading gap which has
  * been causing frames to linger in the reordering buffer for too long.
  * A leading gap will occur if a particular A-MPDU subframe never arrives
@@ -1004,7 +1004,7 @@ ieee80211_input_ba_gap_timeout(void *arg)
 		if_input(&ic->ic_if, &ml);
 	}
 
-	splx(s);	
+	splx(s);
 }
 
 
@@ -1182,7 +1182,7 @@ ieee80211_amsdu_decap_validate(struct ieee80211com *ic, struct mbuf *m,
 	const uint8_t llc_hdr_mac[ETHER_ADDR_LEN] = {
 		/* MAC address matching the 802.2 LLC header. */
 		LLC_SNAP_LSAP, LLC_SNAP_LSAP, LLC_UI, 0, 0, 0
-	}; 
+	};
 
 	/*
 	 * We are sorry, but this particular MAC address cannot be used.
@@ -1299,13 +1299,13 @@ ieee80211_amsdu_decap(struct ieee80211com *ic, struct mbuf *m,
 		}
 
 		ml_enqueue(&subframes, m);
-	
+
 		m = n;
 		/* remove padding */
 		pad = ((len + 3) & ~3) - len;
 		m_adj(m, pad);
 	}
-	
+
 	while ((n = ml_dequeue(&subframes)) != NULL)
 		ieee80211_enqueue_data(ic, n, ni, mcast, ml);
 
@@ -1895,7 +1895,7 @@ ieee80211_recv_probe_resp(struct ieee80211com *ic, struct mbuf *m,
 				ic->ic_updatedtim(ic);
 		}
 
-		/* 
+		/*
 		 * Reset management timer. If it is non-zero in RUN state, the
 		 * driver sent a probe request after a missed beacon event.
 		 * This probe response indicates the AP is still serving us
