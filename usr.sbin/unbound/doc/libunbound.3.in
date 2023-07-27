@@ -115,14 +115,14 @@
 \fBub_process\fR(\fIstruct ub_ctx*\fR ctx);
 .LP
 \fIint\fR
-\fBub_resolve\fR(\fIstruct ub_ctx*\fR ctx, \fIchar*\fR name, 
+\fBub_resolve\fR(\fIstruct ub_ctx*\fR ctx, \fIchar*\fR name,
 .br
            \fIint\fR rrtype, \fIint\fR rrclass, \fIstruct ub_result**\fR result);
 .LP
 \fIint\fR
-\fBub_resolve_async\fR(\fIstruct ub_ctx*\fR ctx, \fIchar*\fR name, 
+\fBub_resolve_async\fR(\fIstruct ub_ctx*\fR ctx, \fIchar*\fR name,
 .br
-                 \fIint\fR rrtype, \fIint\fR rrclass, \fIvoid*\fR mydata, 
+                 \fIint\fR rrtype, \fIint\fR rrclass, \fIvoid*\fR mydata,
 .br
                  \fIub_callback_type\fR callback, \fIint*\fR async_id);
 .LP
@@ -150,8 +150,8 @@
 \fIint\fR
 \fBub_ctx_data_remove\fR(\fIstruct ub_ctx*\fR ctx, \fIchar*\fR data);
 .SH "DESCRIPTION"
-.B Unbound 
-is an implementation of a DNS resolver, that does caching and 
+.B Unbound
+is an implementation of a DNS resolver, that does caching and
 DNSSEC validation. This is the library API, for using the \-lunbound library.
 The server daemon is described in \fIunbound\fR(8).
 The library works independent from a running unbound server, and
@@ -164,22 +164,22 @@ between calls. The user must maintain it, creating it with
 .B ub_ctx_create
 and deleting it with
 .B ub_ctx_delete\fR.
-It can be created and deleted at any time. Creating it anew removes any 
+It can be created and deleted at any time. Creating it anew removes any
 previous configuration (such as trusted keys) and clears any cached results.
 .P
-The functions are thread\-safe, and a context can be used in a threaded (as 
-well as in a non\-threaded) environment. Also resolution (and validation) 
-can be performed blocking and non\-blocking (also called asynchronous). 
-The async method returns from the call immediately, so that processing 
-can go on, while the results become available later. 
+The functions are thread\-safe, and a context can be used in a threaded (as
+well as in a non\-threaded) environment. Also resolution (and validation)
+can be performed blocking and non\-blocking (also called asynchronous).
+The async method returns from the call immediately, so that processing
+can go on, while the results become available later.
 .P
 The functions are discussed in turn below.
 .SH "FUNCTIONS"
-.TP 
+.TP
 .B ub_ctx_create
 Create a new context, initialised with defaults.
-The information from /etc/resolv.conf and /etc/hosts is not utilised 
-by default. Use 
+The information from /etc/resolv.conf and /etc/hosts is not utilised
+by default. Use
 .B ub_ctx_resolvconf
 and
 .B ub_ctx_hosts
@@ -214,10 +214,10 @@ application has to ensure that ub_ctx_config is not called in parallel by
 the different instances.
 .TP
 .B ub_ctx_set_fwd
-Set machine to forward DNS queries to, the caching resolver to use. 
-IP4 or IP6 address. Forwards all DNS requests to that machine, which 
-is expected to run a recursive resolver. If the proxy is not 
-DNSSEC capable, validation may fail. Can be called several times, in 
+Set machine to forward DNS queries to, the caching resolver to use.
+IP4 or IP6 address. Forwards all DNS requests to that machine, which
+is expected to run a recursive resolver. If the proxy is not
+DNSSEC capable, validation may fail. Can be called several times, in
 that case the addresses are used as backup servers.
 At this time it is only possible to set configuration before the
 first resolve is done.
@@ -232,7 +232,7 @@ At this time it is only possible to set configuration before the
 first resolve is done.
 .TP
 .B ub_ctx_set_tls
-Enable DNS over TLS (DoT) for machines set with 
+Enable DNS over TLS (DoT) for machines set with
 .B ub_ctx_set_fwd.
 At this time it is only possible to set configuration before the
 first resolve is done.
@@ -245,15 +245,15 @@ Usually "/etc/resolv.conf". Uses those nameservers as caching proxies.
 If they do not support DNSSEC, validation may fail.
 Only nameservers are picked up, the searchdomain, ndots and other
 settings from \fIresolv.conf\fR(5) are ignored.
-If fname NULL is passed, "/etc/resolv.conf" is used (if on Windows, 
+If fname NULL is passed, "/etc/resolv.conf" is used (if on Windows,
 the system\-wide configured nameserver is picked instead).
 At this time it is only possible to set configuration before the
 first resolve is done.
 .TP
 .B ub_ctx_hosts
 Read list of hosts from the filename given.
-Usually "/etc/hosts". When queried for, these addresses are not marked 
-DNSSEC secure. If fname NULL is passed, "/etc/hosts" is used 
+Usually "/etc/hosts". When queried for, these addresses are not marked
+DNSSEC secure. If fname NULL is passed, "/etc/hosts" is used
 (if on Windows, etc/hosts from WINDIR is picked instead).
 At this time it is only possible to set configuration before the
 first resolve is done.
@@ -298,13 +298,13 @@ Higher debug level gives more output.
 .TP
 .B ub_ctx_async
 Set a context behaviour for asynchronous action.
-if set to true, enables threading and a call to 
-.B ub_resolve_async 
+if set to true, enables threading and a call to
+.B ub_resolve_async
 creates a thread to handle work in the background.
 If false, a process is forked to handle work in the background.
-Changes to this setting after 
-.B ub_resolve_async 
-calls have been made have no effect (delete and re\-create the context 
+Changes to this setting after
+.B ub_resolve_async
+calls have been made have no effect (delete and re\-create the context
 to change).
 .TP
 .B ub_poll
@@ -312,14 +312,14 @@ Poll a context to see if it has any new results.
 Do not poll in a loop, instead extract the fd below to poll for readiness,
 and then check, or wait using the wait routine.
 Returns 0 if nothing to read, or nonzero if a result is available.
-If nonzero, call 
-.B ub_process 
+If nonzero, call
+.B ub_process
 to do callbacks.
 .TP
 .B ub_wait
-Wait for a context to finish with results. Calls 
-.B ub_process 
-after the wait for you. After the wait, there are no more outstanding 
+Wait for a context to finish with results. Calls
+.B ub_process
+after the wait for you. After the wait, there are no more outstanding
 asynchronous queries.
 .TP
 .B ub_fd
@@ -346,31 +346,31 @@ The callback receives a copy of the mydata pointer, that you can use to pass
 information to the callback. The callback type is a function pointer to
 a function declared as
 .IP
-void my_callback_function(void* my_arg, int err, 
+void my_callback_function(void* my_arg, int err,
 .br
                   struct ub_result* result);
 .IP
 The async_id is returned so you can (at your option) decide to track it
 and cancel the request if needed.  If you pass a NULL pointer the async_id
-is not returned. 
+is not returned.
 .TP
 .B ub_cancel
 Cancel an async query in progress.  This may return an error if the query
-does not exist, or the query is already being delivered, in that case you 
+does not exist, or the query is already being delivered, in that case you
 may still get a callback for the query.
 .TP
 .B ub_resolve_free
 Free struct ub_result contents after use.
 .TP
 .B ub_strerror
-Convert error value from one of the unbound library functions 
+Convert error value from one of the unbound library functions
 to a human readable string.
 .TP
 .B ub_ctx_print_local_zones
 Debug printout the local authority information to debug output.
 .TP
 .B ub_ctx_zone_add
-Add new zone to local authority info, like local\-zone \fIunbound.conf\fR(5) 
+Add new zone to local authority info, like local\-zone \fIunbound.conf\fR(5)
 statement.
 .TP
 .B ub_ctx_zone_remove
@@ -383,7 +383,7 @@ Add resource record data to local authority info, like local\-data
 .B ub_ctx_data_remove
 Delete local authority data from the name given.
 .SH "RESULT DATA STRUCTURE"
-The result of the DNS resolution and validation is returned as 
+The result of the DNS resolution and validation is returned as
 \fIstruct ub_result\fR. The result structure contains the following entries.
 .P
 .nf
@@ -407,7 +407,7 @@ The result of the DNS resolution and validation is returned as
 	};
 .fi
 .P
-If both secure and bogus are false, security was not enabled for the 
+If both secure and bogus are false, security was not enabled for the
 domain of the query.  Else, they are not both true, one of them is true.
 .SH "RETURN VALUES"
 Many routines return an error code. The value 0 (zero) denotes no error
@@ -427,7 +427,7 @@ and
 .B ub_ctx_resolvconf
 attempt to leave errno informative on a function return with file read failure.
 .SH "SEE ALSO"
-\fIunbound.conf\fR(5), 
+\fIunbound.conf\fR(5),
 \fIunbound\fR(8).
 .SH "AUTHORS"
 .B Unbound

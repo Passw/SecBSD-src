@@ -319,7 +319,7 @@ diag (xoff, xlim, yoff, ylim, minimal, part)
 	}
     }
 }
-
+
 /* Compare in detail contiguous subsequences of the two files
    which are known, as a whole, to match each other.
 
@@ -330,7 +330,7 @@ diag (xoff, xlim, yoff, ylim, minimal, part)
 
    Note that XLIM, YLIM are exclusive bounds.
    All line numbers are origin-0 and discarded lines are not counted.
- 
+
    If MINIMAL is nonzero, find a minimal difference no matter how
    expensive it is.  */
 
@@ -388,7 +388,7 @@ compareseq (xoff, xlim, yoff, ylim, minimal)
 	}
     }
 }
-
+
 /* Discard lines from one file that have no matches in the other file.
 
    A line which is discarded will not be considered by the actual
@@ -603,7 +603,7 @@ discard_confusing_lines (filevec)
   free (discarded[0]);
   free (equiv_count[0]);
 }
-
+
 /* Adjust inserts/deletes of identical lines to join changes
    as much as possible.
 
@@ -716,7 +716,7 @@ shift_boundaries (filevec)
 	}
     }
 }
-
+
 /* Cons an additional entry onto the front of an edit script OLD.
    LINE0 and LINE1 are the first affected lines in the two files (origin 0).
    DELETED is the number of lines deleted here from file 0.
@@ -812,7 +812,7 @@ build_script (filevec)
 
   return script;
 }
-
+
 /* If CHANGES, briefly report that two files differed.  */
 static void
 briefly_report (changes, filevec)

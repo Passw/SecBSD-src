@@ -5,22 +5,22 @@
  * Copyright (c) 2013, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -53,9 +53,9 @@ struct regional;
 struct ecs_whitelist {
 	/** regional for allocation */
 	struct regional* region;
-	/** 
+	/**
 	 * Tree of the address spans that are whitelisted.
-	 * contents of type addr_tree_node. Each node is an address span 
+	 * contents of type addr_tree_node. Each node is an address span
 	 * Unbound will append subnet option for.
 	 */
 	rbtree_type upstream;
@@ -67,7 +67,7 @@ struct ecs_whitelist {
 };
 
 /**
- * Create ecs_whitelist structure 
+ * Create ecs_whitelist structure
  * @return new structure or NULL on error.
  */
 struct ecs_whitelist* ecs_whitelist_create(void);
@@ -95,7 +95,7 @@ int ecs_whitelist_apply_cfg(struct ecs_whitelist* whitelist,
  * @param qname: dname in query
  * @param qname_len: length of dname
  * @param qclass: class in query
- * @return: true if the address is whitelisted for subnet option. 
+ * @return: true if the address is whitelisted for subnet option.
  */
 int ecs_is_whitelisted(struct ecs_whitelist* whitelist,
 	struct sockaddr_storage* addr, socklen_t addrlen, uint8_t* qname,

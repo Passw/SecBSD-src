@@ -1786,7 +1786,6 @@
 ./usr/share/man/man3/BIO_ctrl.3
 ./usr/share/man/man3/BIO_dump.3
 ./usr/share/man/man3/BIO_dup_chain.3
-./usr/share/man/man3/BIO_f_asn1.3
 ./usr/share/man/man3/BIO_f_base64.3
 ./usr/share/man/man3/BIO_f_buffer.3
 ./usr/share/man/man3/BIO_f_cipher.3
@@ -1813,7 +1812,6 @@
 ./usr/share/man/man3/BIO_s_socket.3
 ./usr/share/man/man3/BIO_set_callback.3
 ./usr/share/man/man3/BIO_should_retry.3
-./usr/share/man/man3/BN_BLINDING_new.3
 ./usr/share/man/man3/BN_CTX_new.3
 ./usr/share/man/man3/BN_CTX_start.3
 ./usr/share/man/man3/BN_add.3
@@ -1967,8 +1965,8 @@
 ./usr/share/man/man3/MD5Init.3
 ./usr/share/man/man3/NAME_CONSTRAINTS_new.3
 ./usr/share/man/man3/OBJ_NAME_add.3
-./usr/share/man/man3/OBJ_add_sigid.3
 ./usr/share/man/man3/OBJ_create.3
+./usr/share/man/man3/OBJ_find_sigid_algs.3
 ./usr/share/man/man3/OBJ_nid2obj.3
 ./usr/share/man/man3/OCSP_CRLID_new.3
 ./usr/share/man/man3/OCSP_REQUEST_new.3

@@ -2,24 +2,24 @@
  * testcode/replay.h - store and use a replay of events for the DNS resolver.
  *
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
- * 
+ *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -62,7 +62,7 @@
  * SCENARIO_BEGIN name_of_scenario
  * RANGE_BEGIN start_time end_time
  *    ; give ip of the virtual server, it matches any ip if not present.
- *    ADDRESS ip_address 
+ *    ADDRESS ip_address
  *    match_entries
  * RANGE_END
  * ; more RANGE items.
@@ -131,7 +131,7 @@
  * ; also, all answers must have been checked with CHECK_ANSWER.
  * ; and, no more pending out_queries (that have not been checked).
  * SCENARIO_END
- * 
+ *
  * </pre>
  */
 
@@ -161,11 +161,11 @@ struct replay_scenario {
 	/** The last element in list of replay moments. */
 	struct replay_moment* mom_last;
 
-	/** 
+	/**
 	 * List of matching answers. This is to ease replay scenario
 	 * creation. It lists queries (to the network) and what answer
 	 * should be returned. The matching answers are valid for a range
-	 * of time steps. 
+	 * of time steps.
 	 * So: timestep, parts of query, destination --> answer.
 	 */
 	struct replay_range* range_list;
@@ -178,9 +178,9 @@ struct replay_scenario {
  * And if output is presented, what is done with that.
  */
 struct replay_moment {
-	/** 
-	 * The replay time step number. Starts at 0, time is incremented 
-	 * every time the fake select() is run. 
+	/**
+	 * The replay time step number. Starts at 0, time is incremented
+	 * every time the fake select() is run.
 	 */
 	int time_step;
 	/** Next replay moment in list of replay moments. */
@@ -273,9 +273,9 @@ struct replay_runtime {
 	 */
 	struct replay_moment* now;
 
-	/** 
+	/**
 	 * List of pending queries in order they were sent out. First
-	 * one has been sent out most recently. Last one in list is oldest. 
+	 * one has been sent out most recently. Last one in list is oldest.
 	 */
 	struct fake_pending* pending_list;
 
@@ -283,7 +283,7 @@ struct replay_runtime {
 	 * List of answers to queries from clients. These need to be checked.
 	 */
 	struct replay_answer* answer_list;
-	
+
 	/** last element in answer list. */
 	struct replay_answer* answer_last;
 
@@ -410,7 +410,7 @@ struct replay_var {
  * @param lineno: incremented for every line read.
  * @return: Scenario. NULL if no scenario read.
  */
-struct replay_scenario* replay_scenario_read(FILE* in, const char* name, 
+struct replay_scenario* replay_scenario_read(FILE* in, const char* name,
 	int* lineno);
 
 /**
@@ -447,7 +447,7 @@ void macro_store_delete(rbtree_type* store);
  * @param text: string to work on.
  * @return newly malloced string with result.
  */
-char* macro_process(rbtree_type* store, struct replay_runtime* runtime, 
+char* macro_process(rbtree_type* store, struct replay_runtime* runtime,
 	char* text);
 
 /**

@@ -2,7 +2,7 @@
 Specification for the unbound-control protocol.
 
 Server listens on 8953 TCP (localhost by default). Client connects,
-SSLv3 or TLSv1 connection setup (server selfsigned certificate, 
+SSLv3 or TLSv1 connection setup (server selfsigned certificate,
 client has cert signed by server certificate).
 
 Port 8953 is registered with IANA as:
@@ -12,16 +12,16 @@ On may 11 2011, ticket [IANA #442315].
 
 Query and Response
 ------------------
-Client sends 
+Client sends
 	UBCT[version] [commandline] \n
 	fixed string UBCT1 (for version 1), then an ascii text line,
 	with a command, some whitespace allowed. Line ends with '\n'.
 
-Server executes command. And sends reply in ascii text over channel, 
+Server executes command. And sends reply in ascii text over channel,
 closes the channel when done.
 	in case of error the first line of the response is:
 		error <descriptive text possible> \n
-	or the remainder is data of the response, for many commands the 
+	or the remainder is data of the response, for many commands the
 	response is 'ok\n'.
 
 Queries and responses
@@ -39,7 +39,7 @@ dump_cache
 	output is a text representation of the cache contents.
 	data ends with a line 'EOF' before connection close.
 load_cache
-	client sends cache contents (like from dump_cache), which is stored 
+	client sends cache contents (like from dump_cache), which is stored
 	in the cache. end of data indicated with a line with 'EOF' on it.
 	The data is sent after the query line.
 flush <name>

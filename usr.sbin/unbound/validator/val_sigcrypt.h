@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -141,8 +141,8 @@ int algo_needs_missing(struct algo_needs* n);
  */
 void algo_needs_reason(struct module_env* env, int alg, char** reason, char* s);
 
-/** 
- * Check if dnskey matches a DS digest 
+/**
+ * Check if dnskey matches a DS digest
  * Does not check dnskey-keyid footprint, just the digest.
  * @param env: module environment. Uses scratch space.
  * @param dnskey_rrset: DNSKEY rrset.
@@ -155,13 +155,13 @@ int ds_digest_match_dnskey(struct module_env* env,
 	struct ub_packed_rrset_key* dnskey_rrset, size_t dnskey_idx,
 	struct ub_packed_rrset_key* ds_rrset, size_t ds_idx);
 
-/** 
+/**
  * Get dnskey keytag, footprint value
  * @param dnskey_rrset: DNSKEY rrset.
  * @param dnskey_idx: index of RR in rrset.
  * @return the keytag or 0 for badly formatted DNSKEYs.
  */
-uint16_t dnskey_calc_keytag(struct ub_packed_rrset_key* dnskey_rrset, 
+uint16_t dnskey_calc_keytag(struct ub_packed_rrset_key* dnskey_rrset,
 	size_t dnskey_idx);
 
 /**
@@ -169,16 +169,16 @@ uint16_t dnskey_calc_keytag(struct ub_packed_rrset_key* dnskey_rrset,
  * @param ds_rrset: DS rrset
  * @param ds_idx: index of RR in DS rrset.
  * @return the keytag or 0 for badly formatted DSs.
- */ 
+ */
 uint16_t ds_get_keytag(struct ub_packed_rrset_key* ds_rrset, size_t ds_idx);
 
-/** 
- * See if DNSKEY algorithm is supported 
+/**
+ * See if DNSKEY algorithm is supported
  * @param dnskey_rrset: DNSKEY rrset.
  * @param dnskey_idx: index of RR in rrset.
  * @return true if supported.
  */
-int dnskey_algo_is_supported(struct ub_packed_rrset_key* dnskey_rrset, 
+int dnskey_algo_is_supported(struct ub_packed_rrset_key* dnskey_rrset,
 	size_t dnskey_idx);
 
 /**
@@ -198,13 +198,13 @@ int dnskey_size_is_supported(struct ub_packed_rrset_key* dnskey_rrset,
  */
 int dnskeyset_size_is_supported(struct ub_packed_rrset_key* dnskey_rrset);
 
-/** 
- * See if DS digest algorithm is supported 
+/**
+ * See if DS digest algorithm is supported
  * @param ds_rrset: DS rrset
  * @param ds_idx: index of RR in DS rrset.
  * @return true if supported.
  */
-int ds_digest_algo_is_supported(struct ub_packed_rrset_key* ds_rrset, 
+int ds_digest_algo_is_supported(struct ub_packed_rrset_key* ds_rrset,
 	size_t ds_idx);
 
 /**
@@ -215,13 +215,13 @@ int ds_digest_algo_is_supported(struct ub_packed_rrset_key* ds_rrset,
  */
 int ds_get_digest_algo(struct ub_packed_rrset_key* ds_rrset, size_t ds_idx);
 
-/** 
- * See if DS key algorithm is supported 
+/**
+ * See if DS key algorithm is supported
  * @param ds_rrset: DS rrset
  * @param ds_idx: index of RR in DS rrset.
  * @return true if supported.
  */
-int ds_key_algo_is_supported(struct ub_packed_rrset_key* ds_rrset, 
+int ds_key_algo_is_supported(struct ub_packed_rrset_key* ds_rrset,
 	size_t ds_idx);
 
 /**
@@ -241,15 +241,15 @@ int ds_get_key_algo(struct ub_packed_rrset_key* k, size_t idx);
 int dnskey_get_algo(struct ub_packed_rrset_key* k, size_t idx);
 
 /**
- * Get DNSKEY RR flags 
+ * Get DNSKEY RR flags
  * @param k: DNSKEY rrset.
  * @param idx: which DNSKEY RR.
  * @return flags or 0 if DNSKEY too short.
  */
 uint16_t dnskey_get_flags(struct ub_packed_rrset_key* k, size_t idx);
 
-/** 
- * Verify rrset against dnskey rrset. 
+/**
+ * Verify rrset against dnskey rrset.
  * @param env: module environment, scratch space is used.
  * @param ve: validator environment, date settings.
  * @param rrset: to be validated.
@@ -264,15 +264,15 @@ uint16_t dnskey_get_flags(struct ub_packed_rrset_key* k, size_t idx);
  *	UNCHECKED on allocation errors, unsupported algorithms, malformed data,
  *	and BOGUS on verification failures (no keys match any signatures).
  */
-enum sec_status dnskeyset_verify_rrset(struct module_env* env, 
-	struct val_env* ve, struct ub_packed_rrset_key* rrset, 
+enum sec_status dnskeyset_verify_rrset(struct module_env* env,
+	struct val_env* ve, struct ub_packed_rrset_key* rrset,
 	struct ub_packed_rrset_key* dnskey, uint8_t* sigalg,
 	char** reason, sldns_ede_code *reason_bogus,
 	sldns_pkt_section section, struct module_qstate* qstate);
 
 
-/** 
- * verify rrset against one specific dnskey (from rrset) 
+/**
+ * verify rrset against one specific dnskey (from rrset)
  * @param env: module environment, scratch space is used.
  * @param ve: validator environment, date settings.
  * @param rrset: to be validated.
@@ -290,8 +290,8 @@ enum sec_status dnskey_verify_rrset(struct module_env* env, struct val_env* ve,
 	size_t dnskey_idx, char** reason, sldns_ede_code *reason_bogus,
 	sldns_pkt_section section, struct module_qstate* qstate);
 
-/** 
- * verify rrset, with specific dnskey(from set), for a specific rrsig 
+/**
+ * verify rrset, with specific dnskey(from set), for a specific rrsig
  * @param region: scratch region used for temporary allocation.
  * @param buf: scratch buffer used for canonicalized rrset data.
  * @param ve: validator environment, date settings.
@@ -309,7 +309,7 @@ enum sec_status dnskey_verify_rrset(struct module_env* env, struct val_env* ve,
  * @param reason_bogus: EDE (8914) code paired with the reason of failure.
  * @param section: section of packet where this rrset comes from.
  * @param qstate: qstate with region.
- * @return secure if this key signs this signature. unchecked on error or 
+ * @return secure if this key signs this signature. unchecked on error or
  *	bogus if it did not validate.
  */
 enum sec_status dnskey_verify_rrset_sig(struct regional* region,

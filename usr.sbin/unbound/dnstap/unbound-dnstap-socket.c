@@ -4,22 +4,22 @@
  * Copyright (c) 2020, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -546,7 +546,7 @@ static void log_data_frame(uint8_t* pkt, size_t len)
 	} else {
 		mtype = "nomessage";
 	}
-	
+
 	printf("%s%s%s%s%s\n", mtype, (maddr?" ":""), (maddr?maddr:""),
 		(qinf?" ":""), (qinf?qinf:""));
 	free(maddr);
@@ -1099,7 +1099,7 @@ void dtio_mainfdcallback(int fd, short ATTR_UNUSED(bits), void* arg)
 			log_info("accepted new dnstap client");
 		}
 	}
-	
+
 	data = calloc(1, sizeof(*data));
 	if(!data) fatal_exit("out of memory");
 	data->fd = s;
@@ -1232,7 +1232,7 @@ extern int optind;
 extern char* optarg;
 
 /** main program for streamtcp */
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
 	int c;
 	int usessl = 0;
@@ -1373,7 +1373,7 @@ void worker_handle_control_cmd(struct tube* ATTR_UNUSED(tube),
 	log_assert(0);
 }
 
-int worker_handle_request(struct comm_point* ATTR_UNUSED(c), 
+int worker_handle_request(struct comm_point* ATTR_UNUSED(c),
 	void* ATTR_UNUSED(arg), int ATTR_UNUSED(error),
         struct comm_reply* ATTR_UNUSED(repinfo))
 {
@@ -1381,7 +1381,7 @@ int worker_handle_request(struct comm_point* ATTR_UNUSED(c),
 	return 0;
 }
 
-int worker_handle_service_reply(struct comm_point* ATTR_UNUSED(c), 
+int worker_handle_service_reply(struct comm_point* ATTR_UNUSED(c),
 	void* ATTR_UNUSED(arg), int ATTR_UNUSED(error),
         struct comm_reply* ATTR_UNUSED(reply_info))
 {
@@ -1389,7 +1389,7 @@ int worker_handle_service_reply(struct comm_point* ATTR_UNUSED(c),
 	return 0;
 }
 
-int remote_accept_callback(struct comm_point* ATTR_UNUSED(c), 
+int remote_accept_callback(struct comm_point* ATTR_UNUSED(c),
 	void* ATTR_UNUSED(arg), int ATTR_UNUSED(error),
         struct comm_reply* ATTR_UNUSED(repinfo))
 {
@@ -1397,7 +1397,7 @@ int remote_accept_callback(struct comm_point* ATTR_UNUSED(c),
 	return 0;
 }
 
-int remote_control_callback(struct comm_point* ATTR_UNUSED(c), 
+int remote_control_callback(struct comm_point* ATTR_UNUSED(c),
 	void* ATTR_UNUSED(arg), int ATTR_UNUSED(error),
         struct comm_reply* ATTR_UNUSED(repinfo))
 {
@@ -1426,7 +1426,7 @@ struct outbound_entry* worker_send_query(
 
 #ifdef UB_ON_WINDOWS
 void
-worker_win_stop_cb(int ATTR_UNUSED(fd), short ATTR_UNUSED(ev), void* 
+worker_win_stop_cb(int ATTR_UNUSED(fd), short ATTR_UNUSED(ev), void*
 	ATTR_UNUSED(arg)) {
 	log_assert(0);
 }
@@ -1438,7 +1438,7 @@ wsvc_cron_cb(void* ATTR_UNUSED(arg))
 }
 #endif /* UB_ON_WINDOWS */
 
-void 
+void
 worker_alloc_cleanup(void* ATTR_UNUSED(arg))
 {
 	log_assert(0);
@@ -1458,7 +1458,7 @@ struct outbound_entry* libworker_send_query(
 	return 0;
 }
 
-int libworker_handle_service_reply(struct comm_point* ATTR_UNUSED(c), 
+int libworker_handle_service_reply(struct comm_point* ATTR_UNUSED(c),
 	void* ATTR_UNUSED(arg), int ATTR_UNUSED(error),
         struct comm_reply* ATTR_UNUSED(reply_info))
 {
@@ -1473,21 +1473,21 @@ void libworker_handle_control_cmd(struct tube* ATTR_UNUSED(tube),
         log_assert(0);
 }
 
-void libworker_fg_done_cb(void* ATTR_UNUSED(arg), int ATTR_UNUSED(rcode), 
+void libworker_fg_done_cb(void* ATTR_UNUSED(arg), int ATTR_UNUSED(rcode),
 	struct sldns_buffer* ATTR_UNUSED(buf), enum sec_status ATTR_UNUSED(s),
 	char* ATTR_UNUSED(why_bogus), int ATTR_UNUSED(was_ratelimited))
 {
 	log_assert(0);
 }
 
-void libworker_bg_done_cb(void* ATTR_UNUSED(arg), int ATTR_UNUSED(rcode), 
+void libworker_bg_done_cb(void* ATTR_UNUSED(arg), int ATTR_UNUSED(rcode),
 	struct sldns_buffer* ATTR_UNUSED(buf), enum sec_status ATTR_UNUSED(s),
 	char* ATTR_UNUSED(why_bogus), int ATTR_UNUSED(was_ratelimited))
 {
 	log_assert(0);
 }
 
-void libworker_event_done_cb(void* ATTR_UNUSED(arg), int ATTR_UNUSED(rcode), 
+void libworker_event_done_cb(void* ATTR_UNUSED(arg), int ATTR_UNUSED(rcode),
 	struct sldns_buffer* ATTR_UNUSED(buf), enum sec_status ATTR_UNUSED(s),
 	char* ATTR_UNUSED(why_bogus), int ATTR_UNUSED(was_ratelimited))
 {

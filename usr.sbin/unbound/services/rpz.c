@@ -4,22 +4,22 @@
  * Copyright (c) 2019, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -234,7 +234,7 @@ rpz_rr_to_action(uint16_t rr_type, uint8_t* rdatawl, size_t rdatalen)
 	return RPZ_LOCAL_DATA_ACTION;
 }
 
-static enum localzone_type 
+static enum localzone_type
 rpz_action_to_localzone_type(enum rpz_action a)
 {
 	switch(a) {
@@ -1257,7 +1257,7 @@ rpz_rrset_delete_rr(struct resp_addr* raddr, uint16_t rr_type, uint8_t* rdata,
 	if(packed_rrset_find_rr(d, rdata, rdatalen, &index)) {
 		if(d->count == 1) {
 			/* regional alloc'd */
-			raddr->data->entry.data = NULL; 
+			raddr->data->entry.data = NULL;
 			raddr->data = NULL;
 			return 1;
 		}
@@ -1293,11 +1293,11 @@ rpz_remove_qname_trigger(struct rpz* r, uint8_t* dname, size_t dnamelen,
 		lock_rw_unlock(&r->local_zones->lock);
 		return;
 	}
-	lock_rw_unlock(&z->lock); 
+	lock_rw_unlock(&z->lock);
 	if(delete_zone) {
 		local_zones_del_zone(r->local_zones, z);
 	}
-	lock_rw_unlock(&r->local_zones->lock); 
+	lock_rw_unlock(&r->local_zones->lock);
 	return;
 }
 
@@ -1326,7 +1326,7 @@ rpz_remove_response_ip_trigger(struct rpz* r, uint8_t* dname, size_t dnamelen,
 	lock_rw_wrlock(&node->lock);
 	if(a == RPZ_LOCAL_DATA_ACTION) {
 		/* remove RR, signal whether RR can be removed */
-		delete_respip = rpz_rrset_delete_rr(node, rr_type, rdatawl, 
+		delete_respip = rpz_rrset_delete_rr(node, rr_type, rdatawl,
 			rdatalen);
 	}
 	lock_rw_unlock(&node->lock);

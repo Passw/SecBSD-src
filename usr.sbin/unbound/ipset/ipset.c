@@ -372,7 +372,7 @@ size_t ipset_get_mem(struct module_env *env, int id) {
 }
 
 /**
- * The ipset function block 
+ * The ipset function block
  */
 static struct module_func_block ipset_block = {
 	"ipset",

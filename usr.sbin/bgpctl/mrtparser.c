@@ -435,7 +435,7 @@ mrt_parse_v2_rib(struct mrt_hdr *hdr, void *msg, int verbose)
 
 		if ((aid = mrt_afi2aid(afi, safi, verbose)) == AID_UNSPEC)
 			goto fail;
-		
+
 		/* prefix */
 		ret = mrt_extract_prefix(b, len, aid, &r->prefix,
 		    &r->prefixlen, verbose);

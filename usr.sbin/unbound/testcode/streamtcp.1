@@ -10,7 +10,7 @@
 .LP
 .B unbound\-streamtcp
 .RB [ \-unsh ]
-.RB [ \-f 
+.RB [ \-f
 .IR ipaddr[@port] ]
 .RB [ \-d
 .IR secs ]
@@ -46,7 +46,7 @@ Do not wait for the answer.
 .TP
 .B \-a
 Print answers on arrival.  This mean queries are sent in sequence without
-waiting for answer but if answers arrive in this time they are printed out. 
+waiting for answer but if answers arrive in this time they are printed out.
 After sending queries the program waits and prints the remainder.
 .TP
 .B \-s
@@ -71,7 +71,7 @@ $ unbound\-streamtcp \-f 192.168.1.1 www.example.com SOA IN
 .P
 $ unbound\-streamtcp \-f 192.168.1.1@1234 153.1.168.192.in\-addr.arpa. PTR IN
 .SH "EXIT CODE"
-The unbound\-streamtcp program exits with status code 1 on error, 
+The unbound\-streamtcp program exits with status code 1 on error,
 0 on no error.
 .SH "AUTHOR"
 This manual page was written by Tomas Hozza <thozza@redhat.com>.

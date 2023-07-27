@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -185,7 +185,7 @@ massage_type(const char* t, int reverse, int* multi)
 {
 	if(t) {
 		int r = sldns_get_rr_type_by_name(t);
-		if(r == 0 && strcasecmp(t, "TYPE0") != 0 && 
+		if(r == 0 && strcasecmp(t, "TYPE0") != 0 &&
 			strcmp(t, "") != 0) {
 			fprintf(stderr, "error unknown type %s\n", t);
 			exit(1);
@@ -204,7 +204,7 @@ massage_class(const char* c)
 {
 	if(c) {
 		int r = sldns_get_rr_class_by_name(c);
-		if(r == 0 && strcasecmp(c, "CLASS0") != 0 && 
+		if(r == 0 && strcasecmp(c, "CLASS0") != 0 &&
 			strcmp(c, "") != 0) {
 			fprintf(stderr, "error unknown class %s\n", c);
 			exit(1);
@@ -215,7 +215,7 @@ massage_class(const char* c)
 }
 
 /** nice security status string */
-static const char* 
+static const char*
 secure_str(struct ub_result* result)
 {
 	if(result->rcode != 0 && result->rcode != 3) return "(error)";
@@ -262,7 +262,7 @@ print_rd(int t, char* data, size_t len)
 
 /** pretty line of RR data for results */
 static void
-pretty_rdata(char* q, char* cstr, char* tstr, int t, const char* sec, 
+pretty_rdata(char* q, char* cstr, char* tstr, int t, const char* sec,
 	char* data, size_t len)
 {
 	printf("%s", q);
@@ -308,7 +308,7 @@ pretty_output(char* q, int t, int c, struct ub_result* result, int docname)
 	}
 	if(docname && result->canonname &&
 		result->canonname != result->qname) {
-		printf("%s is an alias for %s", result->qname, 
+		printf("%s is an alias for %s", result->qname,
 			result->canonname);
 		if(verb > 0)
 			printf(" %s", secstatus);
@@ -429,7 +429,7 @@ int main(int argc, char* argv[])
 	char* use_syslog = NULL;
 	struct ub_ctx* ctx = NULL;
 	int debuglevel = 0;
-	
+
 	ctx = ub_ctx_create();
 	if(!ctx) {
 		fprintf(stderr, "error: out of memory\n");
@@ -458,7 +458,7 @@ int main(int argc, char* argv[])
 			break;
 		case 'd':
 			debuglevel++;
-			if(debuglevel < 2) 
+			if(debuglevel < 2)
 				debuglevel = 2; /* at least VERB_DETAIL */
 			break;
 		case 'r':
@@ -489,7 +489,7 @@ int main(int argc, char* argv[])
 		check_ub_res(ub_ctx_debuglevel(ctx, debuglevel));
 	if(ub_ctx_get_option(ctx, "use-syslog", &use_syslog) == 0) {
 		if(strcmp(use_syslog, "yes") == 0) /* disable use-syslog */
-			check_ub_res(ub_ctx_set_option(ctx, 
+			check_ub_res(ub_ctx_set_option(ctx,
 				"use-syslog:", "no"));
 		free(use_syslog);
 	}

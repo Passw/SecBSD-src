@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -66,7 +66,7 @@ ub_packed_rrset_parsedelete(struct ub_packed_rrset_key* pkey,
 	alloc_special_release(alloc, pkey);
 }
 
-size_t 
+size_t
 ub_rrset_sizefunc(void* key, void* data)
 {
 	struct ub_packed_rrset_key* k = (struct ub_packed_rrset_key*)key;
@@ -76,22 +76,22 @@ ub_rrset_sizefunc(void* key, void* data)
 	return s;
 }
 
-size_t 
+size_t
 packed_rrset_sizeof(struct packed_rrset_data* d)
 {
 	size_t s;
 	if(d->rrsig_count > 0) {
-		s = ((uint8_t*)d->rr_data[d->count+d->rrsig_count-1] - 
+		s = ((uint8_t*)d->rr_data[d->count+d->rrsig_count-1] -
 			(uint8_t*)d) + d->rr_len[d->count+d->rrsig_count-1];
 	} else {
 		log_assert(d->count > 0);
-		s = ((uint8_t*)d->rr_data[d->count-1] - (uint8_t*)d) + 
+		s = ((uint8_t*)d->rr_data[d->count-1] - (uint8_t*)d) +
 			d->rr_len[d->count-1];
 	}
 	return s;
 }
 
-int 
+int
 ub_rrset_compare(void* k1, void* k2)
 {
 	struct ub_packed_rrset_key* key1 = (struct ub_packed_rrset_key*)k1;
@@ -124,7 +124,7 @@ ub_rrset_compare(void* k1, void* k2)
 	return 0;
 }
 
-void 
+void
 ub_rrset_key_delete(void* key, void* userdata)
 {
 	struct ub_packed_rrset_key* k = (struct ub_packed_rrset_key*)key;
@@ -135,19 +135,19 @@ ub_rrset_key_delete(void* key, void* userdata)
 	alloc_special_release(a, k);
 }
 
-void 
+void
 rrset_data_delete(void* data, void* ATTR_UNUSED(userdata))
 {
 	struct packed_rrset_data* d = (struct packed_rrset_data*)data;
 	free(d);
 }
 
-int 
+int
 rrsetdata_equal(struct packed_rrset_data* d1, struct packed_rrset_data* d2)
 {
 	size_t i;
 	size_t total;
-	if(d1->count != d2->count || d1->rrsig_count != d2->rrsig_count) 
+	if(d1->count != d2->count || d1->rrsig_count != d2->rrsig_count)
 		return 0;
 	total = d1->count + d1->rrsig_count;
 	for(i=0; i<total; i++) {
@@ -174,7 +174,7 @@ rrset_key_hash(struct packed_rrset_key* key)
 	return h;
 }
 
-void 
+void
 packed_rrset_ptr_fixup(struct packed_rrset_data* data)
 {
 	size_t i;
@@ -192,13 +192,13 @@ packed_rrset_ptr_fixup(struct packed_rrset_data* data)
 	}
 }
 
-void 
-get_cname_target(struct ub_packed_rrset_key* rrset, uint8_t** dname, 
+void
+get_cname_target(struct ub_packed_rrset_key* rrset, uint8_t** dname,
 	size_t* dname_len)
 {
 	struct packed_rrset_data* d;
 	size_t len;
-	if(ntohs(rrset->rk.type) != LDNS_RR_TYPE_CNAME && 
+	if(ntohs(rrset->rk.type) != LDNS_RR_TYPE_CNAME &&
 		ntohs(rrset->rk.type) != LDNS_RR_TYPE_DNAME)
 		return;
 	d = (struct packed_rrset_data*)rrset->entry.data;
@@ -215,7 +215,7 @@ get_cname_target(struct ub_packed_rrset_key* rrset, uint8_t** dname,
 	*dname_len = len;
 }
 
-void 
+void
 packed_rrset_ttl_add(struct packed_rrset_data* data, time_t add)
 {
 	size_t i;
@@ -226,7 +226,7 @@ packed_rrset_ttl_add(struct packed_rrset_data* data, time_t add)
 		data->rr_ttl[i] += add;
 }
 
-const char* 
+const char*
 rrset_trust_to_string(enum rrset_trust s)
 {
 	switch(s) {
@@ -247,7 +247,7 @@ rrset_trust_to_string(enum rrset_trust s)
 	return "unknown_rrset_trust_value";
 }
 
-const char* 
+const char*
 sec_status_to_string(enum sec_status s)
 {
 	switch(s) {
@@ -261,7 +261,7 @@ sec_status_to_string(enum sec_status s)
 	return "unknown_sec_status_value";
 }
 
-void log_rrset_key(enum verbosity_value v, const char* str, 
+void log_rrset_key(enum verbosity_value v, const char* str,
 	struct ub_packed_rrset_key* rrset)
 {
 	if(verbosity >= v)
@@ -296,7 +296,7 @@ int packed_rr_to_string(struct ub_packed_rrset_key* rrset, size_t i,
 		log_info("rrbuf failure %d %s", (int)d->rr_len[i], dest);
 		dest[0] = 0;
 		return 0;
-	} 
+	}
 	return 1;
 }
 
@@ -318,7 +318,7 @@ void log_packed_rrset(enum verbosity_value v, const char* str,
 	}
 }
 
-time_t 
+time_t
 ub_packed_rrset_ttl(struct ub_packed_rrset_key* key)
 {
 	struct packed_rrset_data* d = (struct packed_rrset_data*)key->
@@ -327,10 +327,10 @@ ub_packed_rrset_ttl(struct ub_packed_rrset_key* key)
 }
 
 struct ub_packed_rrset_key*
-packed_rrset_copy_region(struct ub_packed_rrset_key* key, 
+packed_rrset_copy_region(struct ub_packed_rrset_key* key,
 	struct regional* region, time_t now)
 {
-	struct ub_packed_rrset_key* ck = regional_alloc(region, 
+	struct ub_packed_rrset_key* ck = regional_alloc(region,
 		sizeof(struct ub_packed_rrset_key));
 	struct packed_rrset_data* d;
 	struct packed_rrset_data* data = (struct packed_rrset_data*)
@@ -344,7 +344,7 @@ packed_rrset_copy_region(struct ub_packed_rrset_key* key,
 	ck->entry.hash = key->entry.hash;
 	ck->entry.key = ck;
 	ck->rk = key->rk;
-	ck->rk.dname = regional_alloc_init(region, key->rk.dname, 
+	ck->rk.dname = regional_alloc_init(region, key->rk.dname,
 		key->rk.dname_len);
 	if(!ck->rk.dname)
 		return NULL;
@@ -368,8 +368,8 @@ packed_rrset_copy_region(struct ub_packed_rrset_key* key,
 	return ck;
 }
 
-struct ub_packed_rrset_key* 
-packed_rrset_copy_alloc(struct ub_packed_rrset_key* key, 
+struct ub_packed_rrset_key*
+packed_rrset_copy_alloc(struct ub_packed_rrset_key* key,
 	struct alloc_cache* alloc, time_t now)
 {
 	struct packed_rrset_data* fd, *dd;

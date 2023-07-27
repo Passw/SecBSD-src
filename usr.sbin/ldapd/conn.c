@@ -382,7 +382,7 @@ conn_tls_init(struct conn *conn)
 		log_debug("tls_accept_socket failed");
 		return -1;
 	}
-	
+
 	conn->s_flags |= F_SECURE;
 	buffertls_set(&conn->buftls, conn->bev, conn->tls, conn->fd);
 	buffertls_accept(&conn->buftls, conn->fd);

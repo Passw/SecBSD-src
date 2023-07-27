@@ -4,22 +4,22 @@
  * Copyright (c) 2013, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,7 +32,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/** \file 
+/** \file
  * addrtree -- radix tree for edns subnet cache.
  */
 
@@ -42,7 +42,7 @@
 #include "util/module.h"
 #include "addrtree.h"
 
-/** 
+/**
  * Create a new edge
  * @param node: Child node this edge will connect to.
  * @param addr: full key to this edge.
@@ -51,8 +51,8 @@
  * @param parent_index: Index of child node at parent node
  * @return new addredge or NULL on failure
  */
-static struct addredge * 
-edge_create(struct addrnode *node, const addrkey_t *addr, 
+static struct addredge *
+edge_create(struct addrnode *node, const addrkey_t *addr,
 	addrlen_t addrlen, struct addrnode *parent_node, int parent_index)
 {
 	size_t n;
@@ -78,7 +78,7 @@ edge_create(struct addrnode *node, const addrkey_t *addr,
 	return edge;
 }
 
-/** 
+/**
  * Create a new node
  * @param tree: Tree the node lives in.
  * @param elem: Element to store at this node
@@ -86,8 +86,8 @@ edge_create(struct addrnode *node, const addrkey_t *addr,
  * @param ttl: Element is valid up to this time. Absolute, seconds
  * @return new addrnode or NULL on failure
  */
-static struct addrnode * 
-node_create(struct addrtree *tree, void *elem, addrlen_t scope, 
+static struct addrnode *
+node_create(struct addrtree *tree, void *elem, addrlen_t scope,
 	time_t ttl)
 {
 	struct addrnode* node = (struct addrnode *)malloc( sizeof (*node) );
@@ -108,18 +108,18 @@ node_create(struct addrtree *tree, void *elem, addrlen_t scope,
 
 /** Size in bytes of node and parent edge
  * @param tree: tree the node lives in
- * @param n: node which size must be calculated 
+ * @param n: node which size must be calculated
  * @return size in bytes.
  **/
-static inline size_t 
+static inline size_t
 node_size(const struct addrtree *tree, const struct addrnode *n)
 {
-	return sizeof *n + sizeof *n->parent_edge + n->parent_edge->len + 
+	return sizeof *n + sizeof *n->parent_edge + n->parent_edge->len +
 		(n->elem?tree->sizefunc(n->elem):0);
 }
 
-struct addrtree * 
-addrtree_create(addrlen_t max_depth, void (*delfunc)(void *, void *), 
+struct addrtree *
+addrtree_create(addrlen_t max_depth, void (*delfunc)(void *, void *),
 	size_t (*sizefunc)(void *), void *env, uint32_t max_node_count)
 {
 	struct addrtree *tree;
@@ -145,7 +145,7 @@ addrtree_create(addrlen_t max_depth, void (*delfunc)(void *, void *),
 	return tree;
 }
 
-/** 
+/**
  * Scrub a node clean of elem
  * @param tree: tree the node lives in.
  * @param node: node to be cleaned.
@@ -205,8 +205,8 @@ lru_update(struct addrtree *tree, struct addrnode *node)
 	lru_push(tree, node);
 }
 
-/** 
- * Purge a node from the tree. Node and parentedge are cleaned and 
+/**
+ * Purge a node from the tree. Node and parentedge are cleaned and
  * free'd.
  * @param tree: Tree the node lives in.
  * @param node: Node to be freed
@@ -217,7 +217,7 @@ purge_node(struct addrtree *tree, struct addrnode *node)
 	struct addredge *parent_edge, *child_edge = NULL;
 	int index;
 	int keep = node->edge[0] && node->edge[1];
-	
+
 	clean_node(tree, node);
 	parent_edge = node->parent_edge;
 	if (keep || !parent_edge) return;
@@ -294,13 +294,13 @@ void addrtree_delete(struct addrtree *tree)
 }
 
 /**
- * Get N'th bit from address 
+ * Get N'th bit from address
  * @param addr: address to inspect
  * @param addrlen: length of addr in bits
  * @param n: index of bit to test. Must be in range [0, addrlen)
  * @return 0 or 1
  */
-static int 
+static int
 getbit(const addrkey_t *addr, addrlen_t addrlen, addrlen_t n)
 {
 	log_assert(addrlen > n);
@@ -310,9 +310,9 @@ getbit(const addrkey_t *addr, addrlen_t addrlen, addrlen_t n)
 
 /**
  * Test for equality on N'th bit.
- * @return 0 for equal, 1 otherwise 
+ * @return 0 for equal, 1 otherwise
  */
-static inline int 
+static inline int
 cmpbit(const addrkey_t *key1, const addrkey_t *key2, addrlen_t n)
 {
 	addrkey_t c = key1[n/KEYWIDTH] ^ key2[n/KEYWIDTH];
@@ -328,8 +328,8 @@ cmpbit(const addrkey_t *key1, const addrkey_t *key2, addrlen_t n)
  * @param skip: nr of bits already checked.
  * @return common number of bits.
  */
-static addrlen_t 
-bits_common(const addrkey_t *s1, addrlen_t l1, 
+static addrlen_t
+bits_common(const addrkey_t *s1, addrlen_t l1,
 	const addrkey_t *s2, addrlen_t l2, addrlen_t skip)
 {
 	addrlen_t len, i;
@@ -339,7 +339,7 @@ bits_common(const addrkey_t *s1, addrlen_t l1,
 		if (cmpbit(s1, s2, i)) return i;
 	}
 	return len;
-} 
+}
 
 /**
  * Tests if s1 is a substring of s2
@@ -348,18 +348,18 @@ bits_common(const addrkey_t *s1, addrlen_t l1,
  * @param s2: second prefix.
  * @param l2: length of s2 in bits.
  * @param skip: nr of bits already checked.
- * @return 1 for substring, 0 otherwise 
+ * @return 1 for substring, 0 otherwise
  */
-static int 
-issub(const addrkey_t *s1, addrlen_t l1, 
+static int
+issub(const addrkey_t *s1, addrlen_t l1,
 	const addrkey_t *s2, addrlen_t l2,  addrlen_t skip)
 {
 	return bits_common(s1, l1, s2, l2, skip) == l1;
 }
 
 void
-addrtree_insert(struct addrtree *tree, const addrkey_t *addr, 
-	addrlen_t sourcemask, addrlen_t scope, void *elem, time_t ttl, 
+addrtree_insert(struct addrtree *tree, const addrkey_t *addr,
+	addrlen_t sourcemask, addrlen_t scope, void *elem, time_t ttl,
 	time_t now, int only_match_scope_zero)
 {
 	struct addrnode *newnode, *node;
@@ -444,15 +444,15 @@ addrtree_insert(struct addrtree *tree, const addrkey_t *addr,
 		newnode->edge[index] = edge;
 		edge->parent_node = newnode;
 		edge->parent_index = (int)index;
-		
+
 		if (common == sourcemask) {
 			/* Data is stored in the node */
 			newnode->elem = elem;
 			newnode->scope = scope;
 			newnode->ttl = ttl;
 			newnode->only_match_scope_zero = only_match_scope_zero;
-		} 
-		
+		}
+
 		tree->size_bytes += node_size(tree, newnode);
 
 		if (common != sourcemask) {
@@ -475,7 +475,7 @@ addrtree_insert(struct addrtree *tree, const addrkey_t *addr,
 }
 
 struct addrnode *
-addrtree_find(struct addrtree *tree, const addrkey_t *addr, 
+addrtree_find(struct addrtree *tree, const addrkey_t *addr,
 	addrlen_t sourcemask, time_t now)
 {
 	struct addrnode *node = tree->root;
@@ -519,19 +519,19 @@ addrtree_find(struct addrtree *tree, const addrkey_t *addr,
 }
 
 /** Wrappers for static functions to unit test */
-int unittest_wrapper_addrtree_cmpbit(const addrkey_t *key1, 
+int unittest_wrapper_addrtree_cmpbit(const addrkey_t *key1,
 	const addrkey_t *key2, addrlen_t n) {
 	return cmpbit(key1, key2, n);
 }
-addrlen_t unittest_wrapper_addrtree_bits_common(const addrkey_t *s1, 
+addrlen_t unittest_wrapper_addrtree_bits_common(const addrkey_t *s1,
 	addrlen_t l1, const addrkey_t *s2, addrlen_t l2, addrlen_t skip) {
 	return bits_common(s1, l1, s2, l2, skip);
 }
-int unittest_wrapper_addrtree_getbit(const addrkey_t *addr, 
+int unittest_wrapper_addrtree_getbit(const addrkey_t *addr,
 	addrlen_t addrlen, addrlen_t n) {
 	return getbit(addr, addrlen, n);
 }
-int unittest_wrapper_addrtree_issub(const addrkey_t *s1, addrlen_t l1, 
+int unittest_wrapper_addrtree_issub(const addrkey_t *s1, addrlen_t l1,
 	const addrkey_t *s2, addrlen_t l2,  addrlen_t skip) {
 	return issub(s1, l1, s2, l2, skip);
 }

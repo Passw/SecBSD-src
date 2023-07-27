@@ -1529,7 +1529,7 @@ if test x_$enable_fully_static = x_yes; then
 fi
 
 # set lock checking if requested
-AC_ARG_ENABLE(lock_checks, AS_HELP_STRING([--enable-lock-checks],[ enable to check lock and unlock calls, for debug purposes ]), 
+AC_ARG_ENABLE(lock_checks, AS_HELP_STRING([--enable-lock-checks],[ enable to check lock and unlock calls, for debug purposes ]),
 	, )
 if test x_$enable_lock_checks = x_yes; then
 	AC_DEFINE(ENABLE_LOCK_CHECKS, 1, [Define if you want to use debug lock checking (slow).])

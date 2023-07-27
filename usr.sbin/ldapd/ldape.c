@@ -345,7 +345,7 @@ ldape(int debug, int verbose, char *csockpath)
 	struct passwd		*pw;
 	char			 host[128];
 	mode_t			old_umask = 0;
-	
+
 	TAILQ_INIT(&conn_list);
 
 	ldap_loginit("ldap server", debug, verbose);

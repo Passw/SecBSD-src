@@ -4,22 +4,22 @@
  * Copyright (c) 2008, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -138,7 +138,7 @@ print_result(struct lookinfo* info)
 }
 
 /** this is a function of type ub_callback_t */
-static void 
+static void
 lookup_is_done(void* mydata, int err, struct ub_result* result)
 {
 	/* cast mydata back to the correct type */
@@ -151,7 +151,7 @@ lookup_is_done(void* mydata, int err, struct ub_result* result)
 }
 
 /** check error, if bad, exit with error message */
-static void 
+static void
 checkerr(const char* desc, int err)
 {
 	if(err != 0) {
@@ -232,7 +232,7 @@ ext_check_result(const char* desc, int err, struct ub_result* result)
 			exit(1);
 		}
 		if(result->secure || result->bogus) {
-			printf("%s: error result->secure or bogus is set.\n", 
+			printf("%s: error result->secure or bogus is set.\n",
 				desc);
 			exit(1);
 		}
@@ -250,12 +250,12 @@ ext_check_result(const char* desc, int err, struct ub_result* result)
 			exit(1);
 		}
 		if(result->answer_packet == NULL) {
-			printf("%s: error result->answer_packet is NULL.\n", 
+			printf("%s: error result->answer_packet is NULL.\n",
 				desc);
 			exit(1);
 		}
 		if(result->answer_len != 54) {
-			printf("%s: error result->answer_len is wrong.\n", 
+			printf("%s: error result->answer_len is wrong.\n",
 				desc);
 			exit(1);
 		}
@@ -263,7 +263,7 @@ ext_check_result(const char* desc, int err, struct ub_result* result)
 }
 
 /** extended bg result callback, this function is ub_callback_t */
-static void 
+static void
 ext_callback(void* mydata, int err, struct ub_result* result)
 {
 	struct track_id* my_id = (struct track_id*)mydata;
@@ -271,7 +271,7 @@ ext_callback(void* mydata, int err, struct ub_result* result)
 	if(my_id) {
 		/* I have an id, make sure we are not cancelled */
 		lock_basic_lock(&my_id->lock);
-		if(doprint) 
+		if(doprint)
 			printf("cb %d: ", my_id->id);
 		if(my_id->cancel) {
 			printf("error: query id=%d returned, but was cancelled\n",
@@ -315,9 +315,9 @@ ext_thread(void* arg)
 	}
 	for(i=0; i<inf->numq; i++) {
 		if(async_ids) {
-			r = ub_resolve_async(inf->ctx, 
-				inf->argv[i%inf->argc], LDNS_RR_TYPE_A, 
-				LDNS_RR_CLASS_IN, &async_ids[i], ext_callback, 
+			r = ub_resolve_async(inf->ctx,
+				inf->argv[i%inf->argc], LDNS_RR_TYPE_A,
+				LDNS_RR_CLASS_IN, &async_ids[i], ext_callback,
 				&async_ids[i].id);
 			checkerr("ub_resolve_async", r);
 			if(i > 100) {
@@ -326,18 +326,18 @@ ext_thread(void* arg)
 				if(r != UB_NOID)
 					async_ids[i-100].cancel=1;
 				lock_basic_unlock(&async_ids[i-100].lock);
-				if(r != UB_NOID) 
+				if(r != UB_NOID)
 					checkerr("ub_cancel", r);
 			}
 		} else if(inf->thread_num > NUMTHR/2) {
 			/* async */
-			r = ub_resolve_async(inf->ctx, 
-				inf->argv[i%inf->argc], LDNS_RR_TYPE_A, 
+			r = ub_resolve_async(inf->ctx,
+				inf->argv[i%inf->argc], LDNS_RR_TYPE_A,
 				LDNS_RR_CLASS_IN, NULL, ext_callback, NULL);
 			checkerr("ub_resolve_async", r);
 		} else  {
 			/* blocking */
-			r = ub_resolve(inf->ctx, inf->argv[i%inf->argc], 
+			r = ub_resolve(inf->ctx, inf->argv[i%inf->argc],
 				LDNS_RR_TYPE_A, LDNS_RR_CLASS_IN, &result);
 			ext_check_result("ub_resolve", r, result);
 			ub_resolve_free(result);
@@ -350,7 +350,7 @@ ext_thread(void* arg)
 	/* if these locks are destroyed, or if the async_ids is freed, then
 	   a use-after-free happens in another thread.
 	   The allocation is only part of this test, though. */
-	
+
 	return NULL;
 }
 
@@ -399,7 +399,7 @@ extern int optind;
 extern char* optarg;
 
 /** main program for asynclook */
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
 	int c;
 	struct ub_ctx* ctx;
@@ -443,7 +443,7 @@ int main(int argc, char** argv)
 				if(r != 0) {
 					printf("ub_ctx_resolvconf "
 						"error: %s : %s\n",
-						ub_strerror(r), 
+						ub_strerror(r),
 						strerror(errno));
 					return 1;
 				}
@@ -453,7 +453,7 @@ int main(int argc, char** argv)
 				if(r != 0) {
 					printf("ub_ctx_hosts "
 						"error: %s : %s\n",
-						ub_strerror(r), 
+						ub_strerror(r),
 						strerror(errno));
 					return 1;
 				}
@@ -501,7 +501,7 @@ int main(int argc, char** argv)
 		return ext_test(ctx, argc, argv);
 
 	/* allocate array for results. */
-	lookups = (struct lookinfo*)calloc((size_t)argc, 
+	lookups = (struct lookinfo*)calloc((size_t)argc,
 		sizeof(struct lookinfo));
 	if(!lookups) {
 		printf("out of memory\n");
@@ -520,7 +520,7 @@ int main(int argc, char** argv)
 		} else {
 			fprintf(stderr, "start async lookup %s\n", argv[i]);
 			r = ub_resolve_async(ctx, argv[i], LDNS_RR_TYPE_A,
-				LDNS_RR_CLASS_IN, &lookups[i], &lookup_is_done, 
+				LDNS_RR_CLASS_IN, &lookups[i], &lookup_is_done,
 				&lookups[i].async_id);
 			checkerr("ub_resolve_async", r);
 		}
@@ -531,7 +531,7 @@ int main(int argc, char** argv)
 		for(i=0; i<argc; i++) {
 			fprintf(stderr, "cancel %s\n", argv[i]);
 			r = ub_cancel(ctx, lookups[i].async_id);
-			if(r != UB_NOID) 
+			if(r != UB_NOID)
 				checkerr("ub_cancel", r);
 		}
 		num_wait = 0;

@@ -1,25 +1,25 @@
 /*
- * util/net_help.h - network help functions 
+ * util/net_help.h - network help functions
  *
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -47,13 +47,13 @@ struct sock_list;
 struct regional;
 struct config_strlist;
 
-/** DNS constants for uint16_t style flag manipulation. host byteorder. 
+/** DNS constants for uint16_t style flag manipulation. host byteorder.
  *                                1  1  1  1  1  1
  *  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
  * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
  * |QR|   Opcode  |AA|TC|RD|RA| Z|AD|CD|   RCODE   |
  * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- */ 
+ */
 /** CD flag */
 #define BIT_CD 0x0010
 /** AD flag */
@@ -122,14 +122,14 @@ int str_is_ip6(const char* str);
  * @param s: file descriptor.
  * @return: 0 on error (error is printed to log).
  */
-int fd_set_nonblock(int s); 
+int fd_set_nonblock(int s);
 
 /**
  * Set fd (back to) blocking.
  * @param s: file descriptor.
  * @return: 0 on error (error is printed to log).
  */
-int fd_set_block(int s); 
+int fd_set_block(int s);
 
 /**
  * See if number is a power of 2.
@@ -153,7 +153,7 @@ void* memdup(void* data, size_t len);
  * @param addr: the sockaddr to print. Can be ip4 or ip6.
  * @param addrlen: length of addr.
  */
-void log_addr(enum verbosity_value v, const char* str, 
+void log_addr(enum verbosity_value v, const char* str,
 	struct sockaddr_storage* addr, socklen_t addrlen);
 
 /**
@@ -164,7 +164,7 @@ void log_addr(enum verbosity_value v, const char* str,
  * @param addr: the sockaddr to print. Can be ip4 or ip6.
  * @param addrlen: length of addr.
  */
-void log_name_addr(enum verbosity_value v, const char* str, uint8_t* zone, 
+void log_name_addr(enum verbosity_value v, const char* str, uint8_t* zone,
 	struct sockaddr_storage* addr, socklen_t addrlen);
 
 /**
@@ -186,7 +186,7 @@ void log_err_addr(const char* str, const char* err,
  * @param port: default port.
  * @return 0 on error.
  */
-int extstrtoaddr(const char* str, struct sockaddr_storage* addr, 
+int extstrtoaddr(const char* str, struct sockaddr_storage* addr,
 	socklen_t* addrlen, int port);
 
 /**
@@ -257,7 +257,7 @@ void sockaddr_store_port(struct sockaddr_storage* addr, socklen_t addrlen,
  * @param type: host format RR type.
  * @param dclass: host format RR class.
  */
-void log_nametypeclass(enum verbosity_value v, const char* str, 
+void log_nametypeclass(enum verbosity_value v, const char* str,
 	uint8_t* name, uint16_t type, uint16_t dclass);
 
 /**
@@ -275,7 +275,7 @@ void log_query_in(const char* str, uint8_t* name, uint16_t type,
  * @param len2: lengths of addr2.
  * @return: 0 if addr1 == addr2. -1 if addr1 is smaller, +1 if larger.
  */
-int sockaddr_cmp(struct sockaddr_storage* addr1, socklen_t len1, 
+int sockaddr_cmp(struct sockaddr_storage* addr1, socklen_t len1,
 	struct sockaddr_storage* addr2, socklen_t len2);
 
 /**
@@ -286,7 +286,7 @@ int sockaddr_cmp(struct sockaddr_storage* addr1, socklen_t len1,
  * @param len2: lengths of addr2.
  * @return: 0 if addr1 == addr2. -1 if addr1 is smaller, +1 if larger.
  */
-int sockaddr_cmp_addr(struct sockaddr_storage* addr1, socklen_t len1, 
+int sockaddr_cmp_addr(struct sockaddr_storage* addr1, socklen_t len1,
 	struct sockaddr_storage* addr2, socklen_t len2);
 
 /**
@@ -427,7 +427,7 @@ int listen_sslctx_setup(void* ctxt);
  */
 void listen_sslctx_setup_2(void* ctxt);
 
-/** 
+/**
  * create SSL listen context
  * @param key: private key file.
  * @param pem: public key cert.

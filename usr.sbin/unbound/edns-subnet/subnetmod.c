@@ -5,22 +5,22 @@
  * Copyright (c) 2013, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -59,7 +59,7 @@
 #include "iterator/iter_utils.h"
 
 /** externally called */
-void 
+void
 subnet_data_delete(void *d, void *ATTR_UNUSED(arg))
 {
 	struct subnet_msg_cache_data *r;
@@ -70,12 +70,12 @@ subnet_data_delete(void *d, void *ATTR_UNUSED(arg))
 }
 
 /** externally called */
-size_t 
+size_t
 msg_cache_sizefunc(void *k, void *d)
 {
 	struct msgreply_entry *q = (struct msgreply_entry*)k;
 	struct subnet_msg_cache_data *r = (struct subnet_msg_cache_data*)d;
-	size_t s = sizeof(struct msgreply_entry) 
+	size_t s = sizeof(struct msgreply_entry)
 		+ sizeof(struct subnet_msg_cache_data)
 		+ q->key.qname_len + lock_get_mem(&q->entry.lock);
 	s += addrtree_size(r->tree4);
@@ -89,7 +89,7 @@ subnet_new_qstate(struct module_qstate *qstate, int id)
 {
 	struct subnet_qstate *sq = (struct subnet_qstate*)regional_alloc(
 		qstate->region, sizeof(struct subnet_qstate));
-	if(!sq) 
+	if(!sq)
 		return 0;
 	qstate->minfo[id] = sq;
 	memset(sq, 0, sizeof(*sq));
@@ -107,26 +107,26 @@ subnet_ecs_opt_list_append(struct ecs_data* ecs, struct edns_option** list,
 	sldns_buffer* buf = qstate->env->scratch_buffer;
 
 	if(ecs->subnet_validdata) {
-		log_assert(ecs->subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP4 || 
+		log_assert(ecs->subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP4 ||
 			ecs->subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP6);
-		log_assert(ecs->subnet_addr_fam != EDNSSUBNET_ADDRFAM_IP4 || 
+		log_assert(ecs->subnet_addr_fam != EDNSSUBNET_ADDRFAM_IP4 ||
 			ecs->subnet_source_mask <=  INET_SIZE*8);
-		log_assert(ecs->subnet_addr_fam != EDNSSUBNET_ADDRFAM_IP6 || 
+		log_assert(ecs->subnet_addr_fam != EDNSSUBNET_ADDRFAM_IP6 ||
 			ecs->subnet_source_mask <= INET6_SIZE*8);
 
 		sn_octs = ecs->subnet_source_mask / 8;
 		sn_octs_remainder =
 			(size_t)((ecs->subnet_source_mask % 8)>0?1:0);
-		
+
 		log_assert(sn_octs + sn_octs_remainder <= INET6_SIZE);
-		
+
 		sldns_buffer_clear(buf);
 		sldns_buffer_write_u16(buf, ecs->subnet_addr_fam);
 		sldns_buffer_write_u8(buf, ecs->subnet_source_mask);
 		sldns_buffer_write_u8(buf, ecs->subnet_scope_mask);
 		sldns_buffer_write(buf, ecs->subnet_addr, sn_octs);
 		if(sn_octs_remainder)
-			sldns_buffer_write_u8(buf, ecs->subnet_addr[sn_octs] & 
+			sldns_buffer_write_u8(buf, ecs->subnet_addr[sn_octs] &
 				~(0xFF >> (ecs->subnet_source_mask % 8)));
 		sldns_buffer_flip(buf);
 
@@ -145,7 +145,7 @@ int ecs_whitelist_check(struct query_info* qinfo,
 {
 	struct subnet_qstate *sq;
 	struct subnet_env *sn_env;
-	
+
 	if(!(sq=(struct subnet_qstate*)qstate->minfo[id]))
 		return 1;
 	sn_env = (struct subnet_env*)qstate->env->modinfo[id];
@@ -158,7 +158,7 @@ int ecs_whitelist_check(struct query_info* qinfo,
 
 	if(sq->ecs_server_out.subnet_validdata && ((sq->subnet_downstream &&
 		qstate->env->cfg->client_subnet_always_forward) ||
-		ecs_is_whitelisted(sn_env->whitelist, 
+		ecs_is_whitelisted(sn_env->whitelist,
 		addr, addrlen, qinfo->qname, qinfo->qname_len,
 		qinfo->qclass))) {
 		/* Address on whitelist or client query contains ECS option, we
@@ -299,8 +299,8 @@ sizefunc(void *elemptr) {
  * Select tree from cache entry based on edns data.
  * If for address family not present it will create a new one.
  * NULL on failure to create. */
-static struct addrtree* 
-get_tree(struct subnet_msg_cache_data *data, struct ecs_data *edns, 
+static struct addrtree*
+get_tree(struct subnet_msg_cache_data *data, struct ecs_data *edns,
 	struct subnet_env *env, struct config_file* cfg)
 {
 	struct addrtree *tree;
@@ -385,7 +385,7 @@ update_cache(struct module_qstate *qstate, int id)
 		log_err("subnetcache: cache insertion failed");
 		return;
 	}
-	
+
 	/* store RRsets */
 	for(i=0; i<rep->rrset_count; i++) {
 		rep->ref[i].key = rep->rrsets[i];
@@ -397,7 +397,7 @@ update_cache(struct module_qstate *qstate, int id)
 	if(edns->subnet_source_mask == 0 && edns->subnet_scope_mask == 0)
 		only_match_scope_zero = 1;
 	else only_match_scope_zero = 0;
-	addrtree_insert(tree, (addrkey_t*)edns->subnet_addr, 
+	addrtree_insert(tree, (addrkey_t*)edns->subnet_addr,
 		edns->subnet_source_mask, sq->max_scope, rep,
 		rep->ttl, *qstate->env->now, only_match_scope_zero);
 
@@ -437,7 +437,7 @@ lookup_and_reply(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 		lock_rw_unlock(&e->lock);
 		return 0;
 	}
-	node = addrtree_find(tree, (addrkey_t*)ecs->subnet_addr, 
+	node = addrtree_find(tree, (addrkey_t*)ecs->subnet_addr,
 		ecs->subnet_source_mask, *env->now);
 	if (!node) { /* plain old cache miss */
 		lock_rw_unlock(&e->lock);
@@ -449,11 +449,11 @@ lookup_and_reply(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 		env->scratch);
 	scope = (uint8_t)node->scope;
 	lock_rw_unlock(&e->lock);
-	
+
 	if (!qstate->return_msg) { /* Failed allocation or expired TTL */
 		return 0;
 	}
-	
+
 	if (sq->subnet_downstream) { /* relay to interested client */
 		sq->ecs_client_out.subnet_scope_mask = scope;
 		sq->ecs_client_out.subnet_addr_fam = ecs->subnet_addr_fam;
@@ -473,7 +473,7 @@ lookup_and_reply(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
  * @param net: Number of bits to test.
  * @return: 1 if equal, 0 otherwise.
  */
-static int 
+static int
 common_prefix(uint8_t *a, uint8_t *b, uint8_t net)
 {
 	size_t n = (size_t)net / 8;
@@ -498,7 +498,7 @@ eval_response(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 		 * module_finished */
 		return module_finished;
 	}
-	
+
 	/* We have not asked for subnet data */
 	if (!sq->subnet_sent) {
 		if (s_in->subnet_validdata)
@@ -507,7 +507,7 @@ eval_response(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 			cp_edns_bad_response(c_out, c_in);
 		return module_finished;
 	}
-	
+
 	/* subnet sent but nothing came back */
 	if (!s_in->subnet_validdata) {
 		/* The authority indicated no support for edns subnet. As a
@@ -524,15 +524,15 @@ eval_response(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 			cp_edns_bad_response(c_out, c_in);
 		return module_finished;
 	}
-	
-	/* Being here means we have asked for and got a subnet specific 
-	 * answer. Also, the answer from the authority is not yet cached 
+
+	/* Being here means we have asked for and got a subnet specific
+	 * answer. Also, the answer from the authority is not yet cached
 	 * anywhere. */
-	
+
 	/* can we accept response? */
 	if(s_out->subnet_addr_fam != s_in->subnet_addr_fam ||
 		s_out->subnet_source_mask != s_in->subnet_source_mask ||
-		!common_prefix(s_out->subnet_addr, s_in->subnet_addr, 
+		!common_prefix(s_out->subnet_addr, s_in->subnet_addr,
 			s_out->subnet_source_mask))
 	{
 		/* we can not accept, restart query without option */
@@ -550,7 +550,7 @@ eval_response(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 	}
 	sne->num_msg_nocache++;
 	lock_rw_unlock(&sne->biglock);
-	
+
 	if (sq->subnet_downstream) {
 		/* Client wants to see the answer, echo option back
 		 * and adjust the scope. */
@@ -588,7 +588,7 @@ parse_subnet_option(struct edns_option* ecs_option, struct ecs_data* ecs)
 	ecs->subnet_source_mask = ecs_option->opt_data[2];
 	ecs->subnet_scope_mask = ecs_option->opt_data[3];
 	/* remaining bytes indicate address */
-	
+
 	/* validate input*/
 	/* option length matches calculated length? */
 	if (ecs_option->opt_len != (size_t)((ecs->subnet_source_mask+7)/8 + 4))
@@ -604,9 +604,9 @@ parse_subnet_option(struct edns_option* ecs_option, struct ecs_data* ecs)
 			return 0;
 	} else
 		return 0;
-	
+
 	/* valid ECS data, write to ecs_data */
-	if (copy_clear(ecs->subnet_addr, INET6_SIZE, ecs_option->opt_data + 4, 
+	if (copy_clear(ecs->subnet_addr, INET6_SIZE, ecs_option->opt_data + 4,
 		ecs_option->opt_len - 4, ecs->subnet_source_mask))
 		return 0;
 	ecs->subnet_validdata = 1;
@@ -651,7 +651,7 @@ ecs_query_response(struct module_qstate* qstate, struct dns_msg* response,
 	int id, void* ATTR_UNUSED(cbargs))
 {
 	struct subnet_qstate *sq;
-	
+
 	if(!response || !(sq=(struct subnet_qstate*)qstate->minfo[id]))
 		return 1;
 
@@ -703,7 +703,7 @@ ecs_edns_back_parsed(struct module_qstate* qstate, int id,
 {
 	struct subnet_qstate *sq;
 	struct edns_option* ecs_opt;
-	
+
 	if(!(sq=(struct subnet_qstate*)qstate->minfo[id]))
 		return 1;
 	if((ecs_opt = edns_opt_list_find(
@@ -728,14 +728,14 @@ ecs_edns_back_parsed(struct module_qstate* qstate, int id,
 }
 
 void
-subnetmod_operate(struct module_qstate *qstate, enum module_ev event, 
+subnetmod_operate(struct module_qstate *qstate, enum module_ev event,
 	int id, struct outbound_entry* outbound)
 {
 	struct subnet_env *sne = qstate->env->modinfo[id];
 	struct subnet_qstate *sq = (struct subnet_qstate*)qstate->minfo[id];
-	
+
 	verbose(VERB_QUERY, "subnetcache[module %d] operate: extstate:%s "
-		"event:%s", id, strextstate(qstate->ext_state[id]), 
+		"event:%s", id, strextstate(qstate->ext_state[id]),
 		strmodulevent(event));
 	log_query_info(VERB_QUERY, "subnetcache operate: query", &qstate->qinfo);
 
@@ -768,7 +768,7 @@ subnetmod_operate(struct module_qstate *qstate, enum module_ev event,
 				&qstate->mesh_info->reply_list->query_reply.client_addr,
 				&sq->ecs_client_in, qstate->env->cfg);
 		}
-		
+
 		if(sq->ecs_client_in.subnet_validdata == 0) {
 			/* No clients are interested in result or we could not
 			 * parse it, we don't do client subnet */
@@ -811,18 +811,18 @@ subnetmod_operate(struct module_qstate *qstate, enum module_ev event,
 			}
 			lock_rw_unlock(&sne->biglock);
 		}
-		
+
 		sq->ecs_server_out.subnet_addr_fam =
 			sq->ecs_client_in.subnet_addr_fam;
 		sq->ecs_server_out.subnet_source_mask =
 			sq->ecs_client_in.subnet_source_mask;
 		/* Limit source prefix to configured maximum */
-		if(sq->ecs_server_out.subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP4 
+		if(sq->ecs_server_out.subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP4
 			&& sq->ecs_server_out.subnet_source_mask >
 			qstate->env->cfg->max_client_subnet_ipv4)
 			sq->ecs_server_out.subnet_source_mask =
 				qstate->env->cfg->max_client_subnet_ipv4;
-		else if(sq->ecs_server_out.subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP6 
+		else if(sq->ecs_server_out.subnet_addr_fam == EDNSSUBNET_ADDRFAM_IP6
 			&& sq->ecs_server_out.subnet_source_mask >
 			qstate->env->cfg->max_client_subnet_ipv6)
 			sq->ecs_server_out.subnet_source_mask =
@@ -840,7 +840,7 @@ subnetmod_operate(struct module_qstate *qstate, enum module_ev event,
 			/* ECS specific data required, do not look at the global
 			 * cache in other modules. */
 			qstate->no_cache_lookup = 1;
-		
+
 		/* pass request to next module */
 		verbose(VERB_ALGO,
 			"subnetcache: not found in cache. pass to next module");
@@ -906,13 +906,13 @@ subnetmod_get_mem(struct module_env *env, int id)
 {
 	struct subnet_env *sn_env = env->modinfo[id];
 	if (!sn_env) return 0;
-	return sizeof(*sn_env) + 
+	return sizeof(*sn_env) +
 		slabhash_get_mem(sn_env->subnet_msg_cache) +
 		ecs_whitelist_get_mem(sn_env->whitelist);
 }
 
 /**
- * The module function block 
+ * The module function block
  */
 static struct module_func_block subnetmod_block = {
 	"subnetcache", &subnetmod_init, &subnetmod_deinit, &subnetmod_operate,

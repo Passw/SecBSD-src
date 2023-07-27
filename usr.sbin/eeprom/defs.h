@@ -48,7 +48,7 @@
 #define EE_BANNER_ENABLE_LOC	0x20
 
 /*
- * Keyword table entry.  Contains a pointer to the keyword, the 
+ * Keyword table entry.  Contains a pointer to the keyword, the
  * offset into the prom where the value lives, and a pointer to
  * the function that handles that value.
  */

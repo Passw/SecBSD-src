@@ -14,7 +14,7 @@ struct sldns_file_parse_state;
 
 /**
  * \file
- * 
+ *
  * This is a debugging aid. It is not efficient, especially
  * with a long config file, but it can give any reply to any query.
  * This can help the developer pre-script replies for queries.
@@ -29,7 +29,7 @@ struct sldns_file_parse_state;
 
  /*
 	The data file format is as follows:
-	
+
 	; comment.
 	; a number of entries, these are processed first to last.
 	; a line based format.
@@ -105,8 +105,8 @@ struct sldns_file_parse_state;
 				; are ignored. Only copy_id is done.
 	HEX_ANSWER_END
 	HEX_EDNS_BEGIN		; follow with hex data.
-				; Raw EDNS data to match against. It must be an 
-				; exact match (all options are matched) and will be 
+				; Raw EDNS data to match against. It must be an
+				; exact match (all options are matched) and will be
 				; evaluated only when 'MATCH ednsdata' given.
 	HEX_EDNS_END
 	ENTRY_END
@@ -174,7 +174,7 @@ struct reply_packet {
 	/** or reply pkt in hex if not parsable */
 	struct sldns_buffer* reply_from_hex;
 	/** seconds to sleep before giving packet */
-	unsigned int packet_sleep; 
+	unsigned int packet_sleep;
 };
 
 /** data structure to keep the canned queries in.
@@ -226,7 +226,7 @@ struct entry {
 
 	/** how to adjust the reply packet */
 	/** copy over the ID from the query into the answer */
-	uint8_t copy_id; 
+	uint8_t copy_id;
 	/** copy the query nametypeclass from query into the answer */
 	uint8_t copy_query;
 	/** copy ednsdata to reply, assume it is clientsubnet and
@@ -235,7 +235,7 @@ struct entry {
 	/** increment the ECS scope copied from the sourcemask by one */
 	uint8_t increment_ecs_scope;
 	/** in seconds */
-	unsigned int sleeptime; 
+	unsigned int sleeptime;
 
 	/** some number that names this entry, line number in file or so */
 	int lineno;
@@ -245,7 +245,7 @@ struct entry {
 };
 
 /**
- * reads the canned reply file and returns a list of structs 
+ * reads the canned reply file and returns a list of structs
  * does an exit on error.
  * @param name: name of the file to read.
  * @param skip_whitespace: skip leftside whitespace.
@@ -266,7 +266,7 @@ void delete_entry(struct entry* list);
  * @param skip_whitespace: skip leftside whitespace.
  * @return: The entry read (malloced) or NULL if no entry could be read.
  */
-struct entry* read_entry(FILE* in, const char* name, 
+struct entry* read_entry(FILE* in, const char* name,
 	struct sldns_file_parse_state* pstate, int skip_whitespace);
 
 /**
@@ -297,7 +297,7 @@ void adjust_packet(struct entry* match, uint8_t** answer_pkt,
 	size_t* answer_pkt_len, uint8_t* query_pkt, size_t query_pkt_len);
 
 /**
- * Parses data buffer to a query, finds the correct answer 
+ * Parses data buffer to a query, finds the correct answer
  * and calls the given function for every packet to send.
  * if verbose_out filename is given, packets are dumped there.
  * @param inbuf: the packet that came in
@@ -309,8 +309,8 @@ void adjust_packet(struct entry* match, uint8_t** answer_pkt,
  * @param userdata: userarg to give to sendfunc.
  * @param verbose_out: if not NULL, verbose messages are printed there.
  */
-void handle_query(uint8_t* inbuf, ssize_t inlen, struct entry* entries, 
-	int* count, enum transport_type transport, 
+void handle_query(uint8_t* inbuf, ssize_t inlen, struct entry* entries,
+	int* count, enum transport_type transport,
 	void (*sendfunc)(uint8_t*, size_t, void*), void* userdata,
 	FILE* verbose_out);
 

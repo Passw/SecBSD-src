@@ -33,10 +33,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 /**
  * \file
- * Calls ecs related unit tests. Exits with code 1 on a failure. 
+ * Calls ecs related unit tests. Exits with code 1 on a failure.
  */
 
 #include "config.h"
@@ -76,22 +76,22 @@
 			if (node->edge[i]) {
 				for (s = 0; s < indent; s++) printf(" ");
 				printkey(node->edge[i]->str, node->edge[i]->len);
-				printf("(len %d bits, %d bytes) ", node->edge[i]->len, 
+				printf("(len %d bits, %d bytes) ", node->edge[i]->len,
 					node->edge[i]->len/8 + ((node->edge[i]->len%8)>0));
 				print_tree(node->edge[i]->node, indent+1, maxdepth);
 			}
-		}	
+		}
 		if (indent == 0) printf("-----Tree-----");
 	}
 */
 
 /* what should we check?
- * X - is it balanced? (a node with 1 child should not have  
+ * X - is it balanced? (a node with 1 child should not have
  * a node with 1 child MUST have elem
  * child must be sub of parent
  * edge must be longer than parent edge
  * */
-static int addrtree_inconsistent_subtree(struct addrtree* tree, 
+static int addrtree_inconsistent_subtree(struct addrtree* tree,
 	struct addredge* parent_edge, addrlen_t depth)
 {
 	struct addredge* edge;
@@ -120,10 +120,10 @@ static int addrtree_inconsistent(struct addrtree* tree)
 {
 	struct addredge* edge;
 	int i, r;
-	
+
 	if (!tree) return 0;
 	if (!tree->root) return 1;
-	
+
 	for (i = 0; i<2; i++) {
 		edge = tree->root->edge[i];
 		if (!edge) continue;
@@ -240,7 +240,7 @@ static void bits_common_test(void)
 	addrkey_t k1[] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
 	addrkey_t k2[] = {0,0,0,0,0,0,0,0};
 	addrlen_t i;
-	
+
 	unit_show_func("edns-subnet/addrtree.h", "bits_common");
 	for(i = 0; i<64; i++) {
 		unit_assert( unittest_wrapper_addrtree_bits_common(k1, 64, k1, 64, i) == 64 );
@@ -263,7 +263,7 @@ static void cmpbit_test(void)
 	addrkey_t k1[] = {0xA5, 0x0F};
 	addrkey_t k2[] = {0x5A, 0xF0};
 	addrlen_t i;
-	
+
 	unit_show_func("edns-subnet/addrtree.h", "cmpbit");
 	for(i = 0; i<16; i++) {
 		unit_assert( !unittest_wrapper_addrtree_cmpbit(k1,k1,i) );

@@ -4,22 +4,22 @@
  * Copyright (c) 2013, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -64,7 +64,7 @@ typedef uint8_t addrkey_t;
 
 struct addrtree {
 	struct addrnode *root;
-	/** Number of elements in the tree (not always equal to number of 
+	/** Number of elements in the tree (not always equal to number of
 	 * nodes) */
 	uint32_t node_count;
 	/** Maximum number of allowed nodes, will be enforced by LRU list.
@@ -74,7 +74,7 @@ struct addrtree {
 	size_t size_bytes;
 	/** Maximum prefix length we are willing to cache. */
 	addrlen_t max_depth;
-	/** External function to delete elem. Called as 
+	/** External function to delete elem. Called as
 	 * delfunc(addrnode->elem, addrtree->env) */
 	void (*delfunc)(void *, void *);
 	/** Environment for delfunc */
@@ -129,21 +129,21 @@ struct addredge {
  */
 size_t addrtree_size(const struct addrtree *tree);
 
-/** 
+/**
  * Create a new tree.
  * @param max_depth: Tree will cap keys to this length.
  * @param delfunc: f(element, env) delete element.
  * @param sizefunc: f(element) returning the size of element.
  * @param env: Module environment for alloc information.
- * @param max_node_count: Maximum size of this data structure in nodes. 
+ * @param max_node_count: Maximum size of this data structure in nodes.
  * 			0 for unlimited.
  * @return new addrtree or NULL on failure.
  */
-struct addrtree * 
-addrtree_create(addrlen_t max_depth, void (*delfunc)(void *, void *), 
+struct addrtree *
+addrtree_create(addrlen_t max_depth, void (*delfunc)(void *, void *),
 	size_t (*sizefunc)(void *), void *env, uint32_t max_node_count);
 
-/** 
+/**
  * Free tree and all nodes below.
  * @param tree: Tree to be freed.
  */
@@ -151,10 +151,10 @@ void addrtree_delete(struct addrtree *tree);
 
 /**
  * Insert an element in the tree. Failures are silent. Sourcemask and
- * scope might be changed according to local policy. Caller should no 
+ * scope might be changed according to local policy. Caller should no
  * longer access elem, it could be free'd now or later during future
  * inserts.
- * 
+ *
  * @param tree: Tree insert elem in.
  * @param addr: key for element lookup.
  * @param sourcemask: Length of addr in bits.
@@ -164,29 +164,29 @@ void addrtree_delete(struct addrtree *tree);
  * @param only_match_scope_zero: set for when query /0 has scope /0 answer.
  * @param now: Current time in seconds.
  */
-void addrtree_insert(struct addrtree *tree, const addrkey_t *addr, 
-	addrlen_t sourcemask, addrlen_t scope, void *elem, time_t ttl, 
+void addrtree_insert(struct addrtree *tree, const addrkey_t *addr,
+	addrlen_t sourcemask, addrlen_t scope, void *elem, time_t ttl,
 	time_t now, int only_match_scope_zero);
 
 /**
  * Find a node containing an element in the tree.
- * 
+ *
  * @param tree: Tree to search.
  * @param addr: key for element lookup.
  * @param sourcemask: Length of addr in bits.
  * @param now: Current time in seconds.
  * @return addrnode or NULL on miss.
  */
-struct addrnode * addrtree_find(struct addrtree *tree, 
+struct addrnode * addrtree_find(struct addrtree *tree,
 	const addrkey_t *addr, addrlen_t sourcemask, time_t now);
 
 /** Wrappers for static functions to unit test */
-int unittest_wrapper_addrtree_cmpbit(const addrkey_t *key1, 
+int unittest_wrapper_addrtree_cmpbit(const addrkey_t *key1,
 	const addrkey_t *key2, addrlen_t n);
-addrlen_t unittest_wrapper_addrtree_bits_common(const addrkey_t *s1, 
+addrlen_t unittest_wrapper_addrtree_bits_common(const addrkey_t *s1,
 	addrlen_t l1, const addrkey_t *s2, addrlen_t l2, addrlen_t skip);
-int unittest_wrapper_addrtree_getbit(const addrkey_t *addr, 
+int unittest_wrapper_addrtree_getbit(const addrkey_t *addr,
 	addrlen_t addrlen, addrlen_t n);
-int unittest_wrapper_addrtree_issub(const addrkey_t *s1, addrlen_t l1, 
+int unittest_wrapper_addrtree_issub(const addrkey_t *s1, addrlen_t l1,
 	const addrkey_t *s2, addrlen_t l2,  addrlen_t skip);
 #endif /* ADDRTREE_H */

@@ -630,7 +630,7 @@ q_ans_parse(struct q_ans* q, struct regional* region,
 	*fallback = 0; /* default fallback value */
 	if(strstr(q->flags, "fallback"))
 		*fallback = 1;
-	
+
 	/* parse zone */
 	*dp_nmlen = sizeof(buf);
 	if((ret=sldns_str2wire_dname_buf(q->zone, buf, dp_nmlen))!=0)
@@ -899,7 +899,7 @@ authzone_query_test(void)
 }
 
 /** test authzone code */
-void 
+void
 authzone_test(void)
 {
 	unit_show_feature("authzone");

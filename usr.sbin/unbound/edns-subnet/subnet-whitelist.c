@@ -5,22 +5,22 @@
  * Copyright (c) 2013, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -53,10 +53,10 @@
 #include "sldns/str2wire.h"
 #include "util/data/dname.h"
 
-struct ecs_whitelist* 
+struct ecs_whitelist*
 ecs_whitelist_create(void)
 {
-	struct ecs_whitelist* whitelist = 
+	struct ecs_whitelist* whitelist =
 		(struct ecs_whitelist*)calloc(1,
 		sizeof(struct ecs_whitelist));
 	if(!whitelist)
@@ -69,10 +69,10 @@ ecs_whitelist_create(void)
 	return whitelist;
 }
 
-void 
+void
 ecs_whitelist_delete(struct ecs_whitelist* whitelist)
 {
-	if(!whitelist) 
+	if(!whitelist)
 		return;
 	regional_destroy(whitelist->region);
 	free(whitelist);
@@ -80,7 +80,7 @@ ecs_whitelist_delete(struct ecs_whitelist* whitelist)
 
 /** insert new address into whitelist structure */
 static int
-upstream_insert(struct ecs_whitelist* whitelist, 
+upstream_insert(struct ecs_whitelist* whitelist,
 	struct sockaddr_storage* addr, socklen_t addrlen, int net)
 {
 	struct addr_tree_node* node = (struct addr_tree_node*)regional_alloc(
@@ -114,7 +114,7 @@ upstream_str_cfg(struct ecs_whitelist* whitelist, const char* str)
 }
 
 /** read client_subnet config */
-static int 
+static int
 read_upstream(struct ecs_whitelist* whitelist, struct config_file* cfg)
 {
 	struct config_strlist* p;
@@ -127,7 +127,7 @@ read_upstream(struct ecs_whitelist* whitelist, struct config_file* cfg)
 }
 
 /** read client_subnet_zone config */
-static int 
+static int
 read_names(struct ecs_whitelist* whitelist, struct config_file* cfg)
 {
 	/* parse names, report errors, insert into tree */
@@ -167,7 +167,7 @@ read_names(struct ecs_whitelist* whitelist, struct config_file* cfg)
 	return 1;
 }
 
-int 
+int
 ecs_whitelist_apply_cfg(struct ecs_whitelist* whitelist,
 	struct config_file* cfg)
 {
@@ -183,7 +183,7 @@ ecs_whitelist_apply_cfg(struct ecs_whitelist* whitelist,
 	return 1;
 }
 
-int 
+int
 ecs_is_whitelisted(struct ecs_whitelist* whitelist,
 	struct sockaddr_storage* addr, socklen_t addrlen, uint8_t* qname,
 	size_t qname_len, uint16_t qclass)
@@ -197,7 +197,7 @@ ecs_is_whitelisted(struct ecs_whitelist* whitelist,
 		qclass) != NULL;
 }
 
-size_t 
+size_t
 ecs_whitelist_get_mem(struct ecs_whitelist* whitelist)
 {
 	if(!whitelist) return 0;

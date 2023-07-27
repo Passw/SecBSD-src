@@ -2199,7 +2199,7 @@ guest_match_path(struct guest *guest, const char *path)
 	TAILQ_FOREACH(subdevice, &guest->subdevice_list, link) {
 		const char *path2 = subdevice->path;
 		size_t len2 = strlen(path2);
-		
+
 		if (strncmp(path, path2, len < len2 ? len : len2) == 0)
 			return 1;
 	}
@@ -2299,7 +2299,7 @@ guest_add_vpcie(struct guest *guest, uint64_t cfghandle)
 	}
 	if (phys_device == NULL)
 		errx(1, "no matching physical device");
-			
+
 	for (resource_id = 0; resource_id < max_devices; resource_id++) {
 		if (pcie_busses[resource_id] == NULL)
 			break;
@@ -2502,7 +2502,7 @@ guest_add_cpu(struct guest *guest, uint64_t stride)
 
 	cpu = pri_alloc_cpu(-1);
 
-	/* 
+	/*
 	 * Allocate (but don't assign) additional virtual CPUs if the
 	 * specified stride is bigger than one.
 	 */

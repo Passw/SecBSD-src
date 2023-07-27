@@ -4,22 +4,22 @@
  * Copyright (c) 2008, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -56,7 +56,7 @@
 #include <sys/time.h>
 
 /** usage information for perf */
-static void usage(char* nm) 
+static void usage(char* nm)
 {
 	printf("usage: %s [options] server\n", nm);
 	printf("server: ip address of server, IP4 or IP6.\n");
@@ -74,7 +74,7 @@ struct perfinfo;
 struct perfio;
 
 /** Global info for perf */
-struct perfinfo { 
+struct perfinfo {
 	/** need to exit */
 	volatile int exit;
 	/** all purpose buffer (for UDP send and receive) */
@@ -105,7 +105,7 @@ struct perfinfo {
 	size_t total_sent;
 	/** numbers by rcode */
 	size_t by_rcode[32];
-	
+
 	/** number of I/O ports */
 	size_t io_num;
 	/** I/O ports array */
@@ -158,7 +158,7 @@ static RETSIGTYPE perf_sigh(int sig)
 
 /** timeval compare, t1 < t2 */
 static int
-perf_tv_smaller(struct timeval* t1, struct timeval* t2) 
+perf_tv_smaller(struct timeval* t1, struct timeval* t2)
 {
 #ifndef S_SPLINT_S
 	if(t1->tv_sec < t2->tv_sec)
@@ -172,7 +172,7 @@ perf_tv_smaller(struct timeval* t1, struct timeval* t2)
 
 /** timeval add, t1 += t2 */
 static void
-perf_tv_add(struct timeval* t1, struct timeval* t2) 
+perf_tv_add(struct timeval* t1, struct timeval* t2)
 {
 #ifndef S_SPLINT_S
 	t1->tv_sec += t2->tv_sec;
@@ -186,7 +186,7 @@ perf_tv_add(struct timeval* t1, struct timeval* t2)
 
 /** timeval subtract, t1 -= t2 */
 static void
-perf_tv_subtract(struct timeval* t1, struct timeval* t2) 
+perf_tv_subtract(struct timeval* t1, struct timeval* t2)
 {
 #ifndef S_SPLINT_S
 	t1->tv_sec -= t2->tv_sec;
@@ -208,7 +208,7 @@ perfsetup(struct perfinfo* info)
 	if(gettimeofday(&info->start, NULL) < 0)
 		fatal_exit("gettimeofday: %s", strerror(errno));
 	sig_info = info;
-	if( signal(SIGINT, perf_sigh) == SIG_ERR || 
+	if( signal(SIGINT, perf_sigh) == SIG_ERR ||
 #ifdef SIGQUIT
 		signal(SIGQUIT, perf_sigh) == SIG_ERR ||
 #endif
@@ -318,7 +318,7 @@ perftimeout(struct perfinfo* info, size_t n, struct timeval* now)
 
 /** print nice stats about qps */
 static void
-stat_printout(struct perfinfo* info, struct timeval* now, 
+stat_printout(struct perfinfo* info, struct timeval* now,
 	struct timeval* elapsed)
 {
 	/* calculate qps */
@@ -375,7 +375,7 @@ perfselect(struct perfinfo* info)
 		}
 	}
 	perf_tv_subtract(&timeout, &now);
-	
+
 	num = select(info->maxfd+1, &rset, NULL, NULL, &timeout);
 	if(num == -1) {
 		if(errno == EAGAIN || errno == EINTR)
@@ -398,25 +398,25 @@ perfendstats(struct perfinfo* info)
 {
 	double dt, qps;
 	struct timeval timeout, now;
-	int i, lost; 
+	int i, lost;
 	if(gettimeofday(&now, NULL) < 0)
 		fatal_exit("gettimeofday: %s", strerror(errno));
 	timeout = now;
 	perf_tv_subtract(&timeout, &info->since);
 	stat_printout(info, &now, &timeout);
-	
+
 	timeout = now;
 	perf_tv_subtract(&timeout, &info->start);
 	dt = (double)(timeout.tv_sec*1000000 + timeout.tv_usec) / 1000000.0;
 	qps = (double)(info->total_recv) / dt;
 	lost = (int)(info->total_sent - info->total_recv) - (int)info->io_num;
 	if(!info->quiet) {
-		printf("overall time: 	%g sec\n", 
-			(double)timeout.tv_sec + 
+		printf("overall time: 	%g sec\n",
+			(double)timeout.tv_sec +
 			(double)timeout.tv_usec/1000000.);
-		if(lost > 0) 
+		if(lost > 0)
 			printf("Packets lost: 	%d\n", (int)lost);
-	
+
 		for(i=0; i<(int)(sizeof(info->by_rcode)/sizeof(size_t)); i++)
 		{
 			if(info->by_rcode[i] > 0) {
@@ -447,7 +447,7 @@ static int
 qlist_parse_line(sldns_buffer* buf, char* p)
 {
 	char nm[1024], cl[1024], tp[1024], fl[1024];
-	int r; 
+	int r;
 	int rec = 1, edns = 0;
 	struct query_info qinfo;
 	nm[0] = 0; cl[0] = 0; tp[0] = 0; fl[0] = 0;
@@ -517,7 +517,7 @@ qlist_add_line(struct perfinfo* info, char* line, int no)
 		printf("error parsing query %d: %s\n", no, line);
 		exit(1);
 	}
-	sldns_buffer_write_u16_at(info->buf, 0, (uint16_t)info->qlist_size); 
+	sldns_buffer_write_u16_at(info->buf, 0, (uint16_t)info->qlist_size);
 	if(info->qlist_size + 1 > info->qlist_capacity) {
 		qlist_grow_capacity(info);
 	}
@@ -561,7 +561,7 @@ extern int optind;
 extern char* optarg;
 
 /** main program for perf */
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
 	char* nm = argv[0];
 	int c;
@@ -626,7 +626,7 @@ int main(int argc, char* argv[])
 		printf("No queries to make, use -f or -a.\n");
 		exit(1);
 	}
-	
+
 	/* do the performance test */
 	perfmain(&info);
 

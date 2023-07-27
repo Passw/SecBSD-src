@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.255 2023/07/21 04:50:47 tb Exp $
+# $OpenBSD: Makefile,v 1.258 2023/07/26 20:08:59 tb Exp $
 
 .include <bsd.own.mk>
 
@@ -37,7 +37,6 @@ MAN=	\
 	BIO_ctrl.3 \
 	BIO_dump.3 \
 	BIO_dup_chain.3 \
-	BIO_f_asn1.3 \
 	BIO_f_base64.3 \
 	BIO_f_buffer.3 \
 	BIO_f_cipher.3 \
@@ -63,7 +62,6 @@ MAN=	\
 	BIO_s_socket.3 \
 	BIO_set_callback.3 \
 	BIO_should_retry.3 \
-	BN_BLINDING_new.3 \
 	BN_CTX_new.3 \
 	BN_CTX_start.3 \
 	BN_add.3 \
@@ -214,8 +212,8 @@ MAN=	\
 	MD5.3 \
 	NAME_CONSTRAINTS_new.3 \
 	OBJ_NAME_add.3 \
-	OBJ_add_sigid.3 \
 	OBJ_create.3 \
+	OBJ_find_sigid_algs.3 \
 	OBJ_nid2obj.3 \
 	OCSP_CRLID_new.3 \
 	OCSP_REQUEST_new.3 \

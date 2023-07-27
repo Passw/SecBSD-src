@@ -844,7 +844,7 @@ schema_parse_attributetype(struct schema *schema)
 	while (attr->syntax == NULL && sup != NULL) {
 		attr->syntax = sup->syntax;
 		sup = sup->sup;
-	} 
+	}
 	if (attr->syntax == NULL) {
 		schema_err(schema, "%s: no syntax defined", ATTR_NAME(attr));
 		goto fail;
@@ -857,19 +857,19 @@ schema_parse_attributetype(struct schema *schema)
 	while (attr->equality == NULL && sup != NULL) {
 		attr->equality = sup->equality;
 		sup = sup->sup;
-	} 
+	}
 	/* Same thing with ordering matching rule. */
 	sup = attr->sup;
 	while (attr->ordering == NULL && sup != NULL) {
 		attr->ordering = sup->ordering;
 		sup = sup->sup;
-	} 
+	}
 	/* ...and substring matching rule. */
 	sup = attr->sup;
 	while (attr->substr == NULL && sup != NULL) {
 		attr->substr = sup->substr;
 		sup = sup->sup;
-	} 
+	}
 
 	if (schema_validate_match_rule(schema, attr, attr->equality, MATCH_EQUALITY) != 0 ||
 	    schema_validate_match_rule(schema, attr, attr->ordering, MATCH_ORDERING) != 0 ||

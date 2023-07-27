@@ -35,7 +35,7 @@
  */
 /**
  * \file
- * Calls ldns unit tests. Exits with code 1 on a failure. 
+ * Calls ldns unit tests. Exits with code 1 on a failure.
  */
 
 #include "config.h"
@@ -73,7 +73,7 @@ buf_to_hex(uint8_t* b, size_t blen, char* s, size_t slen)
  * @param bufs: size of the text buffers.
  */
 static void
-rr_transform(char* txt_in, char* wire1, char* txt_out, char* wire2, 
+rr_transform(char* txt_in, char* wire1, char* txt_out, char* wire2,
 	size_t bufs)
 {
 	uint8_t b[65536];
@@ -188,7 +188,7 @@ rr_test_file(const char* input, const char* check)
 			rr_checks(wire_chk, txt_chk, txt_out, wire_out, back);
 		}
 	}
-	
+
 	if(of) fclose(of);
 	fclose(inf);
 	fclose(chf);

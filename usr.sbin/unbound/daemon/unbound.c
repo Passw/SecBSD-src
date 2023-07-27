@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -176,17 +176,17 @@ checkrlimits(struct config_file* cfg)
 #ifndef S_SPLINT_S
 #ifdef HAVE_GETRLIMIT
 	/* list has number of ports to listen to, ifs number addresses */
-	int list = ((cfg->do_udp?1:0) + (cfg->do_tcp?1 + 
+	int list = ((cfg->do_udp?1:0) + (cfg->do_tcp?1 +
 			(int)cfg->incoming_num_tcp:0));
 	size_t listen_ifs = (size_t)(cfg->num_ifs==0?
-		((cfg->do_ip4 && !cfg->if_automatic?1:0) + 
+		((cfg->do_ip4 && !cfg->if_automatic?1:0) +
 		 (cfg->do_ip6?1:0)):cfg->num_ifs);
 	size_t listen_num = list*listen_ifs;
 	size_t outudpnum = (size_t)cfg->outgoing_num_ports;
 	size_t outtcpnum = cfg->outgoing_num_tcp;
 	size_t misc = 4; /* logfile, pidfile, stdout... */
-	size_t perthread_noudp = listen_num + outtcpnum + 
-		2/*cmdpipe*/ + 2/*libevent*/ + misc; 
+	size_t perthread_noudp = listen_num + outtcpnum +
+		2/*cmdpipe*/ + 2/*libevent*/ + misc;
 	size_t perthread = perthread_noudp + outudpnum;
 
 #if !defined(HAVE_PTHREAD) && !defined(HAVE_SOLARIS_THREADS)
@@ -227,29 +227,29 @@ checkrlimits(struct config_file* cfg)
 		}
 	}
 
-	if(total > 1024 && 
+	if(total > 1024 &&
 		strncmp(ub_event_get_version(), "mini-event", 10) == 0) {
 		log_warn("too many file descriptors requested. The builtin"
 			"mini-event cannot handle more than 1024. Config "
 			"for less fds or compile with libevent");
 		if(numthread*perthread_noudp+15 > 1024)
 			fatal_exit("too much tcp. not enough fds.");
-		cfg->outgoing_num_ports = (int)((1024 
-			- numthread*perthread_noudp 
+		cfg->outgoing_num_ports = (int)((1024
+			- numthread*perthread_noudp
 			- 10 /* safety margin */) /numthread);
 		log_warn("continuing with less udp ports: %u",
 			cfg->outgoing_num_ports);
 		total = 1024;
 	}
-	if(perthread > 64 && 
+	if(perthread > 64 &&
 		strncmp(ub_event_get_version(), "winsock-event", 13) == 0) {
 		log_err("too many file descriptors requested. The winsock"
 			" event handler cannot handle more than 64 per "
 			" thread. Config for less fds");
 		if(perthread_noudp+2 > 64)
 			fatal_exit("too much tcp. not enough fds.");
-		cfg->outgoing_num_ports = (int)((64 
-			- perthread_noudp 
+		cfg->outgoing_num_ports = (int)((64
+			- perthread_noudp
 			- 2/* safety margin */));
 		log_warn("continuing with less udp ports: %u",
 			cfg->outgoing_num_ports);
@@ -276,8 +276,8 @@ checkrlimits(struct config_file* cfg)
 			 * with 15 as margin */
 			if(numthread*perthread_noudp+15 > avail)
 				fatal_exit("too much tcp. not enough fds.");
-			cfg->outgoing_num_ports = (int)((avail 
-				- numthread*perthread_noudp 
+			cfg->outgoing_num_ports = (int)((avail
+				- numthread*perthread_noudp
 				- 10 /* safety margin */) /numthread);
 			log_warn("continuing with less udp ports: %u",
 				cfg->outgoing_num_ports);
@@ -290,7 +290,7 @@ checkrlimits(struct config_file* cfg)
 		verbose(VERB_ALGO, "increased limit(open files) from %u to %u",
 			(unsigned)avail, (unsigned)total+10);
 	}
-#else	
+#else
 	(void)cfg;
 #endif /* HAVE_GETRLIMIT */
 #endif /* S_SPLINT_S */
@@ -319,7 +319,7 @@ apply_settings(struct daemon* daemon, struct config_file* cfg,
 }
 
 #ifdef HAVE_KILL
-/** Read existing pid from pidfile. 
+/** Read existing pid from pidfile.
  * @param file: file name of pid file.
  * @return: the pid from the file or -1 if none.
  */
@@ -356,14 +356,14 @@ readpid (const char* file)
 
 	pidbuf[sizeof(pidbuf)-1] = 0;
 	pid = (pid_t)strtol(pidbuf, &t, 10);
-	
+
 	if (*t && *t != '\n') {
 		return -1;
 	}
 	return pid;
 }
 
-/** write pid to file. 
+/** write pid to file.
  * @param pidfile: file name of pid file.
  * @param pid: pid to write to file.
  * @return false on failure
@@ -381,7 +381,7 @@ writepid (const char* pidfile, pid_t pid)
 		| O_NOFOLLOW
 #endif
 		, 0644)) == -1) {
-		log_err("cannot open pidfile %s: %s", 
+		log_err("cannot open pidfile %s: %s",
 			pidfile, strerror(errno));
 		return 0;
 	}
@@ -419,10 +419,10 @@ checkoldpid(char* pidfile, int inchroot)
 	if((old = readpid(pidfile)) != -1) {
 		/* see if it is still alive */
 		if(kill(old, 0) == 0 || errno == EPERM)
-			log_warn("unbound is already running as pid %u.", 
+			log_warn("unbound is already running as pid %u.",
 				(unsigned)old);
 		else	if(inchroot)
-			log_warn("did not exit gracefully last time (%u)", 
+			log_warn("did not exit gracefully last time (%u)",
 				(unsigned)old);
 	}
 }
@@ -541,7 +541,7 @@ perform_setup(struct daemon* daemon, struct config_file* cfg, int debug_mode,
 		/* calculate position of pidfile */
 		if(cfg->pidfile[0] == '/')
 			daemon->pidfile = strdup(cfg->pidfile);
-		else	daemon->pidfile = fname_after_chroot(cfg->pidfile, 
+		else	daemon->pidfile = fname_after_chroot(cfg->pidfile,
 				cfg, 1);
 		if(!daemon->pidfile)
 			fatal_exit("pidfile alloc: out of memory");
@@ -601,18 +601,18 @@ perform_setup(struct daemon* daemon, struct config_file* cfg, int debug_mode,
 		}
 		verbose(VERB_QUERY, "chdir to %s", cfg->chrootdir);
 		if(chroot(cfg->chrootdir))
-			fatal_exit("unable to chroot to %s: %s", 
+			fatal_exit("unable to chroot to %s: %s",
 				cfg->chrootdir, strerror(errno));
 		if(chdir("/"))
 			fatal_exit("unable to chdir to / in chroot %s: %s",
 				cfg->chrootdir, strerror(errno));
 		verbose(VERB_QUERY, "chroot to %s", cfg->chrootdir);
-		if(strncmp(*cfgfile, cfg->chrootdir, 
-			strlen(cfg->chrootdir)) == 0) 
+		if(strncmp(*cfgfile, cfg->chrootdir,
+			strlen(cfg->chrootdir)) == 0)
 			(*cfgfile) += strlen(cfg->chrootdir);
 
 		/* adjust stored pidfile for chroot */
-		if(daemon->pidfile && daemon->pidfile[0] && 
+		if(daemon->pidfile && daemon->pidfile[0] &&
 			strncmp(daemon->pidfile, cfg->chrootdir,
 			strlen(cfg->chrootdir))==0) {
 			char* old = daemon->pidfile;
@@ -632,7 +632,7 @@ perform_setup(struct daemon* daemon, struct config_file* cfg, int debug_mode,
 	if(cfg->directory && cfg->directory[0]) {
 		char* dir = cfg->directory;
 		if(cfg->chrootdir && cfg->chrootdir[0] &&
-			strncmp(dir, cfg->chrootdir, 
+			strncmp(dir, cfg->chrootdir,
 			strlen(cfg->chrootdir)) == 0)
 			dir += strlen(cfg->chrootdir);
 		if(dir[0]) {
@@ -663,7 +663,7 @@ perform_setup(struct daemon* daemon, struct config_file* cfg, int debug_mode,
 #else /* use setgid */
 		if(setgid(cfg_gid) != 0)
 #endif /* HAVE_SETRESGID */
-			fatal_exit("unable to set group id of %s: %s", 
+			fatal_exit("unable to set group id of %s: %s",
 				cfg->username, strerror(errno));
 #ifdef HAVE_SETRESUID
 		if(setresuid(cfg_uid,cfg_uid,cfg_uid) != 0)
@@ -672,27 +672,27 @@ perform_setup(struct daemon* daemon, struct config_file* cfg, int debug_mode,
 #else /* use setuid */
 		if(setuid(cfg_uid) != 0)
 #endif /* HAVE_SETRESUID */
-			fatal_exit("unable to set user id of %s: %s", 
+			fatal_exit("unable to set user id of %s: %s",
 				cfg->username, strerror(errno));
-		verbose(VERB_QUERY, "drop user privileges, run as %s", 
+		verbose(VERB_QUERY, "drop user privileges, run as %s",
 			cfg->username);
 	}
 #endif /* HAVE_GETPWNAM */
-	/* file logging inited after chroot,chdir,setuid is done so that 
+	/* file logging inited after chroot,chdir,setuid is done so that
 	 * it would succeed on SIGHUP as well */
 	if(!cfg->use_syslog)
 		log_init(cfg->logfile, cfg->use_syslog, cfg->chrootdir);
 }
 
 /**
- * Run the daemon. 
+ * Run the daemon.
  * @param cfgfile: the config file name.
  * @param cmdline_verbose: verbosity resulting from commandline -v.
  *    These increase verbosity as specified in the config file.
  * @param debug_mode: if set, do not daemonize.
  * @param need_pidfile: if false, no pidfile is checked or created.
  */
-static void 
+static void
 run_daemon(const char* cfgfile, int cmdline_verbose, int debug_mode, int need_pidfile)
 {
 	struct config_file* cfg = NULL;
@@ -720,13 +720,13 @@ run_daemon(const char* cfgfile, int cmdline_verbose, int debug_mode, int need_pi
 		apply_settings(daemon, cfg, cmdline_verbose, debug_mode);
 		if(!done_setup)
 			config_lookup_uid(cfg);
-	
+
 		/* prepare */
 		if(!daemon_open_shared_ports(daemon))
 			fatal_exit("could not open ports");
-		if(!done_setup) { 
+		if(!done_setup) {
 			perform_setup(daemon, cfg, debug_mode, &cfgfile, need_pidfile);
-			done_setup = 1; 
+			done_setup = 1;
 		} else {
 			/* reopen log after HUP to facilitate log rotation */
 			if(!cfg->use_syslog)
@@ -766,7 +766,7 @@ extern char* optarg;
  * @param argv: array of commandline arguments.
  * @return: exit status of the program.
  */
-int 
+int
 main(int argc, char* argv[])
 {
 	int c;
@@ -823,7 +823,7 @@ main(int argc, char* argv[])
 
 	if(winopt) {
 #ifdef UB_ON_WINDOWS
-		wsvc_command_option(winopt, cfgfile, cmdline_verbose, 
+		wsvc_command_option(winopt, cfgfile, cmdline_verbose,
 			cmdline_cfg);
 #else
 		fatal_exit("option not supported");

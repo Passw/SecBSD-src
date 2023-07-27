@@ -1,6 +1,6 @@
 TODO items. These are interesting todo items.
 o understand synthesized DNAMEs, so those TTL=0 packets are cached properly.
-o NSEC/NSEC3 aggressive negative caching, so that updates to NSEC/NSEC3 
+o NSEC/NSEC3 aggressive negative caching, so that updates to NSEC/NSEC3
   will result in proper negative responses.
 o (option) where port 53 is used for send and receive, no other ports are used.
 o (option) to not send replies to clients after a timeout of (say 5 secs) has
@@ -12,7 +12,7 @@ o (option) reprime and refresh oft used data before timeout.
 o (option) retain prime results in a overlaid roothints file.
 o (option) store primed key data in a overlaid keyhints file (sort of like drafttimers).
 o windows version, auto update feature, a query to check for the version.
-o command the server with TSIG inband. get-config, clearcache, 
+o command the server with TSIG inband. get-config, clearcache,
 	get stats, get memstats, get ..., reload, clear one zone from cache
 o timers rfc 5011 support.
 o Treat YXDOMAIN from a DNAME properly, in iterator (not throwaway), validator.
@@ -24,7 +24,7 @@ o library add convenience functions for A, AAAA, PTR, getaddrinfo, libresolve.
 o library add function to validate input from app that is signed.
 o add dynamic-update requests (making a dynupd request) to libunbound api.
 o SIG(0) and TSIG.
-o support OPT record placement on recv anywhere in the additional section. 
+o support OPT record placement on recv anywhere in the additional section.
 o add local-file: config with authority features.
 o (option) to make local-data answers be secure for libunbound (default=no)
 o (option) to make chroot: copy all needed files into jail (or make jail)
@@ -55,7 +55,7 @@ o winevent - do not go more than 64 fds (by polling with select one by
   not create packet storms with operator errors.
 o on windows version, implement that OS ancillary data capabilities for
   interface-automatic. IPPKTINFO, IP6PKTINFO for WSARecvMsg, WSASendMsg.
-o local-zone directive with authority service, full authority server 
+o local-zone directive with authority service, full authority server
   is a non-goal.
 o infra and lame cache: easier size config (in Mb), show usage in graphs.
 - store time of dump in cachedumps, so that on a load the ttls can be

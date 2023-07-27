@@ -434,7 +434,7 @@ pfkey_establish(struct ldpd_conf *conf, struct nbr *nbr)
 	if (auth == NULL || /* no policy */
 	    auth->md5key_len == 0) /* "no tcpmd5 sig" */
 		return (0);
-	
+
 	return (pfkey_md5sig_establish(nbr, auth));
 }
 

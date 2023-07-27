@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -50,7 +50,7 @@
 #include "sldns/rrdef.h"
 #include "sldns/sbuffer.h"
 
-struct delegpt* 
+struct delegpt*
 delegpt_create(struct regional* region)
 {
 	struct delegpt* dp=(struct delegpt*)regional_alloc(
@@ -66,7 +66,7 @@ struct delegpt* delegpt_copy(struct delegpt* dp, struct regional* region)
 	struct delegpt* copy = delegpt_create(region);
 	struct delegpt_ns* ns;
 	struct delegpt_addr* a;
-	if(!copy) 
+	if(!copy)
 		return NULL;
 	if(!delegpt_set_name(copy, region, dp->name))
 		return NULL;
@@ -93,7 +93,7 @@ struct delegpt* delegpt_copy(struct delegpt* dp, struct regional* region)
 	return copy;
 }
 
-int 
+int
 delegpt_set_name(struct delegpt* dp, struct regional* region, uint8_t* name)
 {
 	log_assert(!dp->dp_type_mlc);
@@ -102,7 +102,7 @@ delegpt_set_name(struct delegpt* dp, struct regional* region, uint8_t* name)
 	return dp->name != 0;
 }
 
-int 
+int
 delegpt_add_ns(struct delegpt* dp, struct regional* region, uint8_t* name,
 	uint8_t lame, char* tls_auth_name, int port)
 {
@@ -145,7 +145,7 @@ delegpt_find_ns(struct delegpt* dp, uint8_t* name, size_t namelen)
 {
 	struct delegpt_ns* p = dp->nslist;
 	while(p) {
-		if(namelen == p->namelen && 
+		if(namelen == p->namelen &&
 			query_dname_compare(name, p->name) == 0) {
 			return p;
 		}
@@ -155,7 +155,7 @@ delegpt_find_ns(struct delegpt* dp, uint8_t* name, size_t namelen)
 }
 
 struct delegpt_addr*
-delegpt_find_addr(struct delegpt* dp, struct sockaddr_storage* addr, 
+delegpt_find_addr(struct delegpt* dp, struct sockaddr_storage* addr,
 	socklen_t addrlen)
 {
 	struct delegpt_addr* p = dp->target_list;
@@ -258,7 +258,7 @@ delegpt_count_ns(struct delegpt* dp, size_t* numns, size_t* missing)
 }
 
 void
-delegpt_count_addr(struct delegpt* dp, size_t* numaddr, size_t* numres, 
+delegpt_count_addr(struct delegpt* dp, size_t* numaddr, size_t* numres,
 	size_t* numavail)
 {
 	struct delegpt_addr* a;
@@ -292,14 +292,14 @@ void delegpt_log(enum verbosity_value v, struct delegpt* dp)
 	delegpt_count_ns(dp, &numns, &missing);
 	delegpt_count_addr(dp, &numaddr, &numres, &numavail);
 	log_info("DelegationPoint<%s>: %u names (%u missing), "
-		"%u addrs (%u result, %u avail)%s", 
-		buf, (unsigned)numns, (unsigned)missing, 
+		"%u addrs (%u result, %u avail)%s",
+		buf, (unsigned)numns, (unsigned)missing,
 		(unsigned)numaddr, (unsigned)numres, (unsigned)numavail,
 		(dp->has_parent_side_NS?" parentNS":" cacheNS"));
 	if(verbosity >= VERB_ALGO) {
 		for(ns = dp->nslist; ns; ns = ns->next) {
 			dname_str(ns->name, buf);
-			log_info("  %s %s%s%s%s%s%s%s", buf, 
+			log_info("  %s %s%s%s%s%s%s%s", buf,
 			(ns->resolved?"*":""),
 			(ns->got4?" A":""), (ns->got6?" AAAA":""),
 			(dp->bogus?" BOGUS":""), (ns->lame?" PARENTSIDE":""),
@@ -321,7 +321,7 @@ void delegpt_log(enum verbosity_value v, struct delegpt* dp)
 	}
 }
 
-void 
+void
 delegpt_add_unused_targets(struct delegpt* dp)
 {
 	struct delegpt_addr* usa = dp->usable_list;
@@ -343,7 +343,7 @@ delegpt_count_targets(struct delegpt* dp)
 	return n;
 }
 
-size_t 
+size_t
 delegpt_count_missing_targets(struct delegpt* dp, int* alllame)
 {
 	struct delegpt_ns* ns;
@@ -369,27 +369,27 @@ find_NS(struct reply_info* rep, size_t from, size_t to)
 	return NULL;
 }
 
-struct delegpt* 
+struct delegpt*
 delegpt_from_message(struct dns_msg* msg, struct regional* region)
 {
 	struct ub_packed_rrset_key* ns_rrset = NULL;
 	struct delegpt* dp;
 	size_t i;
 	/* look for NS records in the authority section... */
-	ns_rrset = find_NS(msg->rep, msg->rep->an_numrrsets, 
+	ns_rrset = find_NS(msg->rep, msg->rep->an_numrrsets,
 		msg->rep->an_numrrsets+msg->rep->ns_numrrsets);
 
-	/* In some cases (even legitimate, perfectly legal cases), the 
+	/* In some cases (even legitimate, perfectly legal cases), the
 	 * NS set for the "referral" might be in the answer section. */
 	if(!ns_rrset)
 		ns_rrset = find_NS(msg->rep, 0, msg->rep->an_numrrsets);
-	
-	/* If there was no NS rrset in the authority section, then this 
-	 * wasn't a referral message. (It might not actually be a 
+
+	/* If there was no NS rrset in the authority section, then this
+	 * wasn't a referral message. (It might not actually be a
 	 * referral message anyway) */
 	if(!ns_rrset)
 		return NULL;
-	
+
 	/* If we found any, then Yay! we have a delegation point. */
 	dp = delegpt_create(region);
 	if(!dp)
@@ -404,7 +404,7 @@ delegpt_from_message(struct dns_msg* msg, struct regional* region)
 	for(i=0; i<msg->rep->rrset_count; i++) {
 		struct ub_packed_rrset_key* s = msg->rep->rrsets[i];
 		/* skip auth section. FIXME really needed?*/
-		if(msg->rep->an_numrrsets <= i && 
+		if(msg->rep->an_numrrsets <= i &&
 			i < (msg->rep->an_numrrsets+msg->rep->ns_numrrsets))
 			continue;
 
@@ -419,7 +419,7 @@ delegpt_from_message(struct dns_msg* msg, struct regional* region)
 	return dp;
 }
 
-int 
+int
 delegpt_rrset_add_ns(struct delegpt* dp, struct regional* region,
         struct ub_packed_rrset_key* ns_rrset, uint8_t lame)
 {
@@ -442,7 +442,7 @@ delegpt_rrset_add_ns(struct delegpt* dp, struct regional* region,
 	return 1;
 }
 
-int 
+int
 delegpt_add_rrset_A(struct delegpt* dp, struct regional* region,
 	struct ub_packed_rrset_key* ak, uint8_t lame, int* additions)
 {
@@ -465,7 +465,7 @@ delegpt_add_rrset_A(struct delegpt* dp, struct regional* region,
         return 1;
 }
 
-int 
+int
 delegpt_add_rrset_AAAA(struct delegpt* dp, struct regional* region,
 	struct ub_packed_rrset_key* ak, uint8_t lame, int* additions)
 {
@@ -488,7 +488,7 @@ delegpt_add_rrset_AAAA(struct delegpt* dp, struct regional* region,
         return 1;
 }
 
-int 
+int
 delegpt_add_rrset(struct delegpt* dp, struct regional* region,
         struct ub_packed_rrset_key* rrset, uint8_t lame, int* additions)
 {
@@ -524,7 +524,7 @@ void delegpt_add_neg_msg(struct delegpt* dp, struct msgreply_entry* msg)
 
 	/* if error or no answers */
 	if(FLAGS_GET_RCODE(rep->flags) != 0 || rep->an_numrrsets == 0) {
-		struct delegpt_ns* ns = delegpt_find_ns(dp, msg->key.qname, 
+		struct delegpt_ns* ns = delegpt_find_ns(dp, msg->key.qname,
 			msg->key.qname_len);
 		delegpt_mark_neg(ns, msg->key.qtype);
 	}

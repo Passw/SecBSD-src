@@ -4,22 +4,22 @@
  * Copyright (c) 2016, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -228,7 +228,7 @@ cachedb_apply_cfg(struct cachedb_env* cachedb_env, struct config_file* cfg)
 	return 1;
 }
 
-int 
+int
 cachedb_init(struct module_env* env, int id)
 {
 	struct cachedb_env* cachedb_env = (struct cachedb_env*)calloc(1,
@@ -267,7 +267,7 @@ cachedb_init(struct module_env* env, int id)
 	return 1;
 }
 
-void 
+void
 cachedb_deinit(struct module_env* env, int id)
 {
 	struct cachedb_env* cachedb_env;
@@ -291,7 +291,7 @@ cachedb_new(struct module_qstate* qstate, int id)
 	struct cachedb_qstate* iq = (struct cachedb_qstate*)regional_alloc(
 		qstate->region, sizeof(struct cachedb_qstate));
 	qstate->minfo[id] = iq;
-	if(!iq) 
+	if(!iq)
 		return 0;
 	memset(iq, 0, sizeof(*iq));
 	/* initialise it */
@@ -306,12 +306,12 @@ cachedb_new(struct module_qstate* qstate, int id)
  * @param id: module id
  * @param rcode: error code (DNS errcode).
  * @return: 0 for use by caller, to make notation easy, like:
- * 	return error_response(..). 
+ * 	return error_response(..).
  */
 static int
 error_response(struct module_qstate* qstate, int id, int rcode)
 {
-	verbose(VERB_QUERY, "return error response %s", 
+	verbose(VERB_QUERY, "return error response %s",
 		sldns_lookup_by_id(sldns_rcodes, rcode)?
 		sldns_lookup_by_id(sldns_rcodes, rcode)->name:"??");
 	qstate->return_rcode = rcode;
@@ -354,7 +354,7 @@ calc_hash(struct module_qstate* qstate, char* buf, size_t len)
 		memmove(clear+clen, secret, strlen(secret));
 		clen += strlen(secret);
 	}
-	
+
 	/* hash the buffer */
 	secalgo_hash_sha256(clear, clen, hash);
 #ifdef HAVE_EXPLICIT_BZERO
@@ -529,7 +529,7 @@ parse_data(struct module_qstate* qstate, struct sldns_buffer* buf)
 	sldns_buffer_set_limit(buf, lim);
 	if(!qstate->return_msg)
 		return 0;
-	
+
 	qstate->return_rcode = LDNS_RCODE_NOERROR;
 
 	/* see how much of the TTL expired, and remove it */
@@ -603,7 +603,7 @@ cachedb_extcache_store(struct module_qstate* qstate, struct cachedb_env* ie)
 	/* prepare data in scratch buffer */
 	if(!prep_data(qstate, qstate->env->scratch_buffer))
 		return;
-	
+
 	/* call backend */
 	(*ie->backend->store)(qstate->env, ie, key,
 		sldns_buffer_begin(qstate->env->scratch_buffer),
@@ -632,7 +632,7 @@ cachedb_intcache_lookup(struct module_qstate* qstate)
 		);
 	if(!msg && qstate->env->neg_cache &&
 		iter_qname_indicates_dnssec(qstate->env, &qstate->qinfo)) {
-		/* lookup in negative cache; may result in 
+		/* lookup in negative cache; may result in
 		 * NOERROR/NODATA or NXDOMAIN answers that need validation */
 		msg = val_neg_getmsg(qstate->env->neg_cache, &qstate->qinfo,
 			qstate->region, qstate->env->rrset_cache,
@@ -767,19 +767,19 @@ cachedb_handle_response(struct module_qstate* qstate,
 	qstate->ext_state[id] = module_finished;
 }
 
-void 
+void
 cachedb_operate(struct module_qstate* qstate, enum module_ev event, int id,
 	struct outbound_entry* outbound)
 {
 	struct cachedb_env* ie = (struct cachedb_env*)qstate->env->modinfo[id];
 	struct cachedb_qstate* iq = (struct cachedb_qstate*)qstate->minfo[id];
-	verbose(VERB_QUERY, "cachedb[module %d] operate: extstate:%s event:%s", 
+	verbose(VERB_QUERY, "cachedb[module %d] operate: extstate:%s event:%s",
 		id, strextstate(qstate->ext_state[id]), strmodulevent(event));
-	if(iq) log_query_info(VERB_QUERY, "cachedb operate: query", 
+	if(iq) log_query_info(VERB_QUERY, "cachedb operate: query",
 		&qstate->qinfo);
 
 	/* perform cachedb state machine */
-	if((event == module_event_new || event == module_event_pass) && 
+	if((event == module_event_new || event == module_event_pass) &&
 		iq == NULL) {
 		if(!cachedb_new(qstate, id)) {
 			(void)error_response(qstate, id, LDNS_RCODE_SERVFAIL);
@@ -825,7 +825,7 @@ cachedb_inform_super(struct module_qstate* ATTR_UNUSED(qstate),
 	verbose(VERB_ALGO, "cachedb inform_super was called");
 }
 
-void 
+void
 cachedb_clear(struct module_qstate* qstate, int id)
 {
 	struct cachedb_qstate* iq;
@@ -839,7 +839,7 @@ cachedb_clear(struct module_qstate* qstate, int id)
 	qstate->minfo[id] = NULL;
 }
 
-size_t 
+size_t
 cachedb_get_mem(struct module_env* env, int id)
 {
 	struct cachedb_env* ie = (struct cachedb_env*)env->modinfo[id];
@@ -849,7 +849,7 @@ cachedb_get_mem(struct module_env* env, int id)
 }
 
 /**
- * The cachedb function block 
+ * The cachedb function block
  */
 static struct module_func_block cachedb_block = {
 	"cachedb",
@@ -857,7 +857,7 @@ static struct module_func_block cachedb_block = {
 	&cachedb_inform_super, &cachedb_clear, &cachedb_get_mem
 };
 
-struct module_func_block* 
+struct module_func_block*
 cachedb_get_funcblock(void)
 {
 	return &cachedb_block;

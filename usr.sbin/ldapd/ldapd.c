@@ -212,7 +212,7 @@ main(int argc, char *argv[])
 	if (socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK,
 	    PF_UNSPEC, pipe_parent2ldap) != 0)
 		fatal("socketpair");
-	
+
 	ldape_pid = start_child(PROC_LDAP_SERVER, saved_argv0,
 	    pipe_parent2ldap[1], debug, verbose, csockpath, conffile);
 

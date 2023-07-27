@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 		if ((fd = open((nlistpath = _PATH_KSYMS), O_RDONLY)) == -1 ||
 		    (rval = kvm_mkdb(fd, dbdir, nlistpath, nlistname, kvm_gid,
 		    verbose)) != 0) {
-			if (fd == -1) 
+			if (fd == -1)
 				warnx("can't open %s", _PATH_KSYMS);
 			else
 				warnx("will try again using %s instead", _PATH_UNIX);
@@ -156,7 +156,7 @@ main(int argc, char *argv[])
 }
 
 int
-kvm_mkdb(int fd, const char *dbdir, char *nlistpath, char *nlistname, gid_t gid, 
+kvm_mkdb(int fd, const char *dbdir, char *nlistpath, char *nlistname, gid_t gid,
     int verbose)
 {
 	DB *db;
