@@ -1120,7 +1120,6 @@
 ./usr/include/openssl/des.h
 ./usr/include/openssl/dh.h
 ./usr/include/openssl/dsa.h
-./usr/include/openssl/dso.h
 ./usr/include/openssl/dtls1.h
 ./usr/include/openssl/ec.h
 ./usr/include/openssl/ecdh.h
@@ -1754,7 +1753,6 @@
 ./usr/share/man/man2/ypconnect.2
 ./usr/share/man/man3/ACCESS_DESCRIPTION_new.3
 ./usr/share/man/man3/AES_encrypt.3
-./usr/share/man/man3/ASN1_BIT_STRING_num_asc.3
 ./usr/share/man/man3/ASN1_BIT_STRING_set.3
 ./usr/share/man/man3/ASN1_INTEGER_get.3
 ./usr/share/man/man3/ASN1_NULL_new.3

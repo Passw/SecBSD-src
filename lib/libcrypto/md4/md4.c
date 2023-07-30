@@ -1,4 +1,4 @@
-/* $OpenBSD: md5_dgst.c,v 1.19 2023/07/15 15:37:05 jsing Exp $ */
+/* $OpenBSD: md4.c,v 1.5 2023/07/28 11:04:41 jsing Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -62,34 +62,23 @@
 
 #include <stdlib.h>
 #include <string.h>
-
 #include <openssl/opensslconf.h>
-
-#include <openssl/md5.h>
-
-#ifdef MD5_ASM
-# if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__) || \
-     defined(__x86_64) || defined(__x86_64__) || defined(_M_AMD64) || defined(_M_X64)
-#  define md5_block_data_order md5_block_asm_data_order
-# elif defined(__ia64) || defined(__ia64__) || defined(_M_IA64)
-#  define md5_block_data_order md5_block_asm_data_order
-# endif
-#endif
+#include <openssl/md4.h>
 
 __BEGIN_HIDDEN_DECLS
 
-void md5_block_data_order (MD5_CTX *c, const void *p, size_t num);
+void md4_block_data_order (MD4_CTX *c, const void *p, size_t num);
 
 __END_HIDDEN_DECLS
 
 #define DATA_ORDER_IS_LITTLE_ENDIAN
 
-#define HASH_LONG		MD5_LONG
-#define HASH_CTX		MD5_CTX
-#define HASH_CBLOCK		MD5_CBLOCK
-#define HASH_UPDATE		MD5_Update
-#define HASH_TRANSFORM		MD5_Transform
-#define HASH_FINAL		MD5_Final
+#define HASH_LONG		MD4_LONG
+#define HASH_CTX		MD4_CTX
+#define HASH_CBLOCK		MD4_CBLOCK
+#define HASH_UPDATE		MD4_Update
+#define HASH_TRANSFORM		MD4_Transform
+#define HASH_FINAL		MD4_Final
 #define	HASH_MAKE_STRING(c,s)	do {	\
 	unsigned long ll;		\
 	ll=(c)->A; HOST_l2c(ll,(s));	\
@@ -97,16 +86,16 @@ __END_HIDDEN_DECLS
 	ll=(c)->C; HOST_l2c(ll,(s));	\
 	ll=(c)->D; HOST_l2c(ll,(s));	\
 	} while (0)
-#define	HASH_BLOCK_DATA_ORDER	md5_block_data_order
+#define	HASH_BLOCK_DATA_ORDER	md4_block_data_order
 
 #include "md32_common.h"
-LCRYPTO_ALIAS(MD5_Update);
-LCRYPTO_ALIAS(MD5_Transform);
-LCRYPTO_ALIAS(MD5_Final);
+LCRYPTO_ALIAS(MD4_Update);
+LCRYPTO_ALIAS(MD4_Final);
+LCRYPTO_ALIAS(MD4_Transform);
 
 /*
 #define	F(x,y,z)	(((x) & (y))  |  ((~(x)) & (z)))
-#define	G(x,y,z)	(((x) & (z))  |  ((y) & (~(z))))
+#define	G(x,y,z)	(((x) & (y))  |  ((x) & ((z))) | ((y) & ((z))))
 */
 
 /* As pointed out by Wei Dai <weidai@eskimo.com>, the above can be
@@ -114,31 +103,22 @@ LCRYPTO_ALIAS(MD5_Final);
  * to Peter Gutmann's SHS code, and he attributes it to Rich Schroeppel.
  */
 #define	F(b,c,d)	((((c) ^ (d)) & (b)) ^ (d))
-#define	G(b,c,d)	((((b) ^ (c)) & (d)) ^ (c))
+#define G(b,c,d)	(((b) & (c)) | ((b) & (d)) | ((c) & (d)))
 #define	H(b,c,d)	((b) ^ (c) ^ (d))
-#define	I(b,c,d)	(((~(d)) | (b)) ^ (c))
 
 #define R0(a,b,c,d,k,s,t) { \
 	a+=((k)+(t)+F((b),(c),(d))); \
-	a=ROTATE(a,s); \
-	a+=b; };\
+	a=ROTATE(a,s); };
 
 #define R1(a,b,c,d,k,s,t) { \
 	a+=((k)+(t)+G((b),(c),(d))); \
-	a=ROTATE(a,s); \
-	a+=b; };
+	a=ROTATE(a,s); };\
 
 #define R2(a,b,c,d,k,s,t) { \
 	a+=((k)+(t)+H((b),(c),(d))); \
-	a=ROTATE(a,s); \
-	a+=b; };
+	a=ROTATE(a,s); };
 
-#define R3(a,b,c,d,k,s,t) { \
-	a+=((k)+(t)+I((b),(c),(d))); \
-	a=ROTATE(a,s); \
-	a+=b; };
-
-/* Implemented from RFC1321 The MD5 Message-Digest Algorithm
+/* Implemented from RFC1186 The MD4 Message-Digest Algorithm
  */
 
 #define INIT_DATA_A (unsigned long)0x67452301L
@@ -147,7 +127,7 @@ LCRYPTO_ALIAS(MD5_Final);
 #define INIT_DATA_D (unsigned long)0x10325476L
 
 int
-MD5_Init(MD5_CTX *c)
+MD4_Init(MD4_CTX *c)
 {
 	memset (c, 0, sizeof(*c));
 	c->A = INIT_DATA_A;
@@ -156,14 +136,14 @@ MD5_Init(MD5_CTX *c)
 	c->D = INIT_DATA_D;
 	return 1;
 }
-LCRYPTO_ALIAS(MD5_Init);
+LCRYPTO_ALIAS(MD4_Init);
 
-#ifndef md5_block_data_order
+#ifndef md4_block_data_order
 #ifdef X
 #undef X
 #endif
 void
-md5_block_data_order(MD5_CTX *c, const void *data_, size_t num)
+md4_block_data_order(MD4_CTX *c, const void *data_, size_t num)
 {
 	const unsigned char *data = data_;
 	unsigned MD32_REG_T A, B, C, D, l;
@@ -181,101 +161,84 @@ md5_block_data_order(MD5_CTX *c, const void *data_, size_t num)
 		HOST_c2l(data, l);
 		X1 = l;
 		/* Round 0 */
-		R0(A, B, C, D, X0, 7, 0xd76aa478L);
+		R0(A, B, C, D, X0, 3, 0);
 		HOST_c2l(data, l);
 		X2 = l;
-		R0(D, A, B, C, X1, 12, 0xe8c7b756L);
+		R0(D, A, B, C, X1, 7, 0);
 		HOST_c2l(data, l);
 		X3 = l;
-		R0(C, D, A, B, X2, 17, 0x242070dbL);
+		R0(C, D, A, B, X2, 11, 0);
 		HOST_c2l(data, l);
 		X4 = l;
-		R0(B, C, D, A, X3, 22, 0xc1bdceeeL);
+		R0(B, C, D, A, X3, 19, 0);
 		HOST_c2l(data, l);
 		X5 = l;
-		R0(A, B, C, D, X4, 7, 0xf57c0fafL);
+		R0(A, B, C, D, X4, 3, 0);
 		HOST_c2l(data, l);
 		X6 = l;
-		R0(D, A, B, C, X5, 12, 0x4787c62aL);
+		R0(D, A, B, C, X5, 7, 0);
 		HOST_c2l(data, l);
 		X7 = l;
-		R0(C, D, A, B, X6, 17, 0xa8304613L);
+		R0(C, D, A, B, X6, 11, 0);
 		HOST_c2l(data, l);
 		X8 = l;
-		R0(B, C, D, A, X7, 22, 0xfd469501L);
+		R0(B, C, D, A, X7, 19, 0);
 		HOST_c2l(data, l);
 		X9 = l;
-		R0(A, B, C, D, X8, 7, 0x698098d8L);
+		R0(A, B, C, D, X8, 3, 0);
 		HOST_c2l(data, l);
 		X10 = l;
-		R0(D, A, B, C, X9, 12, 0x8b44f7afL);
+		R0(D, A,B, C,X9, 7, 0);
 		HOST_c2l(data, l);
 		X11 = l;
-		R0(C, D, A, B, X10, 17, 0xffff5bb1L);
+		R0(C, D,A, B,X10, 11, 0);
 		HOST_c2l(data, l);
 		X12 = l;
-		R0(B, C, D, A, X11, 22, 0x895cd7beL);
+		R0(B, C,D, A,X11, 19, 0);
 		HOST_c2l(data, l);
 		X13 = l;
-		R0(A, B, C, D, X12, 7, 0x6b901122L);
+		R0(A, B,C, D,X12, 3, 0);
 		HOST_c2l(data, l);
 		X14 = l;
-		R0(D, A, B, C, X13, 12, 0xfd987193L);
+		R0(D, A,B, C,X13, 7, 0);
 		HOST_c2l(data, l);
 		X15 = l;
-		R0(C, D, A, B, X14, 17, 0xa679438eL);
-		R0(B, C, D, A, X15, 22, 0x49b40821L);
+		R0(C, D,A, B,X14, 11, 0);
+		R0(B, C,D, A,X15, 19, 0);
 		/* Round 1 */
-		R1(A, B, C, D, X1, 5, 0xf61e2562L);
-		R1(D, A, B, C, X6, 9, 0xc040b340L);
-		R1(C, D, A, B, X11, 14, 0x265e5a51L);
-		R1(B, C, D, A, X0, 20, 0xe9b6c7aaL);
-		R1(A, B, C, D, X5, 5, 0xd62f105dL);
-		R1(D, A, B, C, X10, 9, 0x02441453L);
-		R1(C, D, A, B, X15, 14, 0xd8a1e681L);
-		R1(B, C, D, A, X4, 20, 0xe7d3fbc8L);
-		R1(A, B, C, D, X9, 5, 0x21e1cde6L);
-		R1(D, A, B, C, X14, 9, 0xc33707d6L);
-		R1(C, D, A, B, X3, 14, 0xf4d50d87L);
-		R1(B, C, D, A, X8, 20, 0x455a14edL);
-		R1(A, B, C, D, X13, 5, 0xa9e3e905L);
-		R1(D, A, B, C, X2, 9, 0xfcefa3f8L);
-		R1(C, D, A, B, X7, 14, 0x676f02d9L);
-		R1(B, C, D, A, X12, 20, 0x8d2a4c8aL);
+		R1(A, B, C, D, X0, 3, 0x5A827999L);
+		R1(D, A, B, C, X4, 5, 0x5A827999L);
+		R1(C, D, A, B, X8, 9, 0x5A827999L);
+		R1(B, C, D, A, X12, 13, 0x5A827999L);
+		R1(A, B, C, D, X1, 3, 0x5A827999L);
+		R1(D, A, B, C, X5, 5, 0x5A827999L);
+		R1(C, D, A, B, X9, 9, 0x5A827999L);
+		R1(B, C, D, A, X13, 13, 0x5A827999L);
+		R1(A, B, C, D, X2, 3, 0x5A827999L);
+		R1(D, A, B, C, X6, 5, 0x5A827999L);
+		R1(C, D, A, B, X10, 9, 0x5A827999L);
+		R1(B, C, D, A, X14, 13, 0x5A827999L);
+		R1(A, B, C, D, X3, 3, 0x5A827999L);
+		R1(D, A, B, C, X7, 5, 0x5A827999L);
+		R1(C, D, A, B, X11, 9, 0x5A827999L);
+		R1(B, C, D, A, X15, 13, 0x5A827999L);
 		/* Round 2 */
-		R2(A, B, C, D, X5, 4, 0xfffa3942L);
-		R2(D, A, B, C, X8, 11, 0x8771f681L);
-		R2(C, D, A, B, X11, 16, 0x6d9d6122L);
-		R2(B, C, D, A, X14, 23, 0xfde5380cL);
-		R2(A, B, C, D, X1, 4, 0xa4beea44L);
-		R2(D, A, B, C, X4, 11, 0x4bdecfa9L);
-		R2(C, D, A, B, X7, 16, 0xf6bb4b60L);
-		R2(B, C, D, A, X10, 23, 0xbebfbc70L);
-		R2(A, B, C, D, X13, 4, 0x289b7ec6L);
-		R2(D, A, B, C, X0, 11, 0xeaa127faL);
-		R2(C, D, A, B, X3, 16, 0xd4ef3085L);
-		R2(B, C, D, A, X6, 23, 0x04881d05L);
-		R2(A, B, C, D, X9, 4, 0xd9d4d039L);
-		R2(D, A, B, C, X12, 11, 0xe6db99e5L);
-		R2(C, D, A, B, X15, 16, 0x1fa27cf8L);
-		R2(B, C, D, A, X2, 23, 0xc4ac5665L);
-		/* Round 3 */
-		R3(A, B, C, D, X0, 6, 0xf4292244L);
-		R3(D, A, B, C, X7, 10, 0x432aff97L);
-		R3(C, D, A, B, X14, 15, 0xab9423a7L);
-		R3(B, C, D, A, X5, 21, 0xfc93a039L);
-		R3(A, B, C, D, X12, 6, 0x655b59c3L);
-		R3(D, A, B, C, X3, 10, 0x8f0ccc92L);
-		R3(C, D, A, B, X10, 15, 0xffeff47dL);
-		R3(B, C, D, A, X1, 21, 0x85845dd1L);
-		R3(A, B, C, D, X8, 6, 0x6fa87e4fL);
-		R3(D, A, B, C, X15, 10, 0xfe2ce6e0L);
-		R3(C, D, A, B, X6, 15, 0xa3014314L);
-		R3(B, C, D, A, X13, 21, 0x4e0811a1L);
-		R3(A, B, C, D, X4, 6, 0xf7537e82L);
-		R3(D, A, B, C, X11, 10, 0xbd3af235L);
-		R3(C, D, A, B, X2, 15, 0x2ad7d2bbL);
-		R3(B, C, D, A, X9, 21, 0xeb86d391L);
+		R2(A, B, C, D, X0, 3, 0x6ED9EBA1L);
+		R2(D, A, B, C, X8, 9, 0x6ED9EBA1L);
+		R2(C, D, A, B, X4, 11, 0x6ED9EBA1L);
+		R2(B, C, D, A, X12, 15, 0x6ED9EBA1L);
+		R2(A, B, C, D, X2, 3, 0x6ED9EBA1L);
+		R2(D, A, B, C, X10, 9, 0x6ED9EBA1L);
+		R2(C, D, A, B, X6, 11, 0x6ED9EBA1L);
+		R2(B, C, D, A, X14, 15, 0x6ED9EBA1L);
+		R2(A, B, C, D, X1, 3, 0x6ED9EBA1L);
+		R2(D, A, B, C, X9, 9, 0x6ED9EBA1L);
+		R2(C, D, A, B, X5, 11, 0x6ED9EBA1L);
+		R2(B, C, D, A, X13, 15, 0x6ED9EBA1L);
+		R2(A, B, C, D, X3, 3, 0x6ED9EBA1L);
+		R2(D, A, B, C, X11, 9, 0x6ED9EBA1L);
+		R2(C, D, A, B, X7, 11, 0x6ED9EBA1L);
+		R2(B, C, D, A, X15, 15, 0x6ED9EBA1L);
 
 		A = c->A += A;
 		B = c->B += B;
@@ -284,3 +247,20 @@ md5_block_data_order(MD5_CTX *c, const void *data_, size_t num)
 	}
 }
 #endif
+
+unsigned char *
+MD4(const unsigned char *d, size_t n, unsigned char *md)
+{
+	MD4_CTX c;
+	static unsigned char m[MD4_DIGEST_LENGTH];
+
+	if (md == NULL)
+		md = m;
+	if (!MD4_Init(&c))
+		return NULL;
+	MD4_Update(&c, d, n);
+	MD4_Final(md, &c);
+	explicit_bzero(&c, sizeof(c));
+	return (md);
+}
+LCRYPTO_ALIAS(MD4);
