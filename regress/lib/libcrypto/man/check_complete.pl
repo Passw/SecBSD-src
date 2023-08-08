@@ -45,11 +45,13 @@ my %obsolete = (
 	ASN1_i2d_bio ASN1_i2d_bio_of ASN1_i2d_bio_of_const
 	ASN1_i2d_fp ASN1_i2d_fp_of ASN1_i2d_fp_of_const
 	ASN1_LONG_UNDEF
+	BIT_STRING_BITNAME
 	ub_title
 	V_ASN1_PRIMATIVE_TAG
 	X509_algor_st
     )],
     bio => [qw(
+	asn1_ps_func
 	BIO_C_GET_PROXY_PARAM BIO_C_GET_SOCKS
 	BIO_C_SET_PROXY_PARAM BIO_C_SET_SOCKS
 	BIO_get_no_connect_return BIO_get_proxies
@@ -59,7 +61,6 @@ my %obsolete = (
     )],
     bn => [qw(
 	BN_HEX_FMT1 BN_HEX_FMT2 BN_MASK
-	BN_options BN_prime_checks
     )],
     objects => [qw(
 	_DECLARE_OBJ_BSEARCH_CMP_FN

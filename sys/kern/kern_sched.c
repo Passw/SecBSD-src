@@ -1,4 +1,4 @@
-/*	$OpenBSD: kern_sched.c,v 1.81 2023/07/27 17:52:53 cheloha Exp $	*/
+/*	$OpenBSD: kern_sched.c,v 1.84 2023/08/05 20:07:55 cheloha Exp $	*/
 /*
  * Copyright (c) 2007, 2008 Artur Grabowski <art@openbsd.org>
  *
@@ -24,6 +24,7 @@
 #include <sys/clockintr.h>
 #include <sys/resourcevar.h>
 #include <sys/task.h>
+#include <sys/time.h>
 #include <sys/smr.h>
 #include <sys/tracepoint.h>
 
@@ -87,6 +88,14 @@ sched_init_cpu(struct cpu_info *ci)
 
 	spc->spc_idleproc = NULL;
 
+	if (spc->spc_itimer == NULL) {
+		spc->spc_itimer = clockintr_establish(&ci->ci_queue,
+		    itimer_update);
+		if (spc->spc_itimer == NULL) {
+			panic("%s: clockintr_establish itimer_update",
+			    __func__);
+		}
+	}
 	if (spc->spc_profclock == NULL) {
 		spc->spc_profclock = clockintr_establish(&ci->ci_queue,
 		    profclock);
@@ -223,6 +232,10 @@ sched_exit(struct proc *p)
 	timespecsub(&ts, &spc->spc_runtime, &ts);
 	timespecadd(&p->p_rtime, &ts, &p->p_rtime);
 
+	if (ISSET(spc->spc_schedflags, SPCF_ITIMER)) {
+		atomic_clearbits_int(&spc->spc_schedflags, SPCF_ITIMER);
+		clockintr_cancel(spc->spc_itimer);
+	}
 	if (ISSET(spc->spc_schedflags, SPCF_PROFCLOCK)) {
 		atomic_clearbits_int(&spc->spc_schedflags, SPCF_PROFCLOCK);
 		clockintr_cancel(spc->spc_profclock);
@@ -262,7 +275,6 @@ setrunqueue(struct cpu_info *ci, struct proc *p, uint8_t prio)
 
 	KASSERT(ci != NULL);
 	SCHED_ASSERT_LOCKED();
-	KASSERT(!ISSET(p->p_flag, P_WSLEEP) || p->p_stat == SSTOP);
 
 	p->p_cpu = ci;
 	p->p_stat = SRUN;
@@ -373,7 +385,6 @@ sched_choosecpu_fork(struct proc *parent, int flags)
 {
 #ifdef MULTIPROCESSOR
 	struct cpu_info *choice = NULL;
-	fixpt_t load, best_load = ~0;
 	int run, best_run = INT_MAX;
 	struct cpu_info *ci;
 	struct cpuset set;
@@ -407,13 +418,10 @@ sched_choosecpu_fork(struct proc *parent, int flags)
 	while ((ci = cpuset_first(&set)) != NULL) {
 		cpuset_del(&set, ci);
 
-		load = ci->ci_schedstate.spc_ldavg;
 		run = ci->ci_schedstate.spc_nrun;
 
-		if (choice == NULL || run < best_run ||
-		    (run == best_run &&load < best_load)) {
+		if (choice == NULL || run < best_run) {
 			choice = ci;
-			best_load = load;
 			best_run = run;
 		}
 	}
@@ -605,11 +613,6 @@ sched_proc_to_cpu_cost(struct cpu_info *ci, struct proc *p)
 	 */
 	if (CPU_IS_PRIMARY(ci))
 		cost += sched_cost_runnable;
-
-	/*
-	 * Higher load on the destination means we don't want to go there.
-	 */
-	cost += ((sched_cost_load * spc->spc_ldavg) >> FSHIFT);
 
 	/*
 	 * If the proc is on this cpu already, lower the cost by how much
