@@ -1,4 +1,4 @@
-/* $OpenBSD: dsa_ameth.c,v 1.43 2023/07/07 06:59:18 tb Exp $ */
+/* $OpenBSD: dsa_ameth.c,v 1.46 2023/08/10 16:57:15 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 2006.
  */
@@ -138,49 +138,58 @@ err:
 static int
 dsa_pub_encode(X509_PUBKEY *pk, const EVP_PKEY *pkey)
 {
-	DSA *dsa;
-	ASN1_INTEGER *pubint = NULL;
-	ASN1_STRING *str = NULL;
+	const DSA *dsa = pkey->pkey.dsa;
+	ASN1_STRING *params = NULL;
 	int ptype = V_ASN1_UNDEF;
-	unsigned char *penc = NULL;
-	int penclen;
+	ASN1_INTEGER *key = NULL;
+	ASN1_OBJECT *aobj;
+	unsigned char *params_der = NULL, *key_der = NULL;
+	int params_len = 0, key_len = 0;
+	int ret = 0;
 
-	dsa = pkey->pkey.dsa;
 	if (pkey->save_parameters && dsa->p && dsa->q && dsa->g) {
-		if ((str = ASN1_STRING_new()) == NULL) {
+		if ((params_len = i2d_DSAparams(dsa, &params_der)) <= 0) {
+			DSAerror(ERR_R_MALLOC_FAILURE);
+			params_len = 0;
+			goto err;
+		}
+		if ((params = ASN1_STRING_new()) == NULL) {
 			DSAerror(ERR_R_MALLOC_FAILURE);
 			goto err;
 		}
-		str->length = i2d_DSAparams(dsa, &str->data);
-		if (str->length <= 0) {
-			DSAerror(ERR_R_MALLOC_FAILURE);
-			goto err;
-		}
+		ASN1_STRING_set0(params, params_der, params_len);
+		params_der = NULL;
+		params_len = 0;
 		ptype = V_ASN1_SEQUENCE;
 	}
 
-	if ((pubint = BN_to_ASN1_INTEGER(dsa->pub_key, NULL)) == NULL) {
+	if ((key = BN_to_ASN1_INTEGER(dsa->pub_key, NULL)) == NULL) {
 		DSAerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
-
-	penclen = i2d_ASN1_INTEGER(pubint, &penc);
-	ASN1_INTEGER_free(pubint);
-
-	if (penclen <= 0) {
+	if ((key_len = i2d_ASN1_INTEGER(key, &key_der)) <= 0) {
 		DSAerror(ERR_R_MALLOC_FAILURE);
+		key_len = 0;
 		goto err;
 	}
 
-	if (X509_PUBKEY_set0_param(pk, OBJ_nid2obj(EVP_PKEY_DSA), ptype, str,
-	    penc, penclen))
-		return 1;
+	if ((aobj = OBJ_nid2obj(EVP_PKEY_DSA)) == NULL)
+		goto err;
+	if (!X509_PUBKEY_set0_param(pk, aobj, ptype, params, key_der, key_len))
+		goto err;
+	params = NULL;
+	key_der = NULL;
+	key_len = 0;
+
+	ret = 1;
 
  err:
-	free(penc);
-	ASN1_STRING_free(str);
+	ASN1_STRING_free(params);
+	ASN1_INTEGER_free(key);
+	freezero(params_der, params_len);
+	freezero(key_der, key_len);
 
-	return 0;
+	return ret;
 }
 
 /* In PKCS#8 DSA: you just get a private key integer and parameters in the
@@ -265,47 +274,55 @@ done:
 static int
 dsa_priv_encode(PKCS8_PRIV_KEY_INFO *p8, const EVP_PKEY *pkey)
 {
+	const DSA *dsa = pkey->pkey.dsa;
 	ASN1_STRING *params = NULL;
-	ASN1_INTEGER *prkey = NULL;
-	unsigned char *dp = NULL;
-	int dplen;
+	int ptype = V_ASN1_SEQUENCE;
+	ASN1_INTEGER *key = NULL;
+	ASN1_OBJECT *aobj;
+	unsigned char *params_der = NULL, *key_der = NULL;
+	int params_len = 0, key_len = 0;
+	int ret = 0;
 
-	params = ASN1_STRING_new();
-	if (!params) {
+	if ((params_len = i2d_DSAparams(dsa, &params_der)) <= 0) {
+		DSAerror(ERR_R_MALLOC_FAILURE);
+		params_len = 0;
+		goto err;
+	}
+	if ((params = ASN1_STRING_type_new(V_ASN1_SEQUENCE)) == NULL) {
 		DSAerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
+	ASN1_STRING_set0(params, params_der, params_len);
+	params_der = NULL;
+	params_len = 0;
 
-	params->length = i2d_DSAparams(pkey->pkey.dsa, &params->data);
-	if (params->length <= 0) {
-		DSAerror(ERR_R_MALLOC_FAILURE);
-		goto err;
-	}
-	params->type = V_ASN1_SEQUENCE;
-
-	/* Get private key into integer */
-	prkey = BN_to_ASN1_INTEGER(pkey->pkey.dsa->priv_key, NULL);
-	if (!prkey) {
+	if ((key = BN_to_ASN1_INTEGER(dsa->priv_key, NULL)) == NULL) {
 		DSAerror(DSA_R_BN_ERROR);
 		goto err;
 	}
-
-	dplen = i2d_ASN1_INTEGER(prkey, &dp);
-
-	ASN1_INTEGER_free(prkey);
-	prkey = NULL;
-
-	if (!PKCS8_pkey_set0(p8, OBJ_nid2obj(NID_dsa), 0, V_ASN1_SEQUENCE,
-	    params, dp, dplen))
+	if ((key_len = i2d_ASN1_INTEGER(key, &key_der)) <= 0) {
+		DSAerror(ERR_R_MALLOC_FAILURE);
+		key_len = 0;
 		goto err;
+	}
 
-	return 1;
+	if ((aobj = OBJ_nid2obj(NID_dsa)) == NULL)
+		goto err;
+	if (!PKCS8_pkey_set0(p8, aobj, 0, ptype, params, key_der, key_len))
+		goto err;
+	params = NULL;
+	key_der = NULL;
+	key_len = 0;
 
-err:
-	free(dp);
+	ret = 1;
+
+ err:
 	ASN1_STRING_free(params);
-	ASN1_INTEGER_free(prkey);
-	return 0;
+	ASN1_INTEGER_free(key);
+	freezero(params_der, params_len);
+	freezero(key_der, key_len);
+
+	return ret;
 }
 
 static int

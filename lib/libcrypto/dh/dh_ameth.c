@@ -1,4 +1,4 @@
-/* $OpenBSD: dh_ameth.c,v 1.30 2023/07/08 15:29:03 beck Exp $ */
+/* $OpenBSD: dh_ameth.c,v 1.33 2023/08/10 16:57:15 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 2006.
  */
@@ -130,50 +130,53 @@ err:
 static int
 dh_pub_encode(X509_PUBKEY *pk, const EVP_PKEY *pkey)
 {
-	DH *dh;
-	int ptype;
-	unsigned char *penc = NULL;
-	int penclen;
-	ASN1_STRING *str;
-	ASN1_INTEGER *pub_key = NULL;
+	const DH *dh = pkey->pkey.dh;
+	ASN1_STRING *params = NULL;
+	int ptype = V_ASN1_SEQUENCE;
+	ASN1_INTEGER *key = NULL;
+	ASN1_OBJECT *aobj;
+	unsigned char *params_der = NULL, *key_der = NULL;
+	int params_len = 0, key_len = 0;
+	int ret = 0;
 
-	dh=pkey->pkey.dh;
-
-	str = ASN1_STRING_new();
-	if (str == NULL) {
+	if ((params_len = i2d_DHparams(dh, &params_der)) <= 0) {
+		DHerror(ERR_R_MALLOC_FAILURE);
+		params_len = 0;
+		goto err;
+	}
+	if ((params = ASN1_STRING_new()) == NULL) {
 		DHerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
+	ASN1_STRING_set0(params, params_der, params_len);
+	params_der = NULL;
+	params_len = 0;
 
-	str->length = i2d_DHparams(dh, &str->data);
-	if (str->length <= 0) {
+	if ((key = BN_to_ASN1_INTEGER(dh->pub_key, NULL)) == NULL)
+		goto err;
+	if ((key_len = i2d_ASN1_INTEGER(key, &key_der)) <= 0) {
 		DHerror(ERR_R_MALLOC_FAILURE);
+		key_len = 0;
 		goto err;
 	}
-	ptype = V_ASN1_SEQUENCE;
 
-	pub_key = BN_to_ASN1_INTEGER(dh->pub_key, NULL);
-	if (!pub_key)
+	if ((aobj = OBJ_nid2obj(EVP_PKEY_DH)) == NULL)
 		goto err;
-
-	penclen = i2d_ASN1_INTEGER(pub_key, &penc);
-
-	ASN1_INTEGER_free(pub_key);
-
-	if (penclen <= 0) {
-		DHerror(ERR_R_MALLOC_FAILURE);
+	if (!X509_PUBKEY_set0_param(pk, aobj, ptype, params, key_der, key_len))
 		goto err;
-		}
+	params = NULL;
+	key_der = NULL;
+	key_len = 0;
 
-	if (X509_PUBKEY_set0_param(pk, OBJ_nid2obj(EVP_PKEY_DH), ptype,
-	    (void *)str, penc, penclen))
-		return 1;
+	ret = 1;
 
-err:
-	free(penc);
-	ASN1_STRING_free(str);
+ err:
+	ASN1_STRING_free(params);
+	ASN1_INTEGER_free(key);
+	freezero(params_der, params_len);
+	freezero(key_der, key_len);
 
-	return 0;
+	return ret;
 }
 
 /*
@@ -236,49 +239,55 @@ dherr:
 static int
 dh_priv_encode(PKCS8_PRIV_KEY_INFO *p8, const EVP_PKEY *pkey)
 {
+	const DH *dh = pkey->pkey.dh;
 	ASN1_STRING *params = NULL;
-	ASN1_INTEGER *prkey = NULL;
-	unsigned char *dp = NULL;
-	int dplen;
+	int ptype = V_ASN1_SEQUENCE;
+	ASN1_INTEGER *key = NULL;
+	ASN1_OBJECT *aobj;
+	unsigned char *params_der = NULL, *key_der = NULL;
+	int params_len = 0, key_len = 0;
+	int ret = 0;
 
-	params = ASN1_STRING_new();
-
-	if (!params) {
+	if ((params_len = i2d_DHparams(dh, &params_der)) <= 0) {
+		DHerror(ERR_R_MALLOC_FAILURE);
+		params_len = 0;
+		goto err;
+	}
+	if ((params = ASN1_STRING_type_new(V_ASN1_SEQUENCE)) == NULL) {
 		DHerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
+	ASN1_STRING_set0(params, params_der, params_len);
+	params_der = NULL;
+	params_len = 0;
 
-	params->length = i2d_DHparams(pkey->pkey.dh, &params->data);
-	if (params->length <= 0) {
-		DHerror(ERR_R_MALLOC_FAILURE);
-		goto err;
-	}
-	params->type = V_ASN1_SEQUENCE;
-
-	/* Get private key into integer */
-	prkey = BN_to_ASN1_INTEGER(pkey->pkey.dh->priv_key, NULL);
-
-	if (!prkey) {
+	if ((key = BN_to_ASN1_INTEGER(dh->priv_key, NULL)) == NULL) {
 		DHerror(DH_R_BN_ERROR);
 		goto err;
 	}
-
-	dplen = i2d_ASN1_INTEGER(prkey, &dp);
-
-	ASN1_INTEGER_free(prkey);
-	prkey = NULL;
-
-	if (!PKCS8_pkey_set0(p8, OBJ_nid2obj(NID_dhKeyAgreement), 0,
-	    V_ASN1_SEQUENCE, params, dp, dplen))
+	if ((key_len = i2d_ASN1_INTEGER(key, &key_der)) <= 0) {
+		DHerror(ERR_R_MALLOC_FAILURE);
+		key_len = 0;
 		goto err;
+	}
 
-	return 1;
+	if ((aobj = OBJ_nid2obj(NID_dhKeyAgreement)) == NULL)
+		goto err;
+	if (!PKCS8_pkey_set0(p8, aobj, 0, ptype, params, key_der, key_len))
+		goto err;
+	params = NULL;
+	key_der = NULL;
+	key_len = 0;
 
-err:
-	free(dp);
+	ret = 1;
+
+ err:
 	ASN1_STRING_free(params);
-	ASN1_INTEGER_free(prkey);
-	return 0;
+	ASN1_INTEGER_free(key);
+	freezero(params_der, params_len);
+	freezero(key_der, key_len);
+
+	return ret;
 }
 
 static int

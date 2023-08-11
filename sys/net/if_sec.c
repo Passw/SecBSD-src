@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_sec.c,v 1.1 2023/08/07 01:57:33 dlg Exp $ */
+/*	$OpenBSD: if_sec.c,v 1.5 2023/08/11 02:34:56 dlg Exp $ */
 
 /*
  * Copyright (c) 2022 The University of Queensland
@@ -34,40 +34,25 @@
 #include <sys/mbuf.h>
 #include <sys/socket.h>
 #include <sys/sockio.h>
-#include <sys/kernel.h>
 #include <sys/systm.h>
 #include <sys/errno.h>
-#include <sys/timeout.h>
-#include <sys/queue.h>
-#include <sys/tree.h>
-#include <sys/pool.h>
 #include <sys/smr.h>
 #include <sys/refcnt.h>
+#include <sys/task.h>
+#include <sys/mutex.h>
 
 #include <net/if.h>
 #include <net/if_var.h>
 #include <net/if_types.h>
-#include <net/if_media.h>
-#include <net/route.h>
 #include <net/toeplitz.h>
 
 #include <netinet/in.h>
-#include <netinet/in_var.h>
-#include <netinet/if_ether.h>
 #include <netinet/ip.h>
-#include <netinet/ip_var.h>
-#include <netinet/ip_ecn.h>
 #include <netinet/ip_ipsp.h>
 
 #ifdef INET6
 #include <netinet/ip6.h>
-#include <netinet6/ip6_var.h>
-#include <netinet6/in6_var.h>
 #endif
-
-#ifdef MPLS
-#include <netmpls/mpls.h>
-#endif /* MPLS */
 
 #if NBPFILTER > 0
 #include <net/bpf.h>
@@ -83,6 +68,8 @@
 
 struct sec_softc {
 	struct ifnet			sc_if;
+	unsigned int			sc_dead;
+	unsigned int			sc_up;
 
 	struct task			sc_send;
 
@@ -97,7 +84,7 @@ static int	sec_output(struct ifnet *, struct mbuf *, struct sockaddr *,
 		    struct rtentry *);
 static int	sec_enqueue(struct ifnet *, struct mbuf *);
 static void	sec_send(void *);
-static void	sec_start(struct ifnet *);
+static void	sec_start(struct ifqueue *);
 
 static int	sec_ioctl(struct ifnet *, u_long, caddr_t);
 static int	sec_up(struct sec_softc *);
@@ -148,12 +135,12 @@ sec_clone_create(struct if_clone *ifc, int unit)
 	ifp->if_type = IFT_TUNNEL;
 	ifp->if_mtu = SEC_MTU;
 	ifp->if_flags = IFF_POINTOPOINT|IFF_MULTICAST;
-	ifp->if_xflags = IFXF_CLONED;
+	ifp->if_xflags = IFXF_CLONED | IFXF_MPSAFE;
 	ifp->if_bpf_mtap = p2p_bpf_mtap;
 	ifp->if_input = p2p_input;
 	ifp->if_output = sec_output;
 	ifp->if_enqueue = sec_enqueue;
-	ifp->if_start = sec_start;
+	ifp->if_qstart = sec_start;
 	ifp->if_ioctl = sec_ioctl;
 	ifp->if_rtrequest = p2p_rtrequest;
 
@@ -174,6 +161,7 @@ sec_clone_destroy(struct ifnet *ifp)
 	struct sec_softc *sc = ifp->if_softc;
 
 	NET_LOCK();
+	sc->sc_dead = 1;
 	if (ISSET(ifp->if_flags, IFF_RUNNING))
 		sec_down(sc);
 	NET_UNLOCK();
@@ -237,10 +225,22 @@ sec_up(struct sec_softc *sc)
 	unsigned int idx = stoeplitz_h32(sc->sc_unit) % nitems(sec_map);
 
 	NET_ASSERT_LOCKED();
+	KASSERT(!ISSET(ifp->if_flags, IFF_RUNNING));
 
-	SET(ifp->if_flags, IFF_RUNNING);
+	if (sc->sc_dead)
+		return (ENXIO);
+
+	/*
+	 * coordinate with sec_down(). if sc_up is still up and
+	 * we're here then something else is running sec_down.
+	 */
+	if (sc->sc_up)
+		return (EBUSY);
+
+	sc->sc_up = 1;
+
 	refcnt_init(&sc->sc_refs);
-
+	SET(ifp->if_flags, IFF_RUNNING);
 	SMR_SLIST_INSERT_HEAD_LOCKED(&sec_map[idx], sc, sc_entry);
 
 	return (0);
@@ -253,15 +253,27 @@ sec_down(struct sec_softc *sc)
 	unsigned int idx = stoeplitz_h32(sc->sc_unit) % nitems(sec_map);
 
 	NET_ASSERT_LOCKED();
+	KASSERT(ISSET(ifp->if_flags, IFF_RUNNING));
+
+	/*
+	 * taking sec down involves waiting for it to stop running
+	 * in various contexts. this thread cannot hold netlock
+	 * while waiting for a barrier for a task that could be trying
+	 * to take netlock itself. so give up netlock, but don't clear
+	 * sc_up to prevent sec_up from running.
+	 */
 
 	CLR(ifp->if_flags, IFF_RUNNING);
-
-	SMR_SLIST_REMOVE_LOCKED(&sec_map[idx], sc, sec_softc, sc_entry);
+	NET_UNLOCK();
 
 	smr_barrier();
 	taskq_del_barrier(systq, &sc->sc_send);
 
 	refcnt_finalize(&sc->sc_refs, "secdown");
+
+	NET_LOCK();
+	SMR_SLIST_REMOVE_LOCKED(&sec_map[idx], sc, sec_softc, sc_entry);
+	sc->sc_up = 0;
 
 	return (0);
 }
@@ -369,9 +381,13 @@ purge:
 }
 
 static void
-sec_start(struct ifnet *ifp)
+sec_start(struct ifqueue *ifq)
 {
-	counters_add(ifp->if_counters, ifc_oerrors, ifq_purge(&ifp->if_snd));
+	struct ifnet *ifp = ifq->ifq_if;
+	struct sec_softc *sc = ifp->if_softc;
+
+	/* move this back to systq for KERNEL_LOCK */
+	task_add(systq, &sc->sc_send);
 }
 
 /*

@@ -31,8 +31,7 @@ my %internal = (
 	BN_TBIT BN_ULLONG
     )],
     objects => [qw(
-	OBJ_bsearch OBJ_bsearch_ OBJ_bsearch_ex OBJ_bsearch_ex_
-	USE_OBJ_MAC
+	OBJ_bsearch_ OBJ_bsearch_ex_
     )],
     x509_vfy => [qw(
 	X509_VERIFY_PARAM_ID
@@ -61,11 +60,6 @@ my %obsolete = (
     )],
     bn => [qw(
 	BN_HEX_FMT1 BN_HEX_FMT2 BN_MASK
-    )],
-    objects => [qw(
-	_DECLARE_OBJ_BSEARCH_CMP_FN
-	DECLARE_OBJ_BSEARCH_CMP_FN DECLARE_OBJ_BSEARCH_GLOBAL_CMP_FN
-	IMPLEMENT_OBJ_BSEARCH_CMP_FN IMPLEMENT_OBJ_BSEARCH_GLOBAL_CMP_FN
     )],
 );
 
@@ -446,6 +440,15 @@ try_again:
 	if (/ \*$/) {
 		$_ .= <$in_fh>;
 		goto try_again;
+	}
+	# The name of the function return type is so long
+	# that it requires a line break afterwards.
+	if (/^\w{30,}$/) {
+		my $next_line = <$in_fh>;
+		if ($next_line =~ /^ {4}\w/) {
+			$_ .= $next_line;
+			goto try_again;
+		}
 	}
 	die "parse error: $_";
 }
