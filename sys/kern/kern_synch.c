@@ -1,4 +1,4 @@
-/*	$OpenBSD: kern_synch.c,v 1.196 2023/08/10 20:44:52 claudio Exp $	*/
+/*	$OpenBSD: kern_synch.c,v 1.198 2023/08/16 07:55:52 claudio Exp $	*/
 /*	$NetBSD: kern_synch.c,v 1.37 1996/04/22 01:38:37 christos Exp $	*/
 
 /*
@@ -373,7 +373,6 @@ sleep_finish(int timo, int do_sleep)
 		timeout_add(&p->p_sleep_to, timo);
 	}
 
-	SCHED_LOCK(s);
 	if (catch != 0) {
 		/*
 		 * We put ourselves on the sleep queue and start our
@@ -390,6 +389,7 @@ sleep_finish(int timo, int do_sleep)
 		}
 	}
 
+	SCHED_LOCK(s);
 	/*
 	 * If the wakeup happens while going to sleep, p->p_wchan
 	 * will be NULL. In that case unwind immediately but still
@@ -520,7 +520,7 @@ unsleep(struct proc *p)
 	if (p->p_wchan != NULL) {
 		TAILQ_REMOVE(&slpque[LOOKUP(p->p_wchan)], p, p_runq);
 		p->p_wchan = NULL;
-		TRACEPOINT(sched, wakeup, p->p_tid + THREAD_PID_OFFSET,
+		TRACEPOINT(sched, unsleep, p->p_tid + THREAD_PID_OFFSET,
 		    p->p_p->ps_pid);
 	}
 }

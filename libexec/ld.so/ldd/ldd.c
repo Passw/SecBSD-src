@@ -1,4 +1,4 @@
-/*	$OpenBSD: ldd.c,v 1.24 2023/07/24 01:02:47 deraadt Exp $	*/
+/*	$OpenBSD: ldd.c,v 1.26 2023/08/15 13:50:53 deraadt Exp $	*/
 /*
  * Copyright (c) 2001 Artur Grabowski <art@openbsd.org>
  * All rights reserved.
@@ -48,6 +48,9 @@ main(int argc, char **argv)
 {
 	int c, xflag, ret;
 
+	if (pledge("stdio rpath proc exec prot_exec", NULL) == -1)
+		err(1, "pledge");
+
 	xflag = 0;
 	while ((c = getopt(argc, argv, "x")) != -1) {
 		switch (c) {
@@ -96,7 +99,8 @@ doit(char *name)
 {
 	Elf_Ehdr ehdr;
 	Elf_Phdr *phdr;
-	int fd, i, size, status, interp=0;
+	size_t size;
+	int fd, i, status, interp=0;
 	char buf[PATH_MAX];
 	struct stat st;
 	void * dlhandle;
@@ -118,8 +122,8 @@ doit(char *name)
 		return 1;
 	}
 
-	if (read(fd, &ehdr, sizeof(ehdr)) < 0) {
-		warn("read(%s)", name);
+	if (read(fd, &ehdr, sizeof(ehdr)) != sizeof(ehdr)) {
+		warnx("%s: incomplete ELF header", name);
 		close(fd);
 		return 1;
 	}
@@ -141,7 +145,7 @@ doit(char *name)
 	size = ehdr.e_phnum * sizeof(Elf_Phdr);
 
 	if (pread(fd, phdr, size, ehdr.e_phoff) != size) {
-		warn("read(%s)", name);
+		warnx("%s: incomplete program header", name);
 		close(fd);
 		free(phdr);
 		return 1;
@@ -162,6 +166,8 @@ doit(char *name)
 		err(1, "fork");
 	case 0:
 		if (ehdr.e_type == ET_DYN && !interp) {
+			if (pledge("stdio rpath prot_exec", NULL) == -1)
+				err(1, "pledge");
 			if (realpath(name, buf) == NULL) {
 				printf("realpath(%s): %s", name,
 				    strerror(errno));
@@ -177,14 +183,13 @@ doit(char *name)
 			_exit(0);
 		}
 
+		if (pledge("stdio rpath exec", "stdio rpath") == -1)
+			err(1, "pledge");
 		if (i == ehdr.e_phnum) {
 			printf("not a dynamic executable\n");
 			fflush(stdout);
 			_exit(0);
 		}
-
-		if (pledge(NULL, "stdio rpath") == -1)
-			err(1, "pledge");
 		execl(name, name, (char *)NULL);
 		perror(name);
 		_exit(1);

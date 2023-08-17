@@ -1,4 +1,4 @@
-/*	$OpenBSD: kern_sig.c,v 1.310 2023/07/14 07:07:08 claudio Exp $	*/
+/*	$OpenBSD: kern_sig.c,v 1.313 2023/08/16 07:55:52 claudio Exp $	*/
 /*	$NetBSD: kern_sig.c,v 1.54 1996/04/22 01:38:32 christos Exp $	*/
 
 /*
@@ -1151,8 +1151,9 @@ ptsignal(struct proc *p, int signum, enum signal_type type)
 				atomic_clearbits_int(siglist, mask);
 			if (action == SIG_CATCH)
 				goto runfast;
-			if (p->p_wchan == NULL || p->p_flag & P_WSLEEP)
+			if (p->p_wchan == NULL)
 				goto run;
+			atomic_clearbits_int(&p->p_flag, P_WSLEEP);
 			p->p_stat = SSLEEP;
 			goto out;
 		}
@@ -1250,7 +1251,6 @@ cursig(struct proc *p, struct sigctx *sctx)
 {
 	struct process *pr = p->p_p;
 	int signum, mask, prop;
-	int dolock = (p->p_flag & P_SINTR) == 0;
 	sigset_t ps_siglist;
 	int s;
 
@@ -1293,11 +1293,9 @@ cursig(struct proc *p, struct sigctx *sctx)
 			single_thread_set(p, SINGLE_SUSPEND, 0);
 			pr->ps_xsig = signum;
 
-			if (dolock)
-				SCHED_LOCK(s);
+			SCHED_LOCK(s);
 			proc_stop(p, 1);
-			if (dolock)
-				SCHED_UNLOCK(s);
+			SCHED_UNLOCK(s);
 
 			/*
 			 * re-take the signal before releasing
@@ -1370,11 +1368,9 @@ cursig(struct proc *p, struct sigctx *sctx)
 				    prop & SA_TTYSTOP))
 					break;	/* == ignore */
 				pr->ps_xsig = signum;
-				if (dolock)
-					SCHED_LOCK(s);
+				SCHED_LOCK(s);
 				proc_stop(p, 1);
-				if (dolock)
-					SCHED_UNLOCK(s);
+				SCHED_UNLOCK(s);
 				break;
 			} else if (prop & SA_IGNORE) {
 				/*
@@ -1970,6 +1966,9 @@ userret(struct proc *p)
 	struct sigctx ctx;
 	int signum;
 
+	if (p->p_flag & P_SUSPSINGLE)
+		single_thread_check(p, 0);
+
 	/* send SIGPROF or SIGVTALRM if their timers interrupted this thread */
 	if (p->p_flag & P_PROFPEND) {
 		atomic_clearbits_int(&p->p_flag, P_PROFPEND);
@@ -2002,9 +2001,6 @@ userret(struct proc *p)
 		while ((signum = cursig(p, &ctx)) != 0)
 			postsig(p, signum, &ctx);
 	}
-
-	if (p->p_flag & P_SUSPSINGLE)
-		single_thread_check(p, 0);
 
 	WITNESS_WARN(WARN_PANIC, NULL, "userret: returning");
 
@@ -2203,10 +2199,12 @@ single_thread_clear(struct proc *p, int flag)
 		 * it back into some sleep queue
 		 */
 		if (q->p_stat == SSTOP && (q->p_flag & flag) == 0) {
-			if (p->p_wchan == NULL || p->p_flag & P_WSLEEP)
+			if (q->p_wchan == NULL)
 				setrunnable(q);
-			else
+			else {
+				atomic_clearbits_int(&q->p_flag, P_WSLEEP);
 				q->p_stat = SSLEEP;
+			}
 		}
 	}
 	SCHED_UNLOCK(s);
