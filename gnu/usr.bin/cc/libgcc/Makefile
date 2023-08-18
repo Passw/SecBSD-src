@@ -129,7 +129,7 @@ LIB1ASMFUNCS+=	_cmpsf2 _fixunssfsi _negsf2
 LIB1ASMFUNCS+=	_cmpdf2 _fixunsdfsi _negdf2
 LIB2FUNCS_EXTRA = floatunsidf.c floatunsisf.c
 LIB2ADDEH =	unwind-arm.c libunwind.S pr-support.c unwind-c.c
-SWFLOATFUNCS =	
+SWFLOATFUNCS =
 DWFLOATFUNCS =	_floatundisf _floatundidf
 
 # Not now
