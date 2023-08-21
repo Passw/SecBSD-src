@@ -89,7 +89,7 @@ wr_start(void)
 	if (!wrblksz)
 		wrblksz = frmt->bsz;
 	if (wrblksz > MAXBLK) {
-		paxwarn(1, "Write block size of %d too large, maximium is: %d",
+		paxwarn(1, "Write block size of %d too large, maximum is: %d",
 			wrblksz, MAXBLK);
 		return(-1);
 	}
@@ -134,7 +134,7 @@ rd_start(void)
 	buf = &(bufmem[BLKMULT]);
 	if ((act == APPND) && wrblksz) {
 		if (wrblksz > MAXBLK) {
-			paxwarn(1,"Write block size %d too large, maximium is: %d",
+			paxwarn(1,"Write block size %d too large, maximum is: %d",
 				wrblksz, MAXBLK);
 			return(-1);
 		}
