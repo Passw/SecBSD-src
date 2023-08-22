@@ -1,4 +1,4 @@
-#	$OpenBSD: Makefile,v 1.2 2023/08/21 05:10:25 anton Exp $
+#	$OpenBSD: Makefile,v 1.6 2023/08/21 18:56:06 kn Exp $
 
 BIOCTL ?=		/sbin/bioctl
 
@@ -17,13 +17,20 @@ create-chunk:
 	echo 'RAID *' | ${SUDO} disklabel -wAT- -- "$$(<${CHUNKDEVFILE})"
 
 
-REGRESS_TARGETS =		scripted-create-volume \
+SUCCESS_TESTS =			scripted-create-volume \
+				scripted-recreate-volume \
 				scripted-change-passphrase
-REGRESS_ROOT_TARGETS =		${REGRESS_TARGETS}
+REGRESS_TARGETS =		${SUCCESS_TESTS}
+REGRESS_ROOT_TARGETS =		${SUCCESS_TESTS}
 
 scripted-create-volume:
 	printf '%s\n' '${OLDPW}' | \
 		${SUDO} ${BIOCTL} -s -cC -l"$$(<${CHUNKDEVFILE})a" -- softraid0 | \
+		grep -o 'sd[0-9]*$$' -- 1>${VOLDEVFILE}
+
+scripted-recreate-volume: detach-volume
+	printf '%s\n' '${OLDPW}' | \
+		${SUDO} ${BIOCTL} -s -Cforce -r17 -cC -l"$$(<${CHUNKDEVFILE})a" -- softraid0 | \
 		grep -o 'sd[0-9]*$$' -- 1>${VOLDEVFILE}
 
 scripted-change-passphrase:
@@ -31,11 +38,25 @@ scripted-change-passphrase:
 		${SUDO} ${BIOCTL} -s -P -- "$$(<${VOLDEVFILE})"
 
 
+FAILURE_TESTS =			reuse-active-chunk \
+				set-empty-passphrase
+REGRESS_EXPECTED_FAILURES +=	${FAILURE_TESTS}
+REGRESS_TARGETS +=		${FAILURE_TESTS}
+REGRESS_ROOT_TARGETS +=		${FAILURE_TESTS}
+
+reuse-active-chunk:
+	${SUDO} ${BIOCTL} -cC -l"$$(<${CHUNKDEVFILE})a" -- softraid0
+
+set-empty-passphrase:
+	printf '\n' | ${SUDO} ${BIOCTL} -s -P -- "$$(<${VOLDEVFILE})"
+
+
 CLEANFILES =		*.txt *.img
 REGRESS_CLEANUP =	cleanup
 
-cleanup:
+detach-volume:
 	${SUDO} ${BIOCTL} -d -- "$$(<${VOLDEVFILE})" 2>/dev/null
+cleanup: detach-volume
 	${SUDO} vnconfig  -u -- "$$(<${CHUNKDEVFILE})" 2>/dev/null
 
 .include <bsd.regress.mk>
