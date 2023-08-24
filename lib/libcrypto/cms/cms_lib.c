@@ -1,4 +1,4 @@
-/* $OpenBSD: cms_lib.c,v 1.21 2023/08/22 08:59:44 tb Exp $ */
+/* $OpenBSD: cms_lib.c,v 1.24 2023/08/24 04:56:36 tb Exp $ */
 /*
  * Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project.
@@ -121,55 +121,55 @@ cms_Data_create(void)
 	return cms;
 }
 
-BIO *
+static BIO *
 cms_content_bio(CMS_ContentInfo *cms)
 {
-	ASN1_OCTET_STRING **pos = CMS_get0_content(cms);
+	ASN1_OCTET_STRING **pos;
 
-	if (!pos)
+	if ((pos = CMS_get0_content(cms)) == NULL)
 		return NULL;
-	/* If content detached data goes nowhere: create NULL BIO */
-	if (!*pos)
+
+	/* If content is detached, data goes nowhere: create null BIO. */
+	if (*pos == NULL)
 		return BIO_new(BIO_s_null());
-	/*
-	 * If content not detached and created return memory BIO
-	 */
-	if (!*pos || ((*pos)->flags == ASN1_STRING_FLAG_CONT))
+
+	/* If content is not detached and was created, return memory BIO. */
+	if ((*pos)->flags == ASN1_STRING_FLAG_CONT)
 		return BIO_new(BIO_s_mem());
 
-	/* Else content was read in: return read only BIO for it */
+	/* Else content was read in: return read-only BIO for it. */
 	return BIO_new_mem_buf((*pos)->data, (*pos)->length);
 }
 
 BIO *
-CMS_dataInit(CMS_ContentInfo *cms, BIO *icont)
+CMS_dataInit(CMS_ContentInfo *cms, BIO *in_content_bio)
 {
-	BIO *cmsbio = NULL, *cont = NULL;
+	BIO *cms_bio = NULL, *content_bio = NULL;
 
-	if ((cont = icont) == NULL)
-		cont = cms_content_bio(cms);
-	if (cont == NULL) {
+	if ((content_bio = in_content_bio) == NULL)
+		content_bio = cms_content_bio(cms);
+	if (content_bio == NULL) {
 		CMSerror(CMS_R_NO_CONTENT);
 		goto err;
 	}
 
 	switch (OBJ_obj2nid(cms->contentType)) {
 	case NID_pkcs7_data:
-		return cont;
+		return content_bio;
 	case NID_pkcs7_signed:
-		if ((cmsbio = cms_SignedData_init_bio(cms)) == NULL)
+		if ((cms_bio = cms_SignedData_init_bio(cms)) == NULL)
 			goto err;
 		break;
 	case NID_pkcs7_digest:
-		if ((cmsbio = cms_DigestedData_init_bio(cms)) == NULL)
+		if ((cms_bio = cms_DigestedData_init_bio(cms)) == NULL)
 			goto err;
 		break;
 	case NID_pkcs7_encrypted:
-		if ((cmsbio = cms_EncryptedData_init_bio(cms)) == NULL)
+		if ((cms_bio = cms_EncryptedData_init_bio(cms)) == NULL)
 			goto err;
 		break;
 	case NID_pkcs7_enveloped:
-		if ((cmsbio = cms_EnvelopedData_init_bio(cms)) == NULL)
+		if ((cms_bio = cms_EnvelopedData_init_bio(cms)) == NULL)
 			goto err;
 		break;
 	default:
@@ -177,11 +177,11 @@ CMS_dataInit(CMS_ContentInfo *cms, BIO *icont)
 		goto err;
 	}
 
-	return BIO_push(cmsbio, cont);
+	return BIO_push(cms_bio, content_bio);
 
  err:
-	if (cont != icont)
-		BIO_free(cont);
+	if (content_bio != in_content_bio)
+		BIO_free(content_bio);
 
 	return NULL;
 }
