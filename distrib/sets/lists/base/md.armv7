@@ -87,6 +87,7 @@
 ./usr/libdata/perl5/arm-secbsd/CORE/scope.h
 ./usr/libdata/perl5/arm-secbsd/CORE/sv.h
 ./usr/libdata/perl5/arm-secbsd/CORE/sv_inline.h
+./usr/libdata/perl5/arm-secbsd/CORE/syscall_emulator.h
 ./usr/libdata/perl5/arm-secbsd/CORE/thread.h
 ./usr/libdata/perl5/arm-secbsd/CORE/time64.h
 ./usr/libdata/perl5/arm-secbsd/CORE/time64_config.h
