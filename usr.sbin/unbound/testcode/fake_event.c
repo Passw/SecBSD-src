@@ -65,6 +65,7 @@
 #include "sldns/wire2str.h"
 #include "sldns/str2wire.h"
 #include "daemon/remote.h"
+#include "util/timeval_func.h"
 #include <signal.h>
 struct worker;
 struct daemon_remote;
@@ -94,20 +95,6 @@ struct fake_commpoint {
 
 /** Global variable: the scenario. Saved here for when event_init is done. */
 static struct replay_scenario* saved_scenario = NULL;
-
-/** add timers and the values do not overflow or become negative */
-static void
-timeval_add(struct timeval* d, const struct timeval* add)
-{
-#ifndef S_SPLINT_S
-	d->tv_sec += add->tv_sec;
-	d->tv_usec += add->tv_usec;
-	if(d->tv_usec >= 1000000) {
-		d->tv_usec -= 1000000;
-		d->tv_sec++;
-	}
-#endif
-}
 
 void
 fake_temp_file(const char* adj, const char* id, char* buf, size_t len)
@@ -1265,6 +1252,8 @@ struct serviced_query* outnet_serviced_query(struct outside_network* outnet,
 		if(dnssec)
 			edns.bits = EDNS_DO;
 		edns.padding_block_size = 0;
+		edns.cookie_present = 0;
+		edns.cookie_valid = 0;
 		edns.opt_list_in = NULL;
 		edns.opt_list_out = per_upstream_opt_list;
 		edns.opt_list_inplace_cb_out = NULL;

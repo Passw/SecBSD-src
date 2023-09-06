@@ -68,6 +68,7 @@
 #include "util/fptr_wlist.h"
 #include "util/tube.h"
 #include "util/edns.h"
+#include "util/timeval_func.h"
 #include "iterator/iter_fwd.h"
 #include "iterator/iter_hints.h"
 #include "iterator/iter_utils.h"
@@ -133,7 +134,7 @@ worker_mem_report(struct worker* ATTR_UNUSED(worker),
 	rrset = slabhash_get_mem(&worker->env.rrset_cache->table);
 	infra = infra_get_mem(worker->env.infra_cache);
 	mesh = mesh_get_mem(worker->env.mesh);
-	ac = alloc_get_mem(&worker->alloc);
+	ac = alloc_get_mem(worker->alloc);
 	superac = alloc_get_mem(&worker->daemon->superalloc);
 	anch = anchors_get_mem(worker->env.anchors);
 	iter = 0;
@@ -288,61 +289,83 @@ worker_err_ratelimit(struct worker* worker, int err)
 	return err;
 }
 
+/**
+ * Structure holding the result of the worker_check_request function.
+ * Based on configuration it could be called up to four times; ideally should
+ * be called once.
+ */
+struct check_request_result {
+	int checked;
+	int value;
+};
 /** check request sanity.
  * @param pkt: the wire packet to examine for sanity.
  * @param worker: parameters for checking.
- * @return error code, 0 OK, or -1 discard.
+ * @param out: struct to update with the result.
 */
-static int
-worker_check_request(sldns_buffer* pkt, struct worker* worker)
+static void
+worker_check_request(sldns_buffer* pkt, struct worker* worker,
+	struct check_request_result* out)
 {
+	if(out->checked) return;
+	out->checked = 1;
 	if(sldns_buffer_limit(pkt) < LDNS_HEADER_SIZE) {
 		verbose(VERB_QUERY, "request too short, discarded");
-		return -1;
+		out->value = -1;
+		return;
 	}
 	if(sldns_buffer_limit(pkt) > NORMAL_UDP_SIZE &&
 		worker->daemon->cfg->harden_large_queries) {
 		verbose(VERB_QUERY, "request too large, discarded");
-		return -1;
+		out->value = -1;
+		return;
 	}
 	if(LDNS_QR_WIRE(sldns_buffer_begin(pkt))) {
 		verbose(VERB_QUERY, "request has QR bit on, discarded");
-		return -1;
+		out->value = -1;
+		return;
 	}
 	if(LDNS_TC_WIRE(sldns_buffer_begin(pkt))) {
 		LDNS_TC_CLR(sldns_buffer_begin(pkt));
 		verbose(VERB_QUERY, "request bad, has TC bit on");
-		return worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		out->value = worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		return;
 	}
 	if(LDNS_OPCODE_WIRE(sldns_buffer_begin(pkt)) != LDNS_PACKET_QUERY &&
 		LDNS_OPCODE_WIRE(sldns_buffer_begin(pkt)) != LDNS_PACKET_NOTIFY) {
 		verbose(VERB_QUERY, "request unknown opcode %d",
 			LDNS_OPCODE_WIRE(sldns_buffer_begin(pkt)));
-		return worker_err_ratelimit(worker, LDNS_RCODE_NOTIMPL);
+		out->value = worker_err_ratelimit(worker, LDNS_RCODE_NOTIMPL);
+		return;
 	}
 	if(LDNS_QDCOUNT(sldns_buffer_begin(pkt)) != 1) {
 		verbose(VERB_QUERY, "request wrong nr qd=%d",
 			LDNS_QDCOUNT(sldns_buffer_begin(pkt)));
-		return worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		out->value = worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		return;
 	}
 	if(LDNS_ANCOUNT(sldns_buffer_begin(pkt)) != 0 &&
 		(LDNS_ANCOUNT(sldns_buffer_begin(pkt)) != 1 ||
 		LDNS_OPCODE_WIRE(sldns_buffer_begin(pkt)) != LDNS_PACKET_NOTIFY)) {
 		verbose(VERB_QUERY, "request wrong nr an=%d",
 			LDNS_ANCOUNT(sldns_buffer_begin(pkt)));
-		return worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		out->value = worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		return;
 	}
 	if(LDNS_NSCOUNT(sldns_buffer_begin(pkt)) != 0) {
 		verbose(VERB_QUERY, "request wrong nr ns=%d",
 			LDNS_NSCOUNT(sldns_buffer_begin(pkt)));
-		return worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		out->value = worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		return;
 	}
 	if(LDNS_ARCOUNT(sldns_buffer_begin(pkt)) > 1) {
 		verbose(VERB_QUERY, "request wrong nr ar=%d",
 			LDNS_ARCOUNT(sldns_buffer_begin(pkt)));
-		return worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		out->value = worker_err_ratelimit(worker, LDNS_RCODE_FORMERR);
+		return;
 	}
-	return 0;
+	out->value = 0;
+	return;
 }
 
 void
@@ -452,7 +475,8 @@ answer_norec_from_cache(struct worker* worker, struct query_info* qinfo,
 	uint16_t udpsize = edns->udp_size;
 	int secure = 0;
 	time_t timenow = *worker->env.now;
-	int must_validate = (!(flags&BIT_CD) || worker->env.cfg->ignore_cd)
+	int has_cd_bit = (flags&BIT_CD);
+	int must_validate = (!has_cd_bit || worker->env.cfg->ignore_cd)
 		&& worker->env.need_to_validate;
 	struct dns_msg *msg = NULL;
 	struct delegpt *dp;
@@ -484,11 +508,12 @@ answer_norec_from_cache(struct worker* worker, struct query_info* qinfo,
 				msg->rep, LDNS_RCODE_SERVFAIL, edns, repinfo, worker->scratchpad,
 				worker->env.now_tv))
 					return 0;
-			/* TODO store the reason for the bogus reply in cache
-			 * and implement in here instead of the hardcoded EDE */
-			if (worker->env.cfg->ede) {
-				EDNS_OPT_LIST_APPEND_EDE(&edns->opt_list_out,
-					worker->scratchpad, LDNS_EDE_DNSSEC_BOGUS, "");
+			/* Attach the cached EDE (RFC8914) */
+			if(worker->env.cfg->ede &&
+				msg->rep->reason_bogus != LDNS_EDE_NONE) {
+				edns_opt_list_append_ede(&edns->opt_list_out,
+					worker->scratchpad, msg->rep->reason_bogus,
+					msg->rep->reason_bogus_str);
 			}
 			error_encode(repinfo->c->buffer, LDNS_RCODE_SERVFAIL,
 				&msg->qinfo, id, flags, edns);
@@ -522,6 +547,16 @@ answer_norec_from_cache(struct worker* worker, struct query_info* qinfo,
 		worker->env.now_tv))
 			return 0;
 	msg->rep->flags |= BIT_QR|BIT_RA;
+	/* Attach the cached EDE (RFC8914) if CD bit is set and the answer is
+	 * bogus. */
+	if(worker->env.cfg->ede && has_cd_bit &&
+		(check_delegation_secure(msg->rep) == sec_status_bogus ||
+		check_delegation_secure(msg->rep) == sec_status_secure_sentinel_fail) &&
+		msg->rep->reason_bogus != LDNS_EDE_NONE) {
+		edns_opt_list_append_ede(&edns->opt_list_out,
+			worker->scratchpad, msg->rep->reason_bogus,
+			msg->rep->reason_bogus_str);
+	}
 	if(!reply_info_answer_encode(&msg->qinfo, msg->rep, id, flags,
 		repinfo->c->buffer, 0, 1, worker->scratchpad,
 		udpsize, edns, (int)(edns->bits & EDNS_DO), secure)) {
@@ -565,9 +600,10 @@ apply_respip_action(struct worker* worker, const struct query_info* qinfo,
 
 	/* xxx_deny actions mean dropping the reply, unless the original reply
 	 * was redirected to response-ip data. */
-	if((actinfo.action == respip_deny ||
+	if(actinfo.action == respip_always_deny ||
+		((actinfo.action == respip_deny ||
 		actinfo.action == respip_inform_deny) &&
-		*encode_repp == rep)
+		*encode_repp == rep))
 		*encode_repp = NULL;
 
 	/* If address info is returned, it means the action should be an
@@ -611,7 +647,8 @@ answer_from_cache(struct worker* worker, struct query_info* qinfo,
 	uint16_t udpsize = edns->udp_size;
 	struct reply_info* encode_rep = rep;
 	struct reply_info* partial_rep = *partial_repp;
-	int must_validate = (!(flags&BIT_CD) || worker->env.cfg->ignore_cd)
+	int has_cd_bit = (flags&BIT_CD);
+	int must_validate = (!has_cd_bit || worker->env.cfg->ignore_cd)
 		&& worker->env.need_to_validate;
 	*partial_repp = NULL;  /* avoid accidental further pass */
 
@@ -622,6 +659,14 @@ answer_from_cache(struct worker* worker, struct query_info* qinfo,
 			!worker->env.cfg->serve_expired_client_timeout) {
 				if(worker->env.cfg->serve_expired_ttl &&
 					rep->serve_expired_ttl < timenow)
+					return 0;
+				/* Ignore expired failure answers */
+				if(FLAGS_GET_RCODE(rep->flags) !=
+					LDNS_RCODE_NOERROR &&
+					FLAGS_GET_RCODE(rep->flags) !=
+					LDNS_RCODE_NXDOMAIN &&
+					FLAGS_GET_RCODE(rep->flags) !=
+					LDNS_RCODE_YXDOMAIN)
 					return 0;
 				if(!rrset_array_lock(rep->ref, rep->rrset_count, 0))
 					return 0;
@@ -661,11 +706,11 @@ answer_from_cache(struct worker* worker, struct query_info* qinfo,
 			LDNS_RCODE_SERVFAIL, edns, repinfo, worker->scratchpad,
 			worker->env.now_tv))
 			goto bail_out;
-		/* TODO store the reason for the bogus reply in cache
-		 * and implement in here instead of the hardcoded EDE */
-		if (worker->env.cfg->ede) {
-			EDNS_OPT_LIST_APPEND_EDE(&edns->opt_list_out,
-				worker->scratchpad, LDNS_EDE_DNSSEC_BOGUS, "");
+		/* Attach the cached EDE (RFC8914) */
+		if(worker->env.cfg->ede && rep->reason_bogus != LDNS_EDE_NONE) {
+			edns_opt_list_append_ede(&edns->opt_list_out,
+					worker->scratchpad, rep->reason_bogus,
+					rep->reason_bogus_str);
 		}
 		error_encode(repinfo->c->buffer, LDNS_RCODE_SERVFAIL,
 			qinfo, id, flags, edns);
@@ -697,10 +742,6 @@ answer_from_cache(struct worker* worker, struct query_info* qinfo,
 	edns->udp_size = EDNS_ADVERTISED_SIZE;
 	edns->ext_rcode = 0;
 	edns->bits &= EDNS_DO;
-	if(!inplace_cb_reply_cache_call(&worker->env, qinfo, NULL, rep,
-		(int)(flags&LDNS_RCODE_MASK), edns, repinfo, worker->scratchpad,
-		worker->env.now_tv))
-		goto bail_out;
 	*alias_rrset = NULL; /* avoid confusion if caller set it to non-NULL */
 	if((worker->daemon->use_response_ip || worker->daemon->use_rpz) &&
 		!partial_rep && !apply_respip_action(worker, qinfo, cinfo, rep,
@@ -730,13 +771,24 @@ answer_from_cache(struct worker* worker, struct query_info* qinfo,
 				goto bail_out;
 		}
 	} else {
-		/* We don't check the global ede as this is a warning, not
-		 * an error */
-		if (*is_expired_answer == 1 &&
+		if(*is_expired_answer == 1 &&
 			worker->env.cfg->ede_serve_expired && worker->env.cfg->ede) {
 			EDNS_OPT_LIST_APPEND_EDE(&edns->opt_list_out,
 				worker->scratchpad, LDNS_EDE_STALE_ANSWER, "");
 		}
+		/* Attach the cached EDE (RFC8914) if CD bit is set and the
+		 * answer is bogus. */
+		if(*is_secure_answer == 0 &&
+			worker->env.cfg->ede && has_cd_bit &&
+			encode_rep->reason_bogus != LDNS_EDE_NONE) {
+			edns_opt_list_append_ede(&edns->opt_list_out,
+				worker->scratchpad, encode_rep->reason_bogus,
+				encode_rep->reason_bogus_str);
+		}
+		if(!inplace_cb_reply_cache_call(&worker->env, qinfo, NULL, encode_rep,
+			(int)(flags&LDNS_RCODE_MASK), edns, repinfo, worker->scratchpad,
+			worker->env.now_tv))
+			goto bail_out;
 		if(!reply_info_answer_encode(qinfo, encode_rep, id, flags,
 			repinfo->c->buffer, timenow, 1, worker->scratchpad,
 			udpsize, edns, (int)(edns->bits & EDNS_DO),
@@ -787,7 +839,8 @@ reply_and_prefetch(struct worker* worker, struct query_info* qinfo,
 	if(modstack_find(&worker->env.mesh->mods, "subnetcache") != -1
 		&& worker->env.unique_mesh) {
 		mesh_new_prefetch(worker->env.mesh, qinfo, flags, leeway +
-			PREFETCH_EXPIRY_ADD, rpz_passthru, repinfo, opt_list);
+			PREFETCH_EXPIRY_ADD, rpz_passthru,
+			&repinfo->client_addr, opt_list);
 		return;
 	}
 #endif
@@ -1050,7 +1103,8 @@ static int
 deny_refuse(struct comm_point* c, enum acl_access acl,
 	enum acl_access deny, enum acl_access refuse,
 	struct worker* worker, struct comm_reply* repinfo,
-	struct acl_addr* acladdr, int ede)
+	struct acl_addr* acladdr, int ede,
+	struct check_request_result* check_result)
 {
 	if(acl == deny) {
 		if(verbosity >= VERB_ALGO) {
@@ -1073,9 +1127,16 @@ deny_refuse(struct comm_point* c, enum acl_access acl,
 
 		if(worker->stats.extended)
 			worker->stats.unwanted_queries++;
-		if(worker_check_request(c->buffer, worker) == -1) {
+		worker_check_request(c->buffer, worker, check_result);
+		if(check_result->value != 0) {
+			if(check_result->value != -1) {
+				LDNS_QR_SET(sldns_buffer_begin(c->buffer));
+				LDNS_RCODE_SET(sldns_buffer_begin(c->buffer),
+					check_result->value);
+				return 1;
+			}
 			comm_point_drop_reply(repinfo);
-			return 0; /* discard this */
+			return 0;
 		}
 		/* worker_check_request() above guarantees that the buffer contains at
 		 * least a header and that qdcount == 1
@@ -1229,7 +1290,8 @@ deny_refuse(struct comm_point* c, enum acl_access acl,
 static int
 deny_refuse_all(struct comm_point* c, enum acl_access* acl,
 	struct worker* worker, struct comm_reply* repinfo,
-	struct acl_addr** acladdr, int ede, int check_proxy)
+	struct acl_addr** acladdr, int ede, int check_proxy,
+	struct check_request_result* check_result)
 {
 	if(check_proxy) {
 		*acladdr = acl_addr_lookup(worker->daemon->acl,
@@ -1244,16 +1306,51 @@ deny_refuse_all(struct comm_point* c, enum acl_access* acl,
 	}
 	*acl = acl_get_control(*acladdr);
 	return deny_refuse(c, *acl, acl_deny, acl_refuse, worker, repinfo,
-		*acladdr, ede);
+		*acladdr, ede, check_result);
 }
 
 static int
 deny_refuse_non_local(struct comm_point* c, enum acl_access acl,
 	struct worker* worker, struct comm_reply* repinfo,
-	struct acl_addr* acladdr, int ede)
+	struct acl_addr* acladdr, int ede,
+	struct check_request_result* check_result)
 {
 	return deny_refuse(c, acl, acl_deny_non_local, acl_refuse_non_local,
-		worker, repinfo, acladdr, ede);
+		worker, repinfo, acladdr, ede, check_result);
+}
+
+/* Returns 1 if the ip rate limit check can happen before EDNS parsing,
+ * else 0 */
+static int
+pre_edns_ip_ratelimit_check(enum acl_access acl)
+{
+	if(acl == acl_allow_cookie) return 0;
+	return 1;
+}
+
+/* Check if the query is blocked by source IP rate limiting.
+ * Returns 1 if it passes the check, 0 otherwise. */
+static int
+check_ip_ratelimit(struct worker* worker, struct sockaddr_storage* addr,
+	socklen_t addrlen, int has_cookie, sldns_buffer* pkt)
+{
+	if(!infra_ip_ratelimit_inc(worker->env.infra_cache, addr, addrlen,
+			*worker->env.now, has_cookie,
+			worker->env.cfg->ip_ratelimit_backoff, pkt)) {
+		/* See if we can pass through with slip factor */
+		if(!has_cookie && worker->env.cfg->ip_ratelimit_factor != 0 &&
+			ub_random_max(worker->env.rnd,
+			worker->env.cfg->ip_ratelimit_factor) == 0) {
+			char addrbuf[128];
+			addr_to_str(addr, addrlen, addrbuf, sizeof(addrbuf));
+			verbose(VERB_QUERY, "ip_ratelimit allowed through for "
+				"ip address %s because of slip in "
+				"ip_ratelimit_factor", addrbuf);
+			return 1;
+		}
+		return 0;
+	}
+	return 1;
 }
 
 int
@@ -1269,11 +1366,13 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	struct edns_option* original_edns_list = NULL;
 	enum acl_access acl;
 	struct acl_addr* acladdr;
+	int pre_edns_ip_ratelimit = 1;
 	int rc = 0;
 	int need_drop = 0;
 	int is_expired_answer = 0;
 	int is_secure_answer = 0;
 	int rpz_passthru = 0;
+	long long wait_queue_time = 0;
 	/* We might have to chase a CNAME chain internally, in which case
 	 * we'll have up to two replies and combine them to build a complete
 	 * answer.  These variables control this case. */
@@ -1282,6 +1381,8 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	struct query_info* lookup_qinfo = &qinfo;
 	struct query_info qinfo_tmp; /* placeholder for lookup_qinfo */
 	struct respip_client_info* cinfo = NULL, cinfo_tmp;
+	struct timeval wait_time;
+	struct check_request_result check_result = {0,0};
 	memset(&qinfo, 0, sizeof(qinfo));
 
 	if((error != NETEVENT_NOERROR && error != NETEVENT_DONE)|| !repinfo) {
@@ -1289,6 +1390,20 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 		verbose(VERB_ALGO, "handle request called with err=%d", error);
 		return 0;
 	}
+
+	if (worker->env.cfg->sock_queue_timeout && timeval_isset(&c->recv_tv)) {
+		timeval_subtract(&wait_time, worker->env.now_tv, &c->recv_tv);
+		wait_queue_time = wait_time.tv_sec * 1000000 +  wait_time.tv_usec;
+		if (worker->stats.max_query_time_us < wait_queue_time)
+			worker->stats.max_query_time_us = wait_queue_time;
+		if(wait_queue_time >
+			(long long)(worker->env.cfg->sock_queue_timeout * 1000000)) {
+			/* count and drop queries that were sitting in the socket queue too long */
+			worker->stats.num_queries_timed_out++;
+			return 0;
+		}
+	}
+
 #ifdef USE_DNSCRYPT
 	repinfo->max_udp_size = worker->daemon->cfg->max_udp_size;
 	if(!dnsc_handle_curved_request(worker->daemon->dnscenv, repinfo)) {
@@ -1298,7 +1413,8 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	if(c->dnscrypt && !repinfo->is_dnscrypted) {
 		char buf[LDNS_MAX_DOMAINLEN+1];
 		/* Check if this is unencrypted and asking for certs */
-		if(worker_check_request(c->buffer, worker) != 0) {
+		worker_check_request(c->buffer, worker, &check_result);
+		if(check_result.value != 0) {
 			verbose(VERB_ALGO,
 				"dnscrypt: worker check request: bad query.");
 			log_addr(VERB_CLIENT,"from",&repinfo->client_addr,
@@ -1340,31 +1456,34 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	if(worker->dtenv.log_client_query_messages) {
 		log_addr(VERB_ALGO, "request from client", &repinfo->client_addr, repinfo->client_addrlen);
 		log_addr(VERB_ALGO, "to local addr", (void*)repinfo->c->socket->addr->ai_addr, repinfo->c->socket->addr->ai_addrlen);
-		dt_msg_send_client_query(&worker->dtenv, &repinfo->client_addr, (void*)repinfo->c->socket->addr->ai_addr, c->type, c->buffer);
+		dt_msg_send_client_query(&worker->dtenv, &repinfo->client_addr, (void*)repinfo->c->socket->addr->ai_addr, c->type, c->buffer,
+		((worker->env.cfg->sock_queue_timeout && timeval_isset(&c->recv_tv))?&c->recv_tv:NULL));
 	}
 #endif
 	/* Check deny/refuse ACLs */
 	if(repinfo->is_proxied) {
 		if((ret=deny_refuse_all(c, &acl, worker, repinfo, &acladdr,
-			worker->env.cfg->ede, 1)) != -1) {
+			worker->env.cfg->ede, 1, &check_result)) != -1) {
 			if(ret == 1)
 				goto send_reply;
 			return ret;
 		}
 	}
 	if((ret=deny_refuse_all(c, &acl, worker, repinfo, &acladdr,
-		worker->env.cfg->ede, 0)) != -1) {
+		worker->env.cfg->ede, 0, &check_result)) != -1) {
 		if(ret == 1)
 			goto send_reply;
 		return ret;
 	}
 
-	if((ret=worker_check_request(c->buffer, worker)) != 0) {
+	worker_check_request(c->buffer, worker, &check_result);
+	if(check_result.value != 0) {
 		verbose(VERB_ALGO, "worker check request: bad query.");
 		log_addr(VERB_CLIENT,"from",&repinfo->client_addr, repinfo->client_addrlen);
-		if(ret != -1) {
+		if(check_result.value != -1) {
 			LDNS_QR_SET(sldns_buffer_begin(c->buffer));
-			LDNS_RCODE_SET(sldns_buffer_begin(c->buffer), ret);
+			LDNS_RCODE_SET(sldns_buffer_begin(c->buffer),
+				check_result.value);
 			return 1;
 		}
 		comm_point_drop_reply(repinfo);
@@ -1372,33 +1491,21 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	}
 
 	worker->stats.num_queries++;
+	pre_edns_ip_ratelimit = pre_edns_ip_ratelimit_check(acl);
 
-	/* check if this query should be dropped based on source ip rate limiting
-	 * NOTE: we always check the repinfo->client_address. IP ratelimiting is
-	 *       implicitly disabled for proxies. */
-	if(!infra_ip_ratelimit_inc(worker->env.infra_cache,
-			&repinfo->client_addr, repinfo->client_addrlen,
-			*worker->env.now,
-			worker->env.cfg->ip_ratelimit_backoff, c->buffer)) {
-		/* See if we are passed through with slip factor */
-		if(worker->env.cfg->ip_ratelimit_factor != 0 &&
-			ub_random_max(worker->env.rnd,
-			worker->env.cfg->ip_ratelimit_factor) == 0) {
-			char addrbuf[128];
-			addr_to_str(&repinfo->client_addr,
-				repinfo->client_addrlen, addrbuf,
-				sizeof(addrbuf));
-			verbose(VERB_QUERY, "ip_ratelimit allowed through for "
-				"ip address %s because of slip in "
-				"ip_ratelimit_factor", addrbuf);
-		} else {
+	/* If the IP rate limiting check needs extra EDNS information (e.g.,
+	 * DNS Cookies) postpone the check until after EDNS is parsed. */
+	if(pre_edns_ip_ratelimit) {
+		/* NOTE: we always check the repinfo->client_address.
+		 *       IP ratelimiting is implicitly disabled for proxies. */
+		if(!check_ip_ratelimit(worker, &repinfo->client_addr,
+			repinfo->client_addrlen, 0, c->buffer)) {
 			worker->stats.num_queries_ip_ratelimited++;
 			comm_point_drop_reply(repinfo);
 			return 0;
 		}
 	}
 
-	/* see if query is in the cache */
 	if(!query_info_parse(&qinfo, c->buffer)) {
 		verbose(VERB_ALGO, "worker parse request: formerror.");
 		log_addr(VERB_CLIENT, "from", &repinfo->client_addr,
@@ -1455,16 +1562,16 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 		}
 		goto send_reply;
 	}
-	if((ret=parse_edns_from_query_pkt(c->buffer, &edns, worker->env.cfg, c,
-					worker->scratchpad)) != 0) {
+	if((ret=parse_edns_from_query_pkt(
+			c->buffer, &edns, worker->env.cfg, c, repinfo,
+			(worker->env.now ? *worker->env.now : time(NULL)),
+			worker->scratchpad)) != 0) {
 		struct edns_data reply_edns;
 		verbose(VERB_ALGO, "worker parse edns: formerror.");
 		log_addr(VERB_CLIENT, "from", &repinfo->client_addr,
 			repinfo->client_addrlen);
 		memset(&reply_edns, 0, sizeof(reply_edns));
 		reply_edns.edns_present = 1;
-		reply_edns.udp_size = EDNS_ADVERTISED_SIZE;
-		LDNS_RCODE_SET(sldns_buffer_begin(c->buffer), ret);
 		error_encode(c->buffer, ret, &qinfo,
 			*(uint16_t*)(void *)sldns_buffer_begin(c->buffer),
 			sldns_buffer_read_u16_at(c->buffer, 2), &reply_edns);
@@ -1473,23 +1580,15 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	}
 	if(edns.edns_present) {
 		if(edns.edns_version != 0) {
-			edns.ext_rcode = (uint8_t)(EDNS_RCODE_BADVERS>>4);
-			edns.edns_version = EDNS_ADVERTISED_VERSION;
-			edns.udp_size = EDNS_ADVERTISED_SIZE;
-			edns.bits &= EDNS_DO;
 			edns.opt_list_in = NULL;
 			edns.opt_list_out = NULL;
 			edns.opt_list_inplace_cb_out = NULL;
-			edns.padding_block_size = 0;
 			verbose(VERB_ALGO, "query with bad edns version.");
 			log_addr(VERB_CLIENT, "from", &repinfo->client_addr,
 				repinfo->client_addrlen);
-			error_encode(c->buffer, EDNS_RCODE_BADVERS&0xf, &qinfo,
+			extended_error_encode(c->buffer, EDNS_RCODE_BADVERS, &qinfo,
 				*(uint16_t*)(void *)sldns_buffer_begin(c->buffer),
-				sldns_buffer_read_u16_at(c->buffer, 2), NULL);
-			if(sldns_buffer_capacity(c->buffer) >=
-			   sldns_buffer_limit(c->buffer)+calc_edns_field_size(&edns))
-				attach_edns_record(c->buffer, &edns);
+				sldns_buffer_read_u16_at(c->buffer, 2), 0, &edns);
 			regional_free_all(worker->scratchpad);
 			goto send_reply;
 		}
@@ -1502,6 +1601,62 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 			edns.udp_size = NORMAL_UDP_SIZE;
 		}
 	}
+
+	/* Get stats for cookies */
+	server_stats_downstream_cookie(&worker->stats, &edns);
+
+	/* If the IP rate limiting check was postponed, check now. */
+	if(!pre_edns_ip_ratelimit) {
+		/* NOTE: we always check the repinfo->client_address.
+		 *       IP ratelimiting is implicitly disabled for proxies. */
+		if(!check_ip_ratelimit(worker, &repinfo->client_addr,
+			repinfo->client_addrlen, edns.cookie_valid,
+			c->buffer)) {
+			worker->stats.num_queries_ip_ratelimited++;
+			comm_point_drop_reply(repinfo);
+			return 0;
+		}
+	}
+
+	/* "if, else if" sequence below deals with downstream DNS Cookies */
+	if(acl != acl_allow_cookie)
+		; /* pass; No cookie downstream processing whatsoever */
+
+	else if(edns.cookie_valid)
+		; /* pass; Valid cookie is good! */
+
+	else if(c->type != comm_udp)
+		; /* pass; Stateful transport */
+
+	else if(edns.cookie_present) {
+		/* Cookie present, but not valid: Cookie was bad! */
+		extended_error_encode(c->buffer,
+			LDNS_EXT_RCODE_BADCOOKIE, &qinfo,
+			*(uint16_t*)(void *)
+			sldns_buffer_begin(c->buffer),
+			sldns_buffer_read_u16_at(c->buffer, 2),
+			0, &edns);
+		regional_free_all(worker->scratchpad);
+		goto send_reply;
+	} else {
+		/* Cookie required, but no cookie present on UDP */
+		verbose(VERB_ALGO, "worker request: "
+			"need cookie or stateful transport");
+		log_addr(VERB_ALGO, "from",&repinfo->remote_addr
+		                          , repinfo->remote_addrlen);
+		EDNS_OPT_LIST_APPEND_EDE(&edns.opt_list_out,
+			worker->scratchpad, LDNS_EDE_OTHER,
+			"DNS Cookie needed for UDP replies");
+		error_encode(c->buffer,
+			(LDNS_RCODE_REFUSED|BIT_TC), &qinfo,
+			*(uint16_t*)(void *)
+			sldns_buffer_begin(c->buffer),
+			sldns_buffer_read_u16_at(c->buffer, 2),
+			&edns);
+		regional_free_all(worker->scratchpad);
+		goto send_reply;
+	}
+
 	if(edns.udp_size > worker->daemon->cfg->max_udp_size &&
 		c->type == comm_udp) {
 		verbose(VERB_QUERY,
@@ -1587,7 +1742,7 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	/* We've looked in our local zones. If the answer isn't there, we
 	 * might need to bail out based on ACLs now. */
 	if((ret=deny_refuse_non_local(c, acl, worker, repinfo, acladdr,
-		worker->env.cfg->ede)) != -1)
+		worker->env.cfg->ede, &check_result)) != -1)
 	{
 		regional_free_all(worker->scratchpad);
 		if(ret == 1)
@@ -1606,7 +1761,7 @@ worker_handle_request(struct comm_point* c, void* arg, int error,
 	 * ACLs allow the snooping. */
 	if(!(LDNS_RD_WIRE(sldns_buffer_begin(c->buffer))) &&
 		acl != acl_allow_snoop ) {
-		if (worker->env.cfg->ede) {
+		if(worker->env.cfg->ede) {
 			EDNS_OPT_LIST_APPEND_EDE(&edns.opt_list_out,
 				worker->scratchpad, LDNS_EDE_NOT_AUTHORITATIVE, "");
 		}
@@ -2059,15 +2214,14 @@ worker_init(struct worker* worker, struct config_file *cfg,
 	}
 
 	server_stats_init(&worker->stats, cfg);
-	alloc_init(&worker->alloc, &worker->daemon->superalloc,
-		worker->thread_num);
-	alloc_set_id_cleanup(&worker->alloc, &worker_alloc_cleanup, worker);
+	worker->alloc = worker->daemon->worker_allocs[worker->thread_num];
+	alloc_set_id_cleanup(worker->alloc, &worker_alloc_cleanup, worker);
 	worker->env = *worker->daemon->env;
 	comm_base_timept(worker->base, &worker->env.now, &worker->env.now_tv);
 	worker->env.worker = worker;
 	worker->env.worker_base = worker->base;
 	worker->env.send_query = &worker_send_query;
-	worker->env.alloc = &worker->alloc;
+	worker->env.alloc = worker->alloc;
 	worker->env.outnet = worker->back;
 	worker->env.rnd = worker->rndstate;
 	/* If case prefetch is triggered, the corresponding mesh will clear
@@ -2211,7 +2365,7 @@ worker_delete(struct worker* worker)
 #endif /* USE_DNSTAP */
 	comm_base_delete(worker->base);
 	ub_randfree(worker->rndstate);
-	alloc_clear(&worker->alloc);
+	/* don't touch worker->alloc, as it's maintained in daemon */
 	regional_destroy(worker->env.scratch);
 	regional_destroy(worker->scratchpad);
 	free(worker);

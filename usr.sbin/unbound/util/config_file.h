@@ -76,6 +76,8 @@ struct config_file {
 	int stat_cumulative;
 	/** if true, the statistics are kept in greater detail */
 	int stat_extended;
+	/** if true, inhibits a lot of =0 lines from the extended stats output */
+	int stat_inhibit_zero;
 
 	/** number of threads to create */
 	int num_threads;
@@ -86,6 +88,8 @@ struct config_file {
 	int do_ip4;
 	/** do ip6 query support. */
 	int do_ip6;
+	/** do nat64 on queries */
+	int do_nat64;
 	/** prefer ip4 upstream queries. */
 	int prefer_ip4;
 	/** prefer ip6 upstream queries. */
@@ -114,6 +118,8 @@ struct config_file {
 	int do_tcp_keepalive;
 	/** tcp keepalive timeout, in msec */
 	int tcp_keepalive_timeout;
+	/** timeout of packets sitting in the socket queue */
+	int sock_queue_timeout;
 	/** proxy protocol ports */
 	struct config_strlist* proxy_protocol_port;
 
@@ -290,6 +296,9 @@ struct config_file {
 	int harden_referral_path;
 	/** harden against algorithm downgrade */
 	int harden_algo_downgrade;
+	/** harden against unknown records in the authority section and in
+	 * the additional section */
+	int harden_unknown_additional;
 	/** use 0x20 bits in query as random ID bits */
 	int use_caps_bits_for_id;
 	/** 0x20 whitelist, domains that do not use capsforid */
@@ -533,6 +542,9 @@ struct config_file {
 	/** ignore AAAAs for these domain names and use A record anyway */
 	struct config_strlist* dns64_ignore_aaaa;
 
+	/* NAT64 prefix; if unset defaults to dns64_prefix */
+	char* nat64_prefix;
+
 	/** true to enable dnstap support */
 	int dnstap;
 	/** using bidirectional frame streams if true */
@@ -578,6 +590,9 @@ struct config_file {
 
 	/** ratelimit for ip addresses. 0 is off, otherwise qps (unless overridden) */
 	int ip_ratelimit;
+	/** ratelimit for ip addresses with a valid DNS Cookie. 0 is off,
+	 *  otherwise qps (unless overridden) */
+	int ip_ratelimit_cookie;
 	/** number of slabs for ip_ratelimit cache */
 	size_t ip_ratelimit_slabs;
 	/** memory size in bytes for ip_ratelimit cache */
@@ -608,6 +623,11 @@ struct config_file {
 
 	/** number of retries on outgoing queries */
 	int outbound_msg_retry;
+	/** max sent queries per qstate; resets on query restarts (e.g.,
+	 *  CNAMES) and referrals */
+	int max_sent_count;
+	/** max number of query restarts; determines max length of CNAME chain */
+	int max_query_restarts;
 	/** minimise outgoing QNAME and hide original QTYPE if possible */
 	int qname_minimisation;
 	/** minimise QNAME in strict mode, minimise according to RFC.
@@ -684,12 +704,23 @@ struct config_file {
 	char* redis_server_host;
 	/** redis server's TCP port */
 	int redis_server_port;
+	/** redis server's unix path. Or "", NULL if unused */
+	char* redis_server_path;
+	/** redis server's AUTH password. Or "", NULL if unused */
+	char* redis_server_password;
 	/** timeout (in ms) for communication with the redis server */
 	int redis_timeout;
 	/** set timeout on redis records based on DNS response ttl */
 	int redis_expire_records;
 #endif
 #endif
+	/** Downstream DNS Cookies */
+	/** do answer with server cookie when request contained cookie option */
+	int do_answer_cookie;
+	/** cookie secret */
+	uint8_t cookie_secret[40];
+	/** cookie secret length */
+	size_t  cookie_secret_len;
 
 	/* ipset module */
 #ifdef USE_IPSET
@@ -1335,4 +1366,3 @@ int if_is_dnscrypt(const char* ifname, const char* port, int dnscrypt_port);
 #endif
 
 #endif /* UTIL_CONFIG_FILE_H */
-

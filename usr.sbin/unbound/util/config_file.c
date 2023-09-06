@@ -55,6 +55,7 @@
 #include "util/regional.h"
 #include "util/fptr_wlist.h"
 #include "util/data/dname.h"
+#include "util/random.h"
 #include "util/rtt.h"
 #include "services/cache/infra.h"
 #include "sldns/wire2str.h"
@@ -87,6 +88,9 @@ struct config_parser_state* cfg_parser = 0;
 /** init ports possible for use */
 static void init_outgoing_availports(int* array, int num);
 
+/** init cookie with random data */
+static void init_cookie_secret(uint8_t* cookie_secret, size_t cookie_secret_len);
+
 struct config_file*
 config_create(void)
 {
@@ -99,6 +103,7 @@ config_create(void)
 	cfg->stat_interval = 0;
 	cfg->stat_cumulative = 0;
 	cfg->stat_extended = 0;
+	cfg->stat_inhibit_zero = 1;
 	cfg->num_threads = 1;
 	cfg->port = UNBOUND_DNS_PORT;
 	cfg->do_ip4 = 1;
@@ -115,6 +120,7 @@ config_create(void)
 	cfg->tcp_auth_query_timeout = 3 * 1000; /* 3s in millisecs */
 	cfg->do_tcp_keepalive = 0;
 	cfg->tcp_keepalive_timeout = 120 * 1000; /* 120s in millisecs */
+	cfg->sock_queue_timeout = 0; /* do not check timeout */
 	cfg->ssl_service_key = NULL;
 	cfg->ssl_service_pem = NULL;
 	cfg->ssl_port = UNBOUND_DNS_OVER_TLS_PORT;
@@ -232,6 +238,7 @@ config_create(void)
 	cfg->harden_below_nxdomain = 1;
 	cfg->harden_referral_path = 0;
 	cfg->harden_algo_downgrade = 0;
+	cfg->harden_unknown_additional = 0;
 	cfg->use_caps_bits_for_id = 0;
 	cfg->caps_whitelist = NULL;
 	cfg->private_address = NULL;
@@ -299,7 +306,7 @@ config_create(void)
 	cfg->minimal_responses = 1;
 	cfg->rrset_roundrobin = 1;
 	cfg->unknown_server_time_limit = 376;
-	cfg->max_udp_size = 4096;
+	cfg->max_udp_size = 1232; /* value taken from edns_buffer_size */
 	if(!(cfg->server_key_file = strdup(RUN_DIR"/unbound_server.key")))
 		goto error_exit;
 	if(!(cfg->server_cert_file = strdup(RUN_DIR"/unbound_server.pem")))
@@ -323,6 +330,7 @@ config_create(void)
 	cfg->dnstap_bidirectional = 1;
 	cfg->dnstap_tls = 1;
 	cfg->disable_dnssec_lame_check = 0;
+	cfg->ip_ratelimit_cookie = 0;
 	cfg->ip_ratelimit = 0;
 	cfg->ratelimit = 0;
 	cfg->ip_ratelimit_slabs = 4;
@@ -336,6 +344,8 @@ config_create(void)
 	cfg->ip_ratelimit_backoff = 0;
 	cfg->ratelimit_backoff = 0;
 	cfg->outbound_msg_retry = 5;
+	cfg->max_sent_count = 32;
+	cfg->max_query_restarts = 11;
 	cfg->qname_minimisation = 1;
 	cfg->qname_minimisation_strict = 0;
 	cfg->shm_enable = 0;
@@ -364,11 +374,17 @@ config_create(void)
 	cfg->ipsecmod_whitelist = NULL;
 	cfg->ipsecmod_strict = 0;
 #endif
+	cfg->do_answer_cookie = 0;
+	memset(cfg->cookie_secret, 0, sizeof(cfg->cookie_secret));
+	cfg->cookie_secret_len = 16;
+	init_cookie_secret(cfg->cookie_secret, cfg->cookie_secret_len);
 #ifdef USE_CACHEDB
 	if(!(cfg->cachedb_backend = strdup("testframe"))) goto error_exit;
 	if(!(cfg->cachedb_secret = strdup("default"))) goto error_exit;
 #ifdef USE_REDIS
 	if(!(cfg->redis_server_host = strdup("127.0.0.1"))) goto error_exit;
+	cfg->redis_server_path = NULL;
+	cfg->redis_server_password = NULL;
 	cfg->redis_timeout = 100;
 	cfg->redis_server_port = 6379;
 	cfg->redis_expire_records = 0;
@@ -516,6 +532,7 @@ int config_set_option(struct config_file* cfg, const char* opt,
 	else S_YNO("use-syslog:", use_syslog)
 	else S_STR("log-identity:", log_identity)
 	else S_YNO("extended-statistics:", stat_extended)
+	else S_YNO("statistics-inhibit-zero:", stat_inhibit_zero)
 	else S_YNO("statistics-cumulative:", stat_cumulative)
 	else S_YNO("shm-enable:", shm_enable)
 	else S_NUMBER_OR_ZERO("shm-key:", shm_key)
@@ -536,6 +553,7 @@ int config_set_option(struct config_file* cfg, const char* opt,
 	else S_NUMBER_NONZERO("tcp-reuse-timeout:", tcp_reuse_timeout)
 	else S_YNO("edns-tcp-keepalive:", do_tcp_keepalive)
 	else S_NUMBER_NONZERO("edns-tcp-keepalive-timeout:", tcp_keepalive_timeout)
+	else S_NUMBER_OR_ZERO("sock-queue-timeout:", sock_queue_timeout)
 	else S_YNO("ssl-upstream:", ssl_upstream)
 	else S_YNO("tls-upstream:", ssl_upstream)
 	else S_STR("ssl-service-key:", ssl_service_key)
@@ -645,6 +663,7 @@ int config_set_option(struct config_file* cfg, const char* opt,
 	else S_YNO("harden-below-nxdomain:", harden_below_nxdomain)
 	else S_YNO("harden-referral-path:", harden_referral_path)
 	else S_YNO("harden-algo-downgrade:", harden_algo_downgrade)
+	else S_YNO("harden-unknown-additional:", harden_unknown_additional)
 	else S_YNO("use-caps-for-id:", use_caps_bits_for_id)
 	else S_STRLIST("caps-whitelist:", caps_whitelist)
 	else S_SIZET_OR_ZERO("unwanted-reply-threshold:", unwanted_threshold)
@@ -761,6 +780,10 @@ int config_set_option(struct config_file* cfg, const char* opt,
 	else S_POW2("dnscrypt-nonce-cache-slabs:",
 		dnscrypt_nonce_cache_slabs)
 #endif
+	else if(strcmp(opt, "ip-ratelimit-cookie:") == 0) {
+	    IS_NUMBER_OR_ZERO; cfg->ip_ratelimit_cookie = atoi(val);
+	    infra_ip_ratelimit_cookie=cfg->ip_ratelimit_cookie;
+	}
 	else if(strcmp(opt, "ip-ratelimit:") == 0) {
 	    IS_NUMBER_OR_ZERO; cfg->ip_ratelimit = atoi(val);
 	    infra_ip_ratelimit=cfg->ip_ratelimit;
@@ -778,6 +801,8 @@ int config_set_option(struct config_file* cfg, const char* opt,
 	else S_YNO("ip-ratelimit-backoff:", ip_ratelimit_backoff)
 	else S_YNO("ratelimit-backoff:", ratelimit_backoff)
 	else S_NUMBER_NONZERO("outbound-msg-retry:", outbound_msg_retry)
+	else S_NUMBER_NONZERO("max-sent-count:", max_sent_count)
+	else S_NUMBER_NONZERO("max-query-restarts:", max_query_restarts)
 	else S_SIZET_NONZERO("fast-server-num:", fast_server_num)
 	else S_NUMBER_OR_ZERO("fast-server-permil:", fast_server_permil)
 	else S_YNO("qname-minimisation:", qname_minimisation)
@@ -996,6 +1021,7 @@ config_get_option(struct config_file* cfg, const char* opt,
 	else O_DEC(opt, "statistics-interval", stat_interval)
 	else O_YNO(opt, "statistics-cumulative", stat_cumulative)
 	else O_YNO(opt, "extended-statistics", stat_extended)
+	else O_YNO(opt, "statistics-inhibit-zero", stat_inhibit_zero)
 	else O_YNO(opt, "shm-enable", shm_enable)
 	else O_DEC(opt, "shm-key", shm_key)
 	else O_YNO(opt, "use-syslog", use_syslog)
@@ -1055,6 +1081,7 @@ config_get_option(struct config_file* cfg, const char* opt,
 	else O_DEC(opt, "tcp-reuse-timeout", tcp_reuse_timeout)
 	else O_YNO(opt, "edns-tcp-keepalive", do_tcp_keepalive)
 	else O_DEC(opt, "edns-tcp-keepalive-timeout", tcp_keepalive_timeout)
+	else O_DEC(opt, "sock-queue-timeout", sock_queue_timeout)
 	else O_YNO(opt, "ssl-upstream", ssl_upstream)
 	else O_YNO(opt, "tls-upstream", ssl_upstream)
 	else O_STR(opt, "ssl-service-key", ssl_service_key)
@@ -1110,6 +1137,7 @@ config_get_option(struct config_file* cfg, const char* opt,
 	else O_YNO(opt, "harden-below-nxdomain", harden_below_nxdomain)
 	else O_YNO(opt, "harden-referral-path", harden_referral_path)
 	else O_YNO(opt, "harden-algo-downgrade", harden_algo_downgrade)
+	else O_YNO(opt, "harden-unknown-additional", harden_unknown_additional)
 	else O_YNO(opt, "use-caps-for-id", use_caps_bits_for_id)
 	else O_LST(opt, "caps-whitelist", caps_whitelist)
 	else O_DEC(opt, "unwanted-reply-threshold", unwanted_threshold)
@@ -1225,6 +1253,7 @@ config_get_option(struct config_file* cfg, const char* opt,
 	else O_LST(opt, "python-script", python_script)
 	else O_LST(opt, "dynlib-file", dynlib_file)
 	else O_YNO(opt, "disable-dnssec-lame-check", disable_dnssec_lame_check)
+	else O_DEC(opt, "ip-ratelimit-cookie", ip_ratelimit_cookie)
 	else O_DEC(opt, "ip-ratelimit", ip_ratelimit)
 	else O_DEC(opt, "ratelimit", ratelimit)
 	else O_MEM(opt, "ip-ratelimit-size", ip_ratelimit_size)
@@ -1238,6 +1267,8 @@ config_get_option(struct config_file* cfg, const char* opt,
 	else O_YNO(opt, "ip-ratelimit-backoff", ip_ratelimit_backoff)
 	else O_YNO(opt, "ratelimit-backoff", ratelimit_backoff)
 	else O_UNS(opt, "outbound-msg-retry", outbound_msg_retry)
+	else O_UNS(opt, "max-sent-count", max_sent_count)
+	else O_UNS(opt, "max-query-restarts", max_query_restarts)
 	else O_DEC(opt, "fast-server-num", fast_server_num)
 	else O_DEC(opt, "fast-server-permil", fast_server_permil)
 	else O_DEC(opt, "val-sig-skew-min", val_sig_skew_min)
@@ -1278,6 +1309,8 @@ config_get_option(struct config_file* cfg, const char* opt,
 #ifdef USE_REDIS
 	else O_STR(opt, "redis-server-host", redis_server_host)
 	else O_DEC(opt, "redis-server-port", redis_server_port)
+	else O_STR(opt, "redis-server-path", redis_server_path)
+	else O_STR(opt, "redis-server-password", redis_server_password)
 	else O_DEC(opt, "redis-timeout", redis_timeout)
 	else O_YNO(opt, "redis-expire-records", redis_expire_records)
 #endif  /* USE_REDIS */
@@ -1629,6 +1662,7 @@ config_delete(struct config_file* cfg)
 	free(cfg->server_cert_file);
 	free(cfg->control_key_file);
 	free(cfg->control_cert_file);
+	free(cfg->nat64_prefix);
 	free(cfg->dns64_prefix);
 	config_delstrlist(cfg->dns64_ignore_aaaa);
 	free(cfg->dnstap_socket_path);
@@ -1654,6 +1688,8 @@ config_delete(struct config_file* cfg)
 	free(cfg->cachedb_secret);
 #ifdef USE_REDIS
 	free(cfg->redis_server_host);
+	free(cfg->redis_server_path);
+	free(cfg->redis_server_password);
 #endif  /* USE_REDIS */
 #endif  /* USE_CACHEDB */
 #ifdef USE_IPSET
@@ -1661,6 +1697,20 @@ config_delete(struct config_file* cfg)
 	free(cfg->ipset_name_v6);
 #endif
 	free(cfg);
+}
+
+static void
+init_cookie_secret(uint8_t* cookie_secret, size_t cookie_secret_len)
+{
+	struct ub_randstate *rand = ub_initstate(NULL);
+
+	if (!rand)
+		fatal_exit("could not init random generator");
+	while (cookie_secret_len) {
+		*cookie_secret++ = (uint8_t)ub_random(rand);
+		cookie_secret_len--;
+	}
+	ub_randfree(rand);
 }
 
 static void

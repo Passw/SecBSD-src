@@ -46,6 +46,7 @@
 #include "util/tcp_conn_limit.h"
 #include "util/fptr_wlist.h"
 #include "util/proxy_protocol.h"
+#include "util/timeval_func.h"
 #include "sldns/pkthdr.h"
 #include "sldns/sbuffer.h"
 #include "sldns/str2wire.h"
@@ -71,7 +72,9 @@
 #ifdef HAVE_OPENSSL_ERR_H
 #include <openssl/err.h>
 #endif
-
+#ifdef HAVE_LINUX_NET_TSTAMP_H
+#include <linux/net_tstamp.h>
+#endif
 /* -------- Start of local definitions -------- */
 /** if CMSG_ALIGN is not defined on this platform, a workaround */
 #ifndef CMSG_ALIGN
@@ -114,6 +117,16 @@
 /** timeout in millisec to wait for write to unblock, packets dropped after.*/
 #define SEND_BLOCKED_WAIT_TIMEOUT 200
 
+/** Let's make timestamping code cleaner and redefine SO_TIMESTAMP* */
+#ifndef SO_TIMESTAMP
+#define SO_TIMESTAMP 29
+#endif
+#ifndef SO_TIMESTAMPNS
+#define SO_TIMESTAMPNS 35
+#endif
+#ifndef SO_TIMESTAMPING
+#define SO_TIMESTAMPING 37
+#endif
 /**
  * The internal event structure for keeping ub_event info for the event.
  * Possibly other structures (list, tree) this is part of.
@@ -579,6 +592,11 @@ comm_point_send_udp_msg_if(struct comm_point *c, sldns_buffer* packet,
 		cmsg_data = CMSG_DATA(cmsg);
 		((struct in_pktinfo *) cmsg_data)->ipi_ifindex = 0;
 		cmsg->cmsg_len = CMSG_LEN(sizeof(struct in_pktinfo));
+		/* zero the padding bytes inserted by the CMSG_LEN */
+		if(sizeof(struct in_pktinfo) < cmsg->cmsg_len)
+			memset(((uint8_t*)(CMSG_DATA(cmsg))) +
+				sizeof(struct in_pktinfo), 0, cmsg->cmsg_len
+				- sizeof(struct in_pktinfo));
 #elif defined(IP_SENDSRCADDR)
 		msg.msg_controllen = CMSG_SPACE(sizeof(struct in_addr));
 		log_assert(msg.msg_controllen <= sizeof(control.buf));
@@ -587,6 +605,11 @@ comm_point_send_udp_msg_if(struct comm_point *c, sldns_buffer* packet,
 		memmove(CMSG_DATA(cmsg), &r->pktinfo.v4addr,
 			sizeof(struct in_addr));
 		cmsg->cmsg_len = CMSG_LEN(sizeof(struct in_addr));
+		/* zero the padding bytes inserted by the CMSG_LEN */
+		if(sizeof(struct in_addr) < cmsg->cmsg_len)
+			memset(((uint8_t*)(CMSG_DATA(cmsg))) +
+				sizeof(struct in_addr), 0, cmsg->cmsg_len
+				- sizeof(struct in_addr));
 #else
 		verbose(VERB_ALGO, "no IP_PKTINFO or IP_SENDSRCADDR");
 		msg.msg_control = NULL;
@@ -603,6 +626,11 @@ comm_point_send_udp_msg_if(struct comm_point *c, sldns_buffer* packet,
 		cmsg_data = CMSG_DATA(cmsg);
 		((struct in6_pktinfo *) cmsg_data)->ipi6_ifindex = 0;
 		cmsg->cmsg_len = CMSG_LEN(sizeof(struct in6_pktinfo));
+		/* zero the padding bytes inserted by the CMSG_LEN */
+		if(sizeof(struct in6_pktinfo) < cmsg->cmsg_len)
+			memset(((uint8_t*)(CMSG_DATA(cmsg))) +
+				sizeof(struct in6_pktinfo), 0, cmsg->cmsg_len
+				- sizeof(struct in6_pktinfo));
 	} else {
 		/* try to pass all 0 to use default route */
 		msg.msg_controllen = CMSG_SPACE(sizeof(struct in6_pktinfo));
@@ -611,9 +639,14 @@ comm_point_send_udp_msg_if(struct comm_point *c, sldns_buffer* packet,
 		cmsg->cmsg_type = IPV6_PKTINFO;
 		memset(CMSG_DATA(cmsg), 0, sizeof(struct in6_pktinfo));
 		cmsg->cmsg_len = CMSG_LEN(sizeof(struct in6_pktinfo));
+		/* zero the padding bytes inserted by the CMSG_LEN */
+		if(sizeof(struct in6_pktinfo) < cmsg->cmsg_len)
+			memset(((uint8_t*)(CMSG_DATA(cmsg))) +
+				sizeof(struct in6_pktinfo), 0, cmsg->cmsg_len
+				- sizeof(struct in6_pktinfo));
 	}
 #endif /* S_SPLINT_S */
-	if(verbosity >= VERB_ALGO)
+	if(verbosity >= VERB_ALGO && r->srctype != 0)
 		p_ancil("send_udp over interface", r);
 	sent = sendmsg(c->fd, &msg, 0);
 	if(sent == -1) {
@@ -810,7 +843,7 @@ done:
 		/* We are reading a whole packet;
 		 * Move the rest of the data to overwrite the PROXYv2 header */
 		/* XXX can we do better to avoid memmove? */
-		memmove(header, ((void*)header)+size,
+		memmove(header, ((char*)header)+size,
 			sldns_buffer_limit(buf)-size);
 		sldns_buffer_set_limit(buf, sldns_buffer_limit(buf)-size);
 	}
@@ -833,6 +866,9 @@ comm_point_udp_ancil_callback(int fd, short event, void* arg)
 #ifndef S_SPLINT_S
 	struct cmsghdr* cmsg;
 #endif /* S_SPLINT_S */
+#ifdef HAVE_LINUX_NET_TSTAMP_H
+	struct timespec *ts;
+#endif /* HAVE_LINUX_NET_TSTAMP_H */
 
 	rep.c = (struct comm_point*)arg;
 	log_assert(rep.c->type == comm_udp);
@@ -843,6 +879,7 @@ comm_point_udp_ancil_callback(int fd, short event, void* arg)
 	ub_comm_base_now(rep.c->ev->base);
 	for(i=0; i<NUM_UDP_PER_SELECT; i++) {
 		sldns_buffer_clear(rep.c->buffer);
+		timeval_clear(&rep.c->recv_tv);
 		rep.remote_addrlen = (socklen_t)sizeof(rep.remote_addr);
 		log_assert(fd != -1);
 		log_assert(sldns_buffer_remaining(rep.c->buffer) > 0);
@@ -894,9 +931,23 @@ comm_point_udp_ancil_callback(int fd, short event, void* arg)
 					sizeof(struct in_addr));
 				break;
 #endif /* IP_PKTINFO or IP_RECVDSTADDR */
+#ifdef HAVE_LINUX_NET_TSTAMP_H
+			} else if( cmsg->cmsg_level == SOL_SOCKET &&
+				cmsg->cmsg_type == SO_TIMESTAMPNS) {
+				ts = (struct timespec *)CMSG_DATA(cmsg);
+				TIMESPEC_TO_TIMEVAL(&rep.c->recv_tv, ts);
+			} else if( cmsg->cmsg_level == SOL_SOCKET &&
+				cmsg->cmsg_type == SO_TIMESTAMPING) {
+				ts = (struct timespec *)CMSG_DATA(cmsg);
+				TIMESPEC_TO_TIMEVAL(&rep.c->recv_tv, ts);
+			} else if( cmsg->cmsg_level == SOL_SOCKET &&
+				cmsg->cmsg_type == SO_TIMESTAMP) {
+				memmove(&rep.c->recv_tv, CMSG_DATA(cmsg), sizeof(struct timeval));
+#endif /* HAVE_LINUX_NET_TSTAMP_H */
 			}
 		}
-		if(verbosity >= VERB_ALGO)
+
+		if(verbosity >= VERB_ALGO && rep.srctype != 0)
 			p_ancil("receive_udp on interface", &rep);
 #endif /* S_SPLINT_S */
 
@@ -2545,8 +2596,9 @@ comm_point_tcp_handle_write(int fd, struct comm_point* c)
 	return 1;
 }
 
-/** read again to drain buffers when there could be more to read */
-static void
+/** read again to drain buffers when there could be more to read, returns 0
+ * on failure which means the comm point is closed. */
+static int
 tcp_req_info_read_again(int fd, struct comm_point* c)
 {
 	while(c->tcp_req_info->read_again) {
@@ -2563,9 +2615,10 @@ tcp_req_info_read_again(int fd, struct comm_point* c)
 				(void)(*c->callback)(c, c->cb_arg,
 					NETEVENT_CLOSED, NULL);
 			}
-			return;
+			return 0;
 		}
 	}
+	return 1;
 }
 
 /** read again to drain buffers when there could be more to read */
@@ -2623,6 +2676,9 @@ comm_point_tcp_handle_callback(int fd, short event, void* arg)
 	log_assert(c->type == comm_tcp);
 	ub_comm_base_now(c->ev->base);
 
+	if(c->fd == -1 || c->fd != fd)
+		return; /* duplicate event, but commpoint closed. */
+
 #ifdef USE_DNSCRYPT
 	/* Initialize if this is a dnscrypt socket */
 	if(c->tcp_parent) {
@@ -2671,8 +2727,10 @@ comm_point_tcp_handle_callback(int fd, short event, void* arg)
 			}
 			return;
 		}
-		if(has_tcpq && c->tcp_req_info && c->tcp_req_info->read_again)
-			tcp_req_info_read_again(fd, c);
+		if(has_tcpq && c->tcp_req_info && c->tcp_req_info->read_again) {
+			if(!tcp_req_info_read_again(fd, c))
+				return;
+		}
 		if(moreread && *moreread)
 			tcp_more_read_again(fd, c);
 		return;
@@ -2690,8 +2748,10 @@ comm_point_tcp_handle_callback(int fd, short event, void* arg)
 			}
 			return;
 		}
-		if(has_tcpq && c->tcp_req_info && c->tcp_req_info->read_again)
-			tcp_req_info_read_again(fd, c);
+		if(has_tcpq && c->tcp_req_info && c->tcp_req_info->read_again) {
+			if(!tcp_req_info_read_again(fd, c))
+				return;
+		}
 		if(morewrite && *morewrite)
 			tcp_more_write_again(fd, c);
 		return;
@@ -3800,7 +3860,11 @@ comm_point_create_udp(struct comm_base *base, int fd, sldns_buffer* buffer,
 	evbits = UB_EV_READ | UB_EV_PERSIST;
 	/* ub_event stuff */
 	c->ev->ev = ub_event_new(base->eb->base, c->fd, evbits,
+#ifdef USE_WINSOCK
 		comm_point_udp_callback, c);
+#else
+		comm_point_udp_ancil_callback, c);
+#endif
 	if(c->ev->ev == NULL) {
 		log_err("could not baseset udp event");
 		comm_point_delete(c);
@@ -4488,6 +4552,11 @@ comm_point_close(struct comm_point* c)
 		tcp_req_info_clear(c->tcp_req_info);
 	if(c->h2_session)
 		http2_session_server_delete(c->h2_session);
+	/* stop the comm point from reading or writing after it is closed. */
+	if(c->tcp_more_read_again && *c->tcp_more_read_again)
+		*c->tcp_more_read_again = 0;
+	if(c->tcp_more_write_again && *c->tcp_more_write_again)
+		*c->tcp_more_write_again = 0;
 
 	/* close fd after removing from event lists, or epoll.. is messed up */
 	if(c->fd != -1 && !c->do_not_close) {

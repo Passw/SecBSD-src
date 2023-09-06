@@ -224,7 +224,7 @@ sldns_lookup_table* sldns_tsig_errors = sldns_tsig_errors_data;
 /* draft-ietf-dnsop-svcb-https-06: 6. Initial SvcParamKeys */
 const char *svcparamkey_strs[] = {
 	"mandatory", "alpn", "no-default-alpn", "port",
-	"ipv4hint", "ech", "ipv6hint"
+	"ipv4hint", "ech", "ipv6hint", "dohpath"
 };
 
 char* sldns_wire2str_pkt(uint8_t* data, size_t len)
@@ -1174,6 +1174,7 @@ int sldns_wire2str_svcparam_scan(uint8_t** d, size_t* dlen, char** s, size_t* sl
 	 	case SVCB_KEY_IPV4HINT:
 	 	case SVCB_KEY_IPV6HINT:
 	 	case SVCB_KEY_MANDATORY:
+	 	case SVCB_KEY_DOHPATH:
 	 		return -1;
 	 	default:
 	 		return written_chars;
@@ -1201,6 +1202,8 @@ int sldns_wire2str_svcparam_scan(uint8_t** d, size_t* dlen, char** s, size_t* sl
 	case SVCB_KEY_ECH:
 		r = sldns_wire2str_svcparam_ech2str(s, slen, data_len, *d);
 		break;
+	case SVCB_KEY_DOHPATH:
+		/* fallthrough */
 	default:
 		r = sldns_str_print(s, slen, "=\"");
 

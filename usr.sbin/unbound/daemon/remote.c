@@ -87,6 +87,7 @@
 #include "sldns/parseutil.h"
 #include "sldns/wire2str.h"
 #include "sldns/sbuffer.h"
+#include "util/timeval_func.h"
 
 #ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
@@ -105,49 +106,6 @@
 
 /** what to put on statistics lines between var and value, ": " or "=" */
 #define SQ "="
-/** if true, inhibits a lot of =0 lines from the stats output */
-static const int inhibit_zero = 1;
-
-/** subtract timers and the values do not overflow or become negative */
-static void
-timeval_subtract(struct timeval* d, const struct timeval* end,
-	const struct timeval* start)
-{
-#ifndef S_SPLINT_S
-	time_t end_usec = end->tv_usec;
-	d->tv_sec = end->tv_sec - start->tv_sec;
-	if(end_usec < start->tv_usec) {
-		end_usec += 1000000;
-		d->tv_sec--;
-	}
-	d->tv_usec = end_usec - start->tv_usec;
-#endif
-}
-
-/** divide sum of timers to get average */
-static void
-timeval_divide(struct timeval* avg, const struct timeval* sum, long long d)
-{
-#ifndef S_SPLINT_S
-	size_t leftover;
-	if(d <= 0) {
-		avg->tv_sec = 0;
-		avg->tv_usec = 0;
-		return;
-	}
-	avg->tv_sec = sum->tv_sec / d;
-	avg->tv_usec = sum->tv_usec / d;
-	/* handle fraction from seconds divide */
-	leftover = sum->tv_sec - avg->tv_sec*d;
-	if(leftover <= 0)
-		leftover = 0;
-	avg->tv_usec += (((long long)leftover)*((long long)1000000))/d;
-	if(avg->tv_sec < 0)
-		avg->tv_sec = 0;
-	if(avg->tv_usec < 0)
-		avg->tv_usec = 0;
-#endif
-}
 
 static int
 remote_setup_ctx(struct daemon_remote* rc, struct config_file* cfg)
@@ -684,8 +642,9 @@ do_stop(RES* ssl, struct worker* worker)
 
 /** do the reload command */
 static void
-do_reload(RES* ssl, struct worker* worker)
+do_reload(RES* ssl, struct worker* worker, int reuse_cache)
 {
+	worker->reuse_cache = reuse_cache;
 	worker->need_to_exit = 0;
 	comm_base_exit(worker->base);
 	send_ok(ssl);
@@ -713,6 +672,12 @@ print_stats(RES* ssl, const char* nm, struct ub_stats_info* s)
 		(unsigned long)s->svr.num_queries)) return 0;
 	if(!ssl_printf(ssl, "%s.num.queries_ip_ratelimited"SQ"%lu\n", nm,
 		(unsigned long)s->svr.num_queries_ip_ratelimited)) return 0;
+	if(!ssl_printf(ssl, "%s.num.queries_cookie_valid"SQ"%lu\n", nm,
+		(unsigned long)s->svr.num_queries_cookie_valid)) return 0;
+	if(!ssl_printf(ssl, "%s.num.queries_cookie_client"SQ"%lu\n", nm,
+		(unsigned long)s->svr.num_queries_cookie_client)) return 0;
+	if(!ssl_printf(ssl, "%s.num.queries_cookie_invalid"SQ"%lu\n", nm,
+		(unsigned long)s->svr.num_queries_cookie_invalid)) return 0;
 	if(!ssl_printf(ssl, "%s.num.cachehits"SQ"%lu\n", nm,
 		(unsigned long)(s->svr.num_queries
 			- s->svr.num_queries_missed_cache))) return 0;
@@ -720,6 +685,10 @@ print_stats(RES* ssl, const char* nm, struct ub_stats_info* s)
 		(unsigned long)s->svr.num_queries_missed_cache)) return 0;
 	if(!ssl_printf(ssl, "%s.num.prefetch"SQ"%lu\n", nm,
 		(unsigned long)s->svr.num_queries_prefetch)) return 0;
+	if(!ssl_printf(ssl, "%s.num.queries_timed_out"SQ"%lu\n", nm,
+		(unsigned long)s->svr.num_queries_timed_out)) return 0;
+	if(!ssl_printf(ssl, "%s.query.queue_time_us.max"SQ"%lu\n", nm,
+		(unsigned long)s->svr.max_query_time_us)) return 0;
 	if(!ssl_printf(ssl, "%s.num.expired"SQ"%lu\n", nm,
 		(unsigned long)s->svr.ans_expired)) return 0;
 	if(!ssl_printf(ssl, "%s.num.recursivereplies"SQ"%lu\n", nm,
@@ -920,7 +889,7 @@ print_hist(RES* ssl, struct ub_stats_info* s)
 
 /** print extended stats */
 static int
-print_ext(RES* ssl, struct ub_stats_info* s)
+print_ext(RES* ssl, struct ub_stats_info* s, int inhibit_zero)
 {
 	int i;
 	char nm[32];
@@ -1066,6 +1035,11 @@ print_ext(RES* ssl, struct ub_stats_info* s)
 		(unsigned)s->svr.infra_cache_count)) return 0;
 	if(!ssl_printf(ssl, "key.cache.count"SQ"%u\n",
 		(unsigned)s->svr.key_cache_count)) return 0;
+	/* max collisions */
+	if(!ssl_printf(ssl, "msg.cache.max_collisions"SQ"%u\n",
+		(unsigned)s->svr.msg_cache_max_collisions)) return 0;
+	if(!ssl_printf(ssl, "rrset.cache.max_collisions"SQ"%u\n",
+		(unsigned)s->svr.rrset_cache_max_collisions)) return 0;
 	/* applied RPZ actions */
 	for(i=0; i<UB_STATS_RPZ_ACTION_NUM; i++) {
 		if(i == RPZ_NO_OVERRIDE_ACTION)
@@ -1096,6 +1070,10 @@ print_ext(RES* ssl, struct ub_stats_info* s)
 	if(!ssl_printf(ssl, "num.query.subnet_cache"SQ"%lu\n",
 		(unsigned long)s->svr.num_query_subnet_cache)) return 0;
 #endif /* CLIENT_SUBNET */
+#ifdef USE_CACHEDB
+	if(!ssl_printf(ssl, "num.query.cachedb"SQ"%lu\n",
+		(unsigned long)s->svr.num_query_cachedb)) return 0;
+#endif /* USE_CACHEDB */
 	return 1;
 }
 
@@ -1129,7 +1107,7 @@ do_stats(RES* ssl, struct worker* worker, int reset)
 			return;
 		if(!print_hist(ssl, &total))
 			return;
-		if(!print_ext(ssl, &total))
+		if(!print_ext(ssl, &total, daemon->cfg->stat_inhibit_zero))
 			return;
 	}
 }
@@ -1609,6 +1587,9 @@ do_flush_type(RES* ssl, struct worker* worker, char* arg)
 	if(!parse_arg_name(ssl, arg, &nm, &nmlen, &nmlabs))
 		return;
 	t = sldns_get_rr_type_by_name(arg2);
+	if(t == 0 && strcmp(arg2, "TYPE0") != 0) {
+		return;
+	}
 	do_cache_remove(worker, nm, nmlen, t, LDNS_RR_CLASS_IN);
 
 	free(nm);
@@ -1963,6 +1944,8 @@ do_flush_name(RES* ssl, struct worker* w, char* arg)
 	do_cache_remove(w, nm, nmlen, LDNS_RR_TYPE_PTR, LDNS_RR_CLASS_IN);
 	do_cache_remove(w, nm, nmlen, LDNS_RR_TYPE_SRV, LDNS_RR_CLASS_IN);
 	do_cache_remove(w, nm, nmlen, LDNS_RR_TYPE_NAPTR, LDNS_RR_CLASS_IN);
+	do_cache_remove(w, nm, nmlen, LDNS_RR_TYPE_SVCB, LDNS_RR_CLASS_IN);
+	do_cache_remove(w, nm, nmlen, LDNS_RR_TYPE_HTTPS, LDNS_RR_CLASS_IN);
 
 	free(nm);
 	send_ok(ssl);
@@ -3029,8 +3012,11 @@ execute_cmd(struct daemon_remote* rc, RES* ssl, char* cmd,
 	if(cmdcmp(p, "stop", 4)) {
 		do_stop(ssl, worker);
 		return;
+	} else if(cmdcmp(p, "reload_keep_cache", 17)) {
+		do_reload(ssl, worker, 1);
+		return;
 	} else if(cmdcmp(p, "reload", 6)) {
-		do_reload(ssl, worker);
+		do_reload(ssl, worker, 0);
 		return;
 	} else if(cmdcmp(p, "stats_noreset", 13)) {
 		do_stats(ssl, worker, 0);

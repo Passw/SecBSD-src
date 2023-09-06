@@ -10,7 +10,7 @@ sinclude(dnscrypt/dnscrypt.m4)
 
 # must be numbers. ac_defun because of later processing
 m4_define([VERSION_MAJOR],[1])
-m4_define([VERSION_MINOR],[17])
+m4_define([VERSION_MINOR],[18])
 m4_define([VERSION_MICRO],[0])
 AC_INIT([unbound],m4_defn([VERSION_MAJOR]).m4_defn([VERSION_MINOR]).m4_defn([VERSION_MICRO]),[unbound-bugs@nlnetlabs.nl or https://github.com/NLnetLabs/unbound/issues],[unbound])
 AC_SUBST(UNBOUND_VERSION_MAJOR, [VERSION_MAJOR])
@@ -18,7 +18,7 @@ AC_SUBST(UNBOUND_VERSION_MINOR, [VERSION_MINOR])
 AC_SUBST(UNBOUND_VERSION_MICRO, [VERSION_MICRO])
 
 LIBUNBOUND_CURRENT=9
-LIBUNBOUND_REVISION=20
+LIBUNBOUND_REVISION=22
 LIBUNBOUND_AGE=1
 # 1.0.0 had 0:12:0
 # 1.0.1 had 0:13:0
@@ -106,6 +106,8 @@ LIBUNBOUND_AGE=1
 # 1.16.2 had 9:18:1
 # 1.16.3 had 9:19:1
 # 1.17.0 had 9:20:1
+# 1.17.1 had 9:21:1
+# 1.18.0 had 9:22:1
 
 #   Current  -- the number of the binary API that we're implementing
 #   Revision -- which iteration of the implementation of the binary
@@ -387,7 +389,17 @@ fi
 if test "$LEX" != "" -a "$LEX" != ":"; then
 ACX_YYLEX_OPTION
 fi
+if test "$LEX" = "" -o "$LEX" = ":"; then
+	if test ! -f util/configlexer.c; then
+		AC_MSG_ERROR([no lex and no util/configlexer.c: need flex and bison to compile from source repository.])
+	fi
+fi
 AC_PROG_YACC
+if test "$YACC" = "" -o "$YACC" = ":"; then
+	if test ! -f util/configparser.c; then
+		AC_MSG_ERROR([no yacc and no util/configparser.c: need flex and bison to compile from source repository.])
+	fi
+fi
 AC_CHECK_PROG(doxygen, doxygen, doxygen)
 AC_CHECK_TOOL(STRIP, strip)
 ACX_LIBTOOL_C_ONLY
@@ -451,6 +463,9 @@ AC_CHECK_HEADERS([netioapi.h],,, [AC_INCLUDES_DEFAULT
 #include <ws2tcpip.h>
 #endif
 ])
+
+# Check for Linux timestamping headers
+AC_CHECK_HEADERS([linux/net_tstamp.h],,, [AC_INCLUDES_DEFAULT])
 
 # check for types.
 # Using own tests for int64* because autoconf builtin only give 32bit.
@@ -734,7 +749,14 @@ if test x_$ub_test_python != x_no; then
    ac_save_LIBS="$LIBS" dnl otherwise AC_PYTHON_DEVEL thrashes $LIBS
    AC_PYTHON_DEVEL
    if test ! -z "$PYTHON_VERSION"; then
-	if test `$PYTHON -c "print('$PYTHON_VERSION' >= '2.4.0')"` = "False"; then
+	badversion="no"
+	if test "$PYTHON_VERSION_MAJOR" -lt 2; then
+		badversion="yes"
+	fi
+	if test "$PYTHON_VERSION_MAJOR" -eq 2 -a "$PYTHON_VERSION_MINOR" -lt 4; then
+		badversion="yes"
+	fi
+	if test "$badversion" = "yes"; then
 		AC_MSG_ERROR([Python version >= 2.4.0 is required])
 	fi
 

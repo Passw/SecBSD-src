@@ -79,7 +79,9 @@
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
-
+#ifdef HAVE_LINUX_NET_TSTAMP_H
+#include <linux/net_tstamp.h>
+#endif
 /** number of queued TCP connections for listen() */
 #define TCP_BACKLOG 256
 
@@ -1018,7 +1020,7 @@ make_sock(int stype, const char* ifname, const char* port,
 		log_err("node %s:%s getaddrinfo: %s %s",
 			ifname?ifname:"default", port, gai_strerror(r),
 #ifdef EAI_SYSTEM
-			r==EAI_SYSTEM?(char*)strerror(errno):""
+			(r==EAI_SYSTEM?(char*)strerror(errno):"")
 #else
 			""
 #endif
@@ -1112,6 +1114,25 @@ port_insert(struct listen_port** list, int s, enum listen_type ftype,
 	item->socket = ub_sock;
 	*list = item;
 	return 1;
+}
+
+/** set fd to receive software timestamps */
+static int
+set_recvtimestamp(int s)
+{
+#ifdef HAVE_LINUX_NET_TSTAMP_H
+	int opt = SOF_TIMESTAMPING_RX_SOFTWARE | SOF_TIMESTAMPING_SOFTWARE;
+	if (setsockopt(s, SOL_SOCKET, SO_TIMESTAMPNS, (void*)&opt, (socklen_t)sizeof(opt)) < 0) {
+		log_err("setsockopt(..., SO_TIMESTAMPNS, ...) failed: %s",
+			strerror(errno));
+		return 0;
+	}
+	return 1;
+#else
+	log_err("packets timestamping is not supported on this platform");
+	(void)s;
+	return 0;
+#endif
 }
 
 /** set fd to receive source address packet info */
@@ -1214,6 +1235,9 @@ if_is_ssl(const char* ifname, const char* port, int ssl_port,
  * @param use_systemd: if true, fetch sockets from systemd.
  * @param dnscrypt_port: dnscrypt service port number
  * @param dscp: DSCP to use.
+ * @param sock_queue_timeout: the sock_queue_timeout from config. Seconds to
+ * 	wait to discard if UDP packets have waited for long in the socket
+ * 	buffer.
  * @return: returns false on error.
  */
 static int
@@ -1223,7 +1247,8 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 	struct config_strlist* tls_additional_port, int https_port,
 	struct config_strlist* proxy_protocol_port,
 	int* reuseport, int transparent, int tcp_mss, int freebind,
-	int http2_nodelay, int use_systemd, int dnscrypt_port, int dscp)
+	int http2_nodelay, int use_systemd, int dnscrypt_port, int dscp,
+	int sock_queue_timeout)
 {
 	int s, noip6=0;
 	int is_https = if_is_https(ifname, port, https_port);
@@ -1252,7 +1277,8 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 		if((s = make_sock_port(SOCK_DGRAM, ifname, port, hints, 1,
 			&noip6, rcv, snd, reuseport, transparent,
 			tcp_mss, nodelay, freebind, use_systemd, dscp, ub_sock)) == -1) {
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			if(noip6) {
 				log_warn("IPv6 protocol not available");
@@ -1263,15 +1289,20 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 		/* getting source addr packet info is highly non-portable */
 		if(!set_recvpktinfo(s, hints->ai_family)) {
 			sock_close(s);
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			return 0;
+		}
+		if (sock_queue_timeout && !set_recvtimestamp(s)) {
+			log_warn("socket timestamping is not available");
 		}
 		if(!port_insert(list, s, is_dnscrypt
 			?listen_type_udpancil_dnscrypt:listen_type_udpancil,
 			is_pp2, ub_sock)) {
 			sock_close(s);
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			return 0;
 		}
@@ -1283,7 +1314,8 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 		if((s = make_sock_port(SOCK_DGRAM, ifname, port, hints, 1,
 			&noip6, rcv, snd, reuseport, transparent,
 			tcp_mss, nodelay, freebind, use_systemd, dscp, ub_sock)) == -1) {
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			if(noip6) {
 				log_warn("IPv6 protocol not available");
@@ -1291,11 +1323,15 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 			}
 			return 0;
 		}
+		if (sock_queue_timeout && !set_recvtimestamp(s)) {
+			log_warn("socket timestamping is not available");
+		}
 		if(!port_insert(list, s, is_dnscrypt
 			?listen_type_udp_dnscrypt:listen_type_udp,
 			is_pp2, ub_sock)) {
 			sock_close(s);
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			return 0;
 		}
@@ -1318,7 +1354,8 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 		if((s = make_sock_port(SOCK_STREAM, ifname, port, hints, 1,
 			&noip6, 0, 0, reuseport, transparent, tcp_mss, nodelay,
 			freebind, use_systemd, dscp, ub_sock)) == -1) {
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			if(noip6) {
 				/*log_warn("IPv6 protocol not available");*/
@@ -1330,7 +1367,8 @@ ports_create_if(const char* ifname, int do_auto, int do_udp, int do_tcp,
 			verbose(VERB_ALGO, "setup TCP for SSL service");
 		if(!port_insert(list, s, port_type, is_pp2, ub_sock)) {
 			sock_close(s);
-			freeaddrinfo(ub_sock->addr);
+			if(ub_sock->addr)
+				freeaddrinfo(ub_sock->addr);
 			free(ub_sock);
 			return 0;
 		}
@@ -1802,7 +1840,7 @@ listening_ports_open(struct config_file* cfg, char** ifs, int num_ifs,
 						reuseport, cfg->ip_transparent,
 						cfg->tcp_mss, cfg->ip_freebind,
 						cfg->http_nodelay, cfg->use_systemd,
-						cfg->dnscrypt_port, cfg->ip_dscp)) {
+						cfg->dnscrypt_port, cfg->ip_dscp, cfg->sock_queue_timeout)) {
 						listening_ports_free(list);
 						return NULL;
 					}
@@ -1819,7 +1857,7 @@ listening_ports_open(struct config_file* cfg, char** ifs, int num_ifs,
 						reuseport, cfg->ip_transparent,
 						cfg->tcp_mss, cfg->ip_freebind,
 						cfg->http_nodelay, cfg->use_systemd,
-						cfg->dnscrypt_port, cfg->ip_dscp)) {
+						cfg->dnscrypt_port, cfg->ip_dscp, cfg->sock_queue_timeout)) {
 						listening_ports_free(list);
 						return NULL;
 					}
@@ -1838,7 +1876,7 @@ listening_ports_open(struct config_file* cfg, char** ifs, int num_ifs,
 				reuseport, cfg->ip_transparent,
 				cfg->tcp_mss, cfg->ip_freebind,
 				cfg->http_nodelay, cfg->use_systemd,
-				cfg->dnscrypt_port, cfg->ip_dscp)) {
+				cfg->dnscrypt_port, cfg->ip_dscp, cfg->sock_queue_timeout)) {
 				listening_ports_free(list);
 				return NULL;
 			}
@@ -1854,7 +1892,7 @@ listening_ports_open(struct config_file* cfg, char** ifs, int num_ifs,
 				reuseport, cfg->ip_transparent,
 				cfg->tcp_mss, cfg->ip_freebind,
 				cfg->http_nodelay, cfg->use_systemd,
-				cfg->dnscrypt_port, cfg->ip_dscp)) {
+				cfg->dnscrypt_port, cfg->ip_dscp, cfg->sock_queue_timeout)) {
 				listening_ports_free(list);
 				return NULL;
 			}
@@ -1872,7 +1910,7 @@ listening_ports_open(struct config_file* cfg, char** ifs, int num_ifs,
 				reuseport, cfg->ip_transparent,
 				cfg->tcp_mss, cfg->ip_freebind,
 				cfg->http_nodelay, cfg->use_systemd,
-				cfg->dnscrypt_port, cfg->ip_dscp)) {
+				cfg->dnscrypt_port, cfg->ip_dscp, cfg->sock_queue_timeout)) {
 				listening_ports_free(list);
 				return NULL;
 			}
@@ -1888,7 +1926,7 @@ listening_ports_open(struct config_file* cfg, char** ifs, int num_ifs,
 				reuseport, cfg->ip_transparent,
 				cfg->tcp_mss, cfg->ip_freebind,
 				cfg->http_nodelay, cfg->use_systemd,
-				cfg->dnscrypt_port, cfg->ip_dscp)) {
+				cfg->dnscrypt_port, cfg->ip_dscp, cfg->sock_queue_timeout)) {
 				listening_ports_free(list);
 				return NULL;
 			}
@@ -1908,7 +1946,8 @@ void listening_ports_free(struct listen_port* list)
 		}
 		/* rc_ports don't have ub_socket */
 		if(list->socket) {
-			freeaddrinfo(list->socket->addr);
+			if(list->socket->addr)
+				freeaddrinfo(list->socket->addr);
 			free(list->socket);
 		}
 		free(list);

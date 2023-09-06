@@ -1,4 +1,4 @@
-/*	$OpenBSD: radiusd.c,v 1.29 2023/09/04 10:50:52 yasuoka Exp $	*/
+/*	$OpenBSD: radiusd.c,v 1.31 2023/09/05 00:32:01 yasuoka Exp $	*/
 
 /*
  * Copyright (c) 2013 Internet Initiative Japan Inc.
@@ -27,6 +27,7 @@
 #include <err.h>
 #include <errno.h>
 #include <event.h>
+#include <fcntl.h>
 #include <fnmatch.h>
 #include <imsg.h>
 #include <md5.h>
@@ -489,6 +490,8 @@ radiusd_listen_on_event(int fd, short evmask, void *ctx)
 			goto on_error;
 		}
 found:
+		RADIUSD_ASSERT(authen->auth != NULL);
+
 		if (!MODULE_DO_USERPASS(authen->auth->module) &&
 		    !MODULE_DO_ACCSREQ(authen->auth->module)) {
 			log_warnx("Received %s(code=%d) from %s id=%d "
@@ -918,7 +921,7 @@ radiusd_module_load(struct radiusd *radiusd, const char *path, const char *name)
 {
 	struct radiusd_module		*module = NULL;
 	pid_t				 pid;
-	int				 pairsock[] = { -1, -1 };
+	int				 ival, pairsock[] = { -1, -1 };
 	const char			*av[3];
 	ssize_t				 n;
 	struct imsg			 imsg;
@@ -928,8 +931,7 @@ radiusd_module_load(struct radiusd *radiusd, const char *path, const char *name)
 		fatal("Out of memory");
 	module->radiusd = radiusd;
 
-	if (socketpair(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK, PF_UNSPEC,
-	    pairsock) == -1) {
+	if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, pairsock) == -1) {
 		log_warn("Could not load module `%s'(%s): pipe()", name, path);
 		goto on_error;
 	}
@@ -956,6 +958,16 @@ radiusd_module_load(struct radiusd *radiusd, const char *path, const char *name)
 	close(pairsock[1]);
 
 	module->fd = pairsock[0];
+	if ((ival = fcntl(module->fd, F_GETFL)) == -1) {
+		log_warn("Could not load module `%s': fcntl(F_GETFL)",
+		    name);
+		goto on_error;
+	}
+	if (fcntl(module->fd, F_SETFL, ival | O_NONBLOCK) == -1) {
+		log_warn("Could not load module `%s': fcntl(F_SETFL,O_NONBLOCK)",
+		    name);
+		goto on_error;
+	}
 	strlcpy(module->name, name, sizeof(module->name));
 	module->pid = pid;
 	imsg_init(&module->ibuf, module->fd);

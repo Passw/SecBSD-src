@@ -60,6 +60,7 @@
 #ifndef NET_EVENT_H
 #define NET_EVENT_H
 
+#include <sys/time.h>
 #include "dnscrypt/dnscrypt.h"
 #ifdef HAVE_NGHTTP2_NGHTTP2_H
 #include <nghttp2/nghttp2.h>
@@ -383,7 +384,8 @@ struct comm_point {
 	/** number of queries outstanding on this socket, used by
 	 * outside network for udp ports */
 	int inuse;
-
+	/** the timestamp when the packet was received by the kernel */
+	struct timeval recv_tv;
 	/** callback when done.
 	    tcp_accept does not get called back, is NULL then.
 	    If a timeout happens, callback with timeout=1 is called.

@@ -204,6 +204,17 @@ subnetmod_init(struct module_env *env, int id)
 	}
 	alloc_init(&sn_env->alloc, NULL, 0);
 	env->modinfo[id] = (void*)sn_env;
+
+	/* Warn that serve-expired and prefetch do not work with the subnet
+	 * module cache. */
+	if(env->cfg->serve_expired)
+		log_warn(
+			"subnetcache: serve-expired is set but not working "
+			"for data originating from the subnet module cache.");
+	if(env->cfg->prefetch)
+		log_warn(
+			"subnetcache: prefetch is set but not working "
+			"for data originating from the subnet module cache.");
 	/* Copy msg_cache settings */
 	sn_env->subnet_msg_cache = slabhash_create(env->cfg->msg_cache_slabs,
 		HASH_DEFAULT_STARTARRAY, env->cfg->msg_cache_size,
@@ -341,7 +352,7 @@ update_cache(struct module_qstate *qstate, int id)
 		((struct subnet_qstate*)qstate->minfo[id])->qinfo_hash :
 		query_info_hash(&qstate->qinfo, qstate->query_flags);
 	/* Step 1, general qinfo lookup */
-	struct lruhash_entry *lru_entry = slabhash_lookup(subnet_msg_cache, h,
+	struct lruhash_entry* lru_entry = slabhash_lookup(subnet_msg_cache, h,
 		&qstate->qinfo, 1);
 	int need_to_insert = (lru_entry == NULL);
 	if (!lru_entry) {
@@ -410,7 +421,7 @@ update_cache(struct module_qstate *qstate, int id)
 
 /** Lookup in cache and reply true iff reply is sent. */
 static int
-lookup_and_reply(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
+lookup_and_reply(struct module_qstate *qstate, int id, struct subnet_qstate *sq, int prefetch)
 {
 	struct lruhash_entry *e;
 	struct module_env *env = qstate->env;
@@ -461,6 +472,10 @@ lookup_and_reply(struct module_qstate *qstate, int id, struct subnet_qstate *sq)
 		memcpy(&sq->ecs_client_out.subnet_addr, &ecs->subnet_addr,
 			INET6_SIZE);
 		sq->ecs_client_out.subnet_validdata = 1;
+	}
+
+	if (prefetch && *qstate->env->now >= ((struct reply_info *)node->elem)->prefetch_ttl) {
+		qstate->need_refetch = 1;
 	}
 	return 1;
 }
@@ -768,6 +783,11 @@ subnetmod_operate(struct module_qstate *qstate, enum module_ev event,
 				&qstate->mesh_info->reply_list->query_reply.client_addr,
 				&sq->ecs_client_in, qstate->env->cfg);
 		}
+		else if(qstate->client_addr.ss_family != AF_UNSPEC) {
+			subnet_option_from_ss(
+				&qstate->client_addr,
+				&sq->ecs_client_in, qstate->env->cfg);
+		}
 
 		if(sq->ecs_client_in.subnet_validdata == 0) {
 			/* No clients are interested in result or we could not
@@ -791,7 +811,9 @@ subnetmod_operate(struct module_qstate *qstate, enum module_ev event,
 
 		if(!sq->started_no_cache_lookup && !qstate->blacklist) {
 			lock_rw_wrlock(&sne->biglock);
-			if(lookup_and_reply(qstate, id, sq)) {
+			if(qstate->mesh_info->reply_list &&
+				lookup_and_reply(qstate, id, sq,
+				qstate->env->cfg->prefetch)) {
 				sne->num_msg_cache++;
 				lock_rw_unlock(&sne->biglock);
 				verbose(VERB_QUERY, "subnetcache: answered from cache");

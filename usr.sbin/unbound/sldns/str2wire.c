@@ -698,7 +698,7 @@ static int sldns_str2wire_check_svcbparams(uint8_t* rdata, uint16_t rdata_len)
 				mandatory = svcparams[i];
 		}
 
-		/* 4. verify that all the SvcParamKeys in mandatory are present */
+		/* Verify that all the SvcParamKeys in mandatory are present */
 		if(mandatory) {
 			/* Divide by sizeof(uint16_t)*/
 			uint16_t mandatory_nkeys = sldns_read_uint16(mandatory + 2) / sizeof(uint16_t);
@@ -1123,36 +1123,40 @@ sldns_str2wire_svcparam_key_lookup(const char *key, size_t key_len)
 			return key_value;
 
 	} else switch (key_len) {
-	case sizeof("mandatory")-1:
-		if (!strncmp(key, "mandatory", sizeof("mandatory")-1))
-			return SVCB_KEY_MANDATORY;
-		if (!strncmp(key, "echconfig", sizeof("echconfig")-1))
-			return SVCB_KEY_ECH; /* allow "echconfig" as well as "ech" */
+	case 3:
+		if (!strncmp(key, "ech", key_len))
+			return SVCB_KEY_ECH;
 		break;
 
-	case sizeof("alpn")-1:
-		if (!strncmp(key, "alpn", sizeof("alpn")-1))
+	case 4:
+		if (!strncmp(key, "alpn", key_len))
 			return SVCB_KEY_ALPN;
-		if (!strncmp(key, "port", sizeof("port")-1))
+		if (!strncmp(key, "port", key_len))
 			return SVCB_KEY_PORT;
 		break;
 
-	case sizeof("no-default-alpn")-1:
-		if (!strncmp( key  , "no-default-alpn"
-		            , sizeof("no-default-alpn")-1))
-			return SVCB_KEY_NO_DEFAULT_ALPN;
+	case 7:
+		if (!strncmp(key, "dohpath", key_len))
+			return SVCB_KEY_DOHPATH;
 		break;
 
-	case sizeof("ipv4hint")-1:
-		if (!strncmp(key, "ipv4hint", sizeof("ipv4hint")-1))
+	case 8:
+		if (!strncmp(key, "ipv4hint", key_len))
 			return SVCB_KEY_IPV4HINT;
-		if (!strncmp(key, "ipv6hint", sizeof("ipv6hint")-1))
+		if (!strncmp(key, "ipv6hint", key_len))
 			return SVCB_KEY_IPV6HINT;
 		break;
 
-	case sizeof("ech")-1:
-		if (!strncmp(key, "ech", sizeof("ech")-1))
-			return SVCB_KEY_ECH;
+	case 9:
+		if (!strncmp(key, "mandatory", key_len))
+			return SVCB_KEY_MANDATORY;
+		if (!strncmp(key, "echconfig", key_len))
+			return SVCB_KEY_ECH; /* allow "echconfig" as well as "ech" */
+		break;
+
+	case 15:
+		if (!strncmp(key, "no-default-alpn", key_len))
+			return SVCB_KEY_NO_DEFAULT_ALPN;
 		break;
 
 	default:
@@ -1516,6 +1520,33 @@ sldns_str2wire_svcbparam_alpn_value(const char* val,
 }
 
 static int
+sldns_str2wire_svcbparam_dohpath_value(const char* val,
+	uint8_t* rd, size_t* rd_len)
+{
+	size_t val_len;
+
+	/* RFC6570#section-2.1
+	 * "The characters outside of expressions in a URI Template string are
+	 * intended to be copied literally"
+	 * Practically this means we do not have to look for "double escapes"
+	 * like in the alpn value list.
+	 */
+
+	val_len = strlen(val);
+
+	if (*rd_len < 4 + val_len) {
+		return LDNS_WIREPARSE_ERR_BUFFER_TOO_SMALL;
+	}
+
+	sldns_write_uint16(rd, SVCB_KEY_DOHPATH);
+	sldns_write_uint16(rd + 2, val_len);
+	memcpy(rd + 4, val, val_len);
+	*rd_len = 4 + val_len;
+
+	return LDNS_WIREPARSE_ERR_OK;
+}
+
+static int
 sldns_str2wire_svcparam_value(const char *key, size_t key_len,
 	const char *val, uint8_t* rd, size_t* rd_len)
 {
@@ -1535,6 +1566,7 @@ sldns_str2wire_svcparam_value(const char *key, size_t key_len,
 		case SVCB_KEY_PORT:
 		case SVCB_KEY_IPV4HINT:
 		case SVCB_KEY_IPV6HINT:
+		case SVCB_KEY_DOHPATH:
 			return LDNS_WIREPARSE_ERR_SVCB_MISSING_PARAM;
 #endif
 		default:
@@ -1566,6 +1598,8 @@ sldns_str2wire_svcparam_value(const char *key, size_t key_len,
 		return sldns_str2wire_svcbparam_ech_value(val, rd, rd_len);
 	case SVCB_KEY_ALPN:
 		return sldns_str2wire_svcbparam_alpn_value(val, rd, rd_len);
+	case SVCB_KEY_DOHPATH:
+		return sldns_str2wire_svcbparam_dohpath_value(val, rd, rd_len);
 	default:
 		str_len = strlen(val);
 		if (*rd_len < 4 + str_len)
@@ -1611,7 +1645,7 @@ static int sldns_str2wire_svcparam_buf(const char* str, uint8_t* rd, size_t* rd_
 		*val_out = 0;
 
 		return sldns_str2wire_svcparam_value(str, eq_pos - str,
-		                                         unescaped_val[0] ? unescaped_val : NULL, rd, rd_len);
+		        unescaped_val[0] ? unescaped_val : NULL, rd, rd_len);
 	}
 	/* case: key= */
 	else if (eq_pos != NULL && !(eq_pos[1])) {

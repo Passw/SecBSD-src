@@ -94,8 +94,8 @@
  * The second calls another worker thread (or process) to perform the work.
  * And no buffers need to be set up, but a context-switch happens.
  */
-#ifndef _UB_UNBOUND_H
-#define _UB_UNBOUND_H
+#ifndef UB_UNBOUND_H
+#define UB_UNBOUND_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -695,11 +695,20 @@ struct ub_server_stats {
 	long long num_queries;
 	/** number of queries that have been dropped/ratelimited by ip. */
 	long long num_queries_ip_ratelimited;
+	/** number of queries with a valid DNS Cookie. */
+	long long num_queries_cookie_valid;
+	/** number of queries with only the client part of the DNS Cookie. */
+	long long num_queries_cookie_client;
+	/** number of queries with invalid DNS Cookie. */
+	long long num_queries_cookie_invalid;
 	/** number of queries that had a cache-miss. */
 	long long num_queries_missed_cache;
 	/** number of prefetch queries - cachehits with prefetch */
 	long long num_queries_prefetch;
-
+	/** number of queries which are too late to process */
+	long long num_queries_timed_out;
+	/** the longest wait time in the queue */
+	long long max_query_time_us;
 	/**
 	 * Sum of the querylistsize of the worker for
 	 * every query that missed cache. To calculate average.
@@ -788,6 +797,11 @@ struct ub_server_stats {
 	/** number of key cache entries */
 	long long key_cache_count;
 
+	/** maximum number of collisions in the msg cache */
+	long long msg_cache_max_collisions;
+	/** maximum number of collisions in the rrset cache */
+	long long rrset_cache_max_collisions;
+
 	/** number of queries that used dnscrypt */
 	long long num_query_dnscrypt_crypted;
 	/** number of queries that queried dnscrypt certificates */
@@ -819,6 +833,8 @@ struct ub_server_stats {
 	/** number of queries answered from edns-subnet specific data, and
 	 * the answer was from the edns-subnet cache. */
 	long long num_query_subnet_cache;
+	/** number of queries served from cachedb */
+	long long num_query_cachedb;
 	/** number of bytes in the stream wait buffers */
 	long long mem_stream_wait;
 	/** number of bytes in the HTTP2 query buffers */
@@ -860,4 +876,4 @@ struct ub_stats_info {
 }
 #endif
 
-#endif /* _UB_UNBOUND_H */
+#endif /* UB_UNBOUND_H */
