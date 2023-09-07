@@ -2,7 +2,7 @@
  * THIS FILE AUTOMATICALLY GENERATED.  DO NOT EDIT.
  *
  * generated from:
- *	OpenBSD: pcidevs,v 1.2046 2023/08/30 07:11:48 kevlo Exp 
+ *	OpenBSD: pcidevs,v 1.2048 2023/09/06 23:47:14 jsg Exp 
  */
 /*	$NetBSD: pcidevs,v 1.30 1997/06/24 06:20:24 thorpej Exp $	*/
 
@@ -2107,6 +2107,7 @@
 #define	PCI_PRODUCT_ATI_NAVI31_2	0x7448		/* Navi 31 */
 #define	PCI_PRODUCT_ATI_NAVI31_1	0x744c		/* Navi 31 */
 #define	PCI_PRODUCT_ATI_NAVI31_3	0x745e		/* Navi 31 */
+#define	PCI_PRODUCT_ATI_NAVI32_1	0x747e		/* Navi 32 */
 #define	PCI_PRODUCT_ATI_NAVI33_1	0x7480		/* Navi 33 */
 #define	PCI_PRODUCT_ATI_NAVI33_2	0x7483		/* Navi 33 */
 #define	PCI_PRODUCT_ATI_NAVI33_3	0x7489		/* Navi 33 */
@@ -4571,6 +4572,7 @@
 #define	PCI_PRODUCT_INTEL_82820_HB	0x2501		/* 82820 Host */
 #define	PCI_PRODUCT_INTEL_82820_AGP	0x250f		/* 82820 AGP */
 #define	PCI_PRODUCT_INTEL_OPTANE	0x2522		/* Optane */
+#define	PCI_PRODUCT_INTEL_P1600X	0x2525		/* P1600X */
 #define	PCI_PRODUCT_INTEL_WL_9260_1	0x2526		/* Dual Band Wireless-AC 9260 */
 #define	PCI_PRODUCT_INTEL_82850_HB	0x2530		/* 82850 Host */
 #define	PCI_PRODUCT_INTEL_82860_HB	0x2531		/* 82860 Host */

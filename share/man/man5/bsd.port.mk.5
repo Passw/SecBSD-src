@@ -1,4 +1,4 @@
-.\" $OpenBSD: bsd.port.mk.5,v 1.602 2023/09/05 13:58:49 espie Exp $
+.\" $OpenBSD: bsd.port.mk.5,v 1.612 2023/09/06 22:28:50 espie Exp $
 .\"
 .\" Copyright (c) 2000-2008 Marc Espie
 .\"
@@ -24,7 +24,7 @@
 .\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd $Mdocdate: September 5 2023 $
+.Dd $Mdocdate: September 6 2023 $
 .Dt BSD.PORT.MK 5
 .Os
 .Sh NAME
@@ -397,6 +397,7 @@ hooks, as this would break
 See
 .Ev ALL_DISTFILES ,
 .Ev ALL_PATCHFILES ,
+.Ev ALL_SUPDISTFILES ,
 .Ev CHECKSUMFILES ,
 .Ev DISTDIR ,
 .Ev DISTFILES* ,
@@ -1003,6 +1004,13 @@ Read-only.
 .It Ev ALL_PATCHFILES
 List of all actual files coming from every
 .Ev PATCHFILES*
+setting, after applying the
+.Sq Ar filename Ns { Ns Ar url Ns } Ns Ar sufx
+conversion.
+Read-only.
+.It Ev ALL_SUPDISTFILES
+List of all actual files coming from every
+.Ev SUPDISTFILES*
 setting, after applying the
 .Sq Ar filename Ns { Ns Ar url Ns } Ns Ar sufx
 conversion.
@@ -1739,7 +1747,7 @@ is set and if
 is not null, then
 .Ev DISTFILES
 will be set to
-.Pa ${DISNAME}${EXTRACT_SUFX} .
+.Pa ${DISTNAME}${EXTRACT_SUFX} .
 .It Ev DISTNAME
 Name used to identify the port.
 See
@@ -1858,16 +1866,27 @@ for other common issues).
 .Pp
 Note that setting fatal errors defeats all introspection mechanisms and breaks
 .Pa sqlports .
+.Pp
+Tip: if you need to debug a fatal error, you can always override
+.Ev ERRORS
+on the command line, e.g.,
+.Bd -literal -offset indent
+make ERRORS= show=<var>
+.Ed
 .It Ev EXTRACT_CASES
-In the normal extraction stage (when
+The extraction stage runs a loop under
+.Pa ${WRKDIR}
+with
+.Ev archive
+(shell variable) set to each element of
 .Ev EXTRACT_ONLY
-is not empty), this is the contents of a
-.Xr sh 1
-.Em case conditional ,
-used to extract files.
-Fragments are automatically appended to extract the following archives and
-add the relevant compression tool to
-.Ev BUILD_DEPENDS :
+in order, which is then processed by a case switch: ${EXTRACT_CASES}.
+.Pp
+.Nm
+detects extensions in ${CHECKSUMFILES}
+and automatically adds
+.Ev BUILD_DEPENDS
+and fragments to handle the following archives:
 .Pp
 .Bl -tag -width archivers/lzip/lunzip -offset indent -compact
 .It gzip
@@ -1889,7 +1908,7 @@ rpm
 Other cases not supported directly in
 .Nm
 can be added, and existing cases can be overridden.
-For example the following example sets extra conversion flags to unzip,
+For example the following snippet sets extra conversion flags to unzip,
 and adds support for rar:
 .Bd -literal
 	*.zip) ${UNZIP} -Laq ${FULLDISTDIR}/$$archive -d ${WRKDIR};; \\
@@ -1900,22 +1919,25 @@ Set to the list of distfiles to actually extract if some distfiles
 should not be extracted during the
 .Cm do-extract
 stage.
-Defaults to all distfiles, can even be set to empty.
+Defaults to ${ALL_DISTFILES}, can even be set to empty.
 .It Ev EXTRACT_SUFX
-Used to set DISTFILES default value to ${DISTNAME}${EXTRACT_SUFX}.
-The decompression tool needed will be automatically added as
-.Ev BUILD_DEPENDS .
-Default value is .tar.gz.
+Used to set
+.Ev DISTFILES
+default value to ${DISTNAME}${EXTRACT_SUFX}.
+Default value is
+.Pa .tar.gz .
 .Pp
 Note that
 .Ev DISTFILES
 will only be set in the absence of
 .Ev DISTFILES.sufx
-as well.
+as well, or if
+.Ev SITES
+is not empty.
 .It Ev EXTRACT_SUFX.<name>
 The
 .Ev EXTRACT_SUFX
-for a template defined with
+value for a template defined through
 .Ev DIST_TUPLE .
 .It Ev EXTRACT_FILES
 Set to the list of files to actually extract from distfiles.
@@ -2103,6 +2125,10 @@ Yields a suitable default for
 .Ev SITES_GITHUB
 and
 .Ev DISTNAME .
+.Pp
+Use
+.Ev DIST_TUPLE
+for more complicated situations.
 .It Ev GH_ACCOUNT
 Account name of the GitHub user hosting the project.
 .It Ev GH_COMMIT
@@ -2366,15 +2392,6 @@ is set,
 will contain the list of missing distfiles or patchfiles that need to
 be fetched manually.
 Read-only.
-.It Ev MTREE_FILE
-.Xr mtree 8
-specification used during
-.Ar fake .
-Replaced by direct use of
-.Xr mkdir 1
-now that
-.Ar fake
-no longer happens as root.
 .It Ev MODGNU_CONFIG_GUESS_DIRS
 If a port uses config.guess outside WRKSRC, the directories
 containing the other copies must be set here.
@@ -2447,7 +2464,7 @@ below.
 Especially read the part about
 .Ev ONLY_FOR_ARCHS
 when some of the packages only exist for some architectures.
-.It NO_ARCH
+.It Ev NO_ARCH
 Location for arch-independent packages.
 Defaults to
 .Sq no-arch .
@@ -2582,7 +2599,7 @@ shell fragment:
 .Bd -literal
 set -e
 cd ${FULLDISTDIR}
-for patchfile in ${_LIST_PATCHFILES}
+for patchfile in ${ALL_PATCHFILES}
 do
     case $$patchfile in
 	*.bz2)
@@ -2942,7 +2959,7 @@ If set to empty, will not register anything: very much unsafe.
 Controls the behavior of
 .Pa misc/portroach
 as documented in detail at
-.Lk http://jasperla.github.io/portroach/docs/portroach-portconfig.txt .
+.Lk https://jasperla.github.io/portroach/docs/portroach-portconfig.txt
 .It Ev PREFIX
 Base directory for the current port installation.
 Usually ${LOCALBASE}, though some ports may elect a location under
@@ -3111,6 +3128,18 @@ as
 .Sq p${REVISION}
 to form a full package-name conforming to
 .Xr packages-specs 7 .
+.It Ev ROACH_SITES
+Selects the correct list of sites corresponding to
+.Ev ROACH_URL ,
+in order to help portroach.
+.It Ev ROACH_URL
+The canonical url corresponding to the current port.
+Gets deduced from ${DISTFILES} by default, using the first value
+or the first entry in ${DISTFILES.sufx} if there's only one suffix.
+Conversion rules for
+.Ev DISTFILES
+are applied to yield only the url part of the distfile.
+Set manually if the automatic rules don't find the right one.
 .It Ev RUN_DEPENDS
 Specification of ports this port needs installed to be functional.
 Same format as
@@ -3194,7 +3223,6 @@ for details.
 Suffix should start with
 .Sq \&.
 for consistency.
-.Pp
 .It Ev SITES0 , ... , SITES9
 Supplementary locations from which distribution files and patchfiles are
 retrieved (deprecated).
@@ -3380,7 +3408,7 @@ For instance,
 defaults to
 .Bd -literal
 <account>-<project>-{<account>/<project>/archive/<subdir>}<id>.tar.gz
-.Ed .
+.Ed
 .Pp
 with
 .Li DIST_TUPLE += github foo bar baz qux.
@@ -4401,6 +4429,10 @@ Note that some of these messages are actually emitted by some other external
 commands, but grouped here for convenience: easier to look for in
 .Xr dpb 1 Ns 's
 logs.
+.Pp
+See
+.Ev ERRORS
+for more details about internal diagnostics.
 .Bl -diag
 .It "/bin/sh: cd .../pkg - No such file or directory"
 Emitted during
