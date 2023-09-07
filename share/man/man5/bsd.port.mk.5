@@ -1,4 +1,4 @@
-.\" $OpenBSD: bsd.port.mk.5,v 1.612 2023/09/06 22:28:50 espie Exp $
+.\" $OpenBSD: bsd.port.mk.5,v 1.620 2023/09/07 17:26:14 espie Exp $
 .\"
 .\" Copyright (c) 2000-2008 Marc Espie
 .\"
@@ -24,7 +24,7 @@
 .\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd $Mdocdate: September 6 2023 $
+.Dd $Mdocdate: September 7 2023 $
 .Dt BSD.PORT.MK 5
 .Os
 .Sh NAME
@@ -1801,9 +1801,9 @@ If defined,
 .Nm
 will provide dummy values for variables mandatory for a minimally functional
 port.
-Used by
+Used by the
 .Pa sqlports
-and
+package and
 .Xr dpb 1
 to perform introspection and obtain
 .Nm Ns 's
@@ -1865,7 +1865,9 @@ and
 for other common issues).
 .Pp
 Note that setting fatal errors defeats all introspection mechanisms and breaks
-.Pa sqlports .
+the
+.Pa sqlports
+package.
 .Pp
 Tip: if you need to debug a fatal error, you can always override
 .Ev ERRORS
@@ -2541,9 +2543,9 @@ User settings.
 Location for built packages.
 Defaults to
 .Pa ${PORTSDIR}/packages .
-See
+See the
 .Cm package
-for details.
+target for details.
 .It Ev PARALLEL_MAKE_FLAGS
 Used when
 .Ev DPB_PROPERTIES
@@ -2665,6 +2667,10 @@ ports:
 .Bd -literal
 PATCH_LIST=${PORTSDIR}/x11/kde/libs2/patches/p-* patch-*
 .Ed
+.Pp
+But beware that minor variations will result in
+.Cm update-patches
+creating useless churn !
 .It Ev PATCH_STRIP
 Patch option used to strip directory levels while applying port's patches.
 Defaults to -p0.
@@ -2765,7 +2771,10 @@ as per default.
 Setting of env variable
 .Ev HOME
 for most shell invocations.
-Default will trip ports that try to write into $HOME while building.
+Default will trip ports that try to write into $HOME while building:
+non-existent
+.Pa /${PKGPATH}_writes_to_HOME/ .
+
 .It Ev PORTPATH
 Path used by most shell invocations.
 Don't override unless really needed.
@@ -2987,8 +2996,8 @@ and
 .Xr pkg_create 1
 to use their progress-meter even in the absence of a terminal.
 .It Ev PROPERTIES
-List of properties specific to a given machine architecture.
-Most often obtained through
+List of properties specific to a given machine architecture,
+obtained through the inclusion of
 .Xr bsd.port.arch.mk 5 .
 These can be checked like this
 .Bd -literal -offset indent
@@ -3187,11 +3196,22 @@ port.
 Porters of software using libtool should make sure
 .Ev MAKE_FLAGS
 get propagated to the libtool invocations.
-This should be enough in most cases.
+.Pp
+Most common build systems in the ports tree have been modified
+to handle this mechanism correctly.
 .It Ev SITE_BACKUP
 User settings.
 List of sites to try after normal master sites.
 Normally includes ${SITE_OPENBSD} and ${SITE_FREEBSD}.
+.Po
+For now the ports tree is transitioning from
+.Ev MASTER_SITES*
+to
+.Ev SITES*
+which means that
+.Ev MASTER_SITE_BACKUP
+should be set instead until the transition is complete.
+.Pc
 .It Ev SITE_*
 Lists of standard sites to retrieve files from, refer to
 .Pa ${PORTSDIR}/infrastructure/db/network.conf
@@ -3222,7 +3242,7 @@ See
 for details.
 Suffix should start with
 .Sq \&.
-for consistency.
+and be all lowercase for consistency.
 .It Ev SITES0 , ... , SITES9
 Supplementary locations from which distribution files and patchfiles are
 retrieved (deprecated).
@@ -3362,14 +3382,13 @@ in
 the ports tree will only invoke root's privileges for the parts that
 really require it.
 .It Ev SUPDISTFILES*
-Supplementary files that need to be retrieved under some specific
-circumstances.
-For instance, a port might need architecture-specific files.
+Supplementary distribution files for mirroring and creating checksums with
+.Cm makesum .
+For instance, a port might need architecture-specific files, or have
+some flavor that requires more code.
 .Ev SUPDISTFILES*
-should hold a list of all distribution files and patchfiles that are not
-always needed, so that a mirror will be able to grab all files, or that
-.Cm makesum
-will work.
+should hold a list of all those distribution files and patchfiles
+that are not always needed.
 Having an overlap between
 .Ev SUPDISTFILES*
 and
@@ -3396,7 +3415,9 @@ Set to the list of special targets for a port
 .Cm {pre,do,post}-*
 and module hooks
 .Pc .
-Used by introspection tools such as the sqlports package.
+Used by introspection tools such as the
+.Pa sqlports
+package.
 .It Ev TEMPLATE_DISTFILES.<name>
 Template used to construct
 .Ev DISTFILES.name
