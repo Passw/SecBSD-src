@@ -36,7 +36,7 @@ umask 007
 
 if [ ! -r version -o ! -s version ]
 then
-	echo 1337 > version
+	echo 0 > version
 fi
 
 touch version
