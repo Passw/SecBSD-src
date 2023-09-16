@@ -225,7 +225,7 @@ M4QEND      "]]"
 <EXTENDED_COMMENT>{
     ")"         yy_pop_state();
     [^\n\)]+      ;
-    {NL}        ++linenum;        
+    {NL}        ++linenum;
 }
 
 <LINEDIR>{
@@ -725,7 +725,7 @@ nmstr[yyleng - 2 - end_is_ws] = '\0';  /* chop trailing brace */
                     if (lex_compat || posix_compat){
                         /* Push back the "?#" and treat it like a normal parens. */
                         yyless(1);
-                        sf_push(); 
+                        sf_push();
                         return '(';
                     }
                     else

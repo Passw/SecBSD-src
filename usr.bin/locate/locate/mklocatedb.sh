@@ -53,7 +53,7 @@ sortopt="-u -T $TMPDIR"
 sortcmd="$sort"
 
 # Input already sorted
-case X"$1" in 
+case X"$1" in
 	X-nosort|X-presort) sortcmd=cat; sortopt=;shift;;
 esac
 

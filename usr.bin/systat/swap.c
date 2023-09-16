@@ -185,7 +185,7 @@ showswap(int i)
 	p = p ? p+1 : sep->se_path;
 
 	print_fld_str(FLD_SW_NAME, p);
-	
+
 	xsize = sep->se_nblks;
 	used = sep->se_inuse;
 

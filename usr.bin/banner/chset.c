@@ -4,17 +4,17 @@
 /*
  *	Changes for banner(1)
  *      @(#)Copyright (c) 1995, Simon J. Gerraty.
- *      
+ *
  *      This is free software.  It comes with NO WARRANTY.
- *      Permission to use, modify and distribute this source code 
+ *      Permission to use, modify and distribute this source code
  *      is granted subject to the following conditions.
- *      1/ that the above copyright notice and this notice 
- *      are preserved in all copies and that due credit be given 
- *      to the author.  
- *      2/ that any changes to this code are clearly commented 
- *      as such so that the author does not get blamed for bugs 
+ *      1/ that the above copyright notice and this notice
+ *      are preserved in all copies and that due credit be given
+ *      to the author.
+ *      2/ that any changes to this code are clearly commented
+ *      as such so that the author does not get blamed for bugs
  *      other than his own.
- *      
+ *
  *      Please send copies of changes and bug-fixes to:
  *      sjg@zen.void.oz.au
  */
@@ -187,7 +187,7 @@
 char scnkey[][HEIGHT] =	/* this is relatively easy to modify */
 			/* just look: */
 {
-		
+
 	/* <sjg> this is the real banner char set */
 	{
 		c_______,

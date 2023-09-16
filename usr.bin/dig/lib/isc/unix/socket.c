@@ -837,7 +837,7 @@ doio_recv(isc_socket_t *sock, isc_socketevent_t *dev) {
 		struct msghdr msghdr;
 		char m[RECVCMSGBUFLEN];
 	} cmsgbuf;
-	
+
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
 
 	build_msghdr_recv(sock, cmsgbuf.m, dev, &msghdr, iov, &read_count);
@@ -997,7 +997,7 @@ doio_send(isc_socket_t *sock, isc_socketevent_t *dev) {
 		struct msghdr msghdr;
 		char m[SENDCMSGBUFLEN];
 	} cmsgbuf;
-	
+
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
 
 	build_msghdr_send(sock, cmsgbuf.m, dev, &msghdr, iov, &write_count);

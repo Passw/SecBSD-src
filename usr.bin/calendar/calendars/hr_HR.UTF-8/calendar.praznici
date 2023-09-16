@@ -12,8 +12,8 @@ LANG=hr_HR.UTF-8
 /* slobodni državni praznici */
 01/01	Nova godina
 05/01	Prvi maj
- 
- 
+
+
 /* slobodni kršćanski praznici */
 Easter-2	Veliki petak
 Easter		Uskrs
@@ -29,7 +29,7 @@ Easter+39	Uzašašće
 06/21*	Početak ljeta
 09/21*	Početak jesena
 12/21*	Početak zime
- 
+
 /* ljetno vrijeme */
 03/SundayLast	Početak ljetnog vremena
 10/SundayLast	Kraj ljetnog vremena

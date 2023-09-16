@@ -54,7 +54,7 @@ ccl_contains(const int cclp, const int ch)
 
 /* ccladd - add a single character to a ccl */
 
-void 
+void
 ccladd(cclp, ch)
 	int cclp;
 	int ch;
@@ -92,7 +92,7 @@ ccladd(cclp, ch)
 
 /* dump_cclp - same thing as list_character_set, but for cclps.  */
 
-static void 
+static void
 dump_cclp(FILE * file, int cclp)
 {
 	int i;
@@ -189,7 +189,7 @@ ccl_set_union(int a, int b)
 
 /* cclinit - return an empty ccl */
 
-int 
+int
 cclinit()
 {
 	if (++lastccl >= current_maxccls) {
@@ -230,7 +230,7 @@ cclinit()
 
 /* cclnegate - negate the given ccl */
 
-void 
+void
 cclnegate(cclp)
 	int cclp;
 {
@@ -246,7 +246,7 @@ cclnegate(cclp)
  * has a non-zero value in the cset array.
  */
 
-void 
+void
 list_character_set(file, cset)
 	FILE *file;
 	int cset[];
@@ -288,7 +288,7 @@ list_character_set(file, cset)
  * @param c2 the upper end of the range
  * @return true if [c1-c2] is not ambiguous for a caseless scanner.
  */
-bool 
+bool
 range_covers_case(int c1, int c2)
 {
 	int i, o;
@@ -306,14 +306,14 @@ range_covers_case(int c1, int c2)
 /** Reverse the case of a character, if possible.
  * @return c if case-reversal does not apply.
  */
-int 
+int
 reverse_case(int c)
 {
 	return isupper(c) ? tolower(c) : (islower(c) ? toupper(c) : c);
 }
 
 /** Return true if c is uppercase or lowercase. */
-bool 
+bool
 has_case(int c)
 {
 	return (isupper(c) || islower(c)) ? true : false;

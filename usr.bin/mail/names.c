@@ -536,7 +536,7 @@ elide(struct name *names)
 			np = np->n_flink;
 			continue;
 		}
-		
+
 		/*
 		 * Now t points to the last entry with the same name
 		 * as np.  Make np point beyond t.

@@ -63,27 +63,27 @@ sub TIEARRAY($class, @p)
 # presence of particular item, call the method below on the reference
 # returned by tie() or tied() instead.
 sub exists($self, $key)
-{ 
-	return exists $self->[0]{$key}; 
+{
+	return exists $self->[0]{$key};
 }
 
 sub indexof($self, $key)
-{ 
-	return exists($self->[0]{$key}) ? ($self->[0]{$key} - 1) : undef; 
+{
+	return exists($self->[0]{$key}) ? ($self->[0]{$key} - 1) : undef;
 }
 
 sub FETCHSIZE($self)
-{ 
-	return scalar(@$self) - 1; 
+{
+	return scalar(@$self) - 1;
 }
 
 sub STORE($, $, $)
-{ 
+{
 	die "overwriting elements is unimplemented";
 }
 
 sub DELETE($, $)
-{ 	
+{
 	die "delete is unimplemented";
 }
 

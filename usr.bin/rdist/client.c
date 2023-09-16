@@ -91,7 +91,7 @@ remfilename(char *src, char *dest, char *path, char *rname, int destdir)
 	char *p;
 
 
-	debugmsg(DM_MISC, 
+	debugmsg(DM_MISC,
 		 "remfilename: src=%s dest=%s path=%s rname=%s destdir=%d\n",
 		A(src), A(dest), A(path), A(rname), destdir);
 
@@ -352,17 +352,17 @@ sendhardlink(opt_t opts, struct linkbuf *lp, char *rname, int destdir)
 	char *lname;	/* name of file to link to */
 	char ername[PATH_MAX*4], elname[PATH_MAX*4];
 
-	debugmsg(DM_MISC, 
+	debugmsg(DM_MISC,
 	       "sendhardlink: rname='%s' pathname='%s' src='%s' target='%s'\n",
 		rname, lp->pathname ? lp->pathname : "",
 		lp->src ? lp->src : "", lp->target ? lp->target : "");
-		 
+
 	if (lp->target == NULL)
 		lname = lp->pathname;
 	else {
 		lname = buff;
-		strlcpy(lname, remfilename(lp->src, lp->target, 
-					  lp->pathname, rname, 
+		strlcpy(lname, remfilename(lp->src, lp->target,
+					  lp->pathname, rname,
 					  destdir), sizeof(buff));
 		debugmsg(DM_MISC, "sendhardlink: lname=%s\n", lname);
 	}
@@ -386,7 +386,7 @@ sendfile(char *rname, opt_t opts, struct stat *stb, char *user,
 
 	if (stb->st_nlink > 1) {
 		struct linkbuf *lp;
-		
+
 		if ((lp = linkinfo(stb)) != NULL)
 			return(sendhardlink(opts, lp, rname, destdir));
 	}
@@ -401,8 +401,8 @@ sendfile(char *rname, opt_t opts, struct stat *stb, char *user,
 	 */
 	ENCODE(ername, rname);
 
-	(void) sendcmd(C_RECVREG, "%o %04o %lld %lld %lld %s %s %s", 
-		       opts, stb->st_mode & 07777, (long long) stb->st_size, 
+	(void) sendcmd(C_RECVREG, "%o %04o %lld %lld %lld %s %s %s",
+		       opts, stb->st_mode & 07777, (long long) stb->st_size,
 		       (long long)stb->st_mtime, (long long)stb->st_atime,
 		       user, group, ername);
 	if (response() < 0) {
@@ -442,7 +442,7 @@ sendfile(char *rname, opt_t opts, struct stat *stb, char *user,
 			 */
 		}
 		if (xwrite(rem_w, buf, (size_t) amt) < 0) {
-			error("%s: Error writing to client: %s", 
+			error("%s: Error writing to client: %s",
 			      target, SYSERR);
 			err();
 			++goterr;
@@ -454,7 +454,7 @@ sendfile(char *rname, opt_t opts, struct stat *stb, char *user,
 	(void) alarm(0);	/* Insure alarm is off */
 	(void) close(f);
 
-	debugmsg(DM_MISC, "Send file '%s' %s.\n", 
+	debugmsg(DM_MISC, "Send file '%s' %s.\n",
 		 (goterr) ? "failed" : "complete", rname);
 
 	/*
@@ -590,7 +590,7 @@ senddir(char *rname, opt_t opts, struct stat *stb, char *user,
 	 * Send recvdir command in recvit() format.
 	 */
 	ENCODE(ername, rname);
-	(void) sendcmd(C_RECVDIR, "%o %04o 0 0 0 %s %s %s", 
+	(void) sendcmd(C_RECVDIR, "%o %04o 0 0 0 %s %s %s",
 		       opts, stb->st_mode & 07777, user, group, ername);
 	if (response() < 0)
 		return(-1);
@@ -608,7 +608,7 @@ senddir(char *rname, opt_t opts, struct stat *stb, char *user,
 	if (IS_ON(opts, DO_REMOVE))
 		if (rmchk(opts) > 0)
 			++didupdate;
-	
+
 	if ((d = opendir(target)) == NULL) {
 		error("%s: opendir failed: %s", target, SYSERR);
 		didupdate = -1;
@@ -664,7 +664,7 @@ sendlink(char *rname, opt_t opts, struct stat *stb, char *user,
 
 	if (stb->st_nlink > 1) {
 		struct linkbuf *lp;
-		
+
 		if ((lp = linkinfo(stb)) != NULL)
 			return(sendhardlink(opts, lp, rname, destdir));
 	}
@@ -673,8 +673,8 @@ sendlink(char *rname, opt_t opts, struct stat *stb, char *user,
 	 * Gather and send basic link info
 	 */
 	ENCODE(ername, rname);
-	(void) sendcmd(C_RECVSYMLINK, "%o %04o %lld %lld %lld %s %s %s", 
-		       opts, stb->st_mode & 07777, (long long) stb->st_size, 
+	(void) sendcmd(C_RECVSYMLINK, "%o %04o %lld %lld %lld %s %s %s",
+		       opts, stb->st_mode & 07777, (long long) stb->st_size,
 		       (long long)stb->st_mtime, (long long)stb->st_atime,
 		       user, group, ername);
 	if (response() < 0)
@@ -721,7 +721,7 @@ sendlink(char *rname, opt_t opts, struct stat *stb, char *user,
 			error("expected control record");
 			continue;
 		}
-		
+
 		switch (*s++) {
 		case C_END:	/* End of send operation */
 			*ptarget = CNULL;
@@ -729,7 +729,7 @@ sendlink(char *rname, opt_t opts, struct stat *stb, char *user,
 			runspecial(target, opts, rname, destdir);
 			addcmdspecialfile(target, rname, destdir);
 			return(0);
-			
+
 		case C_LOGMSG:
 			if (n > 0)
 				message(MT_INFO, "%s", s);
@@ -750,7 +750,7 @@ sendlink(char *rname, opt_t opts, struct stat *stb, char *user,
 			finish();
 
 		default:
-			error("install link: unexpected response '%s'", 
+			error("install link: unexpected response '%s'",
 			      respbuff);
 			err();
 		}
@@ -819,22 +819,22 @@ update(char *rname, opt_t opts, struct stat *statp)
 		switch (*cp++) {
 		case QC_ONNFS:  /* Resides on a NFS */
 			debugmsg(DM_MISC,
-				 "update: %s is on a NFS.  Skipping...\n", 
+				 "update: %s is on a NFS.  Skipping...\n",
 				 rname);
 			return(US_NOTHING);
 
 		case QC_SYM:  /* Is a symbolic link */
 			debugmsg(DM_MISC,
-				 "update: %s is a symlink.  Skipping...\n", 
+				 "update: %s is a symlink.  Skipping...\n",
 				 rname);
 			return(US_NOTHING);
 
 		case QC_ONRO:  /* Resides on a Read-Only fs */
 			debugmsg(DM_MISC,
-				 "update: %s is on a RO fs.  Skipping...\n", 
+				 "update: %s is on a RO fs.  Skipping...\n",
 				 rname);
 			return(US_NOTHING);
-			
+
 		case QC_YES:
 			done = 1;
 			break;
@@ -926,14 +926,14 @@ update(char *rname, opt_t opts, struct stat *statp)
 	 */
 	lmode = statp->st_mode & 07777;
 
-	debugmsg(DM_MISC, "update(%s,) local mode %#04o remote mode %#04o\n", 
+	debugmsg(DM_MISC, "update(%s,) local mode %#04o remote mode %#04o\n",
 		 rname, lmode, rmode);
 	debugmsg(DM_MISC, "update(%s,) size %lld mtime %lld owner '%s' grp '%s'"
 		 "\n", rname, (long long) size, (long long)mtime, owner, group);
 
 	if (statp->st_mtime != mtime) {
 		if (statp->st_mtime < mtime && IS_ON(opts, DO_YOUNGER)) {
-			message(MT_WARNING, 
+			message(MT_WARNING,
 				"%s: Warning: remote copy is newer",
 				target);
 			return(US_NOTHING);
@@ -945,7 +945,7 @@ update(char *rname, opt_t opts, struct stat *statp)
 		debugmsg(DM_MISC, "size does not match (%lld != %lld).\n",
 			 (long long) statp->st_size, (long long) size);
 		return(US_OUTDATE);
-	} 
+	}
 
 	if (!IS_ON(opts, DO_NOCHKMODE) && lmode != rmode) {
 		debugmsg(DM_MISC, "modes do not match (%#04o != %#04o).\n",
@@ -960,16 +960,16 @@ update(char *rname, opt_t opts, struct stat *statp)
 	if (!IS_ON(opts, DO_NOCHKOWNER) && owner) {
 		if (!IS_ON(opts, DO_NUMCHKOWNER)) {
 			/* Check by string compare */
-			if (strcmp(owner, getusername(statp->st_uid, 
+			if (strcmp(owner, getusername(statp->st_uid,
 						      target, opts)) != 0) {
-				debugmsg(DM_MISC, 
+				debugmsg(DM_MISC,
 					 "owner does not match (%s != %s).\n",
-					 getusername(statp->st_uid, 
+					 getusername(statp->st_uid,
 						     target, opts), owner);
 				return(US_CHMOG);
 			}
 		} else {
-			/* 
+			/*
 			 * Check numerically.
 			 * Allow negative numbers.
 			 */
@@ -977,26 +977,26 @@ update(char *rname, opt_t opts, struct stat *statp)
 			    (*owner != '-'))
 				++owner;
 			if (owner && (uid_t)atoi(owner) != statp->st_uid) {
-				debugmsg(DM_MISC, 
+				debugmsg(DM_MISC,
 					 "owner does not match (%d != %s).\n",
 					 statp->st_uid, owner);
 				return(US_CHMOG);
 			}
 		}
-	} 
+	}
 
 	if (!IS_ON(opts, DO_NOCHKGROUP) && group) {
 		if (!IS_ON(opts, DO_NUMCHKGROUP)) {
 			/* Check by string compare */
-			if (strcmp(group, getgroupname(statp->st_gid, 
+			if (strcmp(group, getgroupname(statp->st_gid,
 						       target, opts)) != 0) {
-				debugmsg(DM_MISC, 
+				debugmsg(DM_MISC,
 					 "group does not match (%s != %s).\n",
-					 getgroupname(statp->st_gid, 
+					 getgroupname(statp->st_gid,
 						      target, opts), group);
 				return(US_CHMOG);
 			}
-		} else {	
+		} else {
 			/* Check numerically */
 			/* Allow negative gid */
 			while (*group && !isdigit((unsigned char) *group) &&
@@ -1052,7 +1052,7 @@ statupdate(int u, char *starget, opt_t opts, char *rname, int destdir,
 			runspecial(starget, opts, rname, destdir);
 		}
 		else {
-			message(MT_CHANGE, "%s: change to perm %#04o, owner %s, group %s", 
+			message(MT_CHANGE, "%s: change to perm %#04o, owner %s, group %s",
 				starget, lmode, user, group);
 			ENCODE(ername, rname);
 			(void) sendcmd(C_CHMOG, "%o %04o %s %s %s",
@@ -1105,7 +1105,7 @@ fullupdate(int u, char *starget, opt_t opts, char *rname, int destdir,
 		 */
 		(void) sendlink(rname, opts, st, user, group, destdir);
 		return(0);
-	} else if (S_ISREG(st->st_mode)) {		
+	} else if (S_ISREG(st->st_mode)) {
 		if (u == US_OUTDATE) {
 			if (IS_ON(opts, DO_VERIFY)) {
 				message(MT_INFO, "%s: need to update", starget);
@@ -1160,7 +1160,7 @@ sendit(char *rname, opt_t opts, int destdir)
 	 * Does rname need updating?
 	 */
 	u = update(rname, opts, &stb);
-	debugmsg(DM_MISC, "sendit(%s, %#x): update status of %s is %d\n", 
+	debugmsg(DM_MISC, "sendit(%s, %#x): update status of %s is %d\n",
 		 rname, opts, target, u);
 
 	/*
@@ -1189,7 +1189,7 @@ sendit(char *rname, opt_t opts, int destdir)
 
 	return(0);
 }
-	
+
 /*
  * Remove temporary files and do any cleanup operations before exiting.
  */
@@ -1243,9 +1243,9 @@ install(char *src, char *dest, int ddir, int destdir, opt_t opts)
 		char *cp;
 
 		cp = getondistoptlist(opts);
-		(void) snprintf(buff, sizeof(buff), "%s%s%s %s %s", 
+		(void) snprintf(buff, sizeof(buff), "%s%s%s %s %s",
 			       IS_ON(opts, DO_VERIFY) ? "verify" : "install",
-			       (cp) ? " -o" : "", (cp) ? cp : "", 
+			       (cp) ? " -o" : "", (cp) ? cp : "",
 			       src, dest);
 		if (nflag) {
 			printf("%s\n", buff);
@@ -1273,16 +1273,16 @@ install(char *src, char *dest, int ddir, int destdir, opt_t opts)
 	} else {
 		rname = strrchr(target, '/');
 		/* Check if no '/' or target ends in '/' */
-		if (rname == NULL || 
-		    rname+1 == NULL || 
+		if (rname == NULL ||
+		    rname+1 == NULL ||
 		    *(rname+1) == CNULL)
 			rname = target;
 		else
 			rname++;
 	}
 
-	debugmsg(DM_MISC, 
- 	"install: target=%s src=%s rname=%s dest='%s' destdir=%d, ddir=%d\n", 
+	debugmsg(DM_MISC,
+ 	"install: target=%s src=%s rname=%s dest='%s' destdir=%d, ddir=%d\n",
  		 target, source, rname, dest, destdir, ddir);
 
 	/*

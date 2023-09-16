@@ -219,7 +219,7 @@ forward(struct tailfile *tf, int nfiles, enum STYLE style, off_t origoff)
 					 *
 					 * Continue to look at it until
 					 * a new file reappears with
-					 * the same name. 
+					 * the same name.
 					 */
 					(void) tfreopen(ctf);
 				} else if (ke.fflags & NOTE_TRUNCATE) {

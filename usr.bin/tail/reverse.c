@@ -135,7 +135,7 @@ r_reg(struct tailfile *tf, enum STYLE style, off_t off)
 			return (0);
 		}
 		if ((ch = getc(tf->fp)) == '\n') {
-			while (--end > pos) 
+			while (--end > pos)
 				COPYCHAR(tf, ch);
 			end++;
 			if (style == RLINES && --off == 0)

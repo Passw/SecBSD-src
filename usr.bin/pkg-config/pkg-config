@@ -24,7 +24,7 @@ use File::stat;
 use OpenBSD::PkgConfig;
 
 use constant {
-	ONLY_I => 1, 
+	ONLY_I => 1,
 	ONLY_l => 2,
 	ONLY_L => 4,
 	ONLY_OTHER => 8
@@ -674,7 +674,7 @@ sub parse_suffix($s)
 
 	if (@l) {
 		say_debug("valid suffix @l found in $full.");
-	} 
+	}
 
 	return ($s, @l);
 }

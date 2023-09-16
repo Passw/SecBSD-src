@@ -124,7 +124,7 @@ main(int argc, char **argv)
 			err(1, "no user with uid %u", getuid());
 
 		if (argc == 1) {
-			char me[UT_NAMESIZE + 1]; 
+			char me[UT_NAMESIZE + 1];
 
 			(void)strlcpy(me, pp->pw_name, sizeof me);
 			if ((pp = getpwnam(argv[0])) == NULL)

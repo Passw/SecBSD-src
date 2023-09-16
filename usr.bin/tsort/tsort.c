@@ -199,7 +199,7 @@ ereallocarray(void *p, size_t n, size_t s)
 	return emem(reallocarray(p, n, s));
 }
 
-
+
 /***
  *** Hash table.
  ***/
@@ -390,7 +390,7 @@ read_hints(FILE *f, struct ohash *h, int quiet, const char *name,
 	return order;
 }
 
-
+
 /***
  *** Standard heap handling routines.
  ***/
@@ -520,7 +520,7 @@ make_transparent(struct ohash *hash)
 	} while (adjusted);
 }
 
-
+
 /***
  *** Search through hash array for nodes.
  ***/
@@ -597,7 +597,7 @@ find_smallest_node(struct array *h)
 	return u;
 }
 
-
+
 /***
  *** Graph algorithms.
  ***/
@@ -816,10 +816,10 @@ find_normal_cycle(struct array *h, struct array *c)
 	return b;
 }
 
-
+
 #define plural(n) ((n) > 1 ? "s" : "")
 
-static void 
+static void
 parse_args(int argc, char *argv[], struct ohash *pairs)
 {
 	int c;
@@ -881,7 +881,7 @@ parse_args(int argc, char *argv[], struct ohash *pairs)
 
 	nodes_init(pairs);
 	order = 0;
-		
+
 	for (j = 0; j != i-argc; j++) {
 		FILE *f;
 

@@ -368,8 +368,8 @@ fmttime(double in)
 		in *= 1e12;
 	}
 
-	snprintf(outbuf, LEN, 
-	    tiny ? "%s%f %s" : "%s%.3f %s", 
+	snprintf(outbuf, LEN,
+	    tiny ? "%s%f %s" : "%s%.3f %s",
 	    signbit == -1 ? "-" : "", in, unit);
 
 	return outbuf;

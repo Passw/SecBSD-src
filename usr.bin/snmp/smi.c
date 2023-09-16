@@ -668,7 +668,7 @@ smi_displayhint_os(struct textconv *tc, int print_hint, const char *src,
 		errno = EINVAL;
 		return NULL;
 	}
-		
+
 	if (displayformat[0] == 't' || displayformat[0] == 'a') {
 		if ((rbuf = malloc(prefixlen + octetlength + 1)) == NULL)
 			return NULL;

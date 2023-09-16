@@ -383,7 +383,7 @@ shownetstat(struct netinfo *p)
 			   proto, FLD_NS_FOREIGN);
 		break;
 	}
- 
+
 	tb_start();
 	switch (p->nif_proto) {
 	case IPPROTO_TCP:

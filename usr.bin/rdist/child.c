@@ -75,7 +75,7 @@ static void reap(int);
 static void childscan(void);
 
 /*
- * Remove a child that has died (exited) 
+ * Remove a child that has died (exited)
  * from the list of active children
  */
 static void
@@ -89,9 +89,9 @@ removechild(CHILD *child)
 	/*
 	 * Find the child in the list
 	 */
-	for (pc = childlist, prevpc = NULL; pc != NULL; 
+	for (pc = childlist, prevpc = NULL; pc != NULL;
 	     prevpc = pc, pc = pc->c_next)
-		if (pc == child) 
+		if (pc == child)
 			break;
 
 	if (pc == NULL)
@@ -144,7 +144,7 @@ copychild(CHILD *child)
 
 /*
  * Add a child to the list of children.
- */			
+ */
 static void
 addchild(CHILD *child)
 {
@@ -172,7 +172,7 @@ readchild(CHILD *child)
 	char rbuf[BUFSIZ];
 	ssize_t amt;
 
-	debugmsg(DM_CALL, "[readchild(%s, %d, %d) start]", 
+	debugmsg(DM_CALL, "[readchild(%s, %d, %d) start]",
 		 child->c_name, child->c_pid, child->c_readfd);
 
 	/*
@@ -189,7 +189,7 @@ readchild(CHILD *child)
 	 */
 	while ((amt = read(child->c_readfd, rbuf, sizeof(rbuf))) > 0) {
 		/* XXX remove these debug calls */
-		debugmsg(DM_MISC, "[readchild(%s, %d, %d) got %zd bytes]", 
+		debugmsg(DM_MISC, "[readchild(%s, %d, %d) got %zd bytes]",
 			 child->c_name, child->c_pid, child->c_readfd, amt);
 
 		(void) xwrite(fileno(stdout), rbuf, amt);
@@ -201,8 +201,8 @@ readchild(CHILD *child)
 	debugmsg(DM_MISC, "readchild(%s, %d, %d) done: amt = %zd errno = %d\n",
 		 child->c_name, child->c_pid, child->c_readfd, amt, errno);
 
-	/* 
-	 * See if we've reached EOF 
+	/*
+	 * See if we've reached EOF
 	 */
 	if (amt == 0)
 		debugmsg(DM_MISC, "readchild(%s, %d, %d) at EOF\n",
@@ -222,7 +222,7 @@ waitproc(int *statval, int block)
 	pid_t pid;
 	int exitval;
 
-	debugmsg(DM_CALL, "waitproc() %s, active children = %d...\n", 
+	debugmsg(DM_CALL, "waitproc() %s, active children = %d...\n",
 		 (block) ? "blocking" : "nonblocking", activechildren);
 
 	pid = waitpid(-1, &status, (block) ? 0 : WNOHANG);
@@ -231,7 +231,7 @@ waitproc(int *statval, int block)
 
 	if (pid > 0 && exitval != 0) {
 		nerrs++;
-		debugmsg(DM_MISC, 
+		debugmsg(DM_MISC,
 			 "Child process %d exited with status %d.\n",
 			 pid, exitval);
 	}
@@ -239,7 +239,7 @@ waitproc(int *statval, int block)
 	if (statval)
 		*statval = exitval;
 
-	debugmsg(DM_CALL, "waitproc() done (activechildren = %d)\n", 
+	debugmsg(DM_CALL, "waitproc() done (activechildren = %d)\n",
 		 activechildren);
 
 	return(pid);
@@ -269,7 +269,7 @@ reap(int dummy)
 		 * Do a non-blocking check for exiting processes
 		 */
 		pid = waitproc(&status, FALSE);
-		debugmsg(DM_MISC, 
+		debugmsg(DM_MISC,
 			 "reap() pid = %d status = %d activechildren=%d\n",
 			 pid, status, activechildren);
 
@@ -305,14 +305,14 @@ reap(int dummy)
 }
 
 /*
- * Scan the children list to find the child that just exited, 
+ * Scan the children list to find the child that just exited,
  * read any unread input, then remove it from the list of active children.
  */
 static void
 childscan(void)
 {
 	CHILD *pc, *nextpc;
-	
+
 	debugmsg(DM_CALL, "childscan() start");
 
 	for (pc = childlist; pc; pc = nextpc) {
@@ -367,12 +367,12 @@ waitup(void)
 	 * Actually call select()
 	 */
 	/* XXX remove debugmsg() calls */
-	debugmsg(DM_MISC, "waitup() Call select(), activechildren=%d\n", 
+	debugmsg(DM_MISC, "waitup() Call select(), activechildren=%d\n",
 		 activechildren);
 
 	count = select(rchildfdsn+1, rchildfdsp, NULL, NULL, NULL);
 
-	debugmsg(DM_MISC, "waitup() select returned %d activechildren = %d\n", 
+	debugmsg(DM_MISC, "waitup() select returned %d activechildren = %d\n",
 		 count, activechildren);
 
 	/*
@@ -381,7 +381,7 @@ waitup(void)
 	 */
 	if (count < 0) {
 		if (errno != EINTR)
-			error("Select failed reading children input: %s", 
+			error("Select failed reading children input: %s",
 			      SYSERR);
 		free(rchildfdsp);
 		return;
@@ -401,12 +401,12 @@ waitup(void)
 	 * which select() detected as ready for reading.
 	 */
 	for (pc = childlist; pc && count > 0; pc = pc->c_next) {
-		/* 
-		 * Make sure child still exists 
+		/*
+		 * Make sure child still exists
 		 */
-		if (pc->c_name && kill(pc->c_pid, 0) == -1 && 
+		if (pc->c_name && kill(pc->c_pid, 0) == -1 &&
 		    errno == ESRCH) {
-			debugmsg(DM_MISC, 
+			debugmsg(DM_MISC,
 				 "waitup() proc %d (%s) died unexpectedly!",
 				 pc->c_pid, pc->c_name);
 			pc->c_state = PSdead;
@@ -457,7 +457,7 @@ spawn(struct cmd *cmd, struct cmd *cmdlist)
 
 	pid = fork();
 	if (pid == (pid_t)-1) {
-		error("Cannot spawn child for %s: fork failed: %s", 
+		error("Cannot spawn child for %s: fork failed: %s",
 		      childname, SYSERR);
 		return(-1);
 	} else if (pid > 0) {
@@ -496,8 +496,8 @@ spawn(struct cmd *cmd, struct cmd *cmdlist)
 			 pid, childname, activechildren);
 		return(pid);
 	} else {
-		/* 
-		 * Child 
+		/*
+		 * Child
 		 */
 
 		/* We're not going to read from our parent */
@@ -505,12 +505,12 @@ spawn(struct cmd *cmd, struct cmd *cmdlist)
 
 		/* Make stdout and stderr go to PIPE_WRITE (our parent) */
 		if (dup2(fildes[PIPE_WRITE], (int)fileno(stdout)) == -1) {
-			error("Cannot duplicate stdout file descriptor: %s", 
+			error("Cannot duplicate stdout file descriptor: %s",
 			      SYSERR);
 			return(-1);
 		}
 		if (dup2(fildes[PIPE_WRITE], (int)fileno(stderr)) == -1) {
-			error("Cannot duplicate stderr file descriptor: %s", 
+			error("Cannot duplicate stderr file descriptor: %s",
 			      SYSERR);
 			return(-1);
 		}

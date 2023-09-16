@@ -61,7 +61,7 @@ struct macro {
 };
 
 /*
- * FCode header -- assumes big-endian machine, 
+ * FCode header -- assumes big-endian machine,
  *	otherwise the bits need twiddling.
  */
 struct fcode_header {
@@ -72,21 +72,21 @@ struct fcode_header {
 };
 
 /* Tokenizer tokens */
-enum toktypes { 
+enum toktypes {
 	TOK_OCTAL = 8,
 	TOK_DECIMAL = 10,
 	TOK_HEX = 16,
 
-	TOK_NUMBER, 
-	TOK_STRING_LIT, 
+	TOK_NUMBER,
+	TOK_STRING_LIT,
 	TOK_C_LIT,
-	TOK_PSTRING, 
+	TOK_PSTRING,
 	TOK_TOKENIZE,
-	TOK_COMMENT, 
-	TOK_COLON, 
-	TOK_SEMICOLON, 
+	TOK_COMMENT,
+	TOK_COLON,
+	TOK_SEMICOLON,
 	TOK_TOSTRING,
-	
+
 	/* These are special */
 	TOK_ABORT_S,
 	TOK_AGAIN,

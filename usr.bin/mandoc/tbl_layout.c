@@ -184,7 +184,7 @@ mod:
 		isz++;
 	if (strchr(" \t.", p[*pos + isz]) == NULL)
 		isz++;
-	
+
 	fontesc = mandoc_font(p + *pos, isz);
 
 	switch (fontesc) {

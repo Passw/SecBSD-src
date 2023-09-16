@@ -246,7 +246,7 @@ print_pf(void)
 		break;
 	default:
 		debug = "unknown";
-		break;		
+		break;
 	}
 	ADD_LINE_S("pf", "Debug", debug);
 

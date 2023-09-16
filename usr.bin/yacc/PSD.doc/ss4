@@ -202,7 +202,7 @@ The
 .I accept
 action indicates that the entire input has been seen and
 that it matches the specification.
-This action appears only when the lookahead token is 
+This action appears only when the lookahead token is
 the endmarker, and indicates that the parser has successfully
 done its job.
 The
@@ -240,7 +240,7 @@ file corresponding to the above grammar (with some statistics
 stripped off the end) is:
 .DS
 state 0
-	$accept  :  \_rhyme  $end 
+	$accept  :  \_rhyme  $end
 
 	DING  shift 3
 	.  error
@@ -249,13 +249,13 @@ state 0
 	sound  goto 2
 
 state 1
-	$accept  :   rhyme\_$end 
+	$accept  :   rhyme\_$end
 
 	$end  accept
 	.  error
 
 state 2
-	rhyme  :   sound\_place 
+	rhyme  :   sound\_place
 
 	DELL  shift 5
 	.  error
@@ -263,7 +263,7 @@ state 2
 	place   goto 4
 
 state 3
-	sound   :   DING\_DONG 
+	sound   :   DING\_DONG
 
 	DONG  shift 6
 	.  error
@@ -321,7 +321,7 @@ the parser reduces by rule 2.
 .DE
 This rule has two symbols on the right hand side, so
 two states, 6 and 3, are popped off of the stack, uncovering state 0.
-Consulting the description of state 0, looking for a goto on 
+Consulting the description of state 0, looking for a goto on
 .I sound ,
 .DS
 	sound	goto 2

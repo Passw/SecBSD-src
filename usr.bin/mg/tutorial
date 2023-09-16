@@ -2,9 +2,9 @@ The mg Tutorial
 ---------------
 
 The mg editor is a public domain editor intended to loosely resemble GNU Emacs,
-while still retaining fast speed and a small memory footprint. 
+while still retaining fast speed and a small memory footprint.
 
-Most mg commands involve using the Control (sometimes labelled "Ctrl") or the 
+Most mg commands involve using the Control (sometimes labelled "Ctrl") or the
 Meta (sometimes labelled "Alt") key. We will use the following conventions in
 this tutorial:
 
@@ -14,33 +14,33 @@ this tutorial:
 If you don't have a Meta key, you can use Esc instead. Press and release the
 Esc key and type <chr>. This is equivalent to M-<chr>.
 
-The first thing to learn is how to move up and down a document. To move your 
+The first thing to learn is how to move up and down a document. To move your
 cursor down a line, use the down-arrow cursor key or C-n (Control and n).
 
 >> Now type C-n multiple times and move your cursor past this line.
 
 Congratulations. You have now learned how to move your cursor down. To move
 your cursor up one line, you can use the up-arrow cursor key or C-p (Control
-and p). 
+and p).
 
 >> Try using C-p and C-n to move up and down and then move past this line.
 
-The next commands to learn are how to move your cursor left and right. To do 
-this, you can use the left-arrow and right-arrow cursor keys. Alternatively, 
+The next commands to learn are how to move your cursor left and right. To do
+this, you can use the left-arrow and right-arrow cursor keys. Alternatively,
 you can use C-b and C-f to do this.
 
 >> Practise using the arrow keys or C-b and C-f on this line.
 
-To make it easy to remember these commands, it helps to remember by letter: 
+To make it easy to remember these commands, it helps to remember by letter:
 P - Previous line, N - Next line, B - Backwards and F - Forward.
 
 Now that you've learned how to move single characters at a time, next we learn
-how to move one word at a time. To do this, you can use M-f (Meta and f) or 
+how to move one word at a time. To do this, you can use M-f (Meta and f) or
 M-b (Meta and b) to move forwards and backwards, one word at a time.
 
 >> Try moving one word at a time by using M-f and M-b on this line.
 
-Notice how the Ctrl and Meta key combinations perform related functions. C-f 
+Notice how the Ctrl and Meta key combinations perform related functions. C-f
 moves one letter forward, whereas M-f moves one word forward. There are many
 key combinations in mg, where C-<chr> will perform one function and M-<chr>
 will perform a similar related function.
@@ -62,13 +62,13 @@ or you can use C-a and C-e to move to the beginning and end.
 >> Use C-a and C-e to move to the beginning and end of this line.
 
 The next commands we will learn is how to move up and down, one page at a time.
-To do this, you can use the Page Up (sometimes labelled PgUp) and Page Down 
+To do this, you can use the Page Up (sometimes labelled PgUp) and Page Down
 (sometimes labelled PgDn) keys. You can also use C-v and M-v to do this. C-v
 moves the cursor down one page and M-v moves it up one page.
 
 >> Try using M-v and C-v to move up and down, one page at a time.
 
-The final two motion commands we will learn are M-< (Meta-Less than) and 
+The final two motion commands we will learn are M-< (Meta-Less than) and
 M-> (Meta-Greater than) which move you to the beginning and end of a file,
 respectively. You may not want to try that now as you will probably lose your
 place in this tutorial. Note that on most terminals, < is above the , key, so
@@ -98,9 +98,9 @@ followed by some digits followed by a movement command.
 
 >> Type C-u 5 C-f to move forward 5 characters.
 
-In general, C-u allows you to execute any command multiple times, not just 
-cursor motion commands. The only exception to this rule are C-v and M-v. 
-When using these two commands with an argument, they move the cursor by that 
+In general, C-u allows you to execute any command multiple times, not just
+cursor motion commands. The only exception to this rule are C-v and M-v.
+When using these two commands with an argument, they move the cursor by that
 many lines instead of pages.
 
 Cancelling mg Commands
@@ -114,7 +114,7 @@ can use the C-g command to cancel the command immediately.
 
 In general, you can use C-g to stop any mg commands. You may type it multiple
 times if you wish. You should see the word "Quit" appear in the bottom of the
-screen when you type C-g indicating that a command was cancelled. 
+screen when you type C-g indicating that a command was cancelled.
 
 In general, when in doubt, use C-g to get out of trouble.
 
@@ -132,12 +132,12 @@ C-d, you can delete one word at a time instead of one character at a time.
 
 >> Try inserting and deleting characters and words on this line.
 
-Note that if you type too many characters on a single line, the line will 
-scroll off the screen and you will see a $ on the line to indicate that the 
+Note that if you type too many characters on a single line, the line will
+scroll off the screen and you will see a $ on the line to indicate that the
 line is too long to fit on the screen at one time.
 
-To delete a line at a time, you can use C-k to kill the line from the current 
-cursor position to the end of the line. You can type C-k multiple times to 
+To delete a line at a time, you can use C-k to kill the line from the current
+cursor position to the end of the line. You can type C-k multiple times to
 kill many lines.
 
 You can issue insert or delete commands multiple times using C-u. For example,
@@ -160,16 +160,16 @@ that as you start typing the characters, mg automatically searches as you type
 the characters.
 
 To continue searching the text you're looking for, type C-s to find the next
-instance. To search in reverse, type C-r instead of C-s. If you type C-s or 
+instance. To search in reverse, type C-r instead of C-s. If you type C-s or
 C-r twice, it will simply search for the last text that you searched for.
 
 To stop searching for text, simply use the cursor keys (or C-f, C-b etc.) or
-C-g to stop the search operation. 
+C-g to stop the search operation.
 
 >> Use C-s foo to search for "foo" in the text. You can use C-s again to
    find other instances of foo in the file.
-   
-Note that if a word cannot be found, it will say Failing I-search: at the 
+
+Note that if a word cannot be found, it will say Failing I-search: at the
 bottom of the screen. Typing C-s again will wrap the search around from the
 top of the file and begin searching from there.
 
@@ -179,7 +179,7 @@ Replace Text
 To replace text, use M-%. You will be prompted for the text to search for and
 the text to replace it with. You will then be taken to the first instance of
 text from the current position. At this point you can do one of the following:
-	
+
 	y - Replace the text at this instance and search for more items.
 	n - Skip this instance and search for more items.
 	. or Enter - Stop replacing text (you can also use C-g).
@@ -191,7 +191,7 @@ Cut/Copy/Paste Text
 -------------------
 
 As explained above, you can cut regions using C-k to kill multiple lines. To
-paste the text that you just cut, simply move your cursor to the point and 
+paste the text that you just cut, simply move your cursor to the point and
 then type C-y to restore the text. You may type C-y multiple times to restore
 the text. Hence, to copy text, you can use C-k to kill all the lines, use C-y
 to restore it immediately, then move to the region you want to copy it to and
@@ -199,12 +199,12 @@ then type C-y again to restore the last cut text block again.
 
 Another way to cut or copy chunks of text is to first position your cursor at
 the starting point of the chunk of text. Then type C-<space> to mark this as
-the starting point to cut or copy. Then move the cursor to the end point of the 
-text chunk that you wish to manipulate. Then type C-w to cut the region, or 
+the starting point to cut or copy. Then move the cursor to the end point of the
+text chunk that you wish to manipulate. Then type C-w to cut the region, or
 M-w to copy the region. If you wish to cancel marking a block of text, simply
 type C-g to cancel the operation.
 
-To paste the region that you've cut or copied above, simply move your cursor 
+To paste the region that you've cut or copied above, simply move your cursor
 to the desired location and then type C-y to paste it.
 
 Status Line
@@ -213,10 +213,10 @@ Status Line
 At the bottom of your screen is a reverse highlighted line. This is the status
 line and lets you know some useful information about the file you're editing.
 
-On the status line, you should see "Mg: tutorial". This lets you know that 
-you're editing a file named "tutorial". If you've edited this file and not 
-saved it, it should have a "**" to the left of those words. If this file is 
-read-only, you should see a "%%" to the left of those words. 
+On the status line, you should see "Mg: tutorial". This lets you know that
+you're editing a file named "tutorial". If you've edited this file and not
+saved it, it should have a "**" to the left of those words. If this file is
+read-only, you should see a "%%" to the left of those words.
 
 To the right of the status line, you should see L followed by digits
 and, if column-number-mode is enabled, C followed by some more digits.
@@ -225,10 +225,10 @@ default). These indicate the line number and column number of the file
 that your cursor is currently on. If you move the cursor around, you
 should see the line and column number change.
 
-In the middle of the screen, you should see the word "(fundamental)" which 
+In the middle of the screen, you should see the word "(fundamental)" which
 indicates that the current editing mode is "fundamental-mode". The mg editor
 also supports a c-mode that is more suited to editing C code. There are also
-some other useful editing modes for different situations. See the man page 
+some other useful editing modes for different situations. See the man page
 for mg(1) to learn about the various editing modes.
 
 Opening and Saving Files
@@ -236,12 +236,12 @@ Opening and Saving Files
 
 To open a file, you can use C-x C-f. You will then be prompted for a file name.
 If you type a file name that doesn't already exist, a new file will be opened
-for you. If the file name already exists, then it will be opened for you and 
-you can begin editing it. Note that you do not need to type the whole file 
+for you. If the file name already exists, then it will be opened for you and
+you can begin editing it. Note that you do not need to type the whole file
 name for an existing file. You can type part of the file name and then press
 the TAB key. If there is only file name that matches, mg will fill in the rest
-of the file name for you. If there are multiple files, mg will display that 
-the choice is ambiguous. If you type the TAB key again, mg will show you all 
+of the file name for you. If there are multiple files, mg will display that
+the choice is ambiguous. If you type the TAB key again, mg will show you all
 the available choices for file names.
 
 NOTE: If you type C-x f instead of C-x C-f, you can use C-g to cancel the
@@ -250,7 +250,7 @@ if you don't wish to open a new file.
 
 To save the file once you've edited it, use C-x C-s to save the file. When
 mg is done saving the file, you should see the words "Wrote /path/to/file"
-in the bottom of your screen. In general, it is a good idea to save quite 
+in the bottom of your screen. In general, it is a good idea to save quite
 often. When you save a file, mg saves a backup of the file with a tilde (~)
 character at the end.
 
@@ -281,14 +281,14 @@ at the same time, each one displaying different text. To split a screen into two
 horizontal windows use C-x 2. To return to one window, use C-x 1 to close the
 other windows and only keep the current window.
 
->> Use C-x 2 to split the screen into two windows. 
+>> Use C-x 2 to split the screen into two windows.
 
 >> Use C-x o to move from one window to the other. You can scroll up and down
    in each window using the cursor keys or C-n and C-p keys.
 
 >> Use C-x 1 to restore back to one window.
 
-You can list all the buffers that are opened by mg by typing C-x C-b. The 
+You can list all the buffers that are opened by mg by typing C-x C-b. The
 screen should divide into two and the top window will list the buffers that
 are currently open. Use C-x o to switch to the top window, then use the arrow
 keys to move to the buffer you wish to switch to, and then type the Enter key to
@@ -321,8 +321,8 @@ the command at the bottom of the screen. You can type out the whole command
 if you wish, or you can type out part of the command and then use the TAB key
 for autocompleting the command.
 
-For instance, to replace text, you can type M-x repl TAB enter to execute 
-the replace-text command. To cancel this command, type C-g. 
+For instance, to replace text, you can type M-x repl TAB enter to execute
+the replace-text command. To cancel this command, type C-g.
 
 To see a list of all available mg(1) commands, consult the man page.
 
@@ -333,8 +333,8 @@ To exit mg temporarily and return to the shell, use C-z. This will take you
 back to the command shell. To return back to mg, type fg in the shell and you
 will be returned to your mg session.
 
-To exit mg permanently, type C-x C-c. If you have any unsaved buffers, you 
-will be asked if you wish to save them or not. 
+To exit mg permanently, type C-x C-c. If you have any unsaved buffers, you
+will be asked if you wish to save them or not.
 
 Conclusion
 ----------
@@ -347,7 +347,7 @@ a diff to tech@openbsd.org.
 Author Info
 -----------
 
-Original Author of this document: Mayukh Bose, 
+Original Author of this document: Mayukh Bose,
 Date last updated: 2018-05-27
 
 Copyright

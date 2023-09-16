@@ -81,7 +81,7 @@ static int sendcmdmsg(int, char *, size_t);
 static ssize_t remread(int, u_char *, size_t);
 static int remmore(void);
 
-/* 
+/*
  * Front end to write() that handles partial write() requests.
  */
 ssize_t
@@ -90,7 +90,7 @@ xwrite(int fd, void *buf, size_t len)
     	size_t nleft = len;
 	ssize_t nwritten;
 	char *ptr = buf;
-         
+
 	while (nleft > 0) {
 	    	if ((nwritten = write(fd, ptr, nleft)) <= 0) {
 			return nwritten;
@@ -156,7 +156,7 @@ init(int argc, char **argv, char **envp)
 void
 finish(void)
 {
-	debugmsg(DM_CALL, 
+	debugmsg(DM_CALL,
 		 "finish() called: do_fork = %d amchild = %d isserver = %d",
 		 do_fork, amchild, isserver);
 	cleanup(0);
@@ -194,7 +194,7 @@ lostconn(void)
 
 	rem_r = rem_w = -1;	/* Ensure we don't try to send to server */
 	checkhostname();
-	error("Lost connection to %s", 
+	error("Lost connection to %s",
 	      (currenthost) ? currenthost : "(unknown)");
 
 	finish();
@@ -311,7 +311,7 @@ static ssize_t remleft;
 /*
  * Back end to remote read()
  */
-static ssize_t 
+static ssize_t
 remread(int fd, u_char *buf, size_t bufsiz)
 {
 	return(read(fd, (char *)buf, bufsiz));
@@ -335,7 +335,7 @@ remmore(void)
 	remleft--;
 	return (*remptr++);
 }
-	
+
 /*
  * Read an input line from the remote.  Return the number of bytes
  * stored (equivalent to strlen(p)).  If `cleanup' is set, EOF at
@@ -380,8 +380,8 @@ remline(u_char *buffer, int space, int doclean)
 				static char mbuf[BUFSIZ];
 
 				(void) snprintf(mbuf, sizeof(mbuf),
-					"<<< Cmd = %c (\\%3.3o) Msg = \"%s\"", 
-					       buffer[0], buffer[0], 
+					"<<< Cmd = %c (\\%3.3o) Msg = \"%s\"",
+					       buffer[0], buffer[0],
 					       buffer + 1);
 
 				debugmsg(DM_PROTO, "%s", mbuf);
@@ -445,7 +445,7 @@ getusername(uid_t uid, char *file, opt_t opts)
 	 * The value of opts may have changed so we always
 	 * do the opts check.
 	 */
-  	if (IS_ON(opts, DO_NUMCHKOWNER)) { 
+  	if (IS_ON(opts, DO_NUMCHKOWNER)) {
 		(void) snprintf(buf, sizeof(buf), ":%u", uid);
 		return(buf);
   	}
@@ -459,7 +459,7 @@ getusername(uid_t uid, char *file, opt_t opts)
 	lastuid = uid;
 
 	if ((name = user_from_uid(uid, 1)) == NULL) {
-		if (IS_ON(opts, DO_DEFOWNER) && !isserver) 
+		if (IS_ON(opts, DO_DEFOWNER) && !isserver)
 			(void) strlcpy(buf, defowner, sizeof(buf));
 		else {
 			message(MT_WARNING,
@@ -487,7 +487,7 @@ getgroupname(gid_t gid, char *file, opt_t opts)
 	 * The value of opts may have changed so we always
 	 * do the opts check.
 	 */
-  	if (IS_ON(opts, DO_NUMCHKGROUP)) { 
+  	if (IS_ON(opts, DO_NUMCHKGROUP)) {
 		(void) snprintf(buf, sizeof(buf), ":%u", gid);
 		return(buf);
   	}
@@ -501,7 +501,7 @@ getgroupname(gid_t gid, char *file, opt_t opts)
 	lastgid = gid;
 
 	if ((name = group_from_gid(gid, 1)) == NULL) {
-		if (IS_ON(opts, DO_DEFGROUP) && !isserver) 
+		if (IS_ON(opts, DO_DEFGROUP) && !isserver)
 			(void) strlcpy(buf, defgroup, sizeof(buf));
 		else {
 			message(MT_WARNING, "%s: No name for group %u",
@@ -653,7 +653,7 @@ getversion(void)
 {
 	static char buff[BUFSIZ];
 
-	(void) snprintf(buff, sizeof(buff), 
+	(void) snprintf(buff, sizeof(buff),
 	"Version %s.%d (%s) - Protocol Version %d, Release %s, Patch level %d",
 		       DISTVERSION, PATCHLEVEL, DISTSTATUS,
 		       VERSION, DISTVERSION, PATCHLEVEL);
@@ -804,7 +804,7 @@ char *
 xbasename(char *path)
 {
 	char *cp;
- 
+
 	if ((cp = strrchr(path, '/')) != NULL)
 		return(cp+1);
 	else

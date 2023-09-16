@@ -65,7 +65,7 @@ find_file(char *pathname, struct stat *statbuf, int *isvalid)
 	/*
 	 * If this is the same pathname as the last time, and
 	 * the file buffer is valid and we're doing the same stat()
-	 * or lstat(), then set statbuf to the last filestat and 
+	 * or lstat(), then set statbuf to the last filestat and
 	 * return the last file we found.
 	 */
 	if (strcmp(pathname, last_pathname) == 0 && file[0]) {
@@ -244,7 +244,7 @@ makemntinfo(struct mntinfo *mi)
 		 * Get stat info
 		 */
 		if (stat(mnt->me_path, &mntstat) != 0) {
-			message(MT_WARNING, "%s: Cannot stat filesystem: %s", 
+			message(MT_WARNING, "%s: Cannot stat filesystem: %s",
 				mnt->me_path, SYSERR);
 			continue;
 		}
@@ -292,7 +292,7 @@ getmntpt(char *pathname, struct stat *statbuf, int *isvalid)
 	/*
 	 * Use the supplied stat buffer if not NULL or our own.
 	 */
-	if (statbuf) 
+	if (statbuf)
 		pstat = statbuf;
 	else
 		pstat = &filestat;
@@ -345,7 +345,7 @@ is_nfs_mounted(char *path, struct stat *statbuf, int *isvalid)
 }
 
 /*
- * Is "path" on a read-only mounted filesystem?  
+ * Is "path" on a read-only mounted filesystem?
  * Return 1 if it is, 0 if not, or -1 on error.
  */
 int
@@ -376,7 +376,7 @@ is_symlinked(char *path, struct stat *statbuf, int *isvalid)
 			return(-1);
 		statbuf = &stb;
 	}
-	
+
 	if (S_ISLNK(statbuf->st_mode))
 		return(1);
 

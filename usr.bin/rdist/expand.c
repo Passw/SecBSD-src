@@ -80,14 +80,14 @@ Cat(u_char *s1, u_char *s2)		/* quote in s1 and s2 */
 	eargv[++eargc] = NULL;
 	eargv[eargc - 1] = cp = xmalloc(len);
 
-	do { 
-		if (*s1 == QUOTECHAR) 
-			s1++; 
+	do {
+		if (*s1 == QUOTECHAR)
+			s1++;
 	} while ((*cp++ = *s1++) != '\0');
 	cp--;
-	do { 
-		if (*s2 == QUOTECHAR) 
-			s2++; 
+	do {
+		if (*s2 == QUOTECHAR)
+			s2++;
 	} while ((*cp++ = *s2++) != '\0');
 }
 
@@ -119,7 +119,7 @@ expand(struct namelist *list, int wh)		/* quote in list->n_name */
 	int n;
 
 	if (debug)
-		debugmsg(DM_CALL, "expand(%p, %d) start, list = %s", 
+		debugmsg(DM_CALL, "expand(%p, %d) start, list = %s",
 			 list, wh, getnlstr(list));
 
 	if (wh == 0)
@@ -195,7 +195,7 @@ expstr(u_char *s)
 			return;
 		}
 		for (cp = s, cp1 = varbuff; cp && *cp; ++cp) {
-			/* 
+			/*
 			 * remove quoted character if the next
 			 * character is not $
 			 */
@@ -212,7 +212,7 @@ expstr(u_char *s)
 	 * Consider string 's' a variable that should be expanded if
 	 * there is a '$' in 's' that is not quoted.
 	 */
-	if (IS_ON(which, E_VARS) && 
+	if (IS_ON(which, E_VARS) &&
 	    ((cp = xstrchr(s, '$')) && !(cp > s && *(cp-1) == QUOTECHAR))) {
 		*cp++ = CNULL;
 		if (*cp == CNULL) {
@@ -253,7 +253,7 @@ expstr(u_char *s)
 		expstr(ebuf);
 		return;
 	}
-	if ((which & ~E_VARS) == 0 || !strcmp((char *)s, "{") || 
+	if ((which & ~E_VARS) == 0 || !strcmp((char *)s, "{") ||
 	    !strcmp((char *)s, "{}")) {
 		Cat(s, (u_char *)"");
 		sort();
@@ -569,10 +569,10 @@ slash:
 			if (stat(path, &stb) == 0 && S_ISDIR(stb.st_mode)) {
 				if (*p == CNULL) {
 					if (which & E_TILDE) {
-						Cat((u_char *)path, 
+						Cat((u_char *)path,
 						    (u_char *)"");
 					} else {
-						Cat((u_char *)tilde, 
+						Cat((u_char *)tilde,
 						    (u_char *)tpathp);
 					}
 				} else

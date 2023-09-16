@@ -265,9 +265,9 @@ aldap_search(struct aldap *ldap, char *basedn, enum scope scope, char *filter,
 		goto fail;
 	}
 
-	c = ber;	
+	c = ber;
 	ber = ober_printf_elements(ber, "sEEddb", basedn, (long long)scope,
-	                         (long long)LDAP_DEREF_NEVER, sizelimit, 
+	                         (long long)LDAP_DEREF_NEVER, sizelimit,
 				 timelimit, typesonly);
 	if (ber == NULL) {
 		ldap->err = ALDAP_ERR_OPERATION_FAILED;
@@ -339,7 +339,7 @@ aldap_create_page_control(struct ber_element *elm, int size,
 fail:
 	if (ber != NULL)
 		ober_free_elements(ber);
-	ober_free(&c);	
+	ober_free(&c);
 
 	return (-1);
 }
@@ -451,7 +451,7 @@ parsefail:
 }
 
 struct aldap_page_control *
-aldap_parse_page_control(struct ber_element *control, size_t len) 
+aldap_parse_page_control(struct ber_element *control, size_t len)
 {
 	char *oid, *s;
 	char *encoded;

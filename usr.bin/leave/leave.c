@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 			usage();
 		(void)time(&now);
 		t = localtime(&now);
-		while (t->tm_hour > hours || 
+		while (t->tm_hour > hours ||
 		    (t->tm_hour == hours && t->tm_min >= minutes)) {
 			if (twentyfour)
 				hours += 24;

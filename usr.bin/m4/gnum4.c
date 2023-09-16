@@ -184,10 +184,10 @@ static void addchar(int);
 static char *twiddle(const char *);
 static char *getstring(void);
 static void exit_regerror(int, regex_t *, const char *);
-static void do_subst(const char *, regex_t *, const char *, const char *, 
+static void do_subst(const char *, regex_t *, const char *, const char *,
     regmatch_t *);
 static void do_regexpindex(const char *, regex_t *, const char *, regmatch_t *);
-static void do_regexp(const char *, regex_t *, const char *, const char *, 
+static void do_regexp(const char *, regex_t *, const char *, const char *,
     regmatch_t *);
 static void add_sub(int, const char *, regex_t *, regmatch_t *);
 static void add_replace(const char *, regex_t *, const char *, regmatch_t *);
@@ -316,7 +316,7 @@ add_replace(const char *string, regex_t *re, const char *replace, regmatch_t *pm
 }
 
 static void
-do_subst(const char *string, regex_t *re, const char *source, 
+do_subst(const char *string, regex_t *re, const char *source,
     const char *replace, regmatch_t *pm)
 {
 	int error;
@@ -357,7 +357,7 @@ do_subst(const char *string, regex_t *re, const char *source,
 }
 
 static void
-do_regexp(const char *string, regex_t *re, const char *source, 
+do_regexp(const char *string, regex_t *re, const char *source,
     const char *replace, regmatch_t *pm)
 {
 	int error;
@@ -375,7 +375,7 @@ do_regexp(const char *string, regex_t *re, const char *source,
 }
 
 static void
-do_regexpindex(const char *string, regex_t *re, const char *source, 
+do_regexpindex(const char *string, regex_t *re, const char *source,
     regmatch_t *pm)
 {
 	int error;
@@ -485,7 +485,7 @@ dopatsubst(const char *argv[], int argc)
 		if (error != 0)
 			exit_regerror(error, &re, source);
 
-		pmatch = xreallocarray(NULL, re.re_nsub+1, sizeof(regmatch_t), 
+		pmatch = xreallocarray(NULL, re.re_nsub+1, sizeof(regmatch_t),
 		    NULL);
 		do_subst(argv[2], &re, source,
 		    argc > 4 && argv[4] != NULL ? argv[4] : "", pmatch);

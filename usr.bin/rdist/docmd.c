@@ -45,7 +45,7 @@
  * Functions for rdist that do command (cmd) related activities.
  */
 
-struct subcmd	       *subcmds;		/* list of sub-commands for 
+struct subcmd	       *subcmds;		/* list of sub-commands for
 						   current cmd */
 struct namelist	       *filelist;		/* list of source files */
 time_t			lastmod;		/* Last modify time */
@@ -73,7 +73,7 @@ closeconn(void)
 
 	if (rem_w >= 0) {
 		/* We don't care if the connection is still good or not */
-		signal(SIGPIPE, SIG_IGN);	
+		signal(SIGPIPE, SIG_IGN);
 
 		(void) sendcmd(C_FERRMSG, NULL);
 		(void) close(rem_w);
@@ -105,7 +105,7 @@ notify(char *rhost, struct namelist *to, time_t lmod)
 		return;
 
 	if (!IS_ON(options, DO_QUIET)) {
-		message(MT_INFO, "notify %s%s %s", 
+		message(MT_INFO, "notify %s%s %s",
 			(rhost) ? "@" : "",
 			(rhost) ? rhost : "", getnlstr(to));
 	}
@@ -133,7 +133,7 @@ notify(char *rhost, struct namelist *to, time_t lmod)
 	 * Set IFS to avoid possible security problem with users
 	 * setting "IFS=/".
 	 */
-	(void) snprintf(buf, sizeof(buf), "IFS=\" \t\"; export IFS; %s -oi -t", 
+	(void) snprintf(buf, sizeof(buf), "IFS=\" \t\"; export IFS; %s -oi -t",
 		       _PATH_SENDMAIL);
 	pf = popen(buf, "w");
 	if (pf == NULL) {
@@ -166,11 +166,11 @@ notify(char *rhost, struct namelist *to, time_t lmod)
 		user = locuser;
 
 	if (rhost != NULL)
-		(void) fprintf(pf, 
+		(void) fprintf(pf,
 			 "Subject: files updated by %s from %s to %s\n",
 			 locuser, host, rhost);
 	else
-		(void) fprintf(pf, "Subject: files updated after %s\n", 
+		(void) fprintf(pf, "Subject: files updated after %s\n",
 			       ctime(&lmod));
 	(void) putc('\n', pf);
 	(void) putc('\n', pf);
@@ -184,7 +184,7 @@ notify(char *rhost, struct namelist *to, time_t lmod)
 	(void) unlink(file);
 }
 
-/* 
+/*
  * XXX Hack for NFS.  If a hostname from the distfile
  * ends with a '+', then the normal restriction of
  * skipping files that are on an NFS filesystem is
@@ -217,7 +217,7 @@ void
 markassigned(struct cmd *cmd, struct cmd *cmdlist)
 {
 	struct cmd *pcmd;
-	
+
 	for (pcmd = cmdlist; pcmd; pcmd = pcmd->c_next) {
 		checkcmd(pcmd);
 		if (pcmd->c_type == cmd->c_type &&
@@ -324,7 +324,7 @@ makeconn(char *rhost)
 
 	(void) snprintf(buf, sizeof(buf), "%.*s -S",
 			(int)(sizeof(buf)-5), path_rdistd);
-		
+
 	if ((rem_r = rem_w = remotecmd(rhost, locuser, ruser, buf)) < 0)
 		return(0);
 
@@ -353,7 +353,7 @@ makeconn(char *rhost)
 		 * The server wants us to send it our version number
 		 */
 		(void) sendcmd(S_VERSION, "%d", VERSION);
-		if (response() < 0) 
+		if (response() < 0)
 			return(0);
 	} else {
 		/*
@@ -377,13 +377,13 @@ makeconn(char *rhost)
 			return(0);
 	}
 	if (min_freespace) {
-		(void) sendcmd(C_SETCONFIG, "%c%lld", SC_FREESPACE, 
+		(void) sendcmd(C_SETCONFIG, "%c%lld", SC_FREESPACE,
 			       min_freespace);
 		if (response() < 0)
 			return(0);
 	}
 	if (min_freefiles) {
-		(void) sendcmd(C_SETCONFIG, "%c%lld", SC_FREEFILES, 
+		(void) sendcmd(C_SETCONFIG, "%c%lld", SC_FREEFILES,
 			       min_freefiles);
 		if (response() < 0)
 			return(0);
@@ -438,12 +438,12 @@ doarrow(struct cmd *cmd, char **filev)
 	rhost = cmd->c_name;
 
 	if (files == NULL) {
-		error("No files to be updated on %s for target \"%s\"", 
+		error("No files to be updated on %s for target \"%s\"",
 		      rhost, cmd->c_label);
 		return;
 	}
 
-	debugmsg(DM_CALL, "doarrow(%p, %s, %p) start", 
+	debugmsg(DM_CALL, "doarrow(%p, %s, %p) start",
 		 files, A(rhost), sbcmds);
 
 	if (nflag)
@@ -509,7 +509,7 @@ doarrow(struct cmd *cmd, char **filev)
 	debugmsg(DM_MISC,
 		 "Debug files->n_next= %p, destdir=%d, ddir=%d",
 		 files->n_next, destdir, ddir);
- 
+
 	if (!sc->sc_name || !*sc->sc_name) {
 		destdir = 0;
 		ddir = 0;
@@ -571,11 +571,11 @@ doarrow(struct cmd *cmd, char **filev)
 
 		for (l = ihead; l != NULL; freelinkinfo(l), l = nextl) {
 			nextl = l->nextp;
-			if (contimedout || IS_ON(opts, DO_IGNLNKS) || 
+			if (contimedout || IS_ON(opts, DO_IGNLNKS) ||
 			    l->count == 0)
 				continue;
 			message(MT_WARNING, "%s: Warning: %d %s link%s",
-				l->pathname, abs(l->count),	
+				l->pathname, abs(l->count),
 				(l->count > 0) ? "missing" : "extra",
 				(l->count == 1) ? "" : "s");
 		}
@@ -692,7 +692,7 @@ cmptime(char *name, struct subcmd *sbcmds, char **env)
 				continue;
 			if (sc->sc_args != NULL && !inlist(sc->sc_args, name))
 				continue;
-			(void) snprintf(buf, sizeof(buf), "%s=%s;%s", 
+			(void) snprintf(buf, sizeof(buf), "%s=%s;%s",
 				        E_LOCFILE, name, sc->sc_name);
 			message(MT_CHANGE, "special \"%s\"", buf);
 			if (*env) {
@@ -726,7 +726,7 @@ dodcolon(struct cmd *cmd, char **filev)
 	debugmsg(DM_CALL, "dodcolon()");
 
 	if (files == NULL) {
-		error("No files to be updated for target \"%s\"", 
+		error("No files to be updated for target \"%s\"",
 		      cmd->c_label);
 		return;
 	}
@@ -851,7 +851,7 @@ docmdhost(struct cmd *cmd, char **filev)
 	checkcmd(cmd);
 
 	/*
-	 * If we're multi-threaded and we're the parent, spawn a 
+	 * If we're multi-threaded and we're the parent, spawn a
 	 * new child process.
 	 */
 	if (do_fork && !amchild) {
@@ -964,14 +964,14 @@ docmds(struct namelist *hostlist, int argc, char **argv)
 		int found;
 
 		for (found = FALSE, c = cmds; c != NULL; c = c->c_next) {
-			if (c->c_label && argv[i] && 
+			if (c->c_label && argv[i] &&
 			    strcmp(c->c_label, argv[i]) == 0) {
 				found = TRUE;
 				break;
 			}
 		}
 		if (!found)
-			error("Label \"%s\" is not defined in the distfile.", 
+			error("Label \"%s\" is not defined in the distfile.",
 			      argv[i]);
 	}
 	if (nerrs)
@@ -1023,7 +1023,7 @@ docmds(struct namelist *hostlist, int argc, char **argv)
 		 */
 		if (amchild) {
 			if (!IS_ON(options, DO_QUIET))
-				message(MT_VERBOSE, "updating of %s finished", 
+				message(MT_VERBOSE, "updating of %s finished",
 					currenthost);
 			closeconn();
 			cleanup(0);
@@ -1034,7 +1034,7 @@ docmds(struct namelist *hostlist, int argc, char **argv)
 		 * Wait for all remaining active children to finish
 		 */
 		while (activechildren > 0) {
-			debugmsg(DM_MISC, 
+			debugmsg(DM_MISC,
 				 "Waiting for %d children to finish.\n",
 				 activechildren);
 			waitup();

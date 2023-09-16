@@ -142,7 +142,7 @@ intpr(int interval, int repeatcount)
 			bzero(name, sizeof(name));
 			if (sdl->sdl_nlen >= IFNAMSIZ)
 				memcpy(name, sdl->sdl_data, IFNAMSIZ - 1);
-			else if (sdl->sdl_nlen > 0) 
+			else if (sdl->sdl_nlen > 0)
 				memcpy(name, sdl->sdl_data, sdl->sdl_nlen);
 
 			if (interface != 0 && strcmp(name, interface) != 0)
@@ -450,7 +450,7 @@ catchalarm(int signo)
 
 static void
 get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info)
-{   
+{
 	int i;
 
 	for (i = 0; i < RTAX_MAX; i++) {
@@ -458,7 +458,7 @@ get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info)
 			rti_info[i] = sa;
 			sa = (struct sockaddr *)((char *)(sa) +
 			    roundup(sa->sa_len, sizeof(long)));
-		} else 
+		} else
 			rti_info[i] = NULL;
 	}
 }
@@ -540,7 +540,7 @@ fetchifs(void)
 			bzero(name, sizeof(name));
 			if (sdl->sdl_nlen >= IFNAMSIZ)
 				memcpy(name, sdl->sdl_data, IFNAMSIZ - 1);
-			else if (sdl->sdl_nlen > 0) 
+			else if (sdl->sdl_nlen > 0)
 				memcpy(name, sdl->sdl_data, sdl->sdl_nlen);
 
 			if (interface != NULL && !strcmp(name, interface)) {

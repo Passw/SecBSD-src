@@ -38,7 +38,7 @@ struct track_info {
 	char *file;
 	SLIST_ENTRY(track_info) track_list;
 	char type;
-	int   speed; 
+	int   speed;
 };
 SLIST_HEAD(track_head, track_info);
 extern struct track_head tracks;

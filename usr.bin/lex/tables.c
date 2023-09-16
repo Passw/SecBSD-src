@@ -33,14 +33,14 @@
  *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  *  PURPOSE.
  */
-
+
 
 #include "flexdef.h"
 #include "tables.h"
 
 /** Convert size_t to t_flag.
  *  @param n in {1,2,4}
- *  @return YYTD_DATA*. 
+ *  @return YYTD_DATA*.
  */
 #define BYTES2TFLAG(n)\
     (((n) == sizeof(flex_int8_t))\
@@ -329,7 +329,7 @@ int yytbl_write8 (struct yytbl_writer *wr, flex_uint8_t v)
 
 /** Extract data element [i] from array data tables treated as a single flat array of integers.
  * Be careful for 2-dimensional arrays or for YYTD_ID_TRANSITION, which is an array
- * of structs. 
+ * of structs.
  * @param tbl data table
  * @param i index into array.
  * @return data[i]
@@ -353,7 +353,7 @@ static flex_int32_t yytbl_data_geti (const struct yytbl_data *tbl, int i)
 
 /** Set data element [i] in array data tables treated as a single flat array of integers.
  * Be careful for 2-dimensional arrays or for YYTD_ID_TRANSITION, which is an array
- * of structs. 
+ * of structs.
  * @param tbl data table
  * @param i index into array.
  * @param newval new value for data[i]

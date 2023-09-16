@@ -1523,7 +1523,7 @@ main(int argc, char *argv[])
 				   argv[optind], tfile[termcount]);
 
 		status = _nc_read_file_entry(tfile[termcount],
-					     &entries[termcount].tterm);		
+					     &entries[termcount].tterm);
 #else
 		(void) fprintf(stderr, "%s: terminfo files not supported\n",
 			       _nc_progname);

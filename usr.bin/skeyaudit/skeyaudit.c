@@ -158,7 +158,7 @@ main(int argc, char **argv)
 		if (left < limit)
 			notify(pw, left, iflag);
 	}
-		
+
 	exit(0);
 }
 

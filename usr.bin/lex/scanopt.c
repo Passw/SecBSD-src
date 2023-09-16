@@ -586,7 +586,7 @@ static int scanopt_err (s, opt_offset, is_short, err)
 	}
 	return err;
 }
-
+
 
 /* Internal. Match str against the regex  ^--([^=]+)(=(.*))?
  * return 1 if *looks* like a long option.
@@ -634,7 +634,7 @@ static int matchlongopt (str, optname, optlen, arg, arglen)
 
 	return 1;
 }
-
+
 
 /* Internal. Look up long or short option by name.
  * Long options must match a non-ambiguous prefix, or exact match.
@@ -704,7 +704,7 @@ static int find_opt (s, lookup_long, optstart, len, err_code, opt_offset)
 
 	return *err_code ? 0 : 1;
 }
-
+
 
 int     scanopt (svoid, arg, optindex)
      scanopt_t *svoid;

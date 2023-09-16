@@ -109,7 +109,7 @@ print_header(void)
 		getloadavg(avenrun, sizeof(avenrun) / sizeof(avenrun[0]));
 
 		snprintf(uloadbuf, sizeof(uloadbuf),
-		    "%4d users Load %.2f %.2f %.2f", 
+		    "%4d users Load %.2f %.2f %.2f",
 		    ucount(), avenrun[0], avenrun[1], avenrun[2]);
 
 		time(&now);
@@ -126,7 +126,7 @@ print_header(void)
 		snprintf(tmpbuf, sizeof(tmpbuf), 
 		    "%s %s", uloadbuf,
 		    paused ? "PAUSED" : "");
-		
+
 	snprintf(header, sizeof(header), "%-*s %19.19s %s", TIMEPOS - 1,
 	    tmpbuf, hostname, timebuf);
 

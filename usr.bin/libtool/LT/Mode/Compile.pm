@@ -55,11 +55,11 @@ sub run($class, $ltprog, $gp, $ltconfig)
 	my @pie_flags = ();
 
 	$gp->handle_permuted_options('o:!@',
-		qr{\-Wc\,(.*)}, 
-		    sub { 
+		qr{\-Wc\,(.*)},
+		    sub {
 			$gp->keep_for_later(split(/\,/, shift));
 		    },
-		'Xcompiler:', 
+		'Xcompiler:',
 		    sub {
 			$gp->keep_for_later($_[2]);
 		    },
@@ -70,12 +70,12 @@ sub run($class, $ltprog, $gp, $ltconfig)
 		'no-suppress', # we just ignore that one
 		'prefer-pic', sub { $pic_mode = 1; },
 		'prefer-non-pic', sub { $pic_mode =  0; },
-		'static', 
-		    sub { 
-			$pic = 0; 
+		'static',
+		    sub {
+			$pic = 0;
 			$nonpic = 1;
 		    },
-		'shared', 
+		'shared',
 		    sub {
 			if (!$pic) {
 				shortdie "bad configuration: can't build shared library";

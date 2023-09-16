@@ -613,7 +613,7 @@ check_type:
 	    if (ps.in_decl && !ps.block_init)
 		if (troff && !ps.dumped_decl_indent && !is_procname && ps.last_token == decl) {
 		    ps.dumped_decl_indent = 1;
-		    snprintf(e_code, (l_code - e_code) + 5, 
+		    snprintf(e_code, (l_code - e_code) + 5,
 			"\n.Du %dp+\200p \"%s\"\n", dec_ind * 7, token);
 		    e_code += strlen(e_code);
 		    CHECK_SIZE_CODE;

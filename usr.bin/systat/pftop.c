@@ -311,9 +311,9 @@ TAILQ_HEAD(qnodes, pfctl_queue_node) qnodes = TAILQ_HEAD_INITIALIZER(qnodes);
 int
 sort_size_callback(const void *s1, const void *s2)
 {
-	u_int64_t b1 = COUNTER(state_buf[* (size_t *) s1].bytes[0]) + 
+	u_int64_t b1 = COUNTER(state_buf[* (size_t *) s1].bytes[0]) +
 		COUNTER(state_buf[* (size_t *) s1].bytes[1]);
-	u_int64_t b2 = COUNTER(state_buf[* (size_t *) s2].bytes[0]) + 
+	u_int64_t b2 = COUNTER(state_buf[* (size_t *) s2].bytes[0]) +
 		COUNTER(state_buf[* (size_t *) s2].bytes[1]);
 	if (b2 > b1)
 		return sortdir;
@@ -325,9 +325,9 @@ sort_size_callback(const void *s1, const void *s2)
 int
 sort_pkt_callback(const void *s1, const void *s2)
 {
-	u_int64_t p1 = COUNTER(state_buf[* (size_t *) s1].packets[0]) + 
+	u_int64_t p1 = COUNTER(state_buf[* (size_t *) s1].packets[0]) +
 		COUNTER(state_buf[* (size_t *) s1].packets[1]);
-	u_int64_t p2 = COUNTER(state_buf[* (size_t *) s2].packets[0]) + 
+	u_int64_t p2 = COUNTER(state_buf[* (size_t *) s2].packets[0]) +
 		COUNTER(state_buf[* (size_t *) s2].packets[1]);
 	if (p2 > p1)
 		return sortdir;
@@ -1050,7 +1050,7 @@ read_rulesets(const char *path)
 
 	if (path == NULL)
 		ruleset.path[0] = '\0';
-	else if (strlcpy(ruleset.path, path, sizeof(ruleset.path)) >= 
+	else if (strlcpy(ruleset.path, path, sizeof(ruleset.path)) >=
 	    sizeof(ruleset.path))
 		 return (-1);
 
@@ -1146,7 +1146,7 @@ read_rules(void)
 	if (nw > 16)
 		nw = 16;
 
-	if (FLD_LABEL->norm_width != nw || 
+	if (FLD_LABEL->norm_width != nw ||
 	    FLD_LABEL->max_width != mw) {
 		FLD_LABEL->norm_width = nw;
 		FLD_LABEL->max_width = mw;

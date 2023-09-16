@@ -736,7 +736,7 @@ expandtilde(const char *fn)
 		plen = strlcpy(path, pw->pw_dir, sizeof(path));
 		if (plen == 0 || path[plen - 1] != '/') {
 			if (strlcat(path, "/", sizeof(path)) >= sizeof(path)) {
-				dobeep();				
+				dobeep();
 				ewprintf("Path too long");
 				return (NULL);
 			}

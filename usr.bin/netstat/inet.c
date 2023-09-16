@@ -153,7 +153,7 @@ protopr(kvm_t *kvmd, u_long pcbaddr, u_int tableid, int proto)
 		printf("Out of memory (file table).\n");
 		return;
 	}
-	
+
 	/* sort sockets by AF and type */
 	qsort(kf, fcnt, sizeof(*kf), kf_comp);
 

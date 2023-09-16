@@ -2292,7 +2292,7 @@ Cell *gensub(Node **a, int nnn)	/* global selective substitute */
 				FATAL("gensub doesn't support backreferences (subst \"%s\")", rptr);
 			}
 		}
-		
+
 		do {
 			if (whichm >= 0 && whichm != num) {
 				num++;

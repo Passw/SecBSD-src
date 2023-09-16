@@ -124,15 +124,15 @@ main(int argc, char *argv[])
 	}
 	exit(0);
 }
-	
+
 void
 process(FILE *fp)
 {
 	static int col = 0;
 	char *cp = "\0";
-	int c, rachar; 
+	int c, rachar;
 	char buff[5];
-	
+
 	cp++;			/* so *(cp-1) starts out != '\n' */
 	c = getc(fp);
 	while (c != EOF) {
@@ -150,7 +150,7 @@ process(FILE *fp)
 			*cp++ = '$';
 			*cp++ = '\n';
 			*cp = '\0';
-		} else 
+		} else
 			(void) vis(buff, (char)c, eflags, (char)rachar);
 
 		cp = buff;

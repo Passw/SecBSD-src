@@ -605,7 +605,7 @@ buffsave(struct buffer *bp)
 		    "Save anyway")) != TRUE)
 			return (s);
 	}
-	
+
 	if (makebackup && (bp->b_flag & BFBAK)) {
 		s = fbackupfile(bp->b_fname);
 		/* hard error */

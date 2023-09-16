@@ -904,7 +904,7 @@ snmpc_df(int argc, char *argv[])
 			    ober_oid_cmp(&oid, &descroid) != 2)
 				break;
 			rows++;
-		} 
+		}
 		if ((df = reallocarray(df, rows, sizeof(*df))) == NULL)
 			err(1, "malloc");
 		(void) ober_scanf_elements(pdu, "{SSS{e", &varbind);
@@ -932,7 +932,7 @@ snmpc_df(int argc, char *argv[])
 				err(1, "df: invalid hrStorageDescr");
 			if (df[i].descrwidth > descrlen)
 				descrlen = df[i].descrwidth;
-		} 
+		}
 		ober_free_elements(pdu);
 		if (varbind != NULL)
 			break;

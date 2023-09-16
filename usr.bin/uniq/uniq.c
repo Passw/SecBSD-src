@@ -132,7 +132,7 @@ main(int argc, char *argv[])
 		p = skip(prevline);
 	else
 		p = prevline;
-	
+
 	thissize = 0;
 	thisline = NULL;
 	while ((len = getline(&thisline, &thissize, stdin)) != -1) {

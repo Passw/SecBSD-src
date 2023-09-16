@@ -94,7 +94,7 @@ int	vflag;
 int
 main(int argc, char *argv[])
 {
-	int ngroups; 
+	int ngroups;
 	gid_t mygid, gidset[NGROUPS_MAX];
 	int i, gflag = 0, uflag = 0;
 	int ch;
@@ -345,7 +345,7 @@ showquotas(int type, u_long id, const char *name)
 			if (strlen(qup->fsname) > 15) {
 				printf("%s\n", qup->fsname);
 				nam = "";
-			} 
+			}
 			printf("%12s %7d%c %7d %7d %7s",
 			    nam,
 			    (int)(dbtob((u_quad_t)qup->dqblk.dqb_curblocks)
@@ -585,7 +585,7 @@ getnfsquota(struct statfs *fst, struct fstab *fs, struct quotause *qup,
 		warnx("cannot find hostname for %s", fst->f_mntfromname);
 		return (0);
 	}
- 
+
 	*cp = '\0';
 	if (cp[1] != '/') {
 		*cp = ':';
@@ -640,7 +640,7 @@ getnfsquota(struct statfs *fst, struct fstab *fs, struct quotause *qup,
 	*cp = ':';
 	return (0);
 }
- 
+
 int
 callaurpc(char *host, int prognum, int versnum, int procnum,
     xdrproc_t inproc, void *in, xdrproc_t outproc, void *out)
@@ -649,10 +649,10 @@ callaurpc(char *host, int prognum, int versnum, int procnum,
 	enum clnt_stat clnt_stat;
 	struct hostent *hp;
 	struct timeval timeout, tottimeout;
- 
+
 	CLIENT *client = NULL;
 	int socket = RPC_ANYSOCK;
- 
+
 	if ((hp = gethostbyname(host)) == NULL)
 		return ((int) RPC_UNKNOWNHOST);
 	timeout.tv_usec = 0;
@@ -672,7 +672,7 @@ callaurpc(char *host, int prognum, int versnum, int procnum,
 	tottimeout.tv_usec = 0;
 	clnt_stat = clnt_call(client, procnum, inproc, in,
 	    outproc, out, tottimeout);
- 
+
 	return ((int) clnt_stat);
 }
 

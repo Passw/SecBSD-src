@@ -516,7 +516,7 @@ ktrcmsghdr(char *data, socklen_t len)
 				printf("SCM_RIGHTS, data=");
 				fds = (int *)CMSG_DATA(cmsg);
 				for (i = 0;
-				    cmsg->cmsg_len > CMSG_LEN(sizeof(int) * i) 
+				    cmsg->cmsg_len > CMSG_LEN(sizeof(int) * i)
 				    && (char *)fds + (i + 1) * sizeof(int) <=
 				    data + len;
 				    i++) {
@@ -595,7 +595,7 @@ ktrstruct(char *buf, size_t buflen)
 		    sizeof(ss.ss_len))
 			goto invalid;
 		memcpy(&ss, data, datalen);
-		if ((ss.ss_family != AF_UNIX && 
+		if ((ss.ss_family != AF_UNIX &&
 		    datalen < sizeof(struct sockaddr)) || datalen != ss.ss_len)
 			goto invalid;
 		ktrsockaddr((struct sockaddr *)&ss);

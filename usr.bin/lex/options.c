@@ -76,7 +76,7 @@ optspec_t flexopts[] = {
 	,
 	{"--case-insensitive", OPT_CASE_INSENSITIVE, 0}
 	,			/* Generate case-insensitive scanner. */
-	
+
 		{"-C[aefFmr]", OPT_COMPRESSION,
 	 "Specify degree of table compression (default is -Cem)"},
 	{"-+", OPT_CPLUSPLUS, 0}

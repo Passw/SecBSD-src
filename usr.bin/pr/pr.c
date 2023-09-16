@@ -473,7 +473,7 @@ vertcol(int argc, char *argv[])
 			if (!i) {
 			    ptbf = buf + indy[j];
 			    lstdat[j] = ptbf;
-			} else 
+			} else
 			    ptbf = lstdat[j];
 			vc[cvc].pt = ptbf;
 
@@ -1036,7 +1036,7 @@ mulfile(int argc, char *argv[])
 			    fproc++;
 			} else
 			    cnt = 0;
-			
+
 			if (rc[j] == END) {
 			    /*
 			     * EOF close file
@@ -1135,7 +1135,7 @@ out:
  *    lim:    buffer length
  *    cnt:    line length or -1 if no line (EOF for example)
  *    cps:    column position 1st char in buffer (large line support)
- *    trnc:    throw away data more than lim up to \n 
+ *    trnc:    throw away data more than lim up to \n
  *    mor:    set if more data in line (not truncated)
  */
 int
@@ -1249,7 +1249,7 @@ inln(FILE *inf, char *buf, int lim, int *cnt, int *cps, int trnc, int *mor)
  *    cnt:    number of chars of valid data in buf
  *    svips:    buffer input column position (for large lines)
  *    svops:    buffer output column position (for large lines)
- *    mor:    output line not complete in this buf; more data to come.    
+ *    mor:    output line not complete in this buf; more data to come.
  *        1 is more, 0 is complete, -1 is no \n's
  */
 int
@@ -1748,7 +1748,7 @@ usage(void)
 }
 
 /*
- * setup:    Validate command args, initialize and perform sanity 
+ * setup:    Validate command args, initialize and perform sanity
  *        checks on options
  */
 int

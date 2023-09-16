@@ -59,7 +59,7 @@ sub chdir($self, $dir)
 
 sub compile($self, @l)
 {
-	$self->command("compile", @l);	
+	$self->command("compile", @l);
 }
 
 sub execute($self, @l)
@@ -125,7 +125,7 @@ sub command($self, $mode, @l)
 	if ($mode eq "compile"){
 		say "@l" if $verbose || $dry;
 	} else {
-		say "libtool: $mode: @l" if $verbose || $dry;	
+		say "libtool: $mode: @l" if $verbose || $dry;
 	}
 	if (!$dry) {
 		$self->command_run(@l);

@@ -84,7 +84,7 @@ get_state_decl(void)
 
 /* Indent to the current level. */
 
-void 
+void
 do_indent()
 {
 	int i = indent_level * 8;
@@ -128,7 +128,7 @@ mkeoltbl(void)
 }
 
 /* Generate the table for possible eol matches. */
-static void 
+static void
 geneoltbl()
 {
 	int i;
@@ -153,7 +153,7 @@ geneoltbl()
 
 /* Generate the code to keep backing-up information. */
 
-void 
+void
 gen_backing_up()
 {
 	if (reject || num_backing_up == 0)
@@ -175,7 +175,7 @@ gen_backing_up()
 
 /* Generate the code to perform the backing up. */
 
-void 
+void
 gen_bu_action()
 {
 	if (reject || num_backing_up == 0)
@@ -238,7 +238,7 @@ mkctbl(void)
 	 * The offset is base[nxt[i]] - (base of current state)].  That's
 	 * just the difference between the starting points of the two
 	 * involved states (to - from).
-	 * 
+	 *
 	 * First, though, we need to find some way to put in our end-of-buffer
 	 * flags and states.  We do this by making a state with absolutely no
 	 * transitions.  We put it at the end of the table.
@@ -341,7 +341,7 @@ mkssltbl(void)
 
 /* genctbl - generates full speed compressed transition table */
 
-void 
+void
 genctbl()
 {
 	int i;
@@ -359,7 +359,7 @@ genctbl()
 	 * The offset is base[nxt[i]] - (base of current state)].  That's
 	 * just the difference between the starting points of the two
 	 * involved states (to - from).
-	 * 
+	 *
 	 * First, though, we need to find some way to put in our end-of-buffer
 	 * flags and states.  We do this by making a state with absolutely no
 	 * transitions.  We put it at the end of the table.
@@ -475,7 +475,7 @@ mkecstbl(void)
 
 /* Generate equivalence-class tables. */
 
-void 
+void
 genecs()
 {
 	int i, j;
@@ -511,7 +511,7 @@ genecs()
 
 /* Generate the code to find the action number. */
 
-void 
+void
 gen_find_action()
 {
 	if (fullspd)
@@ -689,7 +689,7 @@ mkftbl(void)
 
 /* genftbl - generate full transition table */
 
-void 
+void
 genftbl()
 {
 	int i;
@@ -724,7 +724,7 @@ genftbl()
 
 /* Generate the code to find the next compressed-table state. */
 
-void 
+void
 gen_next_compressed_state(char_map)
 	char *char_map;
 {
@@ -770,7 +770,7 @@ gen_next_compressed_state(char_map)
 
 /* Generate the code to find the next match. */
 
-void 
+void
 gen_next_match()
 {
 	/*
@@ -872,7 +872,7 @@ gen_next_match()
 
 /* Generate the code to find the next state. */
 
-void 
+void
 gen_next_state(worry_about_NULs)
 	int worry_about_NULs;
 {				/* NOTE - changes in here should be reflected
@@ -939,7 +939,7 @@ gen_next_state(worry_about_NULs)
 
 /* Generate the code to make a NUL transition. */
 
-void 
+void
 gen_NUL_trans()
 {				/* NOTE - changes in here should be reflected
 				 * in gen_next_match() */
@@ -1024,7 +1024,7 @@ gen_NUL_trans()
 
 /* Generate the code to find the start state. */
 
-void 
+void
 gen_start_state()
 {
 	if (fullspd) {
@@ -1055,7 +1055,7 @@ gen_start_state()
 
 /* gentabs - generate data statements for the transition tables */
 
-void 
+void
 gentabs()
 {
 	int i, j, k, *accset, nacc, *acc_array, total_states;
@@ -1080,7 +1080,7 @@ gentabs()
 	if (reject) {
 		/*
 		 * Write out accepting list and pointer list.
-		 * 
+		 *
 		 * First we generate the "yy_acclist" array.  In the process, we
 		 * compute the indices that will go into the "yy_accept"
 		 * array, and save the indices in the dfaacc array.
@@ -1474,7 +1474,7 @@ gentabs()
  * current indentation level, adding a final newline.
  */
 
-void 
+void
 indent_put2s(fmt, arg)
 	const char *fmt, *arg;
 {
@@ -1488,7 +1488,7 @@ indent_put2s(fmt, arg)
  * newline.
  */
 
-void 
+void
 indent_puts(str)
 	const char *str;
 {
@@ -1500,7 +1500,7 @@ indent_puts(str)
 /* make_tables - generate transition tables and finishes generating output file
  */
 
-void 
+void
 make_tables()
 {
 	int i;

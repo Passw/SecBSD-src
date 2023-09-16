@@ -259,7 +259,7 @@ read_mb(void)
 		if (ifa->ifa_addr == NULL ||
 		    ifa->ifa_addr->sa_family != AF_LINK)
 			continue;
-			
+
 		strlcpy(ifi->name, ifa->ifa_name, sizeof(ifi->name));
 		for (;;) {
 			struct ifreq ifreq;
@@ -284,7 +284,7 @@ read_mb(void)
 			}
 
 			if (rings >= ifi->data.ifri_total)
-				break;  
+				break;
 
 			ifr = reallocarray(ifi->data.ifri_entries,
 			    ifi->data.ifri_total, sizeof(*ifr));

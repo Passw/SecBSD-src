@@ -125,7 +125,7 @@ filter_create_int(struct filter * chain,
  *  @param chain The head of the chain.
  *  @return true on success.
  */
-bool 
+bool
 filter_apply_chain(struct filter * chain)
 {
 	int pid, pipes[2];
@@ -201,7 +201,7 @@ filter_apply_chain(struct filter * chain)
  * @param max_len the maximum length of the chain.
  * @return the resulting length of the chain.
  */
-int 
+int
 filter_truncate(struct filter * chain, int max_len)
 {
 	int len = 1;
@@ -223,7 +223,7 @@ filter_truncate(struct filter * chain, int max_len)
  *  The header file name is in extra.
  *  @return 0 (zero) on success, and -1 on failure.
  */
-int 
+int
 filter_tee_header(struct filter * chain)
 {
 	/*
@@ -337,7 +337,7 @@ filter_tee_header(struct filter * chain)
  * not user code. This also happens to be a good place to squeeze multiple
  * blank lines into a single blank line.
  */
-int 
+int
 filter_fix_linedirs(struct filter * chain)
 {
 	char *buf;

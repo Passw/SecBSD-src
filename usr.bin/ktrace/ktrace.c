@@ -151,7 +151,7 @@ main(int argc, char *argv[])
 
 	argv += optind;
 	argc -= optind;
-	
+
 	if ((pidset && *argv) || (!pidset && !*argv && clear != CLEAR))
 		usage();
 
@@ -192,7 +192,7 @@ main(int argc, char *argv[])
 	(void)umask(omask);
 	(void)close(fd);
 
-	if (*argv) { 
+	if (*argv) {
 		if (is_ltrace) {
 			if (setenv("LD_TRACE_PLT", inherit ? "i" : "", 1) < 0)
 				err(1, "setenv(LD_TRACE_PLT)");

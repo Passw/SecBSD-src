@@ -224,15 +224,15 @@ main(int argc, char *argv[])
 	/*
 	 *	print the dynamic profile
 	 */
-    printgprof( timesortnlp );	
+    printgprof( timesortnlp );
 	/*
 	 *	print the flat profile
 	 */
-    printprof();	
+    printprof();
 	/*
 	 *	print the index
 	 */
-    printindex();	
+    printindex();
 
     return (0);
 }
@@ -410,7 +410,7 @@ readsamples(FILE *pfile)
 {
     UNIT	sample;
     int i;
-    
+
     if (samples == 0) {
 	samples = calloc(sampbytes, sizeof (UNIT));
 	if (samples == 0)
@@ -491,7 +491,7 @@ asgnsamples(void)
 	    svalue0 = nl[j].svalue;
 	    svalue1 = nl[j+1].svalue;
 		/*
-		 *	if high end of tick is below entry address, 
+		 *	if high end of tick is below entry address,
 		 *	go for next tick.
 		 */
 	    if (pch < svalue0)
@@ -508,7 +508,7 @@ asgnsamples(void)
 		    if (debug & SAMPLEDEBUG) {
 			printf("[asgnsamples] (0x%lx->0x%lx-0x%lx) %s gets %f ticks %ld overlap\n",
 				nl[j].value/sizeof(UNIT), svalue0, svalue1,
-				nl[j].name, 
+				nl[j].name,
 				overlap * time / scale, overlap);
 		    }
 #		endif /* DEBUG */

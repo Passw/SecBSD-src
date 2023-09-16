@@ -52,7 +52,7 @@ tstpcont(int sig)
 	if (sig == SIGTSTP) {
 		signal(SIGCONT, tstpcont);
 		gettty(&ttyedit);
-		settty(&ttysaved);	
+		settty(&ttysaved);
 	} else {
 		signal(SIGTSTP, tstpcont);
 		settty(&ttyedit);

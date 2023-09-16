@@ -420,7 +420,7 @@ want(struct utmp *bp, int check)
 
 	if (check) {
 		/*
-		 * some entries, such as ftp and uucp, will 
+		 * some entries, such as ftp and uucp, will
 		 * include process name plus id; exclude entries
 		 * that start with 'console' and 'tty' from
 		 * having the process id stripped.

@@ -76,7 +76,7 @@ talk(void)
 	fds[0].events = POLLIN;
 	fds[1].fd = sockt;
 	fds[1].events = POLLIN;
-	
+
 	for (;;) {
 		nb = poll(fds, 2, A_LONG_TIME * 1000);
 		if (gotwinch) {

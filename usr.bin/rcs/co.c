@@ -225,7 +225,7 @@ checkout_usage(void)
 	    "usage: co [-TV] [-ddate] [-f[rev]] [-I[rev]] [-kmode] [-l[rev]]\n"
 	    "          [-M[rev]] [-p[rev]] [-q[rev]] [-r[rev]] [-sstate]\n"
 	    "          [-u[rev]] [-w[user]] [-xsuffixes] [-ztz] file ...\n");
-	
+
 	exit(1);
 }
 

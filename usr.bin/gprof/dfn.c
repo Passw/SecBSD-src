@@ -127,7 +127,7 @@ dfn_pre_visit(nltype *parentp)
 bool
 dfn_numbered(nltype *childp)
 {
-    
+
     return ( childp -> toporder != DFN_NAN && childp -> toporder != DFN_BUSY );
 }
 
@@ -202,7 +202,7 @@ dfn_findcycle(nltype *childp)
 	     *	if what we think is the top of the cycle
 	     *	has a cyclehead field, then it's not really the
 	     *	head of the cycle, which is really what we want
-	     */	
+	     */
 	if ( cycleheadp -> cyclehead != cycleheadp ) {
 	    cycleheadp = cycleheadp -> cyclehead;
 #	    ifdef DEBUG

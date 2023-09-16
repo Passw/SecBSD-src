@@ -68,7 +68,7 @@ again:
 			col = 0;
 			first = 0;
 			goto again;
-		} 
+		}
 		cp++;
 	}
 	return (col);

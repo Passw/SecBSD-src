@@ -204,7 +204,7 @@ process(char *cap, char *str, char **argv)
 	if (arg_need > NUM_PARM)
 		errx(2, "too many arguments (%d) for capability `%s'",
 		    arg_need, cap);
-	
+
 	for (i = 0; i < arg_need; i++) {
 		const char *errstr;
 		long l;

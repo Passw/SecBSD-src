@@ -45,7 +45,7 @@
  *		one character at a time...
  *
  *		Written by Kipp Hickman
- *		
+ *
  *		Modified to run under 4.1a by Clem Cole and Peter Moore
  *		Modified to run between hosts by Peter Moore, 8/19/82
  *		Modified to run under 4.1c by Peter Moore 3/17/83

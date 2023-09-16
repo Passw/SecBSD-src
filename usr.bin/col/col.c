@@ -133,7 +133,7 @@ main(int argc, char *argv[])
 			max_bufd_lines = strtonum(optarg, 1,
 			    (INT_MAX - BUFFER_MARGIN) / 2, &errstr) * 2;
 			if (errstr != NULL)
-				errx(1, "bad -l argument, %s: %s", errstr, 
+				errx(1, "bad -l argument, %s: %s", errstr,
 					optarg);
 			break;
 		case 'x':		/* do not compress spaces into tabs */

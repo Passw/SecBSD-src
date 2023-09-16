@@ -95,17 +95,17 @@ command:	  NAME '=' namelist = {
 		| error
 		;
 
-namelist: 	nlist { 
-			$$ = $1; 
+namelist: 	nlist {
+			$$ = $1;
 		}
-		| nlist '-' nlist { 
-			$$ = subnl($1, $3); 
+		| nlist '-' nlist {
+			$$ = subnl($1, $3);
 		}
-		| nlist '+' nlist { 
-			$$ = addnl($1, $3); 
+		| nlist '+' nlist {
+			$$ = addnl($1, $3);
 		}
-		| nlist '&' nlist { 
-			$$ = andnl($1, $3); 
+		| nlist '&' nlist {
+			$$ = andnl($1, $3);
 		}
 		;
 
@@ -232,7 +232,7 @@ yylex(void)
 	int c;
 	char *cp1, *cp2;
 	static char quotechars[] = "[]{}*?$";
-	
+
 again:
 	switch (c = getc(fin)) {
 	case EOF:  /* end of file */
@@ -251,8 +251,8 @@ again:
 
 	case '=':  /* EQUAL */
 	case ';':  /* SM */
-	case '+': 
-	case '&': 
+	case '+':
+	case '&':
 		return(c);
 
 	case '(':  /* LP */
@@ -329,7 +329,7 @@ again:
 		}
 	}
 	*cp1 = '\0';
-	if (yytext[0] == '-' && yytext[1] == CNULL) 
+	if (yytext[0] == '-' && yytext[1] == CNULL)
 		return '-';
 	if (yytext[0] == '-' && parendepth <= 0) {
 		opt_t opt = 0;
@@ -339,7 +339,7 @@ again:
 		case 'o':
 			if (parsedistopts(&yytext[2], &opt, TRUE)) {
 				(void) snprintf(ebuf, sizeof(ebuf),
-					        "Bad distfile options \"%s\".", 
+					        "Bad distfile options \"%s\".",
 					        &yytext[2]);
 				yyerror(ebuf);
 			}
@@ -413,13 +413,13 @@ insert(char *label, struct namelist *files, struct namelist *hosts,
 	struct cmd *c, *prev, *nc;
 	struct namelist *h, *lasth;
 
-	debugmsg(DM_CALL, "insert(%s, %p, %p, %p) start, files = %s", 
+	debugmsg(DM_CALL, "insert(%s, %p, %p, %p) start, files = %s",
 		 label == NULL ? "(null)" : label,
 		 files, hosts, scmds, getnlstr(files));
 
 	files = expand(files, E_VARS|E_SHELL);
 	hosts = expand(hosts, E_ALL);
-	for (h = hosts; h != NULL; lasth = h, h = h->n_next, 
+	for (h = hosts; h != NULL; lasth = h, h = h->n_next,
 	     free((char *)lasth)) {
 		/*
 		 * Search command list for an update to the same host.

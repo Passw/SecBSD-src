@@ -154,7 +154,7 @@ extern int	cyclecnt;		/* the number of cycles found */
 #define	DFN_BUSY	-1
 #define	DFN_NAN		0
 
-    /* 
+    /*
      *	namelist entries for cycle headers.
      *	the number of discovered cycles.
      */

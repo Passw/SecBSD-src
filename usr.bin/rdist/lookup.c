@@ -134,7 +134,7 @@ lookup(char *name, int action, struct namelist *value)
 			if (action != INSERT || s->s_type != CONST) {
 				(void) snprintf(ebuf, sizeof(ebuf),
 					        "%.*s redefined",
-					        (int)(sizeof(ebuf) - 
+					        (int)(sizeof(ebuf) -
 					        sizeof(" redefined")), name);
 				yyerror(ebuf);
 			}

@@ -100,14 +100,14 @@ and
 .UC GCOS .
 Its primary use has been as a
 front end for Ratfor for those
-cases where parameterless macros 
+cases where parameterless macros
 are not adequately powerful.
 It has also been used for languages as disparate as C and Cobol.
 M4 is particularly suited for functional languages like Fortran, PL/I and C
 since macros are specified in a functional notation.
 .PP
 M4 provides features seldom found even in much larger
-macro processors, 
+macro processors,
 including
 .IP "  \(bu"
 arguments
@@ -259,7 +259,7 @@ define(N, 100)
  ...
 if (NNN > 100)
 .P2
-the variable 
+the variable
 .UL NNN
 is absolutely unrelated to the defined macro
 .UL N ,
@@ -278,7 +278,7 @@ What happens if
 .UL N
 is redefined?
 Or, to say it another way, is
-.UL M 
+.UL M
 defined as
 .UL N
 or as 100?
@@ -286,7 +286,7 @@ In M4,
 the latter is true _
 .UL M
 is 100, so even if
-.UL N 
+.UL N
 subsequently changes,
 .UL M
 does not.
@@ -315,10 +315,10 @@ Now
 .UL M
 is defined to be the string
 .UL N ,
-so when you ask for 
+so when you ask for
 .UL M
 later, you'll always get the value of
-.UL N 
+.UL N
 at that time
 (because the
 .UL M
@@ -330,7 +330,7 @@ Quoting
 .PP
 The more general solution is to delay the expansion of
 the arguments of
-.UL define 
+.UL define
 by
 .ul
 quoting
@@ -345,7 +345,7 @@ define(M, `N')
 the quotes around the
 .UL N
 are stripped off as the argument is being collected,
-but they have served their purpose, and 
+but they have served their purpose, and
 .UL M
 is defined as
 the string
@@ -385,7 +385,7 @@ define(100, 200)
 .P2
 This statement is ignored by M4, since you can only define things that look
 like names, but it obviously doesn't have the effect you wanted.
-To really redefine 
+To really redefine
 .UL N ,
 you must delay the evaluation by quoting:
 .P1
@@ -418,7 +418,7 @@ undefine(`N')
 removes the definition of
 .UL N .
 (Why are the quotes absolutely necessary?)
-Built-ins can be removed with 
+Built-ins can be removed with
 .UL undefine ,
 as in
 .P1
@@ -426,7 +426,7 @@ undefine(`define')
 .P2
 but once you remove one, you can never get it back.
 .PP
-The built-in 
+The built-in
 .UL ifdef
 provides a way to determine if a macro is currently defined.
 In particular, M4 has pre-defined the names
@@ -462,7 +462,7 @@ Within the replacement text for a macro
 .UL define )
 any occurrence of
 .UL $n
-will be replaced by the 
+will be replaced by the
 .UL n th
 argument when the macro
 is actually used.
@@ -586,13 +586,13 @@ is
 and 36 bits on
 .UC GCOS .
 .PP
-As a simple example, suppose we want 
+As a simple example, suppose we want
 .UL M
-to be 
+to be
 .UL 2**N+1 .
 Then
 .P1
-define(N, 3)	
+define(N, 3)
 define(M, `eval(2**N+1)')
 .P2
 As a matter of principle, it is advisable
@@ -629,7 +629,7 @@ cannot be accessed.
 To get some control over this situation, the alternate form
 .UL sinclude
 can be used;
-.UL sinclude 
+.UL sinclude
 (``silent include'')
 says nothing and continues if it can't access the file.
 .PP
@@ -643,8 +643,8 @@ divert(n)
 all subsequent output is put onto the end of a temporary file
 referred to as
 .UL n .
-Diverting to this file is stopped by another 
-.UL divert 
+Diverting to this file is stopped by another
+.UL divert
 command;
 in particular,
 .UL divert
@@ -666,7 +666,7 @@ brings back all diversions in numeric order, and
 with arguments brings back the selected diversions
 in the order given.
 The act of undiverting discards the diverted stuff,
-as does diverting into a diversion 
+as does diverting into a diversion
 whose number is not between 0 and 9 inclusive.
 .PP
 The value of
@@ -727,7 +727,7 @@ compares the two strings
 .UL a
 and
 .UL b .
-If these are identical, 
+If these are identical,
 .UL ifelse
 returns
 the string
@@ -776,7 +776,7 @@ ifelse(a, b, c)
 .P2
 is
 .UL c
-if 
+if
 .UL a
 matches
 .UL b ,
@@ -808,7 +808,7 @@ position
 and is
 .UL n
 characters long.
-If 
+If
 .UL n
 is omitted, the rest of the string is returned,
 so
@@ -819,7 +819,7 @@ is
 .P1
 ow is the time
 .P2
-If 
+If
 .UL i
 or
 .UL n
@@ -863,22 +863,22 @@ are deleted; as a limiting case,
 if
 .UL t
 is not present at all,
-characters from 
+characters from
 .UL f
-are deleted from 
+are deleted from
 .UL s .
 So
 .P1
 translit(s, aeiou)
 .P2
-deletes vowels from 
+deletes vowels from
 .UL s .
 .PP
 There is also a built-in called
 .UL dnl
 which deletes all characters that follow it up to
 and including the next newline;
-it is useful mainly for throwing away 
+it is useful mainly for throwing away
 empty lines that otherwise tend to clutter up M4 output.
 For example, if you say
 .P1

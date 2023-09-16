@@ -823,7 +823,7 @@ dump_tables()
 	    fprintf(stderr, " %4s", (r & _RUNETYPE_Q) ? "phon" : "");
             fprintf(stderr, " %1u", (unsigned)((r & _RUNETYPE_SWM)>>_RUNETYPE_SWS));
 	    fprintf(stderr, "\n");
-	} else 
+	} else
 	for (x = list->min; x <= list->max; ++x) {
 	    u_int32_t r = ntohl(list->types[x - list->min]);
 

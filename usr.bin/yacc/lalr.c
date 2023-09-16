@@ -320,7 +320,7 @@ initialize_F(void)
 				if (nullable[symbol])
 					edge[nedges++] = map_goto(stateno, symbol);
 			}
-			
+
 			if (nedges) {
 				reads[i] = rp = NEW2(nedges + 1, short);
 

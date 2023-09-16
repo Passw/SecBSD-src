@@ -41,7 +41,7 @@
 scanfordasho() {
 	while [ $# != 0 ]
 	do case "$1" in
-		-o)	
+		-o)
 			file="$2"; shift; shift ;;
 		-o*)
 			file="${1#-o}"; shift ;;

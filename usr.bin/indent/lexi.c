@@ -202,7 +202,7 @@ lexi(void)
 		}
 		break;
 	    }
-	    if (!(seensfx & 1) &&    
+	    if (!(seensfx & 1) &&
 	        (*buf_ptr == 'F' || *buf_ptr == 'f')) {
 		CHECK_SIZE_TOKEN;
 		*e_token++ = *buf_ptr++;

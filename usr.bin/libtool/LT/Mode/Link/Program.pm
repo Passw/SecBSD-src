@@ -37,7 +37,7 @@ use File::Basename;
 
 sub link
 {
-	my ($linker, $self, $ltprog, $ltconfig, $dirs, $libs, $deplibs, 
+	my ($linker, $self, $ltprog, $ltconfig, $dirs, $libs, $deplibs,
 	    $libdirs, $parser, $gp) = @_;
 
 	tsay {"linking program (", ($gp->static ? "not " : ""),
@@ -81,7 +81,7 @@ sub link
 		tprint {"key = $k - "};
 		my $r = ref($libs->{$k});
 		tsay {"ref = $r"};
-		$libs->create($k)->resolve_library($dirs, 1, $gp->static, 
+		$libs->create($k)->resolve_library($dirs, 1, $gp->static,
 		    ref($self));
 	}
 
@@ -110,7 +110,7 @@ sub link
 		}
 	}
 
-	push(@linkeropts, $linker->export_symbols($ltconfig, 
+	push(@linkeropts, $linker->export_symbols($ltconfig,
 	    "$odir/$ltdir/$fname", $gp, @{$self->{objlist}}, @$staticlibs));
 
 	@cmd = @$ltprog;

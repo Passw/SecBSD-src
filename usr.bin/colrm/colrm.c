@@ -113,7 +113,7 @@ main(int argc, char *argv[])
 					putchar('\b');
 					if (width > 1 && p[1] == '\b')
 						putchar('\b');
-				} 
+				}
 				if (width > 1 && p[1] == '\b')
 					p++;
 				column -= width;

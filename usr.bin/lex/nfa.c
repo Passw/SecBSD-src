@@ -47,7 +47,7 @@ void mkxtion PROTO((int, int));
  * accepting_number becomes mach's accepting number.
  */
 
-void 
+void
 add_accept(mach, accepting_number)
 	int mach, accepting_number;
 {
@@ -81,7 +81,7 @@ add_accept(mach, accepting_number)
  *     num    - the number of copies of singl to be present in newsng
  */
 
-int 
+int
 copysingl(singl, num)
 	int singl, num;
 {
@@ -98,7 +98,7 @@ copysingl(singl, num)
 
 /* dumpnfa - debugging routine to write out an nfa */
 
-void 
+void
 dumpnfa(state1)
 	int state1;
 
@@ -155,7 +155,7 @@ dumpnfa(state1)
  * states accessible by the arrays firstst and lastst
  */
 
-int 
+int
 dupmachine(mach)
 	int mach;
 {
@@ -203,7 +203,7 @@ dupmachine(mach)
  * context has variable length.
  */
 
-void 
+void
 finish_rule(mach, variable_trail_rule, headcnt, trailcnt,
     pcont_act)
 	int mach, variable_trail_rule, headcnt, trailcnt, pcont_act;
@@ -318,7 +318,7 @@ finish_rule(mach, variable_trail_rule, headcnt, trailcnt,
  *  FIRST is set to new by the operation.  last is unmolested.
  */
 
-int 
+int
 link_machines(first, last)
 	int first, last;
 {
@@ -346,7 +346,7 @@ link_machines(first, last)
  * The "beginning" states are the epsilon closure of the first state
  */
 
-void 
+void
 mark_beginning_as_normal(mach)
 	int mach;
 {
@@ -389,7 +389,7 @@ mark_beginning_as_normal(mach)
  * more mkbranch's.  Compare with mkor()
  */
 
-int 
+int
 mkbranch(first, second)
 	int first, second;
 {
@@ -418,7 +418,7 @@ mkbranch(first, second)
  * new - a new state which matches the closure of "state"
  */
 
-int 
+int
 mkclos(state)
 	int state;
 {
@@ -440,7 +440,7 @@ mkclos(state)
  *     2. mach is destroyed by the call
  */
 
-int 
+int
 mkopt(mach)
 	int mach;
 {
@@ -478,7 +478,7 @@ mkopt(mach)
  * the number of epsilon states needed
  */
 
-int 
+int
 mkor(first, second)
 	int first, second;
 {
@@ -533,7 +533,7 @@ mkor(first, second)
  *    new - a machine matching the positive closure of "state"
  */
 
-int 
+int
 mkposcl(state)
 	int state;
 {
@@ -562,7 +562,7 @@ mkposcl(state)
  *   if "ub" is INFINITE_REPEAT then "new" matches "lb" or more occurrences of "mach"
  */
 
-int 
+int
 mkrep(mach, lb, ub)
 	int mach, lb, ub;
 {
@@ -608,7 +608,7 @@ mkrep(mach, lb, ub)
  * that it admittedly is)
  */
 
-int 
+int
 mkstate(sym)
 	int sym;
 {
@@ -685,7 +685,7 @@ mkstate(sym)
  *     stateto   - the state to which the transition is to be made
  */
 
-void 
+void
 mkxtion(statefrom, stateto)
 	int statefrom, stateto;
 {
@@ -704,7 +704,7 @@ mkxtion(statefrom, stateto)
 
 /* new_rule - initialize for a new rule */
 
-void 
+void
 new_rule()
 {
 	if (++num_rules >= current_max_rules) {

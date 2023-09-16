@@ -292,7 +292,7 @@ keep(char *ptr)
 			kept_capacity *= 2;
 		else
 			kept_capacity = 50;
-		kept = xreallocarray(kept, kept_capacity, 
+		kept = xreallocarray(kept, kept_capacity,
 		    sizeof(char *), "Out of memory while saving %d strings\n", 
 		    kept_capacity);
 	}
@@ -300,7 +300,7 @@ keep(char *ptr)
 }
 
 static int
-string_in_use(const char *ptr) 
+string_in_use(const char *ptr)
 {
 	int i;
 	for (i = 0; i <= sp; i++) {
@@ -321,7 +321,7 @@ free_definition(char *ptr)
 		if (!string_in_use(kept[i])) {
 			kept_size--;
 			free(kept[i]);
-			if (i != kept_size) 
+			if (i != kept_size)
 				kept[i] = kept[kept_size];
 			i--;
 		}

@@ -154,7 +154,7 @@ sub new($class, $string, $code)
 	my @alternates = split(/\|/, $string);
 
 	bless {
-		alt => [map { Option->factory($_); } @alternates], 
+		alt => [map { Option->factory($_); } @alternates],
 		code => $code
 	}, $class;
 }
@@ -190,7 +190,7 @@ sub add_option_accessor($self, $option, $isarray)
 	my $access = $option;
 	$access =~ s/^\-//;
 	$access =~ s/-/_/g;
-	my $actual = $isarray ? 
+	my $actual = $isarray ?
 		sub($self) {
 		    $self->{opt}{$option} //= [];
 		    if (wantarray) {
@@ -232,7 +232,7 @@ sub create_options($self, @l)
 				};
 			}
 		}
-		push(@options, 
+		push(@options,
 		    Options->new($opt, $code)->setup($self, $isarray));
 	}
 	return @options;

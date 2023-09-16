@@ -289,13 +289,13 @@ read_types(void)
 	siz = sizeof(struct kmemstats);
 
 	num_types = 0;
-	
+
 	for (i = 0; i < M_LAST; i++) {
 		mib[0] = CTL_KERN;
 		mib[1] = KERN_MALLOCSTATS;
 		mib[2] = KERN_MALLOC_KMEMSTATS;
 		mib[3] = i;
-		
+
 		/*
 		 * Skip errors -- these are presumed to be unallocated
 		 * entries.

@@ -3,7 +3,7 @@
 .include <bsd.own.mk>
 
 MAN=libtool.1
-NOPROG= 
+NOPROG=
 
 PACKAGES= \
     LT/Archive.pm \
@@ -25,7 +25,7 @@ PACKAGES= \
 
 LIBBASE=/usr/libdata/perl5
 
-realinstall: 
+realinstall:
 .for d in LT LT/Mode LT/Mode/Link
 	${INSTALL} -d -o ${LIBOWN} -g ${LIBGRP} -m ${DIRMODE} \
 		${DESTDIR}${LIBBASE}/$d

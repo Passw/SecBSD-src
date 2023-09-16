@@ -113,7 +113,7 @@ by the requirement that the input and output fit simultaneously
 into available secondary storage.
 .LP
 Complicated editing scripts can be created separately and given
-to 
+to
 .I sed
 as a command file.
 For complex edits, this saves considerable typing, and its
@@ -139,7 +139,7 @@ and
 even confirmed users of
 .I ed
 will frequently be surprised (and probably chagrined),
-if they rashly use 
+if they rashly use
 .I sed
 without reading Sections 2 and 3 of this document.
 The most striking family resemblance between the two
@@ -210,7 +210,7 @@ not to copy all lines, but only those specified by
 .I p
 functions or
 .I p
-flags after 
+flags after
 .I s
 functions (see Section 3.3);
 .RE
@@ -261,7 +261,7 @@ Through caverns measureless to man
 Down to a sunless sea.
 .DE
 .LP
-(In no case is the output of the 
+(In no case is the output of the
 .I sed
 commands to be considered an improvement
 on Coleridge.)
@@ -467,8 +467,8 @@ function reads the next line from the input, replacing
 the current line.
 The current line is written to the output if it should
 be.
-The list of editing commands is continued 
-following the 
+The list of editing commands is continued
+following the
 .I n
 command.
 .RE
@@ -500,7 +500,7 @@ Once an
 function is successfully executed, <text> will be
 written to the output regardless of what later commands do to
 the line which triggered it.
-The triggering line may be 
+The triggering line may be
 deleted entirely; <text> will still be written to the output.
 .LP
 The <text> is not scanned for address matches, and no editing
@@ -584,7 +584,7 @@ function is described in Section 3.4.)
 .RS
 .I Note :
 Within the text put in the output by these functions,
-leading blanks and tabs will disappear, as always in 
+leading blanks and tabs will disappear, as always in
 .I sed
 commands.
 To get leading blanks and tabs into the output, precede the first
@@ -660,7 +660,7 @@ The
 <replacement> argument begins immediately after the
 second delimiting character of <pattern>, and must be followed
 immediately by another instance of the delimiting character.
-(Thus there are exactly 
+(Thus there are exactly
 .I three
 instances of the delimiting character.)
 .LP
@@ -719,7 +719,7 @@ If <filename> exists before
 is run, it is overwritten;
 if not, it is created.
 The possibilities of multiple, somewhat different copies of
-one input line being written are the same as for 
+one input line being written are the same as for
 .I p.
 A maximum of 10 different file names may be mentioned after
 .I w
@@ -837,7 +837,7 @@ If
 and
 .I a
 functions are executed on the same line,
-the text from the 
+the text from the
 .I a
 functions and the
 .I r
@@ -923,7 +923,7 @@ from its beginning.
 .LP
 Print up to and including the first newline in the pattern space.
 .LP
-The 
+The
 .I P
 and
 .I D
@@ -1079,7 +1079,7 @@ beginning on the new line.
 .LP
 The
 .I t
-function tests whether 
+function tests whether
 .I any
 successful substitutions have been made on the current input
 line;

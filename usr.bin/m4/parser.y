@@ -52,7 +52,7 @@ expr 	: expr '+' expr { $$ = $1 + $3; }
 		}
 		$$ = $1 / $3;
 	}
-	| expr '%' expr { 
+	| expr '%' expr {
 		if ($3 == 0) {
 			yyerror("modulo zero");
 			exit(1);

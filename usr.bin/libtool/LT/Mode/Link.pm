@@ -535,7 +535,7 @@ sub find_first_lib($self, $lib, $dirs, $gp)
 # -Lfoo, -lfoo, foo.a, foo.la
 # recursively find .la files corresponding to -l flags; if there is no .la
 # file, just inspect the library file itself for any dependencies.
-sub internal_parse_linkargs1($self, $deplibs, $gp, $dirs, $libs, $args, 
+sub internal_parse_linkargs1($self, $deplibs, $gp, $dirs, $libs, $args,
     $level = 0)
 {
 	tsay {"parse_linkargs1, level: $level"};
@@ -791,7 +791,7 @@ sub common1($self, $parser, $gp, $deplibs, $libdirs, $dirs, $libs)
 	$parser->resolve_la($deplibs, $libdirs);
 	my $orderedlibs = LT::UList->new;
 	my $staticlibs = [];
-	my $args = $parser->parse_linkargs2($gp, $orderedlibs, $staticlibs, 
+	my $args = $parser->parse_linkargs2($gp, $orderedlibs, $staticlibs,
 	    $dirs, $libs);
 
 	my $tiedlibs = tied(@$orderedlibs);

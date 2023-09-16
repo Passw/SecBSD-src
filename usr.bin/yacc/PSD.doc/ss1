@@ -168,5 +168,5 @@ If the endmarker is seen in any other context, it is an error.
 .PP
 It is the job of the user-supplied lexical analyzer
 to return the endmarker when appropriate; see section 3, below.
-Usually the endmarker represents some reasonably obvious 
+Usually the endmarker represents some reasonably obvious
 I/O status, such as ``end-of-file'' or ``end-of-record''.

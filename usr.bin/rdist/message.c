@@ -128,10 +128,10 @@ msgprconfig(void)
 
 	debugmsg(DM_MISC, "Current message logging config:");
 	for (i = 0; msgfacility[i].mf_name; ++i) {
-		(void) snprintf(buf, sizeof(buf), "    %.*s=", 
+		(void) snprintf(buf, sizeof(buf), "    %.*s=",
 			       (int)(sizeof(buf) - 7), msgfacility[i].mf_name);
 		for (x = 0; msgtypes[x].mt_name; ++x)
-			if (IS_ON(msgfacility[i].mf_msgtypes, 
+			if (IS_ON(msgfacility[i].mf_msgtypes,
 				  msgtypes[x].mt_type)) {
 				if (x > 0)
 					(void) strlcat(buf, ",", sizeof(buf));
@@ -188,7 +188,7 @@ setmsgtypes(struct msgfacility *msgfac, char *str)
 	/*
 	 * MF_SYSLOG is the only supported message facility for the server
 	 */
-	if (isserver && (msgfac->mf_msgfac != MF_SYSLOG && 
+	if (isserver && (msgfac->mf_msgfac != MF_SYSLOG &&
 			 msgfac->mf_msgfac != MF_FILE)) {
 		(void) snprintf(ebuf, sizeof(ebuf),
 		"The \"%.*s\" message facility cannot be used by the server.",
@@ -247,7 +247,7 @@ setmsgtypes(struct msgfacility *msgfac, char *str)
 			 * XXX This is really a kludge until we add real
 			 * control over debugging.
 			 */
-			if (!debug && isserver && 
+			if (!debug && isserver &&
 			    strcasecmp(word, "debug") == 0)
 				debug = DM_ALL;
 		} else {
@@ -296,11 +296,11 @@ msgparseopts(char *msgstr, int doset)
 
 		if ((msgfac = getmsgfac(word)) == NULL) {
 			(void) snprintf(ebuf, sizeof(ebuf),
-				        "%.*s is not a valid message facility", 
+				        "%.*s is not a valid message facility",
 				        100, word);
 			return(ebuf);
 		}
-		
+
 		if (doset) {
 			char *mcp;
 
@@ -352,7 +352,7 @@ msgsendstdout(struct msgfacility *msgfac, int mtype, int flags, char *msgbuf)
 			break;
 
 		case MT_DEBUG:
-			/* 
+			/*
 			 * Only things that are strictly MT_DEBUG should
 			 * be shown.
 			 */
@@ -511,7 +511,7 @@ _message(int flags, char *msgbuf)
 		if (strncmp(currenthost, msgbuf, strlen(currenthost)) == 0)
 			(void) strlcpy(mbuf, msgbuf, sizeof(mbuf));
 		else
-			(void) snprintf(mbuf, sizeof(mbuf), 
+			(void) snprintf(mbuf, sizeof(mbuf),
 					"%s: %s", currenthost, msgbuf);
 	} else
 		mbuf[0] = '\0';
@@ -545,8 +545,8 @@ _message(int flags, char *msgbuf)
 	 */
 	for (i = 0; msgfacility[i].mf_name; ++i)
 		for (x = 0; msgtypes[x].mt_name; ++x)
-			/* 
-			 * XXX MT_ALL should not be used directly 
+			/*
+			 * XXX MT_ALL should not be used directly
 			 */
 			if (msgtypes[x].mt_type != MT_ALL &&
 			    IS_ON(flags, msgtypes[x].mt_type) &&

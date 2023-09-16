@@ -187,7 +187,7 @@ hidtestrule(struct Susbvar *var, struct usagedata *cache)
 	if (pagesplit >= 0) {
 		/*
 		 * Page name was specified, determine whether it was
-		 * symbolic or numeric.  
+		 * symbolic or numeric.
 		 */
 		char const *strstart;
 		int numpage;

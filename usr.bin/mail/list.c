@@ -698,7 +698,7 @@ matchsubj(char *str, int mesg)
 	else
 		strlcpy(lastscan, str, sizeof(lastscan));
 	mp = &message[mesg-1];
-	
+
 	/*
 	 * Now look, ignoring case, for the word in the string.
 	 */

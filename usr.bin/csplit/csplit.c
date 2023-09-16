@@ -463,5 +463,5 @@ do_lineno(const char *expr)
 		if (reps-- == 0)
 			break;
 		lastline += tgtline;
-	} 
+	}
 }

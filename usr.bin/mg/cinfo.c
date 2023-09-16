@@ -27,7 +27,7 @@
  */
 /*
  * Due to incompatible behaviour between "standard" emacs and
- * ctags word traversing, '_' character's value is changed on 
+ * ctags word traversing, '_' character's value is changed on
  * the fly in ctags mode, hence non-const.
  */
 char cinfo[256] = {

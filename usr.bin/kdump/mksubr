@@ -456,7 +456,7 @@ dosocktypename (int arg, int show_type)
 {
 	int	type = arg & 0xff;		/* XXX */
 	int	or = 0;
-	
+
 	printf("%#x<", arg);
 	if (show_type || type) {
 		or = 1;

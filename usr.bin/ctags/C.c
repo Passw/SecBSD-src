@@ -246,7 +246,7 @@ endtok:			if (sp > tok) {
 				/* hell... truncate it */
 				if (sp == tok + sizeof tok - 1)
 					*sp = EOS;
-				else 
+				else
 					*sp++ = c;
 				token = YES;
 			}
@@ -385,7 +385,7 @@ hash_entry(void)
 		/* hell... truncate it */
 		if (sp == tok + sizeof tok - 1)
 			*sp = EOS;
-		else 
+		else
 			*sp++ = c;
 	}
 	*sp = EOS;
@@ -401,7 +401,7 @@ hash_entry(void)
 		/* hell... truncate it */
 		if (sp == tok + sizeof tok - 1)
 			*sp = EOS;
-		else 
+		else
 			*sp++ = c;
 		if (GETC(==, EOF))
 			return;
@@ -446,7 +446,7 @@ str_entry(int c)
 		/* hell... truncate it */
 		if (sp == tok + sizeof tok - 1)
 			*sp = EOS;
-		else 
+		else
 			*sp++ = c;
 		if (GETC(==, EOF))
 			return (NO);

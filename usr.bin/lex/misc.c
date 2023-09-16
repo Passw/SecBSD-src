@@ -58,7 +58,7 @@ struct sko_state {
 };
 static struct sko_state *sko_stack = 0;
 static int sko_len = 0, sko_sz = 0;
-static void 
+static void
 sko_push(bool dc)
 {
 	if (!sko_stack) {
@@ -76,7 +76,7 @@ sko_push(bool dc)
 	sko_stack[sko_len].dc = dc;
 	sko_len++;
 }
-static void 
+static void
 sko_peek(bool * dc)
 {
 	if (sko_len <= 0)
@@ -84,7 +84,7 @@ sko_peek(bool * dc)
 	if (dc)
 		*dc = sko_stack[sko_len - 1].dc;
 }
-static void 
+static void
 sko_pop(bool * dc)
 {
 	sko_peek(dc);
@@ -94,7 +94,7 @@ sko_pop(bool * dc)
 }
 
 /* Append "#define defname value\n" to the running buffer. */
-void 
+void
 action_define(defname, value)
 	const char *defname;
 	int value;
@@ -121,7 +121,7 @@ action_define(defname, value)
  *  @param defname The macro name.
  *  @param value The macro value, can be NULL, which is the same as the empty string.
  */
-void 
+void
 action_m4_define(const char *defname, const char *value)
 {
 	char buf[MAXLINE];
@@ -139,7 +139,7 @@ action_m4_define(const char *defname, const char *value)
 }
 
 /* Append "new_text" to the running buffer. */
-void 
+void
 add_action(new_text)
 	const char *new_text;
 {
@@ -190,7 +190,7 @@ allocate_array(size, element_size)
 
 /* all_lower - true if a string is all lower-case */
 
-int 
+int
 all_lower(str)
 	char *str;
 {
@@ -206,7 +206,7 @@ all_lower(str)
 
 /* all_upper - true if a string is all upper-case */
 
-int 
+int
 all_upper(str)
 	char *str;
 {
@@ -222,7 +222,7 @@ all_upper(str)
 
 /* intcmp - compares two integers for use by qsort. */
 
-int 
+int
 intcmp(const void *a, const void *b)
 {
 	return *(const int *) a - *(const int *) b;
@@ -234,7 +234,7 @@ intcmp(const void *a, const void *b)
  *		and exits.
  */
 
-void 
+void
 check_char(c)
 	int c;
 {
@@ -252,7 +252,7 @@ check_char(c)
 
 /* clower - replace upper-case letter to lower-case */
 
-u_char 
+u_char
 clower(c)
 	int c;
 {
@@ -311,7 +311,7 @@ copy_unsigned_string(str)
 
 /* cclcmp - compares two characters for use by qsort with '\0' sorting last. */
 
-int 
+int
 cclcmp(const void *a, const void *b)
 {
 	if (!*(const u_char *) a)
@@ -325,7 +325,7 @@ cclcmp(const void *a, const void *b)
 
 /* dataend - finish up a block of data declarations */
 
-void 
+void
 dataend()
 {
 	/* short circuit any output */
@@ -344,7 +344,7 @@ dataend()
 
 /* dataflush - flush generated data statements */
 
-void 
+void
 dataflush()
 {
 	/* short circuit any output */
@@ -368,7 +368,7 @@ dataflush()
 
 /* flexerror - report an error message and terminate */
 
-void 
+void
 flexerror(msg)
 	const char *msg;
 {
@@ -379,7 +379,7 @@ flexerror(msg)
 
 /* flexfatal - report a fatal error message and terminate */
 
-void 
+void
 flexfatal(msg)
 	const char *msg;
 {
@@ -391,7 +391,7 @@ flexfatal(msg)
 
 /* htoi - convert a hexadecimal digit string to an integer value */
 
-int 
+int
 htoi(str)
 	u_char str[];
 {
@@ -405,7 +405,7 @@ htoi(str)
 
 /* lerrif - report an error message formatted with one integer argument */
 
-void 
+void
 lerrif(msg, arg)
 	const char *msg;
 	int arg;
@@ -419,7 +419,7 @@ lerrif(msg, arg)
 
 /* lerrsf - report an error message formatted with one string argument */
 
-void 
+void
 lerrsf(msg, arg)
 	const char *msg, arg[];
 {
@@ -433,7 +433,7 @@ lerrsf(msg, arg)
 
 /* lerrsf_fatal - as lerrsf, but call flexfatal */
 
-void 
+void
 lerrsf_fatal(msg, arg)
 	const char *msg, arg[];
 {
@@ -447,7 +447,7 @@ lerrsf_fatal(msg, arg)
 
 /* line_directive_out - spit out a "#line" statement */
 
-void 
+void
 line_directive_out(output_file, do_infile)
 	FILE *output_file;
 	int do_infile;
@@ -498,7 +498,7 @@ line_directive_out(output_file, do_infile)
  *               representing where the user's section 1 definitions end
  *		 and the prolog begins
  */
-void 
+void
 mark_defs1()
 {
 	defs1_offset = 0;
@@ -511,7 +511,7 @@ mark_defs1()
 /* mark_prolog - mark the current position in the action array as
  *               representing the end of the action prolog
  */
-void 
+void
 mark_prolog()
 {
 	action_array[action_index++] = '\0';
@@ -524,7 +524,7 @@ mark_prolog()
  *
  * Generates a data statement initializing the current 2-D array to "value".
  */
-void 
+void
 mk2data(value)
 	int value;
 {
@@ -554,7 +554,7 @@ mk2data(value)
  * Generates a data statement initializing the current array element to
  * "value".
  */
-void 
+void
 mkdata(value)
 	int value;
 {
@@ -580,7 +580,7 @@ mkdata(value)
 
 /* myctoi - return the integer represented by a string of digits */
 
-int 
+int
 myctoi(array)
 	const char *array;
 {
@@ -594,7 +594,7 @@ myctoi(array)
 
 /* myesc - return character corresponding to escape sequence */
 
-u_char 
+u_char
 myesc(array)
 	u_char array[];
 {
@@ -685,7 +685,7 @@ myesc(array)
 
 /* otoi - convert an octal digit string to an integer value */
 
-int 
+int
 otoi(str)
 	u_char str[];
 {
@@ -700,14 +700,14 @@ otoi(str)
  *	 generated scanner, keeping track of the line count.
  */
 
-void 
+void
 out(str)
 	const char *str;
 {
 	fputs(str, stdout);
 }
 
-void 
+void
 out_dec(fmt, n)
 	const char *fmt;
 	int n;
@@ -715,7 +715,7 @@ out_dec(fmt, n)
 	fprintf(stdout, fmt, n);
 }
 
-void 
+void
 out_dec2(fmt, n1, n2)
 	const char *fmt;
 	int n1, n2;
@@ -723,7 +723,7 @@ out_dec2(fmt, n1, n2)
 	fprintf(stdout, fmt, n1, n2);
 }
 
-void 
+void
 out_hex(fmt, x)
 	const char *fmt;
 	unsigned int x;
@@ -731,21 +731,21 @@ out_hex(fmt, x)
 	fprintf(stdout, fmt, x);
 }
 
-void 
+void
 out_str(fmt, str)
 	const char *fmt, str[];
 {
 	fprintf(stdout, fmt, str);
 }
 
-void 
+void
 out_str3(fmt, s1, s2, s3)
 	const char *fmt, s1[], s2[], s3[];
 {
 	fprintf(stdout, fmt, s1, s2, s3);
 }
 
-void 
+void
 out_str_dec(fmt, str, n)
 	const char *fmt, str[];
 	int n;
@@ -753,14 +753,14 @@ out_str_dec(fmt, str, n)
 	fprintf(stdout, fmt, str, n);
 }
 
-void 
+void
 outc(c)
 	int c;
 {
 	fputc(c, stdout);
 }
 
-void 
+void
 outn(str)
 	const char *str;
 {
@@ -773,7 +773,7 @@ outn(str)
  * @param val The definition; may be NULL.
  * @return buf
  */
-void 
+void
 out_m4_define(const char *def, const char *val)
 {
 	const char *fmt = "m4_define( [[%s]], [[%s]])m4_dnl\n";
@@ -853,7 +853,7 @@ reallocate_array(array, size, element_size)
  *    Copies skelfile or skel array to stdout until a line beginning with
  *    "%%" or EOF is found.
  */
-void 
+void
 skelout()
 {
 	char buf_storage[MAXLINE];
@@ -968,7 +968,7 @@ skelout()
  * element_n.  Formats the output with spaces and carriage returns.
  */
 
-void 
+void
 transition_struct_out(element_v, element_n)
 	int element_v, element_n;
 {

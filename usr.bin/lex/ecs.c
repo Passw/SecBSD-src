@@ -38,7 +38,7 @@
 
 /* ccl2ecl - convert character classes to set of equivalence classes */
 
-void 
+void
 ccl2ecl(void)
 {
 	int i, ich, newlen, cclp, ccls, cclmec;
@@ -78,7 +78,7 @@ ccl2ecl(void)
  * Returned is the number of classes.
  */
 
-int 
+int
 cre8ecs(int *fwd, int *bck, int num)
 {
 	int i, j, numcl;
@@ -115,7 +115,7 @@ cre8ecs(int *fwd, int *bck, int num)
  * NUL_mapping is the value which NUL (0) should be mapped to.
  */
 
-void 
+void
 mkeccl(u_char *ccls, int lenccl, int *fwd, int *bck, int llsiz, int NUL_mapping)
 {
 	int cclp, oldec, newec;
@@ -206,7 +206,7 @@ mkeccl(u_char *ccls, int lenccl, int *fwd, int *bck, int llsiz, int NUL_mapping)
 
 /* mkechar - create equivalence class for single character */
 
-void 
+void
 mkechar(int tch, int *fwd, int *bck)
 {
 	/*

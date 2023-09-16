@@ -164,6 +164,6 @@ __dead void
 ident_usage(void)
 {
 	fprintf(stderr, "usage: ident [-qV] [file ...]\n");
-	
+
 	exit(1);
 }

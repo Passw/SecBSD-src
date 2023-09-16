@@ -35,7 +35,7 @@ use File::Basename;
 
 sub link
 {
-	my ($linker, $self, $ltprog, $ltconfig, $la, $fname, $odir, $shared, 
+	my ($linker, $self, $ltprog, $ltconfig, $la, $fname, $odir, $shared,
 	    $objs, $dirs, $libs, $deplibs, $libdirs, $parser, $gp) = @_;
 
 	tsay {"creating link command for library (linked ",
@@ -176,7 +176,7 @@ sub link
 	    if @$staticlibs;
 	push @cmd, "-L$symlinkdir", @libflags if @libflags;
 
-	my @e = $linker->export_symbols($ltconfig, 
+	my @e = $linker->export_symbols($ltconfig,
 	    "$odir/$ltdir/$la", $gp, @$objs, @$staticlibs);
 	push(@cmd, join(',', "-Wl", @e)) if @e;
 	push @cmd, join(',', "-Wl", @linkeropts) if @linkeropts;

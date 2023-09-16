@@ -80,7 +80,7 @@ int tbldiff PROTO((int[], int, int[]));
  * cost only one difference.
  */
 
-void 
+void
 bldtbl(state, statenum, totaltrans, comstate, comfreq)
 	int state[], statenum, totaltrans, comstate, comfreq;
 {
@@ -230,7 +230,7 @@ bldtbl(state, statenum, totaltrans, comstate, comfreq)
  * classes.
  */
 
-void 
+void
 cmptmps()
 {
 	int tmpstorage[CSIZE + 1];
@@ -298,7 +298,7 @@ cmptmps()
 
 /* expand_nxt_chk - expand the next check arrays */
 
-void 
+void
 expand_nxt_chk()
 {
 	int old_max = current_max_xpairs;
@@ -333,7 +333,7 @@ expand_nxt_chk()
  * and an action number will be added in [-1].
  */
 
-int 
+int
 find_table_space(state, numtrans)
 	int *state, numtrans;
 {
@@ -434,7 +434,7 @@ find_table_space(state, numtrans)
  * Initializes "firstfree" to be one beyond the end of the table.  Initializes
  * all "chk" entries to be zero.
  */
-void 
+void
 inittbl()
 {
 	int i;
@@ -466,7 +466,7 @@ inittbl()
 
 /* mkdeftbl - make the default, "jam" table entries */
 
-void 
+void
 mkdeftbl()
 {
 	int i;
@@ -517,7 +517,7 @@ mkdeftbl()
  * state array.
  */
 
-void 
+void
 mkentry(state, numchars, statenum, deflink, totaltrans)
 	int *state;
 	int numchars, statenum, deflink, totaltrans;
@@ -635,7 +635,7 @@ mkentry(state, numchars, statenum, deflink, totaltrans)
  *            has only one out-transition
  */
 
-void 
+void
 mk1tbl(state, sym, onenxt, onedef)
 	int state, sym, onenxt, onedef;
 {
@@ -662,7 +662,7 @@ mk1tbl(state, sym, onenxt, onedef)
 
 /* mkprot - create new proto entry */
 
-void 
+void
 mkprot(state, statenum, comstate)
 	int state[], statenum, comstate;
 {
@@ -700,7 +700,7 @@ mkprot(state, statenum, comstate)
  *              to it
  */
 
-void 
+void
 mktemplate(state, statenum, comstate)
 	int state[], statenum, comstate;
 {
@@ -754,7 +754,7 @@ mktemplate(state, statenum, comstate)
 
 /* mv2front - move proto queue element to front of queue */
 
-void 
+void
 mv2front(qelm)
 	int qelm;
 {
@@ -782,7 +782,7 @@ mv2front(qelm)
  * Transnum is the number of out-transitions for the state.
  */
 
-void 
+void
 place_state(state, statenum, transnum)
 	int *state, statenum, transnum;
 {
@@ -827,7 +827,7 @@ place_state(state, statenum, transnum)
  * no room, we process the sucker right now.
  */
 
-void 
+void
 stack1(statenum, sym, nextstate, deflink)
 	int statenum, sym, nextstate, deflink;
 {
@@ -858,7 +858,7 @@ stack1(statenum, sym, nextstate, deflink)
  * number is "numecs" minus the number of "SAME_TRANS" entries in "ext".
  */
 
-int 
+int
 tbldiff(state, pr, ext)
 	int state[], pr, ext[];
 {

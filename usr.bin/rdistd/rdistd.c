@@ -95,7 +95,7 @@ main(int argc, char **argv, char **envp)
 
 	/* Set logging */
 	if ((cp = msgparseopts(localmsglist, TRUE)) != NULL)
-		fatalerr("Bad message logging option (%s): %s", 
+		fatalerr("Bad message logging option (%s): %s",
 			 localmsglist, cp);
 
 	/*

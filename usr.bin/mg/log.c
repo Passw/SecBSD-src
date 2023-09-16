@@ -1,6 +1,6 @@
 /*	$OpenBSD: log.c,v 1.13 2022/12/26 19:16:02 jmc Exp $	*/
 
-/* 
+/*
  * This file is in the public domain.
  *
  * Author: Mark Lumsden <mark@showcomplex.com>
@@ -9,27 +9,27 @@
 
 /*
  * Record a history of an mg session for temporal debugging.
- * Sometimes pressing a key will set the scene for a bug only visible 
+ * Sometimes pressing a key will set the scene for a bug only visible
  * dozens of keystrokes later. gdb has its limitations in this scenario.
  *
  * Note this file is not compiled into mg by default, you will need to
  * amend the 'Makefile' for that to happen. Because of this, the code
- * is subject to bit-rot. However, I know myself and others have 
- * written similar functionally often enough, that recording the below 
+ * is subject to bit-rot. However, I know myself and others have
+ * written similar functionally often enough, that recording the below
  * in a code repository could aid the development efforts of mg, even
  * if it requires a bit of effort to get working. The current code is
  * written in the spirit of debugging (quickly and perhaps not ideal,
  * but it does what is required well enough). Should debugging become
  * more formalised within mg, then I would expect that to change.
  *
- * If you open a file with long lines to run through this debugging 
+ * If you open a file with long lines to run through this debugging
  * code, you may run into problems with the 1st fprintf statement in
  * in the mglog_lines() function. mg sometimes segvs at a strlen call
  * in fprintf - possibly something to do with the format string?
  * 	"%s%p b^%p f.%p %d %d\t%c|%s\n"
- * When I get time I will look into it. But since my debugging 
+ * When I get time I will look into it. But since my debugging
  * generally revolves around a file like:
- * 
+ *
  * abc
  * def
  * ghk
@@ -347,7 +347,7 @@ mgloginit(void)
 	mglogfile_interpreter = "interpreter.log";
 	mglogfile_misc = "misc.log";
 
-	/* 
+	/*
 	 * Change mgloglevel for desired level of logging.
 	 * log.h has relevant level info.
 	 */
@@ -384,7 +384,7 @@ mgloginit(void)
 		return (FALSE);
 
 	return (TRUE);
-}	
+}
 
 
 static char *

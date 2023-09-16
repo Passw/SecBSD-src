@@ -102,7 +102,7 @@ set_edit_chars(void)
 	u_char buf[3];
 	int cc;
 	struct termios tty;
-	
+
 	tcgetattr(STDIN_FILENO, &tty);
 	buf[0] = my_win.cerase = (tty.c_cc[VERASE] == (u_char)_POSIX_VDISABLE)
 	    ? CERASE : tty.c_cc[VERASE];

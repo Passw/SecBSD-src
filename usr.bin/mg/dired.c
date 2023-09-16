@@ -786,7 +786,7 @@ refreshbuffer(struct buffer *bp)
 
 	/* remark any previously deleted files with a 'D' */
 	if (ddel)
-		redelete(bp);		
+		redelete(bp);
 
 	/* find dot line */
 	bp->b_dotp = bfirstlp(bp);
@@ -989,7 +989,7 @@ redelete(struct buffer *bp)
 	/* reset the deleted file buffer flag until a deleted file is found */
 	bp->b_flag &= ~BFDIREDDEL;
 
-	for (lp = bfirstlp(bp); lp != bp->b_headp; lp = nlp) {	
+	for (lp = bfirstlp(bp); lp != bp->b_headp; lp = nlp) {
 		bp->b_dotp = lp;
 		if ((p = findfname(lp, p)) == NULL) {
 			nlp = lforw(lp);
@@ -998,7 +998,7 @@ redelete(struct buffer *bp)
 		plen = strlen(p);
 		SLIST_FOREACH_SAFE(d1, &delhead, entry, dt) {
 			fnlen = strlen(d1->fn);
-			if ((plen == fnlen) && 
+			if ((plen == fnlen) &&
 			    (strncmp(p, d1->fn, plen) == 0)) {
 				lputc(bp->b_dotp, 0, DDELCHAR);
 				bp->b_flag |= BFDIREDDEL;
@@ -1006,7 +1006,7 @@ redelete(struct buffer *bp)
 				if (SLIST_EMPTY(&delhead)) {
 					finished = 1;
 					break;
-				}	
+				}
 			}
 		}
 		if (finished)
@@ -1035,7 +1035,7 @@ createlist(struct buffer *bp)
 	int		 ret = FALSE;
 
 	for (lp = bfirstlp(bp); lp != bp->b_headp; lp = nlp) {
-		/* 
+		/*
 		 * Check if the line has 'D' on the first char and if a valid
 		 * filename can be extracted from it.
 		 */
@@ -1070,7 +1070,7 @@ createlist(struct buffer *bp)
 				SLIST_INSERT_HEAD(&delhead, d2, entry);
 			else
 				SLIST_INSERT_AFTER(d1, d2, entry);
-			d1 = d2;				
+			d1 = d2;
 		}
 		ret = TRUE;
 		nlp = lforw(lp);

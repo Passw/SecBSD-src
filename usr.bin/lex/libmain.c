@@ -25,7 +25,7 @@
 
 extern int yylex();
 
-int 
+int
 main(argc, argv)
 	int argc;
 	char *argv[];

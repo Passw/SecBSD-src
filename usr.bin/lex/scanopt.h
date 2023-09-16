@@ -32,7 +32,7 @@
 /*  IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED */
 /*  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR */
 /*  PURPOSE. */
-
+
 #ifndef SCANOPT_H
 #define SCANOPT_H
 
@@ -77,7 +77,7 @@ extern  "C" {
 /* Used internally by scanopt() to maintain state. */
 /* Never modify these value directly. */
 	typedef void *scanopt_t;
-
+
 
 /* Initializes scanner and checks option list for errors.
  * Parameters:

@@ -111,7 +111,7 @@ expr	:	\'(\'  expr  \')\'
 			{	$$  =  \-  $2;  }
 	|	LETTER
 			{	$$  =  regs[$1];  }
-	|	number          
+	|	number
 	;
 
 number	:	DIGIT
@@ -133,11 +133,11 @@ yylex() {		/*  lexical  analysis  routine  */
 
 	/*  c  is  now  nonblank  */
 
-	if(  islower(  c  )  )  {	
+	if(  islower(  c  )  )  {
 		yylval  =  c  \-  \'a\';
 		return  (  LETTER  );
 		}
-	if(  isdigit(  c  )  )  {	
+	if(  isdigit(  c  )  )  {
 		yylval  =  c  \-  \'0\';
 		return(  DIGIT  );
 		}

@@ -2,7 +2,7 @@
 
 
 The following TELNET options are supported:
-	
+
 	LINEMODE:
 		The LINEMODE option is supported as per RFC1116.  The
 		FORWARDMASK option is not currently supported.

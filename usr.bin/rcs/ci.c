@@ -773,7 +773,7 @@ checkin_revert(struct checkin_params *pb)
 	pb->flags |= CO_REVERT;
 	(void)close(workfile_fd);
 	(void)unlink(pb->filename);
-	
+
 	/* If needed, write out RCSFILE before calling checkout_rev() */
 	if (pb->symbol != NULL)
 		rcs_write(pb->file);

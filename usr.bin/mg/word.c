@@ -67,7 +67,7 @@ forwword(int f, int n)
 }
 
 /*
- * Transpose 2 words. 
+ * Transpose 2 words.
  * The function below is artificially restricted to only a maximum of 1 iteration
  * at the moment because the 'undo' functionality within mg needs amended for
  * multiple movements of point, backwards and forwards.

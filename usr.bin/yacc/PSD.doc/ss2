@@ -161,7 +161,7 @@ creates a node with label L, and descendants n1 and n2, and returns the index of
 the newly created node.
 Then parse tree can be built by supplying actions such as:
 .DS
-expr	:	expr  \'+\'  expr  
+expr	:	expr  \'+\'  expr
 			{  $$ = node( \'+\', $1, $3 );  }
 .DE
 in the specification.
@@ -170,7 +170,7 @@ The user may define other variables to be used by the actions.
 Declarations and definitions can appear in
 the declarations section,
 enclosed in the marks ``%{'' and ``%}''.
-These declarations and definitions have global scope, 
+These declarations and definitions have global scope,
 so they are known to the action statements and the lexical analyzer.
 For example,
 .DS

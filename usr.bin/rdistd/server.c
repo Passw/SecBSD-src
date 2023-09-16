@@ -99,7 +99,7 @@ cattarget(char *string)
 
 	return(0);
 }
-	
+
 /*
  * Set uid and gid ownership of a file.
  */
@@ -136,7 +136,7 @@ setownership(char *file, int fd, uid_t uid, gid_t gid, int islink)
 			message(MT_NOTICE, "%s: chgrp %d failed: %s",
 				target, gid, SYSERR);
 		else
-			message(MT_NOTICE, "%s: chown %d:%d failed: %s", 
+			message(MT_NOTICE, "%s: chown %d:%d failed: %s",
 				target, uid, gid, SYSERR);
 		return(-1);
 	}
@@ -210,7 +210,7 @@ fchog(int fd, char *file, char *owner, char *group, int mode)
 		}
 	} else {	/* not root, setuid only if user==owner */
 		if (mode != -1) {
-			if (IS_ON(mode, S_ISUID) && 
+			if (IS_ON(mode, S_ISUID) &&
 			    strcmp(locuser, owner) != 0)
 				mode &= ~S_ISUID;
 			if (mode)
@@ -224,12 +224,12 @@ fchog(int fd, char *file, char *owner, char *group, int mode)
 		gid = (gid_t) atoi(group + 1);
 	} else if (gid_from_group(group, &gid) == -1) {
 		if (mode != -1 && IS_ON(mode, S_ISGID)) {
-			message(MT_NOTICE, 
+			message(MT_NOTICE,
 			"%s: unknown group \"%s\", clearing setgid",
 				target, group);
 			mode &= ~S_ISGID;
 		} else
-			message(MT_NOTICE, 
+			message(MT_NOTICE,
 				"%s: unknown group \"%s\"",
 				target, group);
 	}
@@ -240,7 +240,7 @@ fchog(int fd, char *file, char *owner, char *group, int mode)
 				goto ok;
 		}
 		if (mode != -1 && IS_ON(mode, S_ISGID)) {
-			message(MT_NOTICE, 
+			message(MT_NOTICE,
 				"%s: user %s not in group %s, clearing setgid",
 				target, locuser, group);
 			mode &= ~S_ISGID;
@@ -259,12 +259,12 @@ ok:
 	 */
 	if (setownership(file, fd, uid, gid, S_ISLNK(st.st_mode)) < 0) {
 		if (mode != -1 && IS_ON(mode, S_ISUID)) {
-			message(MT_NOTICE, 
+			message(MT_NOTICE,
 				"%s: chown failed, clearing setuid", target);
 			mode &= ~S_ISUID;
 		}
 		if (mode != -1 && IS_ON(mode, S_ISGID)) {
-			message(MT_NOTICE, 
+			message(MT_NOTICE,
 				"%s: chown failed, clearing setgid", target);
 			mode &= ~S_ISGID;
 		}
@@ -299,7 +299,7 @@ removefile(struct stat *statb, int silent)
 		if (unlink(target) == -1) {
 			if (errno == ETXTBSY) {
 				if (!silent)
-					message(MT_REMOTE|MT_NOTICE, 
+					message(MT_REMOTE|MT_NOTICE,
 						"%s: unlink failed: %s",
 						target, SYSERR);
 				return(0);
@@ -333,8 +333,8 @@ removefile(struct stat *statb, int silent)
 
 		if (len + 1 + (int)strlen(dp->d_name) >= PATH_MAX - 1) {
 			if (!silent)
-				message(MT_REMOTE|MT_WARNING, 
-					"%s/%s: Name too long", 
+				message(MT_REMOTE|MT_WARNING,
+					"%s/%s: Name too long",
 					target, dp->d_name);
 			continue;
 		}
@@ -347,7 +347,7 @@ removefile(struct stat *statb, int silent)
 		if (lstat(target, &stb) == -1) {
 			if (!silent)
 				message(MT_REMOTE|MT_WARNING,
-					"%s: lstat failed: %s", 
+					"%s: lstat failed: %s",
 					target, SYSERR);
 			continue;
 		}
@@ -415,7 +415,7 @@ doclean(char *cp)
 			continue;
 
 		if (len + 1 + (int)strlen(dp->d_name) >= PATH_MAX - 1) {
-			message(MT_REMOTE|MT_WARNING, "%s/%s: Name too long", 
+			message(MT_REMOTE|MT_WARNING, "%s/%s: Name too long",
 				target, dp->d_name);
 			continue;
 		}
@@ -426,7 +426,7 @@ doclean(char *cp)
 			continue;
 		ptarget--;
 		if (lstat(target, &stb) == -1) {
-			message(MT_REMOTE|MT_WARNING, "%s: lstat failed: %s", 
+			message(MT_REMOTE|MT_WARNING, "%s: lstat failed: %s",
 				target, SYSERR);
 			continue;
 		}
@@ -439,7 +439,7 @@ doclean(char *cp)
 			continue;
 
 		if (IS_ON(opts, DO_VERIFY))
-			message(MT_REMOTE|MT_INFO, "%s: need to remove", 
+			message(MT_REMOTE|MT_INFO, "%s: need to remove",
 				target);
 		else
 			(void) removefile(&stb, 0);
@@ -508,7 +508,7 @@ docmdspecial(void)
 			if (env == NULL) {
 				len = (2 * sizeof(E_FILES)) + strlen(cp) + 10;
 				env = xmalloc(len);
-				(void) snprintf(env, len, "export %s;%s=%s", 
+				(void) snprintf(env, len, "export %s;%s=%s",
 					       E_FILES, E_FILES, cp);
 			} else {
 				len = strlen(env) + 1 + strlen(cp) + 1;
@@ -620,7 +620,7 @@ query(char *xname)
 			       (long long) stb.st_size,
 			       (long long) stb.st_mtime,
 			       stb.st_mode & 07777,
-			       getusername(stb.st_uid, target, options), 
+			       getusername(stb.st_uid, target, options),
 			       getgroupname(stb.st_gid, target, options));
 		break;
 
@@ -654,8 +654,8 @@ chkparent(char *name, opt_t opts)
 			if (mkdir(name, 0777 & ~oumask) == 0) {
 				message(MT_NOTICE, "%s: mkdir", name);
 				r = 0;
-			} else 
-				debugmsg(DM_MISC, 
+			} else
+				debugmsg(DM_MISC,
 					 "chkparent(%s, %#04o) mkdir fail: %s\n",
 					 name, opts, SYSERR);
 		}
@@ -696,7 +696,7 @@ savetarget(char *file, opt_t opts)
 
 		}
 		if (i == 1000) {
-			message(MT_NOTICE, 
+			message(MT_NOTICE,
 			    "%s: More than 1000 versions for %s; reusing 1\n",
 				savefile, SYSERR);
 			i = 1;
@@ -716,7 +716,7 @@ savetarget(char *file, opt_t opts)
 	}
 
 	if (rename(file, savefile) != 0 && errno != ENOENT) {
-		error("%s -> %s: rename failed: %s", 
+		error("%s -> %s: rename failed: %s",
 		      file, savefile, SYSERR);
 		return(NULL);
 	}
@@ -817,7 +817,7 @@ recvfile(char *new, opt_t opts, int mode, char *owner, char *group,
 		}
 		while ((c = getc(f1)) == getc(f2))
 			if (c == EOF) {
-				debugmsg(DM_MISC, 
+				debugmsg(DM_MISC,
 					 "Files are the same '%s' '%s'.",
 					 target, new);
 				(void) fclose(f1);
@@ -837,7 +837,7 @@ recvfile(char *new, opt_t opts, int mode, char *owner, char *group,
 		(void) fclose(f1);
 		(void) fclose(f2);
 		if (IS_ON(opts, DO_VERIFY)) {
-			message(MT_REMOTE|MT_INFO, "%s: need to update", 
+			message(MT_REMOTE|MT_INFO, "%s: need to update",
 				target);
 			(void) close(f);
 			(void) unlink(new);
@@ -980,21 +980,21 @@ recvdir(opt_t opts, int mode, char *owner, char *group)
 			if (!IS_ON(opts, DO_NOCHKMODE) &&
 			    (stb.st_mode & 07777) != mode) {
 				if (IS_ON(opts, DO_VERIFY))
-					message(MT_NOTICE, 
+					message(MT_NOTICE,
 						"%s: need to chmod to %#04o",
 						target, mode);
 				else if (chmod(target, mode) != 0)
 					message(MT_NOTICE,
 				  "%s: chmod from %#04o to %#04o failed: %s",
-						target, 
-						stb.st_mode & 07777, 
+						target,
+						stb.st_mode & 07777,
 						mode,
 						SYSERR);
 				else
 					message(MT_NOTICE,
 						"%s: chmod from %#04o to %#04o",
-						target, 
-						stb.st_mode & 07777, 
+						target,
+						stb.st_mode & 07777,
 						mode);
 			}
 
@@ -1032,13 +1032,13 @@ recvdir(opt_t opts, int mode, char *owner, char *group)
 			 */
 #define PRN(n) ((n[0] == ':') ? n+1 : n)
 			if (lowner[0] != CNULL || lgroup[0] != CNULL) {
-				if (lowner[0] == CNULL && 
-				    (cp = getusername(stb.st_uid, 
+				if (lowner[0] == CNULL &&
+				    (cp = getusername(stb.st_uid,
 						      target, opts)))
 					(void) strlcpy(lowner, cp,
 					    sizeof(lowner));
-				if (lgroup[0] == CNULL && 
-				    (cp = getgroupname(stb.st_gid, 
+				if (lgroup[0] == CNULL &&
+				    (cp = getgroupname(stb.st_gid,
 						       target, opts)))
 					(void) strlcpy(lgroup, cp,
 					    sizeof(lgroup));
@@ -1046,18 +1046,18 @@ recvdir(opt_t opts, int mode, char *owner, char *group)
 				if (IS_ON(opts, DO_VERIFY))
 					message(MT_NOTICE,
 				"%s: need to chown from %s:%s to %s:%s",
-						target, 
+						target,
 						PRN(lowner), PRN(lgroup),
 						PRN(owner), PRN(group));
 				else {
-					if (fchog(-1, target, owner, 
+					if (fchog(-1, target, owner,
 						  group, -1) == 0)
 						message(MT_NOTICE,
 					       "%s: chown from %s:%s to %s:%s",
 							target,
-							PRN(lowner), 
+							PRN(lowner),
 							PRN(lgroup),
-							PRN(owner), 
+							PRN(owner),
 							PRN(group));
 				}
 			}
@@ -1078,7 +1078,7 @@ recvdir(opt_t opts, int mode, char *owner, char *group)
 	if (s < 0) {
 		if (errno == ENOENT) {
 			if (mkdir(target, mode) == 0 ||
-			    (chkparent(target, opts) == 0 && 
+			    (chkparent(target, opts) == 0 &&
 			    mkdir(target, mode) == 0)) {
 				message(MT_NOTICE, "%s: mkdir", target);
 				(void) fchog(-1, target, owner, group, mode);
@@ -1313,7 +1313,7 @@ setconfig(char *cmd)
 
 	case SC_LOGGING:	/* Logging options */
 		if ((estr = msgparseopts(cp, TRUE)) != NULL) {
-			fatalerr("Bad message option string (%s): %s", 
+			fatalerr("Bad message option string (%s): %s",
 				 cp, estr);
 			return;
 		}
@@ -1482,7 +1482,7 @@ recvit(char *cmd, int type)
 		 * filesystem values < 0 indicate unsupported or unavailable
 		 * information.
 		 */
-		if (min_freespace && (freespace >= 0) && 
+		if (min_freespace && (freespace >= 0) &&
 		    (freespace - fsize < min_freespace)) {
 			error(
 		     "%s: Not enough free space on filesystem: min %lld "
@@ -1673,7 +1673,7 @@ server(void)
 #endif	/* SETARGS */
 	}
 
-	/* 
+	/*
 	 * Let client know we want it to send its version number
 	 */
 	(void) sendcmd(S_VERSION, NULL);

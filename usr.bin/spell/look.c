@@ -63,40 +63,40 @@ look(u_char *string, u_char *front, u_char *back)
 
 /*
  * Binary search for "string" in memory between "front" and "back".
- * 
+ *
  * This routine is expected to return a pointer to the start of a line at
  * *or before* the first word matching "string".  Relaxing the constraint
  * this way simplifies the algorithm.
- * 
+ *
  * Invariants:
- * 	front points to the beginning of a line at or before the first 
+ * 	front points to the beginning of a line at or before the first
  *	matching string.
- * 
- * 	back points to the beginning of a line at or after the first 
+ *
+ * 	back points to the beginning of a line at or after the first
  *	matching line.
- * 
+ *
  * Base of the Invariants.
- * 	front = NULL; 
+ * 	front = NULL;
  *	back = EOF;
- * 
+ *
  * Advancing the Invariants:
- * 
+ *
  * 	p = first newline after halfway point from front to back.
- * 
- * 	If the string at "p" is not greater than the string to match, 
+ *
+ * 	If the string at "p" is not greater than the string to match,
  *	p is the new front.  Otherwise it is the new back.
- * 
+ *
  * Termination:
- * 
- * 	The definition of the routine allows it return at any point, 
+ *
+ * 	The definition of the routine allows it return at any point,
  *	since front is always at or before the line to print.
- * 
- * 	In fact, it returns when the chosen "p" equals "back".  This 
- *	implies that there exists a string is least half as long as 
- *	(back - front), which in turn implies that a linear search will 
+ *
+ * 	In fact, it returns when the chosen "p" equals "back".  This
+ *	implies that there exists a string is least half as long as
+ *	(back - front), which in turn implies that a linear search will
  *	be no more expensive than the cost of simply printing a string or two.
- * 
- * 	Trying to continue with binary search at this point would be 
+ *
+ * 	Trying to continue with binary search at this point would be
  *	more trouble than it's worth.
  */
 #define	SKIP_PAST_NEWLINE(p, back) \
@@ -128,12 +128,12 @@ binary_search(u_char *string, u_char *front, u_char *back)
 /*
  * Find the first line that matches string, linearly searching from front
  * to back.
- * 
+ *
  * Return NULL for no such line.
- * 
+ *
  * This routine assumes:
- * 
- * 	o front points at the first character in a line. 
+ *
+ * 	o front points at the first character in a line.
  *	o front is before or at the first line to be printed.
  */
 u_char *

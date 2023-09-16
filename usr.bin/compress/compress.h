@@ -83,4 +83,4 @@ extern int null_write(void *, const char *, int);
 extern int null_close(void *, struct z_info *, const char *, struct stat *);
 extern int null_flush(void *, int);
 
-extern void setfile(const char *, int, struct stat *);   
+extern void setfile(const char *, int, struct stat *);

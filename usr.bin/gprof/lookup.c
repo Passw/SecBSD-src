@@ -34,7 +34,7 @@
 
     /*
      *	look up an address in a sorted-by-address namelist
-     *	    this deals with misses by mapping them to the next lower 
+     *	    this deals with misses by mapping them to the next lower
      *	    entry point.
      */
 nltype *

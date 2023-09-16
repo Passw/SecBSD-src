@@ -169,7 +169,7 @@ linsert(int n, int c)
 
 	if ((s = checkdirty(curbp)) != TRUE)
 		return (s);
-	
+
 	if (curbp->b_flag & BFREADONLY) {
 		dobeep();
 		ewprintf("Buffer is read only");
@@ -281,7 +281,7 @@ lnewline_at(struct line *lp1, int doto)
 		for (wp = wheadp; wp != NULL; wp = wp->w_wndp) {
 			if (wp->w_linep == lp1)
 				wp->w_linep = lp2;
-			if (wp->w_dotline >= tcurwpdotline && 
+			if (wp->w_dotline >= tcurwpdotline &&
 			    wp->w_bufp == curwp->w_bufp)
 				wp->w_dotline++;
 		}

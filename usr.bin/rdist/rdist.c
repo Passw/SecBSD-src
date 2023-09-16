@@ -98,14 +98,14 @@ main(int argc, char **argv, char **envp)
 	progname = __progname;
 
 	if ((cp = msgparseopts(localmsglist, TRUE)) != NULL) {
-		error("Bad builtin log option (%s): %s.", 
+		error("Bad builtin log option (%s): %s.",
 		      localmsglist, cp);
 		usage();
 	}
 
 	if ((cp = getenv("RDIST_OPTIONS")) != NULL)
 		if (parsedistopts(cp, &options, TRUE)) {
-			error("Bad dist option environment string \"%s\".", 
+			error("Bad dist option environment string \"%s\".",
 			      cp);
 			exit(1);
 		}
@@ -202,7 +202,7 @@ main(int argc, char **argv, char **envp)
 
 		case 'o':
 			if (parsedistopts(optarg, &options, TRUE)) {
-				error("Bad dist option string \"%s\".", 
+				error("Bad dist option string \"%s\".",
 				      optarg);
 				usage();
 			}
@@ -311,7 +311,7 @@ opendist(char *distfile)
 		 * Try to test to see if file is readable before running m4.
 		 */
 		if (access(distfile, R_OK) != 0)
-			fatalerr("%s: Cannot access file: %s.", 
+			fatalerr("%s: Cannot access file: %s.",
 				 distfile, SYSERR);
 		file = distfile;
 	}

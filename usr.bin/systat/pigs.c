@@ -123,7 +123,7 @@ getprocs(void)
 {
 	size_t size;
 	int mib[6] = {CTL_KERN, KERN_PROC, KERN_PROC_KTHREAD, 0, sizeof(struct kinfo_proc), 0};
-	
+
 	int st;
 
 	free(procbase);
@@ -290,7 +290,7 @@ compar(const void *a, const void *b)
 	int i1 = *((int *)a);
 	int i2 = *((int *)b);
 
-	return procbase[i1].p_pctcpu > 
+	return procbase[i1].p_pctcpu >
 		procbase[i2].p_pctcpu ? -1 : 1;
 }
 

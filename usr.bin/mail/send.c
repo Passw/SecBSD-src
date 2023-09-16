@@ -369,7 +369,7 @@ mail1(struct header *hp, int printheaders)
 	}
 	if ((cp = value("record")) != NULL)
 		(void)savemail(expand(cp), mtf);
-	
+
 	/* Setup sendmail arguments. */
         *ap++ = "sendmail";
         *ap++ = "-i";

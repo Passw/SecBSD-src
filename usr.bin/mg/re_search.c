@@ -231,7 +231,7 @@ re_repl(int f, int n)
 	update(CMODE);
 	if (!inmacro)
 		ewprintf("(%d replacement(s) done)", rcnt);
-	
+
 	return(TRUE);
 }
 

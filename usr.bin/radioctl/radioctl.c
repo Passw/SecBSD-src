@@ -405,7 +405,7 @@ parse_opt(char *s, struct opt_t *o) {
 	static const char badvalue[] = "bad value `%s'";
 	char *topt = NULL;
 	int slen, optlen;
-	
+
 	if (s == NULL || *s == '\0' || o == NULL)
 		return 0;
 
@@ -443,7 +443,7 @@ parse_opt(char *s, struct opt_t *o) {
 	o->string = topt;
 
 	topt = &s[optlen];
-	
+
 	if (strcmp(o->string, "chnlset") == 0) {
 		for (i = 0; chansets[i].name; i++)
 			if (strncmp(chansets[i].name, topt,

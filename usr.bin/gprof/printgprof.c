@@ -88,7 +88,7 @@ timecmp(const void *v1, const void *v2)
 void
 flatprofheader()
 {
-    
+
     if (bflag)
 	printblurb( _PATH_FLAT_BLURB );
     printf("\ngranularity: each sample hit covers %ld byte(s)",
@@ -268,7 +268,7 @@ totalcmp(const void *v1, const void *v2)
 	return 1;
     if ( np1 -> ncall > np2 -> ncall )
 	return -1;
-    if ( np1 -> ncall < np2 -> ncall ) 
+    if ( np1 -> ncall < np2 -> ncall )
 	return 1;
     return strcmp( np1 -> name , np2 -> name );
 }

@@ -248,7 +248,7 @@ week(int day, int month, int year)
 	int	firstday;
 	int	firstsunday;
 	int	shift;
-	
+
 	if (mflag)
 		return isoweek(day, month, year);
 
@@ -261,7 +261,7 @@ week(int day, int month, int year)
 	shift = 1;
 	if (yearday < firstsunday)
 		return (1);
-	if (firstweekday > THURSDAY - 1) 
+	if (firstweekday > THURSDAY - 1)
 		shift = 2;
 	return ((((yearday + 1) - (weekday - 1)) / 7) + shift);
 }
@@ -291,7 +291,7 @@ isoweek(int day, int month, int year)
 		return 53 - (g - s) / 5;
 	else if (n > 364 + s)
 		return 1;
-	else 
+	else
 		return n/7 + 1;
 }
 
@@ -388,7 +388,7 @@ yearly(int year)
 		for (row = 0; row < 6; row++) {
 			for (which_cal = 0; which_cal < 3; which_cal++) {
 				p = lineout + which_cal * (week_len + 2);
-				
+
 				dp = &days[month + which_cal][row * 7];
 				firstday = SPACE;
 				for (col = 0; col < 7; col++, p += DAY_LEN) {

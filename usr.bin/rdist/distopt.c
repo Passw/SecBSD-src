@@ -134,7 +134,7 @@ parsedistopts(char *str, opt_t *optptr, int doerrs)
 }
 
 /*
- * Get a list of the Distfile Option Entries for each enabled 
+ * Get a list of the Distfile Option Entries for each enabled
  * value in "opts".
  */
 char *

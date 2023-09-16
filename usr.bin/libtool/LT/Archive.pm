@@ -52,7 +52,7 @@ sub get_symbollist($self, $filepath, $regex, $objlist)
 	tsay {"generating symbol list in file: $filepath"};
 	tsay {"object list is @$objlist" };
 	my $symbols = LT::UList->new;
-	open(my $sh, '-|', 'nm', '--', @$objlist) or 
+	open(my $sh, '-|', 'nm', '--', @$objlist) or
 	    die "Error running nm on object list @$objlist\n";
 	my $c = 0;
 	while (my $line = <$sh>) {

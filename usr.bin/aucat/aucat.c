@@ -549,7 +549,7 @@ slot_mix_badd(struct slot *s, adata_t *odata)
 
 	odone = 0;
 	otodo = dev_round;
-	if (s->skip > 0) {		
+	if (s->skip > 0) {
 		ocnt = otodo;
 		if (ocnt > s->skip)
 			ocnt = s->skip;

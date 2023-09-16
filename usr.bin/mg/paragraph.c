@@ -26,7 +26,7 @@ static int 	do_gotoeop(int, int, int *);
 /*
  * Move to start of paragraph.
  * Move backwards by line, checking from the 1st character forwards for the
- * existence a non-space. If a non-space character is found, move to the 
+ * existence a non-space. If a non-space character is found, move to the
  * preceding line. Keep doing this until a line with only spaces is found or
  * the start of buffer.
  */
@@ -320,7 +320,7 @@ markpara(int f, int n)
 
 /*
  * Transpose the current paragraph with the following paragraph. If invoked
- * multiple times, transpose to the n'th paragraph. If invoked between 
+ * multiple times, transpose to the n'th paragraph. If invoked between
  * paragraphs, move to the previous paragraph, then continue.
  */
 int
@@ -341,14 +341,14 @@ transposepara(int f, int n)
 	(void)gotoeop(FFRAND, 1);
 
 	/* take a note of buffer flags - we may need them */
-	flg = curbp->b_flag;	
+	flg = curbp->b_flag;
 
 	/* clean out kill buffer then kill region */
 	kdelete();
 	if ((status = killregion(FFRAND, 1)) != TRUE)
 		return (status);
 
-	/* 
+	/*
 	 * Now step through n paragraphs. If we reach the end of buffer,
 	 * stop and paste the killed region back, then display a message.
 	 */
@@ -356,7 +356,7 @@ transposepara(int f, int n)
 		ewprintf("Cannot transpose paragraph, end of buffer reached.");
 		(void)gotobop(FFRAND, i);
 		(void)yank(FFRAND, 1);
-		curbp->b_flag = flg;	
+		curbp->b_flag = flg;
 		return (FALSE);
 	}
 	(void)yank(FFRAND, 1);
@@ -391,7 +391,7 @@ findpara(void)
 		if (lforw(curwp->w_dotp) == curbp->b_headp)
 			return (FALSE);
 
-		curwp->w_dotp = lforw(curwp->w_dotp);	
+		curwp->w_dotp = lforw(curwp->w_dotp);
 		curwp->w_dotline++;
 	} while (1);
 

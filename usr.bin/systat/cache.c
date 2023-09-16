@@ -157,7 +157,7 @@ cache_state(struct pfsync_state *st)
 
 	if (td > 0) {
 		r = sd/td;
-		update_state(old, st, r);		
+		update_state(old, st, r);
 	}
 
 	/* move to active queue */

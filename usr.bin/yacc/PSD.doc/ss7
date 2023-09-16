@@ -146,7 +146,7 @@ be the first token in a legal statement;
 the old, illegal token must be discarded, and the error state reset.
 This could be done by a rule like
 .DS
-stat	:	error 
+stat	:	error
 			{	resynch();
 				yyerrok ;
 				yyclearin ;   }

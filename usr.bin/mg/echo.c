@@ -842,7 +842,7 @@ ewprintf(const char *fmt, ...)
  * Printf style formatting. This is called by "ewprintf" to provide
  * formatting services to its clients.  The move to the start of the
  * echo line, and the erase to the end of the echo line, is done by
- * the caller. 
+ * the caller.
  * %c prints the "name" of the supplied character.
  * %k prints the name of the current key (and takes no arguments).
  * %d prints a decimal integer

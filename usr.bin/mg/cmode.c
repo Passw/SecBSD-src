@@ -263,7 +263,7 @@ getindent(const struct line *lp, int *curi)
 		if (!firstnwsp && !isspace(c)) {
 			if (c == '#')
 				cppp = TRUE;
-			firstnwsp = TRUE; 
+			firstnwsp = TRUE;
 		}
 		if (c == '\\')
 			escp = !escp;

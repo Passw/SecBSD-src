@@ -28,7 +28,7 @@ unsigned char* addr_to_byte(unsigned char *bytes, const uint32_t addr[8]){
 #else
   memcpy(bytes, addr, 32);
   return bytes;
-#endif 
+#endif
 }
 
 int core_hash_SHA2(unsigned char *out, const unsigned int type, const unsigned char *key, unsigned int keylen, const unsigned char *in, unsigned long long inlen, unsigned int n){

@@ -112,7 +112,7 @@ argcount(char **argv)
 	char **ap;
 
 	for (ap = argv; *ap++ != NULL;)
-		;	
+		;
 	return(ap - argv - 1);
 }
 
