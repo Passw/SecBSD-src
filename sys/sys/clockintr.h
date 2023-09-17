@@ -1,4 +1,4 @@
-/* $OpenBSD: clockintr.h,v 1.17 2023/09/15 11:48:48 deraadt Exp $ */
+/* $OpenBSD: clockintr.h,v 1.20 2023/09/17 15:24:35 cheloha Exp $ */
 /*
  * Copyright (c) 2020-2022 Scott Cheloha <cheloha@openbsd.org>
  *
@@ -35,6 +35,8 @@ struct clockintr_stat {
 #include <sys/mutex.h>
 #include <sys/queue.h>
 
+struct cpu_info;
+
 /*
  * Platform API
  */
@@ -68,7 +70,7 @@ intrclock_trigger(struct intrclock *ic)
 struct clockintr_queue;
 struct clockintr {
 	uint64_t cl_expiration;				/* [m] dispatch time */
-	TAILQ_ENTRY(clockintr) cl_elink;		/* [m] cq_est glue */
+	TAILQ_ENTRY(clockintr) cl_alink;		/* [m] cq_all glue */
 	TAILQ_ENTRY(clockintr) cl_plink;		/* [m] cq_pend glue */
 	void *cl_arg;					/* [I] argument */
 	void (*cl_func)(struct clockintr *, void *, void *); /* [I] callback */
@@ -94,7 +96,7 @@ struct clockintr_queue {
 	struct clockintr cq_shadow;	/* [o] copy of running clockintr */
 	struct mutex cq_mtx;		/* [a] per-queue mutex */
 	uint64_t cq_uptime;		/* [o] cached uptime */
-	TAILQ_HEAD(, clockintr) cq_est;	/* [m] established clockintr list */
+	TAILQ_HEAD(, clockintr) cq_all;	/* [m] established clockintr list */
 	TAILQ_HEAD(, clockintr) cq_pend;/* [m] pending clockintr list */
 	struct clockintr *cq_running;	/* [m] running clockintr */
 	struct clockintr *cq_hardclock;	/* [o] hardclock handle */
@@ -109,16 +111,8 @@ struct clockintr_queue {
 #define CQ_INTRCLOCK		0x00000002	/* intrclock installed */
 #define CQ_STATE_MASK		0x00000003
 
-/* Global state flags. */
-#define CL_INIT			0x00000001	/* global init done */
-#define CL_STATE_MASK		0x00000001
-
-/* Global behavior flags. */
-#define CL_FLAG_MASK		0x00000000
-
 void clockintr_cpu_init(const struct intrclock *);
 int clockintr_dispatch(void *);
-void clockintr_init(uint32_t);
 void clockintr_trigger(void);
 
 /*
@@ -128,7 +122,7 @@ void clockintr_trigger(void);
 uint64_t clockintr_advance(struct clockintr *, uint64_t);
 uint64_t clockintr_advance_random(struct clockintr *, uint64_t, uint32_t);
 void clockintr_cancel(struct clockintr *);
-struct clockintr *clockintr_establish(void *,
+struct clockintr *clockintr_establish(struct cpu_info *,
     void (*)(struct clockintr *, void *, void *), void *);
 void clockintr_stagger(struct clockintr *, uint64_t, uint32_t, uint32_t);
 void clockqueue_init(struct clockintr_queue *);

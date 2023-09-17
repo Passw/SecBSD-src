@@ -1,4 +1,4 @@
-/* $OpenBSD: kern_clockintr.c,v 1.53 2023/09/15 11:48:49 deraadt Exp $ */
+/* $OpenBSD: kern_clockintr.c,v 1.56 2023/09/17 15:24:35 cheloha Exp $ */
 /*
  * Copyright (c) 2003 Dale Rahn <drahn@openbsd.org>
  * Copyright (c) 2020 Mark Kettenis <kettenis@openbsd.org>
@@ -31,13 +31,6 @@
 #include <sys/sysctl.h>
 #include <sys/time.h>
 
-/*
- * Protection for global variables in this file:
- *
- *	I	Immutable after initialization.
- */
-uint32_t clockintr_flags;		/* [I] global state + behavior flags */
-
 void clockintr_hardclock(struct clockintr *, void *, void *);
 void clockintr_schedule(struct clockintr *, uint64_t);
 void clockintr_schedule_locked(struct clockintr *, uint64_t);
@@ -49,19 +42,6 @@ void clockqueue_pend_insert(struct clockintr_queue *, struct clockintr *,
     uint64_t);
 void clockqueue_reset_intrclock(struct clockintr_queue *);
 uint64_t nsec_advance(uint64_t *, uint64_t, uint64_t);
-
-/*
- * Initialize global state.  Set flags and compute intervals.
- */
-void
-clockintr_init(uint32_t flags)
-{
-	KASSERT(CPU_IS_PRIMARY(curcpu()));
-	KASSERT(clockintr_flags == 0);
-	KASSERT(!ISSET(flags, ~CL_FLAG_MASK));
-
-	SET(clockintr_flags, flags | CL_INIT);
-}
 
 /*
  * Ready the calling CPU for clockintr_dispatch().  If this is our
@@ -76,8 +56,6 @@ clockintr_cpu_init(const struct intrclock *ic)
 	struct clockintr_queue *cq = &ci->ci_queue;
 	struct schedstate_percpu *spc = &ci->ci_schedstate;
 	int reset_cq_intrclock = 0;
-
-	KASSERT(ISSET(clockintr_flags, CL_INIT));
 
 	if (ic != NULL)
 		clockqueue_intrclock_install(cq, ic);
@@ -355,10 +333,9 @@ clockintr_cancel(struct clockintr *cl)
 }
 
 struct clockintr *
-clockintr_establish(void *vci,
+clockintr_establish(struct cpu_info *ci,
     void (*func)(struct clockintr *, void *, void *), void *arg)
 {
-	struct cpu_info *ci = vci;
 	struct clockintr *cl;
 	struct clockintr_queue *cq = &ci->ci_queue;
 
@@ -370,7 +347,7 @@ clockintr_establish(void *vci,
 	cl->cl_queue = cq;
 
 	mtx_enter(&cq->cq_mtx);
-	TAILQ_INSERT_TAIL(&cq->cq_est, cl, cl_elink);
+	TAILQ_INSERT_TAIL(&cq->cq_all, cl, cl_alink);
 	mtx_leave(&cq->cq_mtx);
 	return cl;
 }
@@ -443,7 +420,7 @@ clockqueue_init(struct clockintr_queue *cq)
 
 	cq->cq_shadow.cl_queue = cq;
 	mtx_init(&cq->cq_mtx, IPL_CLOCK);
-	TAILQ_INIT(&cq->cq_est);
+	TAILQ_INIT(&cq->cq_all);
 	TAILQ_INIT(&cq->cq_pend);
 	cq->cq_gen = 1;
 	SET(cq->cq_flags, CQ_INIT);
@@ -623,7 +600,7 @@ db_show_clockintr_cpu(struct cpu_info *ci)
 		db_show_clockintr(cq->cq_running, "run", cpu);
 	TAILQ_FOREACH(elm, &cq->cq_pend, cl_plink)
 		db_show_clockintr(elm, "pend", cpu);
-	TAILQ_FOREACH(elm, &cq->cq_est, cl_elink) {
+	TAILQ_FOREACH(elm, &cq->cq_all, cl_alink) {
 		if (!ISSET(elm->cl_flags, CLST_PENDING))
 			db_show_clockintr(elm, "idle", cpu);
 	}
