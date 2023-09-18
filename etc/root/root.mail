@@ -1,9 +1,9 @@
-From purplerain@secbsd.org Fri Aug 11 00:00:00 UTC 2023
+From purplerain@secbsd.org Mon Oct 27 00:00:00 UTC 2023
 Return-Path: root
-Date: Aug 11 00:00:00 UTC 2023
+Date: Oct 27 00:00:00 UTC 2023
 From: purplerain@secbsd.org (Purple Rain)
 To: root
-Subject: Welcome to SecBSD 1.3!
+Subject: Welcome to SecBSD 1.4!
 
 This message attempts to describe the most basic initial questions that a
 system administrator of an SecBSD box might have.  You are urged to save
