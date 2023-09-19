@@ -27,7 +27,7 @@
 # ECB	4.25/4.25   1.38/1.38   1.28/1.28   1.26/1.26	1.26/1.26
 # CTR	5.42/5.42   1.92/1.92   1.44/1.44   1.28/1.28   1.26/1.26
 # CBC	4.38/4.43   4.15/1.43   4.07/1.32   4.07/1.29   4.06/1.28
-# CCM	5.66/9.42   4.42/5.41   4.16/4.40   4.09/4.15   4.06/4.07   
+# CCM	5.66/9.42   4.42/5.41   4.16/4.40   4.09/4.15   4.06/4.07
 # OFB	5.42/5.42   4.64/4.64   4.44/4.44   4.39/4.39   4.38/4.38
 # CFB	5.73/5.85   5.56/5.62   5.48/5.56   5.47/5.55   5.47/5.55
 #
@@ -111,7 +111,7 @@
 # performance is achieved by interleaving instructions working on
 # independent blocks. In which case asymptotic limit for such modes
 # can be obtained by dividing above mentioned numbers by AES
-# instructions' interleave factor. Westmere can execute at most 3 
+# instructions' interleave factor. Westmere can execute at most 3
 # instructions at a time, meaning that optimal interleave factor is 3,
 # and that's where the "magic" number of 1.25 come from. "Optimal
 # interleave factor" means that increase of interleave factor does
@@ -201,7 +201,7 @@ $inout6="%xmm8";	$inout7="%xmm9";
 
 $in2="%xmm6";		$in1="%xmm7";	# used in CBC decrypt, CTR, ...
 $in0="%xmm8";		$iv="%xmm9";
-
+
 # Inline version of internal aesni_[en|de]crypt1.
 #
 # Why folded loop? Because aes[enc|dec] is slow enough to accommodate
@@ -267,7 +267,7 @@ $code.=<<___;
 .size	${PREFIX}_decrypt, .-${PREFIX}_decrypt
 ___
 }
-
+
 # _aesni_[en|de]cryptN are private interfaces, N denotes interleave
 # factor. Why 3x subroutine were originally used in loops? Even though
 # aes[enc|dec] latency was originally 6, it could be scheduled only
@@ -520,7 +520,7 @@ ___
 &aesni_generate6("dec");
 &aesni_generate8("enc") if ($PREFIX eq "aesni");
 &aesni_generate8("dec");
-
+
 if ($PREFIX eq "aesni") {
 ########################################################################
 # void aesni_ecb_encrypt (const void *in, void *out,
@@ -674,7 +674,8 @@ $code.=<<___;
 	movups	$inout4,0x40($out)
 	movups	$inout5,0x50($out)
 	jmp	.Lecb_ret
-#--------------------------- ECB DECRYPT ------------------------------#
+
+#--------------------------- ECB DECRYPT ------------------------------#
 .align	16
 .Lecb_decrypt:
 	cmp	\$0x80,$len
@@ -815,7 +816,7 @@ $code.=<<___;
 	ret
 .size	aesni_ecb_encrypt,.-aesni_ecb_encrypt
 ___
-
+
 {
 ######################################################################
 # void aesni_ccm64_[en|de]crypt_blocks (const void *in, void *out,
@@ -1005,7 +1006,8 @@ $code.=<<___;
 	ret
 .size	aesni_ccm64_decrypt_blocks,.-aesni_ccm64_decrypt_blocks
 ___
-}
+}
+
 ######################################################################
 # void aesni_ctr32_encrypt_blocks (const void *in, void *out,
 #                         size_t blocks, const AES_KEY *key,
@@ -1025,6 +1027,7 @@ $code.=<<___;
 .type	aesni_ctr32_encrypt_blocks,\@function,5
 .align	16
 aesni_ctr32_encrypt_blocks:
+	endbr64
 	lea	(%rsp),%rax
 	push	%rbp
 	sub	\$$frame_size,%rsp
@@ -1299,7 +1302,7 @@ $code.=<<___;
 .size	aesni_ctr32_encrypt_blocks,.-aesni_ctr32_encrypt_blocks
 ___
 }
-
+
 ######################################################################
 # void aesni_xts_[en|de]crypt(const char *inp,char *out,size_t len,
 #	const AES_KEY *key1, const AES_KEY *key2
@@ -2135,7 +2138,7 @@ $code.=<<___;
 .size	aesni_xts_decrypt,.-aesni_xts_decrypt
 ___
 } }}
-
+
 ########################################################################
 # void $PREFIX_cbc_encrypt (const void *inp, void *out,
 #			    size_t length, const AES_KEY *key,
@@ -2194,7 +2197,8 @@ $code.=<<___;
 	mov	$key_,$key	# restore $key
 	xor	$len,$len	# len=16
 	jmp	.Lcbc_enc_loop	# one more spin
-#--------------------------- CBC DECRYPT ------------------------------#
+
+#--------------------------- CBC DECRYPT ------------------------------#
 .align	16
 .Lcbc_decrypt:
 	lea	(%rsp),%rax
@@ -2475,7 +2479,8 @@ $code.=<<___;
 	ret
 .size	${PREFIX}_cbc_encrypt,.-${PREFIX}_cbc_encrypt
 ___
-} 
+}
+
 # int $PREFIX_set_[en|de]crypt_key (const unsigned char *userKey,
 #				int bits, AES_KEY *key)
 { my ($inp,$bits,$key) = @_4args;
@@ -2522,7 +2527,7 @@ ${PREFIX}_set_decrypt_key:
 .LSEH_end_set_decrypt_key:
 .size	${PREFIX}_set_decrypt_key,.-${PREFIX}_set_decrypt_key
 ___
-
+
 # This is based on submission by
 #
 #	Huang Ying <ying.huang@intel.com>
@@ -2655,7 +2660,7 @@ __aesni_set_encrypt_key:
 	add	\$8,%rsp
 	ret
 .LSEH_end_set_encrypt_key:
-
+
 .align	16
 .Lkey_expansion_128:
 	$movkey	%xmm0,(%rax)
@@ -2728,7 +2733,7 @@ __aesni_set_encrypt_key:
 .size	__aesni_set_encrypt_key,.-__aesni_set_encrypt_key
 ___
 }
-
+
 $code.=<<___;
 .section .rodata
 .align	64
