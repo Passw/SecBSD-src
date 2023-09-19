@@ -123,7 +123,7 @@ print_header(void)
 		    "%s (%u-%u of %u) %s", uloadbuf, start, end, num_disp,
 		    paused ? "PAUSED" : "");
 	else
-		snprintf(tmpbuf, sizeof(tmpbuf), 
+		snprintf(tmpbuf, sizeof(tmpbuf),
 		    "%s %s", uloadbuf,
 		    paused ? "PAUSED" : "");
 

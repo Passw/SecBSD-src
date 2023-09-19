@@ -32,7 +32,7 @@
 /*  IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED */
 /*  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR */
 /*  PURPOSE. */
-
+
 #include "options.h"
 
 /* Be sure to synchronize these options with those defined in "options.h",

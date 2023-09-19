@@ -445,7 +445,7 @@ void fldbld(void)	/* create fields from current record */
 				}
 				if (*r++ == 0)
 					break;
-	
+
 			}
 		}
 		*fr = 0;

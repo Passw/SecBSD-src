@@ -293,7 +293,7 @@ keep(char *ptr)
 		else
 			kept_capacity = 50;
 		kept = xreallocarray(kept, kept_capacity,
-		    sizeof(char *), "Out of memory while saving %d strings\n", 
+		    sizeof(char *), "Out of memory while saving %d strings\n",
 		    kept_capacity);
 	}
 	kept[kept_size++] = ptr;

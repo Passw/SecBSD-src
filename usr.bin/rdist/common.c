@@ -270,7 +270,7 @@ sendcmdmsg(int cmd, char *msg, size_t msgsize)
 	}
 
 	debugmsg(DM_PROTO, ">>> Cmd = %c (\\%3.3o) Msg = \"%.*s\"",
-		 cmd, cmd, 
+		 cmd, cmd,
 		 (cmd == C_NONE) ? len-1 : len-2,
 		 (cmd == C_NONE) ? msg : msg + 1);
 

@@ -488,7 +488,7 @@ add_targets_to_make(Lst todo)
 		if (gn->children_left != 0) {
 			if (DEBUG(MAKE))
 				printf("%s: not queuing (%d child%s left to build)\n",
-				    gn->name, gn->children_left, 
+				    gn->name, gn->children_left,
 				    gn->children_left > 1 ? "ren" : "");
 			Lst_ForEach(&gn->children, MakeAddChild,
 			    &examine);

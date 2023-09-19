@@ -712,7 +712,7 @@ int u8_byte2char(const char *s, int bytenum)
 {
 	int i, len, b;
 	int charnum = 0; /* BUG: what origin? */
-	/* should be 0 to match start==0 which means no match */	
+	/* should be 0 to match start==0 which means no match */
 
 	b = strlen(s);
 	if (bytenum > b) {
@@ -757,13 +757,13 @@ enum
 };
 
 int runetochar(char *str, int c)
-{	
-	/* one character sequence 00000-0007F => 00-7F */     
+{
+	/* one character sequence 00000-0007F => 00-7F */
 	if (c <= Rune1) {
 		str[0] = c;
 		return 1;
 	}
-	
+
 	/* two character sequence 00080-007FF => T2 Tx */
 	if (c <= Rune2) {
 		str[0] = T2 | (c >> 1*Bitx);
@@ -780,14 +780,14 @@ int runetochar(char *str, int c)
 		str[2] = Tx |  (c & Maskx);
 		return 3;
 	}
-	
+
 	/* four character sequence 010000-1FFFFF => T4 Tx Tx Tx */
 	str[0] = T4 |  (c >> 3*Bitx);
 	str[1] = Tx | ((c >> 2*Bitx) & Maskx);
 	str[2] = Tx | ((c >> 1*Bitx) & Maskx);
 	str[3] = Tx |  (c & Maskx);
 	return 4;
-}               
+}
 
 
 /* ========== end of utf8 code =========== */
@@ -1247,7 +1247,7 @@ int format(char **pbuf, int *pbufsize, const char *s, Node *a)	/* printf-like co
 				prec = u8_strlen(t);
 			pad = wid>prec ? wid - prec : 0;  // has to be >= 0
 			int i, k, n;
-			
+
 			if (ljust) { // print prec chars from t, then pad blanks
 				n = u8_char2byte(t, prec);
 				for (k = 0; k < n; k++) {

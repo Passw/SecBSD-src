@@ -523,7 +523,7 @@ rmchk(opt_t opts)
 			}
 			(void) snprintf(ptarget,
 					sizeof(target) - (ptarget - target),
-					"%s%s", 
+					"%s%s",
 				        (ptarget[-1] == '/' ? "" : "/"),
 				        targ);
 			debugmsg(DM_MISC, "check %s\n", target);

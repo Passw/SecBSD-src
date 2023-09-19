@@ -127,7 +127,7 @@ sub link
 
 	my @libobjects = values %$libs;
 	tsay {"libs:\n", join("\n", (keys %$libs))};
-	tsay {"libfiles:\n", 
+	tsay {"libfiles:\n",
 	    join("\n", map { $_->{fullpath}//'UNDEF' } @libobjects) };
 
 	$linker->create_symlinks($symlinkdir, $libs);
