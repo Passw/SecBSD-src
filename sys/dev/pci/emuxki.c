@@ -32,7 +32,7 @@
 
 /*
  * Driver for Creative Labs SBLive! series and probably PCI512.
- * 
+ *
  * Known bugs:
  * - inversed stereo at ac97 codec level
  *   (XXX jdolecek - don't see the problem? maybe because auvia(4) has
@@ -297,7 +297,7 @@ emuxki_dmamem_alloc(bus_dma_tag_t dmat, size_t size, bus_size_t align,
 		return (NULL);
 	}
 
-	if (bus_dmamap_load(dmat, mem->map, mem->kaddr, 
+	if (bus_dmamap_load(dmat, mem->map, mem->kaddr,
 			    mem->size, NULL, bus_dma_flags)) {
 		bus_dmamap_destroy(dmat, mem->map);
 		bus_dmamem_unmap(dmat, mem->kaddr, mem->size);
@@ -849,7 +849,7 @@ emuxki_init(struct emuxki_softc *sc, int resuming)
                 emuxki_write(sc, 0, EMU_A2_SPDIF_SAMPLERATE, EMU_A2_SPDIF_UNKNOWN);
 
                 bus_space_write_4(sc->sc_iot, sc->sc_ioh, EMU_A2_PTR, EMU_A2_SRCSEL);
-                bus_space_write_4(sc->sc_iot, sc->sc_ioh, EMU_A2_DATA, 
+                bus_space_write_4(sc->sc_iot, sc->sc_ioh, EMU_A2_DATA,
                         EMU_A2_SRCSEL_ENABLE_SPDIF | EMU_A2_SRCSEL_ENABLE_SRCMULTI);
 
                 bus_space_write_4(sc->sc_iot, sc->sc_ioh, EMU_A2_PTR, EMU_A2_SRCMULTI);
@@ -1204,7 +1204,7 @@ emuxki_channel_commit_fx(struct emuxki_channel *chan)
 {
 	struct emuxki_softc *sc = chan->voice->sc;
         u_int8_t	chano = chan->num;
-        
+
         if (sc->sc_flags & EMUXKI_AUDIGY) {
                 emuxki_write(sc, chano, EMU_A_CHAN_FXRT1,
                               (chan->fxsend.d.dest << 24) |
@@ -1228,7 +1228,7 @@ emuxki_channel_commit_fx(struct emuxki_channel *chan)
                               (chan->fxsend.b.dest << 20) |
                               (chan->fxsend.a.dest << 16));
         }
-        
+
         emuxki_write(sc, chano, 0x10000000 | EMU_CHAN_PTRX,
                       (chan->fxsend.a.level << 8) | chan->fxsend.b.level);
         emuxki_write(sc, chano, EMU_CHAN_DSL,
@@ -1474,7 +1474,7 @@ emuxki_voice_new(struct emuxki_softc *sc, u_int8_t use)
 	if (!voice) {
 		if (!(voice = malloc(sizeof(*voice), M_DEVBUF, M_WAITOK)))
 			return (NULL);
-	} else if (voice->use != use) 
+	} else if (voice->use != use)
 		emuxki_voice_dataloc_destroy(voice);
 	else
 		goto skip_initialize;
@@ -1563,7 +1563,7 @@ emuxki_voice_set_stereo(struct emuxki_voice *voice, u_int8_t stereo)
 			fxsend.f.level = fxsend.h.level = 0xc0;
 			emuxki_channel_set_fxsend(voice->dataloc.chan[1],
 						   &fxsend);
-		} /* No else : default is good for mono */	
+		} /* No else : default is good for mono */
 	}
 	return (0);
 }
@@ -1623,10 +1623,10 @@ emuxki_voice_set_audioparms(struct emuxki_voice *voice, u_int8_t stereo,
 	       (voice->use & EMU_VOICE_USE_PLAY) ? "play" : "record",
 	       stereo ? "stereo" : "mono", (b16 + 1) * 8, srate);
 #endif
-	
+
 	voice->b16 = b16;
 
-	/* sample rate must be set after any channel number changes */ 
+	/* sample rate must be set after any channel number changes */
 	if ((voice->stereo != stereo) || (voice->sample_rate != srate)) {
 		if (voice->stereo != stereo) {
 			if ((error = emuxki_voice_set_stereo(voice, stereo)))
@@ -2222,7 +2222,7 @@ emuxki_round_blocksize(void *addr, int blksize)
 
 	return bufsize;
 }
-	
+
 size_t
 emuxki_round_buffersize(void *addr, int direction, size_t bsize)
 {

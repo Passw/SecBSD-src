@@ -459,7 +459,7 @@ const struct ahc_pci_identity ahc_pci_ident_table [] =
 		ID_ALL_MASK,
 		ahc_aic7892_setup
 	},
-	/* aic7895 based controllers */	
+	/* aic7895 based controllers */
 	{
 		ID_AHA_2940U_DUAL,
 		ID_ALL_MASK,
@@ -480,7 +480,7 @@ const struct ahc_pci_identity ahc_pci_ident_table [] =
 		ID_AIC7895_ARO_MASK,
 		ahc_aic7895_setup
 	},
-	/* aic7896/97 based controllers */	
+	/* aic7896/97 based controllers */
 	{
 		ID_AHA_3950U2B_0,
 		ID_ALL_MASK,
@@ -506,7 +506,7 @@ const struct ahc_pci_identity ahc_pci_ident_table [] =
 		ID_ALL_MASK,
 		ahc_aic7896_setup
 	},
-	/* aic7899 based controllers */	
+	/* aic7899 based controllers */
 	{
 		ID_AHA_3960D,
 		ID_ALL_MASK,
@@ -665,7 +665,7 @@ ahc_find_pci_device(pcireg_t id, pcireg_t subid, u_int func)
 	 * ID as valid.
 	 */
 	if (func > 0
-	    && ahc_9005_subdevinfo_valid(PCI_VENDOR(id), PCI_PRODUCT(id), 
+	    && ahc_9005_subdevinfo_valid(PCI_VENDOR(id), PCI_PRODUCT(id),
 					 PCI_VENDOR(subid), PCI_PRODUCT(subid))
 	    && SUBID_9005_MFUNCENB(PCI_PRODUCT(subid)) == 0)
 		return (NULL);
@@ -834,7 +834,7 @@ ahc_pci_attach(struct device *parent, struct device *self, void *aux)
 			       ahc_name(ahc));
 		devconfig |= DACEN;
 	}
-	
+
 	/* Ensure that pci error generation, a test feature, is disabled. */
 	devconfig |= PCIERRGENDIS;
 
@@ -963,7 +963,7 @@ ahc_pci_attach(struct device *parent, struct device *self, void *aux)
 	    M_NOWAIT | M_ZERO);
 	if (ahc->seep_config == NULL)
 		goto error_out;
-	
+
 	/* See if we have a SEEPROM and perform auto-term */
 	ahc_check_extport(ahc, &sxfrctl1);
 
@@ -1208,7 +1208,7 @@ ahc_probe_ext_scbram(struct ahc_softc *ahc)
 	fast = FALSE;
 	large = FALSE;
 	num_scbs = 0;
-	
+
 	if (ahc_ext_scbram_present(ahc) == 0)
 		goto done;
 
@@ -1283,7 +1283,7 @@ done:
 	ahc_outb(ahc, CLRINT, CLRBRKADRINT);
 	if (1/*bootverbose*/ && enable) {
 		printf("%s: External SRAM, %s access%s, %dbytes/SCB\n",
-		       ahc_name(ahc), fast ? "fast" : "slow", 
+		       ahc_name(ahc), fast ? "fast" : "slow",
 		       pcheck ? ", parity checking enabled" : "",
 		       large ? 64 : 32);
 	}
@@ -1402,7 +1402,7 @@ ahc_pci_intr(struct ahc_softc *ahc)
 
 	if ((status1 & (DPE|SSE|RMA|RTA|STA|DPR)) == 0) {
 		printf("%s: Latched PCIERR interrupt with "
-		       "no status bits set\n", ahc_name(ahc)); 
+		       "no status bits set\n", ahc_name(ahc));
 	} else {
 		ahc_outb(ahc, CLRINT, CLRPARERR);
 	}

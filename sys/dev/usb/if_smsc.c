@@ -28,7 +28,7 @@
 
 /*
  * SMSC LAN9xxx devices (http://www.smsc.com/)
- * 
+ *
  * The LAN9500 & LAN9500A devices are stand-alone USB to Ethernet chips that
  * support USB 2.0 and 10/100 Mbps Ethernet.
  *
@@ -42,7 +42,7 @@
  * H/W TCP & UDP Checksum Offloading
  * ---------------------------------
  * The chip supports both tx and rx offloading of UDP & TCP checksums, this
- * feature can be dynamically enabled/disabled.  
+ * feature can be dynamically enabled/disabled.
  *
  * RX checksumming is performed across bytes after the IPv4 header to the end of
  * the Ethernet frame, this means if the frame is padded with non-zero values
@@ -195,7 +195,7 @@ smsc_enaddr_OF(struct smsc_softc *sc)
 	 * much more complicated than strictly needed since the
 	 * firmware device tree keeps changing as drivers get
 	 * upstreamed.  Sigh.
-	 * 
+	 *
 	 * Ultimately this should just use the "ethernet0" alias and
 	 * the "local-mac-address" property.
 	 */
@@ -236,7 +236,7 @@ smsc_read_reg(struct smsc_softc *sc, uint32_t off, uint32_t *data)
 		smsc_warn_printf(sc, "Failed to read register 0x%0x\n", off);
 
 	*data = letoh32(buf);
-	
+
 	return (err);
 }
 
@@ -367,14 +367,14 @@ smsc_miibus_statchg(struct device *dev)
 		smsc_dbg_printf(sc, "link flag not set\n");
 		return;
 	}
-	
+
 	err = smsc_read_reg(sc, SMSC_AFC_CFG, &afc_cfg);
 	if (err) {
 		smsc_warn_printf(sc, "failed to read initial AFC_CFG, "
 		    "error %d\n", err);
 		return;
 	}
-	
+
 	/* Enable/disable full duplex operation and TX/RX pause */
 	if ((IFM_OPTIONS(mii->mii_media_active) & IFM_FDX) != 0) {
 		smsc_dbg_printf(sc, "full duplex operation\n");
@@ -385,17 +385,17 @@ smsc_miibus_statchg(struct device *dev)
 			flow = 0xffff0002;
 		else
 			flow = 0;
-			
+
 		if ((IFM_OPTIONS(mii->mii_media_active) & IFM_ETH_TXPAUSE) != 0)
 			afc_cfg |= 0xf;
 		else
 			afc_cfg &= ~0xf;
-		
+
 	} else {
 		smsc_dbg_printf(sc, "half duplex operation\n");
 		sc->sc_mac_csr &= ~SMSC_MAC_CSR_FDPX;
 		sc->sc_mac_csr |= SMSC_MAC_CSR_RCVOWN;
-		
+
 		flow = 0;
 		afc_cfg |= 0xf;
 	}
@@ -431,7 +431,7 @@ smsc_ifmedia_sts(struct ifnet *ifp, struct ifmediareq *ifmr)
 	struct mii_data *mii = &sc->sc_mii;
 
 	mii_pollstat(mii);
-	
+
 	ifmr->ifm_active = mii->mii_media_active;
 	ifmr->ifm_status = mii->mii_media_status;
 }
@@ -541,10 +541,10 @@ smsc_setmacaddress(struct smsc_softc *sc, const uint8_t *addr)
 	val = (addr[3] << 24) | (addr[2] << 16) | (addr[1] << 8) | addr[0];
 	if ((err = smsc_write_reg(sc, SMSC_MAC_ADDRL, val)) != 0)
 		goto done;
-		
+
 	val = (addr[5] << 8) | addr[4];
 	err = smsc_write_reg(sc, SMSC_MAC_ADDRH, val);
-	
+
 done:
 	return (err);
 }
@@ -570,7 +570,7 @@ smsc_init(void *xsc)
 	struct smsc_chain	*c;
 	usbd_status		 err;
 	int			 s, i;
-	
+
 	s = splnet();
 
 	/* Cancel pending I/O */
@@ -853,7 +853,7 @@ smsc_chip_init(struct smsc_softc *sc)
 	}
 
 	/* GPIO/LED setup */
-	reg_val = SMSC_LED_GPIO_CFG_SPD_LED | SMSC_LED_GPIO_CFG_LNK_LED | 
+	reg_val = SMSC_LED_GPIO_CFG_SPD_LED | SMSC_LED_GPIO_CFG_LNK_LED |
 	          SMSC_LED_GPIO_CFG_FDX_LED;
 	smsc_write_reg(sc, SMSC_LED_GPIO_CFG, reg_val);
 
@@ -869,7 +869,7 @@ smsc_chip_init(struct smsc_softc *sc)
 		smsc_warn_printf(sc, "failed to read MAC_CSR (err=%d)\n", err);
 		goto init_failed;
 	}
-	
+
 	/* Vlan */
 	smsc_write_reg(sc, SMSC_VLAN1, (uint32_t)ETHERTYPE_VLAN);
 
@@ -887,7 +887,7 @@ smsc_chip_init(struct smsc_softc *sc)
 	smsc_write_reg(sc, SMSC_MAC_CSR, sc->sc_mac_csr);
 
 	return (0);
-	
+
 init_failed:
 	smsc_err_printf(sc, "smsc_chip_init failed (err=%d)\n", err);
 	return (err);
@@ -1020,7 +1020,7 @@ smsc_attach(struct device *parent, struct device *self, void *aux)
 	 * address based on urandom.
 	 */
 	memset(sc->sc_ac.ac_enaddr, 0xff, ETHER_ADDR_LEN);
-	
+
 	/* Check if there is already a MAC address in the register */
 	if ((smsc_read_reg(sc, SMSC_MAC_ADDRL, &mac_l) == 0) &&
 	    (smsc_read_reg(sc, SMSC_MAC_ADDRH, &mac_h) == 0)) {
@@ -1033,10 +1033,10 @@ smsc_attach(struct device *parent, struct device *self, void *aux)
 	}
 
 	smsc_enaddr_OF(sc);
-	
+
 	printf("%s: address %s\n", sc->sc_dev.dv_xname,
 	    ether_sprintf(sc->sc_ac.ac_enaddr));
-	
+
 	/* Initialise the chip for the first time */
 	smsc_chip_init(sc);
 
@@ -1231,7 +1231,7 @@ smsc_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 			total_len = 0;
 		else
 			total_len -= pktlen;
-		
+
 		m = m_devget(buf, pktlen, ETHER_ALIGN);
 		if (m == NULL) {
 			smsc_dbg_printf(sc, "m_devget returned NULL\n");
@@ -1373,15 +1373,15 @@ smsc_encap(struct smsc_softc *sc, struct mbuf *m, int idx)
 	 * Each frame is prefixed with two 32-bit values describing the
 	 * length of the packet and buffer.
 	 */
-	txhdr = SMSC_TX_CTRL_0_BUF_SIZE(m->m_pkthdr.len) | 
+	txhdr = SMSC_TX_CTRL_0_BUF_SIZE(m->m_pkthdr.len) |
 			SMSC_TX_CTRL_0_FIRST_SEG | SMSC_TX_CTRL_0_LAST_SEG;
 	txhdr = htole32(txhdr);
 	memcpy(c->sc_buf, &txhdr, sizeof(txhdr));
-	
+
 	txhdr = SMSC_TX_CTRL_1_PKT_LENGTH(m->m_pkthdr.len);
 	txhdr = htole32(txhdr);
 	memcpy(c->sc_buf + 4, &txhdr, sizeof(txhdr));
-	
+
 	frm_len += 8;
 
 	/* Next copy in the actual packet */

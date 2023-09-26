@@ -115,7 +115,7 @@ diff_write_commit(const char* zone, uint32_t old_serial, uint32_t new_serial,
 			zone, strerror(errno));
 	}
 
-	/* overwrite the first part of the file with 'committed = 1', 
+	/* overwrite the first part of the file with 'committed = 1',
 	 * as well as the end_time and number of parts.
 	 * also write old_serial and new_serial, so that a bad file mixup
 	 * will result in unusable serial numbers. */
@@ -586,7 +586,7 @@ static void
 nsec3_add_rr_trigger(namedb_type* db, rr_type* rr, zone_type* zone,
 	udb_ptr* udbz)
 {
-	/* the RR has been added in full, also to UDB (and thus NSEC3PARAM 
+	/* the RR has been added in full, also to UDB (and thus NSEC3PARAM
 	 * in the udb has been adjusted) */
 	if(zone->nsec3_param && rr->type == TYPE_NSEC3 &&
 		(!rr->owner->nsec3 || !rr->owner->nsec3->nsec3_node.key)
@@ -873,7 +873,7 @@ add_RR(namedb_type* db, const dname_type* dname,
 			assert(zone->nsec3_param >= rrs_old &&
 				zone->nsec3_param < rrs_old+rrset->rr_count);
 			/* in this order to make sure no overflow/underflow*/
-			zone->nsec3_param = (void*)zone->nsec3_param - 
+			zone->nsec3_param = (void*)zone->nsec3_param -
 				(void*)rrs_old + (void*)rrset->rrs;
 		}
 #endif /* NSEC3 */
@@ -890,7 +890,7 @@ add_RR(namedb_type* db, const dname_type* dname,
 	if(rrset_added) {
 		domain_type* p = domain->parent;
 		nsec3_add_rrset_trigger(db, domain, zone, type);
-		/* go up and process (possibly created) empty nonterminals, 
+		/* go up and process (possibly created) empty nonterminals,
 		 * until we hit the apex or root */
 		while(p && p->rrsets == NULL && !p->is_apex) {
 			nsec3_rrsets_changed_add_prehash(db, p, zone);

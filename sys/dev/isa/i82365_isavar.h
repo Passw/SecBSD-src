@@ -34,7 +34,7 @@
 extern char pcic_isa_intr_list[];
 extern int npcic_isa_intr_list;
 
-/* 
+/*
  * Establish/disestablish interrupts for PCMCIA functions.
  */
 

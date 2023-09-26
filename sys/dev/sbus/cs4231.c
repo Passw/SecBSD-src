@@ -183,7 +183,7 @@ cs4231_match(struct device *parent, void *vcf, void *aux)
 	return (strcmp("SUNW,CS4231", sa->sa_name) == 0);
 }
 
-void    
+void
 cs4231_attach(struct device *parent, struct device *self, void *aux)
 {
 	struct sbus_attach_args *sa = aux;

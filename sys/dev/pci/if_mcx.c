@@ -3996,7 +3996,7 @@ mcx_hca_max_caps(struct mcx_softc *sc)
 	 */
 	sc->sc_bf_size = (1 << hca->log_bf_reg_size) / 2;
 	sc->sc_max_rqt_size = (1 << hca->log_max_rqt_size);
-	
+
 	if (hca->local_ca_ack_delay & MCX_CAP_DEVICE_MCAM_REG)
 		sc->sc_mcam_reg = 1;
 

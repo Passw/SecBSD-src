@@ -174,7 +174,7 @@ send_packet(struct eigrp_iface *ei, struct nbr *nbr, uint32_t flags,
 	}
 	if (flags)
 		eigrp_hdr->flags |= htonl(flags);
-	
+
 	eigrp_hdr->chksum = 0;
 	eigrp_hdr->chksum = in_cksum(ibuf_data(buf), ibuf_size(buf));
 

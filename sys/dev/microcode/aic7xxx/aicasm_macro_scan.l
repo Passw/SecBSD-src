@@ -2,7 +2,7 @@
 /*
 /*	$OpenBSD: aicasm_macro_scan.l,v 1.4 2004/09/18 19:51:53 mickey Exp $	*/
 /*
- * Sub-Lexical Analyzer for macro invokation in 
+ * Sub-Lexical Analyzer for macro invokation in
  * the Aic7xxx SCSI Host adapter sequencer assembler.
  *
  * Copyright (c) 2001 Adaptec Inc.
@@ -144,7 +144,7 @@ MCARG		[^(), \t]+
 				BEGIN ARGLIST;
 				return T_SYMBOL;
 			}
-.			{ 
+.			{
 				snprintf(buf, sizeof(buf), "Invalid character "
 					 "'%c'", mmtext[0]);
 				stop(buf, EX_DATAERR);

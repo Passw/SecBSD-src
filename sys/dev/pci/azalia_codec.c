@@ -1581,7 +1581,7 @@ azalia_mixer_default(codec_t *this)
 		break;
  	}
 	this->playvols.mute = 0;
- 
+
 	/* get default value for record group master */
 	for (i = 0; i < this->recvols.nslaves; i++) {
 		if (!(this->recvols.cur & (1 << i)))
@@ -2574,7 +2574,7 @@ azalia_ampcap_ov(widget_t *w, int type, int offset, int steps, int size,
 
 	cap = (offset & 0x7f) | ((steps & 0x7f) << 8) |
 	    ((size & 0x7f) << 16) | ((ctloff & 0x7f) << 24) |
-	    (mute ? COP_AMPCAP_MUTE : 0);  
+	    (mute ? COP_AMPCAP_MUTE : 0);
 
 	if (type == COP_OUTPUT_AMPCAP) {
 		w->outamp_cap = cap;

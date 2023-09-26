@@ -105,7 +105,7 @@ asc_tc_match(parent, cfdata, aux)
 	void *cfdata, *aux;
 {
 	struct tc_attach_args *d = aux;
-	
+
 	if (strncmp("PMAZ-AA ", d->ta_modname, TC_ROM_LLEN))
 		return (0);
 
@@ -118,7 +118,7 @@ asc_tc_attach(parent, self, aux)
 	void *aux;
 {
 	struct tc_attach_args *ta = aux;
-	struct asc_tc_softc *asc = (struct asc_tc_softc *)self;	
+	struct asc_tc_softc *asc = (struct asc_tc_softc *)self;
 	struct ncr53c9x_softc *sc = &asc->asc.sc_ncr53c9x;
 
 	/*
@@ -136,7 +136,7 @@ asc_tc_attach(parent, self, aux)
 
 	tc_intr_establish(parent, ta->ta_cookie, IPL_BIO, ncr53c9x_intr, sc,
 	    self->dv_xname);
-	
+
 	sc->sc_id = 7;
 	sc->sc_freq = TC_SPEED_TO_KHZ(ta->ta_busspeed);	/* in kHz so far */
 

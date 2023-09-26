@@ -223,9 +223,9 @@ fxp_pci_attach(struct device *parent, struct device *self, void *aux)
 	 * killing people's eeproms.
 	 */
 	if ((PCI_VENDOR(pa->pa_id) == PCI_VENDOR_INTEL) &&
-	    (PCI_PRODUCT(pa->pa_id) == 0x2449 || 
-	    (PCI_PRODUCT(pa->pa_id) > 0x1030 && 
-	    PCI_PRODUCT(pa->pa_id) < 0x1039) || 
+	    (PCI_PRODUCT(pa->pa_id) == 0x2449 ||
+	    (PCI_PRODUCT(pa->pa_id) > 0x1030 &&
+	    PCI_PRODUCT(pa->pa_id) < 0x1039) ||
 	    (PCI_PRODUCT(pa->pa_id) == 0x1229 &&
 	    (sc->sc_revision >= 8 && sc->sc_revision <= 16))))
 		sc->sc_flags |= FXPF_DISABLE_STANDBY;

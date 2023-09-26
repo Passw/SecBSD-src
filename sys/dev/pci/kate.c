@@ -47,7 +47,7 @@
 
 
 /*
- * Revision Guide for AMD NPT Family 0Fh Processors, 
+ * Revision Guide for AMD NPT Family 0Fh Processors,
  * Publication # 33610, Revision 3.30, February 2008
  */
 static const struct {
@@ -105,7 +105,7 @@ kate_match(struct device *parent, void *match, void *aux)
 		return 0;
 
 	/*
-	 * First, let's probe for chips at or after Revision F, which is 
+	 * First, let's probe for chips at or after Revision F, which is
 	 * when the temperature readings were officially introduced.
 	 */
 	c = pci_conf_read(pa->pa_pc, pa->pa_tag, K_CPUID_FAMILY_MODEL_R);

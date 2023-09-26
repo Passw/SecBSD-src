@@ -81,7 +81,7 @@ hmematch_pci(struct device *parent, void *vcf, void *aux)
 {
 	struct pci_attach_args *pa = aux;
 
-	if (PCI_VENDOR(pa->pa_id) == PCI_VENDOR_SUN && 
+	if (PCI_VENDOR(pa->pa_id) == PCI_VENDOR_SUN &&
 	    PCI_PRODUCT(pa->pa_id) == PCI_PRODUCT_SUN_HME)
 		return (1);
 
@@ -280,7 +280,7 @@ hmeattach_pci(struct device *parent, struct device *self, void *aux)
 		printf(": couldn't map interrupt\n");
 		bus_space_unmap(hsc->hsc_memt, hsc->hsc_memh, hsc->hsc_memsize);
 		return;
-	}	
+	}
 	intrstr = pci_intr_string(pa->pa_pc, ih);
 	hsc->hsc_ih = pci_intr_establish(pa->pa_pc, ih, IPL_NET,
 	    hme_intr, sc, self->dv_xname);

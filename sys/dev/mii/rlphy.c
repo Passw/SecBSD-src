@@ -273,7 +273,7 @@ rlphy_status(struct mii_softc *sc)
 		/*
 		 * If the other side doesn't support NWAY, then the
 		 * best we can do is determine if we have a 10Mbps or
-		 * 100Mbps link. There's no way to know if the link 
+		 * 100Mbps link. There's no way to know if the link
 		 * is full or half duplex, so we default to half duplex
 		 * and hope that the user is clever enough to manually
 		 * change the media settings if we're wrong.

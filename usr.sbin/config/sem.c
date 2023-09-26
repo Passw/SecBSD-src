@@ -1096,7 +1096,7 @@ fixloc(const char *name, struct attr *attr, struct nvlist *got)
 	if (attr->a_loclen == 0)	/* e.g., "at root" */
 		lp = nullvec;
 	else
-		lp = ereallocarray(NULL, attr->a_loclen + 1, 
+		lp = ereallocarray(NULL, attr->a_loclen + 1,
 		    sizeof(const char *));
 	for (n = got; n != NULL; n = n->nv_next)
 		n->nv_int = -1;

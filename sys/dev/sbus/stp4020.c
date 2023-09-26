@@ -705,7 +705,7 @@ stp4020_chip_socket_enable(pcmcia_chipset_handle_t pch)
 	/*
 	 * hold RESET at least 20us.
 	 */
-	stp4020_wr_sockctl(h, STP4020_ICR0_IDX, 
+	stp4020_wr_sockctl(h, STP4020_ICR0_IDX,
 	    stp4020_rd_sockctl(h, STP4020_ICR0_IDX) | STP4020_ICR0_RESET);
 	delay(20);
 	stp4020_wr_sockctl(h, STP4020_ICR0_IDX,

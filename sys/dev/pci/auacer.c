@@ -140,9 +140,9 @@ struct cfdriver auacer_cd = {
 };
 
 int	auacer_match(struct device *, void *, void *);
-void	auacer_attach(struct device *, struct device *, void *); 
+void	auacer_attach(struct device *, struct device *, void *);
 int	auacer_activate(struct device *, int);
-int	auacer_intr(void *); 
+int	auacer_intr(void *);
 
 const struct cfattach auacer_ca = {
         sizeof(struct auacer_softc), auacer_match, auacer_attach, NULL,
@@ -646,7 +646,7 @@ auacer_add_entry(struct auacer_chan *chan)
 	chan->p += chan->blksize;
 	if (chan->p >= chan->end)
 		chan->p = chan->start;
-	
+
 	if (++chan->ptr >= ALI_DMALIST_MAX)
 		chan->ptr = 0;
 }
@@ -670,9 +670,9 @@ auacer_upd_chan(struct auacer_softc *sc, struct auacer_chan *chan)
 	}
 
 	civ = READ1(sc, chan->port + ALI_OFF_CIV);
-	
+
 	DPRINTF(ALI_DEBUG_INTR,("auacer_intr: civ=%u ptr=%u\n",civ,chan->ptr));
-			
+
 	/* XXX */
 	while (chan->ptr != civ) {
 		auacer_add_entry(chan);

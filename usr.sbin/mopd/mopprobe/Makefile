@@ -5,7 +5,7 @@ SRCS=	mopprobe.c device.c get.c cmp.c mopdef.c version.c pf.c loop-bsd.c \
 	print.c nma.c
 CFLAGS+= -I${.CURDIR} -I${.CURDIR}/.. -I${.CURDIR}/../common -DNODL
 CLEANFILES= version.c version.h
-.PATH:	${.CURDIR}/../common 
+.PATH:	${.CURDIR}/../common
 
 version.c version.h: ${.CURDIR}/../common/VERSION
 	rm -f version.c; \

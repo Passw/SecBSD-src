@@ -84,11 +84,11 @@ const struct mue_type mue_devs[] = {
 int	mue_match(struct device *, void *, void *);
 void	mue_attach(struct device *, struct device *, void *);
 int	mue_detach(struct device *, int);
- 
+
 struct cfdriver mue_cd = {
 	NULL, "mue", DV_IFNET
 };
-	  
+
 const struct cfattach mue_ca = {
 	sizeof(struct mue_softc), mue_match, mue_attach, mue_detach
 };
@@ -226,7 +226,7 @@ mue_csr_write(struct mue_softc *sc, uint32_t reg, uint32_t aval)
 	return (0);
 }
 
-/* 
+/*
  * Get exclusive access to the MII registers.
  */
 void
@@ -250,7 +250,7 @@ mue_unlock_mii(struct mue_softc *sc)
 int
 mue_mii_wait(struct mue_softc *sc)
 {
-	int ntries;	
+	int ntries;
 
 	for (ntries = 0; ntries < 100; ntries++) {
 		if (!(mue_csr_read(sc, MUE_MII_ACCESS) & MUE_MII_ACCESS_BUSY))
@@ -258,7 +258,7 @@ mue_mii_wait(struct mue_softc *sc)
 		DELAY(5);
 	}
 
-	printf("%s: MII timed out\n", sc->mue_dev.dv_xname); 
+	printf("%s: MII timed out\n", sc->mue_dev.dv_xname);
 	return (1);
 }
 
@@ -423,7 +423,7 @@ int
 mue_eeprom_wait(struct mue_softc *sc)
 {
 	uint32_t val;
-	int ntries;	
+	int ntries;
 
 	for (ntries = 0; ntries < 100; ntries++) {
 		val = mue_csr_read(sc, MUE_E2P_CMD);
@@ -449,7 +449,7 @@ mue_eeprom_getbyte(struct mue_softc *sc, int addr, uint8_t *dest)
 
 	if (ntries == 100) {
 		printf("%s: EEPROM failed to come ready\n",
-		    sc->mue_dev.dv_xname); 
+		    sc->mue_dev.dv_xname);
 		return (ETIMEDOUT);
 	}
 
@@ -474,7 +474,7 @@ mue_read_eeprom(struct mue_softc *sc, caddr_t dest, int off, int cnt)
 	uint8_t byte = 0;
 	int i, err = 0;
 
-	/* 
+	/*
 	 * EEPROM pins are muxed with the LED function on LAN7800 device.
 	 */
 	val = mue_csr_read(sc, MUE_HW_CFG);
@@ -496,10 +496,10 @@ mue_read_eeprom(struct mue_softc *sc, caddr_t dest, int off, int cnt)
 	return (err ? 1 : 0);
 }
 
-int             
+int
 mue_dataport_wait(struct mue_softc *sc)
 {
-	int ntries;	
+	int ntries;
 
 	for (ntries = 0; ntries < 100; ntries++) {
 		if (mue_csr_read(sc, MUE_DP_SEL) & MUE_DP_SEL_DPRDY)
@@ -507,7 +507,7 @@ mue_dataport_wait(struct mue_softc *sc)
 		DELAY(5);
 	}
 
-	printf("%s: dataport timed out\n", sc->mue_dev.dv_xname); 
+	printf("%s: dataport timed out\n", sc->mue_dev.dv_xname);
 	return (1);
 }
 
@@ -619,7 +619,7 @@ mue_chip_init(struct mue_softc *sc)
 	mue_csr_write(sc, (sc->mue_flags & LAN7500) ?
 	    MUE_FCT_FLOW : MUE_7800_FCT_FLOW, 0);
 	mue_csr_write(sc, MUE_FLOW, 0);
- 
+
 	/* Reset PHY. */
 	MUE_SETBIT(sc, MUE_PMT_CTL, MUE_PMT_CTL_PHY_RST);
 	for (ntries = 0; ntries < 100; ntries++) {
@@ -683,7 +683,7 @@ mue_set_macaddr(struct mue_softc *sc)
 	mue_csr_write(sc, reg, val | MUE_ADDR_FILTX_VALID);
 }
 
-/* 
+/*
  * Probe for a Microchip chip.
  */
 int
@@ -979,7 +979,7 @@ mue_encap(struct mue_softc *sc, struct mbuf *m, int idx)
 	    MUE_TX_CMD_A_FCS);
 	/* Disable segmentation offload. */
 	hdr.tx_cmd_b = htole32(0);
-	memcpy(c->mue_buf, &hdr, sizeof(hdr)); 
+	memcpy(c->mue_buf, &hdr, sizeof(hdr));
 	length = sizeof(hdr);
 
 	m_copydata(m, 0, m->m_pkthdr.len, c->mue_buf + length);
@@ -1039,7 +1039,7 @@ mue_iff(struct mue_softc *sc)
 		while (enm != NULL) {
 			h = ether_crc32_be(enm->enm_addrlo,
 			    ETHER_ADDR_LEN) >> 23;
-			hashtbl[h / 32] |= 1 << (h % 32); 
+			hashtbl[h / 32] |= 1 << (h % 32);
 			ETHER_NEXT_MULTI(step, enm);
 		}
 	}

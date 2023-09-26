@@ -245,7 +245,7 @@ struct edns_data {
 	unsigned int cookie_valid   : 1;
 	/** if the cookie holds only the client part */
 	unsigned int cookie_client  : 1;
-};	
+};
 
 /**
  * EDNS option

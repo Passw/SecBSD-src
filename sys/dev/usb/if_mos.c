@@ -65,8 +65,8 @@
  */
 
 /*
- * Moschip MCS7730/MCS7830/MCS7832 USB to Ethernet controller 
- * The datasheet is available at the following URL: 
+ * Moschip MCS7730/MCS7830/MCS7832 USB to Ethernet controller
+ * The datasheet is available at the following URL:
  * http://www.moschip.com/data/products/MCS7830/Data%20Sheet_7830.pdf
  */
 
@@ -546,7 +546,7 @@ mos_iff(struct mos_softc *sc)
 		}
 	}
 
-	/* 
+	/*
 	 * The datasheet claims broadcast frames were always accepted
 	 * regardless of filter settings. But the hardware seems to
 	 * filter broadcast frames, so pass them explicitly.
@@ -920,7 +920,7 @@ mos_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 	rxstat = buf[pktlen] & MOS_RXSTS_MASK;
 
 	if (rxstat != MOS_RXSTS_VALID) {
-		DPRINTF(("%s: erroneous frame received: ", 
+		DPRINTF(("%s: erroneous frame received: ",
 		    sc->mos_dev.dv_xname));
 		if (rxstat & MOS_RXSTS_SHORT_FRAME)
 			DPRINTF(("frame size less than 64 bytes\n"));

@@ -72,7 +72,7 @@ struct pciide_softc {
 
 	/*
 	 * Used as a register save space by pciide_activate()
-	 * 
+	 *
 	 * sc_save[] is for the 6 pci regs starting at PCI_MAPREG_END + 0x18 --
 	 * most IDE chipsets need a subset of those saved.  sc_save2 is for
 	 * up to 6 other registers, which specific chips might need saved.

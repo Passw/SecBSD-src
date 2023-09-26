@@ -42,7 +42,7 @@
 enum imsg_type {
 	IMSG_NONE,
 	IMSG_CTL_OK,			/* answers to npppctl requests */
-	IMSG_CTL_FAIL,		
+	IMSG_CTL_FAIL,
 	IMSG_CTL_NOP,			/* npppctl requests */
 	IMSG_CTL_WHO,
 	IMSG_CTL_DISCONNECT,

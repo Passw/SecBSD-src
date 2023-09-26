@@ -1649,7 +1649,7 @@ umb_decode_packet_service(struct umb_softc *sc, void *data, int len)
 				addlog("changed from %s to ",
 				    umb_packet_state(sc->sc_info.packetstate));
 			addlog("%s, class %s, speed: %llu up / %llu down\n",
-			    umb_packet_state(state), 
+			    umb_packet_state(state),
 			    umb_dataclass(highestclass), up_speed, down_speed);
 		}
 	}
@@ -1727,7 +1727,7 @@ umb_decode_signal_state(struct umb_softc *sc, void *data, int len)
 			uks->rssi.kv_type = KSTAT_KV_T_INT32;
 			kstat_kv_s32(&uks->rssi) = sc->sc_info.rssi;
 		}
-	
+
 		if (sc->sc_info.ber == UMB_VALUE_UNKNOWN)
 			uks->error_rate.kv_type = KSTAT_KV_T_NULL;
 		else {
@@ -2057,7 +2057,7 @@ umb_decode_ip_configuration(struct umb_softc *sc, void *data, int len)
 		memcpy(&gw, data + off, sizeof(gw));
 
 		rv = umb_add_inet_config(sc, addr, ipv4elem.prefixlen, gw);
-		if (rv == 0) 
+		if (rv == 0)
 			state = UMB_S_UP;
 
 	}

@@ -222,7 +222,7 @@ ng_load(const char *fname)
 				key.size = strlen(head->n_name) + 1;
 				data.data = (u_char *) & head;
 				data.size = sizeof(head);
-				switch ((db->put)(db, &key, &data, 
+				switch ((db->put)(db, &key, &data,
 						  R_NOOVERWRITE)) {
 				case 0:
 					break;

@@ -77,7 +77,7 @@ uhci_pci_match(struct device *parent, void *match, void *aux)
 	    PCI_SUBCLASS(pa->pa_class) == PCI_SUBCLASS_SERIALBUS_USB &&
 	    PCI_INTERFACE(pa->pa_class) == PCI_INTERFACE_UHCI)
 		return (1);
- 
+
 	return (0);
 }
 
@@ -183,7 +183,7 @@ uhci_pci_attach(struct device *parent, struct device *self, void *aux)
 			"vendor 0x%04x", PCI_VENDOR(pa->pa_id));
 
 	config_defer(self, uhci_pci_attach_deferred);
-	
+
 	/* Ignore interrupts for now */
 	sc->sc.sc_bus.dying = 1;
 
@@ -206,7 +206,7 @@ uhci_pci_attach_deferred(struct device *self)
 	int s;
 
 	s = splhardusb();
-	
+
 	sc->sc.sc_bus.dying = 0;
 	r = uhci_init(&sc->sc);
 	if (r != USBD_NORMAL_COMPLETION) {

@@ -42,7 +42,7 @@ sub bn_mul_add_words
 		&movd("mm0",&wparam(3));	# mm0 = w
 		&pxor("mm1","mm1");		# mm1 = carry_in
 		&jmp(&label("maw_sse2_entry"));
-		
+
 	&set_label("maw_sse2_unrolled",16);
 		&movd("mm3",&DWP(0,$r,"",0));	# mm3 = r[0]
 		&paddq("mm1","mm3");		# mm1 = carry_in + r[0]

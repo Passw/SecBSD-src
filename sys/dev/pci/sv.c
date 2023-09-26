@@ -15,7 +15,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  * 3. The author's name or those of the contributors may be used to
- *    endorse or promote products derived from this software without 
+ *    endorse or promote products derived from this software without
  *    specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR(S) AND CONTRIBUTORS
@@ -239,7 +239,7 @@ sv_attach(struct device *parent, struct device *self, void *aux)
   pci_intr_handle_t ih;
   bus_size_t iosize;
   char const *intrstr;
-  u_int32_t  dmareg, dmaio; 
+  u_int32_t  dmareg, dmaio;
   u_int8_t   reg;
 
   sc->sc_pci_chipset_tag = pc;
@@ -257,10 +257,10 @@ sv_attach(struct device *parent, struct device *self, void *aux)
   dmareg = pci_conf_read(pa->pa_pc, pa->pa_tag, SV_DMAA_CONFIG_OFF);
   iosize = 0x10;
   dmaio =  dmareg & ~(iosize - 1);
-  
+
   if (dmaio) {
     dmareg &= 0xF;
-    
+
     if (bus_space_map(sc->sc_iot, dmaio, iosize, 0, &sc->sc_dmaa_ioh)) {
       /* The BIOS assigned us some bad I/O address! Make sure to clear
          and disable this DMA before we enable the device */
@@ -271,7 +271,7 @@ sv_attach(struct device *parent, struct device *self, void *aux)
     }
 
     pci_conf_write(pa->pa_pc, pa->pa_tag, SV_DMAA_CONFIG_OFF,
-		   dmaio | dmareg | 
+		   dmaio | dmareg |
 		   SV_DMA_CHANNEL_ENABLE | SV_DMAA_EXTENDED_ADDR);
     sc->sc_dma_configured |= SV_DMAA_CONFIGURED;
   }
@@ -284,13 +284,13 @@ sv_attach(struct device *parent, struct device *self, void *aux)
     if (bus_space_map(sc->sc_iot, dmaio, iosize, 0, &sc->sc_dmac_ioh)) {
       /* The BIOS assigned us some bad I/O address! Make sure to clear
          and disable this DMA before we enable the device */
-      pci_conf_write (pa->pa_pc, pa->pa_tag, SV_DMAC_CONFIG_OFF, 
-		      dmareg & ~SV_DMA_CHANNEL_ENABLE); 
+      pci_conf_write (pa->pa_pc, pa->pa_tag, SV_DMAC_CONFIG_OFF,
+		      dmareg & ~SV_DMA_CHANNEL_ENABLE);
       printf (": can't map DMA i/o space\n");
       goto enable;
     }
 
-    pci_conf_write(pa->pa_pc, pa->pa_tag, SV_DMAC_CONFIG_OFF, 
+    pci_conf_write(pa->pa_pc, pa->pa_tag, SV_DMAC_CONFIG_OFF,
 		   dmaio | dmareg | SV_DMA_CHANNEL_ENABLE);
     sc->sc_dma_configured |= SV_DMAC_CONFIGURED;
   }
@@ -374,7 +374,7 @@ sv_dumpregs(struct sv_softc *sc)
   }
 
   for (idx = 0; idx < 0x10; idx++) {
-    printf ("DMA %02x = %02x\n", idx, 
+    printf ("DMA %02x = %02x\n", idx,
 	    bus_space_read_1(sc->sc_iot, sc->sc_dmaa_ioh, idx));
   }
 
@@ -421,7 +421,7 @@ sv_allocmem(struct sv_softc *sc, size_t size, size_t align, struct sv_dma *p)
 	if (error)
 		return (error);
 
-	error = bus_dmamem_map(sc->sc_dmatag, p->segs, p->nsegs, p->size, 
+	error = bus_dmamem_map(sc->sc_dmatag, p->segs, p->nsegs, p->size,
 			       &p->addr, BUS_DMA_NOWAIT|BUS_DMA_COHERENT);
 	if (error)
 		goto free;
@@ -431,7 +431,7 @@ sv_allocmem(struct sv_softc *sc, size_t size, size_t align, struct sv_dma *p)
 	if (error)
 		goto unmap;
 
-	error = bus_dmamap_load(sc->sc_dmatag, p->map, p->addr, p->size, NULL, 
+	error = bus_dmamap_load(sc->sc_dmatag, p->map, p->addr, p->size, NULL,
 				BUS_DMA_NOWAIT);
 	if (error)
 		goto destroy;
@@ -475,7 +475,7 @@ sv_open(void *addr, int flags)
 	    return (ENXIO);
 
 	for (dmaio = 0xa000; dmaio < 0xb000; dmaio += iosize) {
-	    if (!bus_space_map(sc->sc_iot, dmaio, iosize, 0, 
+	    if (!bus_space_map(sc->sc_iot, dmaio, iosize, 0,
 			      &sc->sc_dmaa_ioh)) {
 		goto found_dmaa;
 	    }
@@ -484,10 +484,10 @@ sv_open(void *addr, int flags)
 	sc->sc_dma_configured |= SV_DMAA_TRIED_CONFIGURE;
 	return (ENXIO);
     found_dmaa:
-	  
+
 	pci_conf_write(sc->sc_pci_chipset_tag, sc->sc_pci_tag,
-		       SV_DMAA_CONFIG_OFF, 
-		       dmaio | SV_DMA_CHANNEL_ENABLE 
+		       SV_DMAA_CONFIG_OFF,
+		       dmaio | SV_DMA_CHANNEL_ENABLE
 		       | SV_DMAA_EXTENDED_ADDR);
 
 	sc->sc_dma_configured |= SV_DMAA_CONFIGURED;
@@ -504,18 +504,18 @@ sv_open(void *addr, int flags)
 	    return (ENXIO);
 
 	for (dmaio = 0xa000; dmaio < 0xb000; dmaio += iosize) {
-	    if (!bus_space_map(sc->sc_iot, dmaio, iosize, 0, 
+	    if (!bus_space_map(sc->sc_iot, dmaio, iosize, 0,
 			      &sc->sc_dmac_ioh)) {
 		goto found_dmac;
 	    }
 	}
 
-	sc->sc_dma_configured |= SV_DMAC_TRIED_CONFIGURE;	    
+	sc->sc_dma_configured |= SV_DMAC_TRIED_CONFIGURE;
 	return (ENXIO);
     found_dmac:
-	  
+
 	pci_conf_write(sc->sc_pci_chipset_tag, sc->sc_pci_tag,
-		       SV_DMAC_CONFIG_OFF, 
+		       SV_DMAC_CONFIG_OFF,
 		       dmaio | SV_DMA_CHANNEL_ENABLE);
 
 	sc->sc_dma_configured |= SV_DMAC_CONFIGURED;
@@ -543,7 +543,7 @@ void
 sv_close(void *addr)
 {
 	struct sv_softc *sc = addr;
-    
+
         sv_halt_in_dma(sc);
         sv_halt_out_dma(sc);
 
@@ -558,7 +558,7 @@ sv_set_params(void *addr, int setmode, int usemode,
 	struct sv_softc *sc = addr;
         u_int32_t mode, val;
         u_int8_t reg;
-	
+
         switch (p->encoding) {
         case AUDIO_ENCODING_SLINEAR_LE:
         	if (p->precision != 16)
@@ -627,7 +627,7 @@ sv_set_params(void *addr, int setmode, int usemode,
 	    if ((goal_f_out * (1 << a)) >= 80000000)
 	      break;
 	  }
-	  
+
 	  /* a != 8 because sample_rate >= 2000 */
 
 	  for (n = 33; n > 2; n--) {
@@ -636,14 +636,14 @@ sv_set_params(void *addr, int setmode, int usemode,
 	    m = (goal_f_out * n * (1 << a)) / F_REF;
 
 	    if ((m > 257) || (m < 3)) continue;
- 
+
 	    pll_sample = (m * F_REF) / (n * (1 << a));
 	    pll_sample /= 512;
 
 	    /* Threshold might be good here */
 	    error = pll_sample - r->sample_rate;
 	    error = abs(error);
-	    
+
 	    if (error < best_error) {
 	      best_error = error;
 	      best_n = n;
@@ -651,11 +651,11 @@ sv_set_params(void *addr, int setmode, int usemode,
 	      if (error == 0) break;
 	    }
 	  }
-	
+
 
 	  best_n -= 2;
 	  best_m -= 2;
-	  
+
 	  sv_write_indirect(sc, SV_ADC_PLL_M, best_m);
 	  sv_write_indirect(sc, SV_ADC_PLL_N, best_n | (a << SV_PLL_R_SHIFT));
 	}
@@ -675,7 +675,7 @@ sv_dma_init_input(void *addr, void *buf, int cc)
 	struct sv_dma *p;
 	int dma_count;
 
-	DPRINTF(("sv_dma_init_input: dma start loop input addr=%p cc=%d\n", 
+	DPRINTF(("sv_dma_init_input: dma start loop input addr=%p cc=%d\n",
 		 buf, cc));
         for (p = sc->sc_dmas; p && KERNADDR(p) != buf; p = p->next)
 		;
@@ -729,8 +729,8 @@ sv_dma_output(void *addr, void *p, int cc, void (*intr)(void *), void *arg)
 	struct sv_softc *sc = addr;
 	u_int8_t mode;
 
-	DPRINTFN(1, 
-                 ("sv_dma_output: sc=%p buf=%p cc=%d intr=%p(%p)\n", 
+	DPRINTFN(1,
+                 ("sv_dma_output: sc=%p buf=%p cc=%d intr=%p(%p)\n",
                   addr, p, cc, intr, arg));
 	sc->sc_pintr = intr;
 	sc->sc_parg = arg;
@@ -754,7 +754,7 @@ sv_dma_input(void *addr, void *p, int cc, void (*intr)(void *), void *arg)
 	struct sv_softc *sc = addr;
 	u_int8_t mode;
 
-	DPRINTFN(1, ("sv_dma_input: sc=%p buf=%p cc=%d intr=%p(%p)\n", 
+	DPRINTFN(1, ("sv_dma_input: sc=%p buf=%p cc=%d intr=%p(%p)\n",
 		     addr, p, cc, intr, arg));
 	sc->sc_rintr = intr;
 	sc->sc_rarg = arg;
@@ -777,7 +777,7 @@ sv_halt_out_dma(void *addr)
 {
 	struct sv_softc *sc = addr;
 	u_int8_t mode;
-	
+
         DPRINTF(("sv: sv_halt_out_dma\n"));
 	mtx_enter(&audio_lock);
 	mode = sv_read_indirect(sc, SV_PLAY_RECORD_ENABLE);
@@ -793,7 +793,7 @@ sv_halt_in_dma(void *addr)
 {
 	struct sv_softc *sc = addr;
 	u_int8_t mode;
-    
+
         DPRINTF(("sv: sv_halt_in_dma\n"));
 	mtx_enter(&audio_lock);
 	mode = sv_read_indirect(sc, SV_PLAY_RECORD_ENABLE);
@@ -826,18 +826,18 @@ static const struct {
 } ports[] = {
   { SV_LEFT_AUX1_INPUT_CONTROL, SV_RIGHT_AUX1_INPUT_CONTROL, SV_AUX1_MASK,
     SV_INPUT_CLASS, "aux1" },
-  { SV_LEFT_CD_INPUT_CONTROL, SV_RIGHT_CD_INPUT_CONTROL, SV_CD_MASK, 
+  { SV_LEFT_CD_INPUT_CONTROL, SV_RIGHT_CD_INPUT_CONTROL, SV_CD_MASK,
     SV_INPUT_CLASS, AudioNcd },
   { SV_LEFT_LINE_IN_INPUT_CONTROL, SV_RIGHT_LINE_IN_INPUT_CONTROL, SV_LINE_IN_MASK,
     SV_INPUT_CLASS, AudioNline },
   { SV_MIC_INPUT_CONTROL, 0, SV_MIC_MASK, SV_INPUT_CLASS, AudioNmicrophone },
-  { SV_LEFT_SYNTH_INPUT_CONTROL, SV_RIGHT_SYNTH_INPUT_CONTROL, 
+  { SV_LEFT_SYNTH_INPUT_CONTROL, SV_RIGHT_SYNTH_INPUT_CONTROL,
     SV_SYNTH_MASK, SV_INPUT_CLASS, AudioNfmsynth },
   { SV_LEFT_AUX2_INPUT_CONTROL, SV_RIGHT_AUX2_INPUT_CONTROL, SV_AUX2_MASK,
     SV_INPUT_CLASS, "aux2" },
   { SV_LEFT_PCM_INPUT_CONTROL, SV_RIGHT_PCM_INPUT_CONTROL, SV_PCM_MASK,
     SV_INPUT_CLASS, AudioNdac },
-  { SV_LEFT_MIXER_OUTPUT_CONTROL, SV_RIGHT_MIXER_OUTPUT_CONTROL, 
+  { SV_LEFT_MIXER_OUTPUT_CONTROL, SV_RIGHT_MIXER_OUTPUT_CONTROL,
     SV_MIXER_OUT_MASK, SV_OUTPUT_CLASS, AudioNmaster }
 };
 
@@ -864,7 +864,7 @@ static const struct {
 #define SV_RECORD_GAIN (SV_LAST_MIXER + 3)
 #define SV_SRS_MODE (SV_LAST_MIXER + 4)
 
-int 
+int
 sv_query_devinfo(void *addr, mixer_devinfo_t *dip)
 {
 
@@ -899,7 +899,7 @@ sv_query_devinfo(void *addr, mixer_devinfo_t *dip)
 	dip->un.v.num_channels = 2;
       else
 	dip->un.v.num_channels = 1;
-      
+
       strlcpy(dip->un.v.units.name, AudioNvolume, sizeof dip->un.v.units.name);
 
     } else {
@@ -992,11 +992,11 @@ sv_mixer_set_port(void *addr, mixer_ctrl_t *cp)
     idx = off / SV_DEVICES_PER_PORT;
 
     if (mute) {
-      if (cp->type != AUDIO_MIXER_ENUM) 
+      if (cp->type != AUDIO_MIXER_ENUM)
 	return (EINVAL);
 
       reg = sv_read_indirect(sc, ports[idx].l_port);
-      if (cp->un.ord) 
+      if (cp->un.ord)
 	reg |= SV_MUTE_BIT;
       else
 	reg &= ~SV_MUTE_BIT;
@@ -1004,7 +1004,7 @@ sv_mixer_set_port(void *addr, mixer_ctrl_t *cp)
 
       if (ports[idx].r_port) {
 	reg = sv_read_indirect(sc, ports[idx].r_port);
-	if (cp->un.ord) 
+	if (cp->un.ord)
 	  reg |= SV_MUTE_BIT;
 	else
 	  reg &= ~SV_MUTE_BIT;
@@ -1067,7 +1067,7 @@ sv_mixer_set_port(void *addr, mixer_ctrl_t *cp)
       if (record_sources[idx].idx == cp->un.ord)
 	goto found;
     }
-    
+
     return (EINVAL);
 
   found:
@@ -1092,14 +1092,14 @@ sv_mixer_set_port(void *addr, mixer_ctrl_t *cp)
       if (cp->un.value.num_channels != 1)
 	return (EINVAL);
 
-      val = (cp->un.value.level[AUDIO_MIXER_LEVEL_MONO] * SV_REC_GAIN_MASK) 
+      val = (cp->un.value.level[AUDIO_MIXER_LEVEL_MONO] * SV_REC_GAIN_MASK)
 	/ AUDIO_MAX_GAIN;
 
       reg = sv_read_indirect(sc, SV_LEFT_ADC_INPUT_CONTROL);
       reg &= ~SV_REC_GAIN_MASK;
       reg |= val;
       sv_write_indirect(sc, SV_LEFT_ADC_INPUT_CONTROL, reg);
-      
+
       reg = sv_read_indirect(sc, SV_RIGHT_ADC_INPUT_CONTROL);
       reg &= ~SV_REC_GAIN_MASK;
       reg |= val;
@@ -1119,7 +1119,7 @@ sv_mixer_set_port(void *addr, mixer_ctrl_t *cp)
     } else {
       reg &= ~SV_MIC_BOOST_BIT;
     }
-    
+
     sv_write_indirect(sc, SV_LEFT_ADC_INPUT_CONTROL, reg);
     return (0);
 
@@ -1133,7 +1133,7 @@ sv_mixer_set_port(void *addr, mixer_ctrl_t *cp)
     } else {
       reg |= SV_SRS_SPACE_ONOFF;
     }
-    
+
     sv_write_indirect(sc, SV_SRS_SPACE_CONTROL, reg);
     return (0);
   }
@@ -1155,7 +1155,7 @@ sv_mixer_get_port(void *addr, mixer_ctrl_t *cp)
     int idx = off / 2;
 
     if (mute) {
-      if (cp->type != AUDIO_MIXER_ENUM) 
+      if (cp->type != AUDIO_MIXER_ENUM)
 	return (EINVAL);
 
       reg = sv_read_indirect(sc, ports[idx].l_port);
@@ -1184,10 +1184,10 @@ sv_mixer_get_port(void *addr, mixer_ctrl_t *cp)
 
 	reg = sv_read_indirect(sc, ports[idx].r_port);
 	reg &= ports[idx].mask;
-      
+
 	val = AUDIO_MAX_GAIN - ((reg * AUDIO_MAX_GAIN) / ports[idx].mask);
 	cp->un.value.level[AUDIO_MIXER_LEVEL_RIGHT] = val;
-      } else 
+      } else
 	cp->un.value.level[AUDIO_MIXER_LEVEL_MONO] = val;
     }
 
@@ -1212,7 +1212,7 @@ sv_mixer_get_port(void *addr, mixer_ctrl_t *cp)
       return (EINVAL);
 
     reg = sv_read_indirect(sc, SV_LEFT_ADC_INPUT_CONTROL) & SV_REC_GAIN_MASK;
-    cp->un.value.level[AUDIO_MIXER_LEVEL_MONO] = 
+    cp->un.value.level[AUDIO_MIXER_LEVEL_MONO] =
       (((unsigned int)reg) * AUDIO_MAX_GAIN) / SV_REC_GAIN_MASK;
 
     return (0);

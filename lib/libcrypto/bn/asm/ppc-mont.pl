@@ -19,7 +19,7 @@
 # So far RSA *sign* performance improvement over pre-bn_mul_mont asm
 # for 64-bit application running on PPC970/G5 is:
 #
-# 512-bit	+65%	
+# 512-bit	+65%
 # 1024-bit	+35%
 # 2048-bit	+18%
 # 4096-bit	+4%
@@ -42,7 +42,7 @@ if ($flavour =~ /32/) {
 	$UMULL=	"mullw";	# unsigned multiply low
 	$UMULH=	"mulhwu";	# unsigned multiply high
 	$UCMP=	"cmplw";	# unsigned compare
-	$SHRI=	"srwi";		# unsigned shift right by immediate	
+	$SHRI=	"srwi";		# unsigned shift right by immediate
 	$PUSH=	$ST;
 	$POP=	$LD;
 } elsif ($flavour =~ /64/) {
@@ -62,7 +62,7 @@ if ($flavour =~ /32/) {
 	$UMULL=	"mulld";	# unsigned multiply low
 	$UMULH=	"mulhdu";	# unsigned multiply high
 	$UCMP=	"cmpld";	# unsigned compare
-	$SHRI=	"srdi";		# unsigned shift right by immediate	
+	$SHRI=	"srdi";		# unsigned shift right by immediate
 	$PUSH=	$ST;
 	$POP=	$LD;
 } else { die "nonsense $flavour"; }
@@ -147,7 +147,7 @@ $code.=<<___;
 
 	$LD	$n0,0($n0)	; pull n0[0] value
 	addi	$num,$num,-2	; adjust $num for counter register
-
+
 	$LD	$m0,0($bp)	; m0=bp[0]
 	$LD	$aj,0($ap)	; ap[0]
 	addi	$tp,$sp,$LOCALS
@@ -206,7 +206,7 @@ L1st:
 	addc	$hi1,$hi1,$hi0
 	addze	$ovf,$ovf	; upmost overflow bit
 	$ST	$hi1,$BNSZ($tp)
-
+
 	li	$i,$BNSZ
 .align	4
 Louter:
@@ -230,7 +230,7 @@ Louter:
 	$UMULL	$nlo,$nj,$m1	; np[1]*m1
 	addze	$hi1,$hi1
 	$UMULH	$nhi,$nj,$m1
-
+
 	mtctr	$num
 	li	$j,`2*$BNSZ`
 .align	4
@@ -277,7 +277,7 @@ Linner:
 	$UCMP	$i,$tj
 	addi	$i,$i,$BNSZ
 	ble-	Louter
-
+
 	addi	$num,$num,2	; restore $num
 	subfc	$j,$j,$j	; j=0 and "clear" XER[CA]
 	addi	$tp,$sp,$LOCALS

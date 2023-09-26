@@ -67,7 +67,7 @@ tls_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
 	int err = X509_STORE_CTX_get_error(ctx);
 	int depth = X509_STORE_CTX_get_error_depth(ctx);
 
-	// report the specific cert error here - will need custom verify code if 
+	// report the specific cert error here - will need custom verify code if
 	// SPKI pins are supported
 	if (!preverify_ok)
 		log_msg(LOG_ERR, "xfrd tls: TLS verify failed - (%d) depth: %d error: %s",
@@ -78,14 +78,14 @@ tls_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
 }
 
 static int
-setup_ssl(struct xfrd_tcp_pipeline* tp, struct xfrd_tcp_set* tcp_set, 
+setup_ssl(struct xfrd_tcp_pipeline* tp, struct xfrd_tcp_set* tcp_set,
 		  const char* auth_domain_name)
 {
 	if (!tcp_set->ssl_ctx) {
 		log_msg(LOG_ERR, "xfrd tls: No TLS CTX, cannot set up XFR-over-TLS");
 		return 0;
 	}
-	DEBUG(DEBUG_XFRD,1, (LOG_INFO, "xfrd: setting up TLS for tls_auth domain name %s", 
+	DEBUG(DEBUG_XFRD,1, (LOG_INFO, "xfrd: setting up TLS for tls_auth domain name %s",
 						 auth_domain_name));
 	tp->ssl = SSL_new((SSL_CTX*)tcp_set->ssl_ctx);
 	if(!tp->ssl) {
@@ -525,7 +525,7 @@ pipeline_find(struct xfrd_tcp_set* set, xfrd_zone_type* zone)
 	if(rbtree_find_less_equal(set->pipetree, key, &sme)) {
 		/* exact match, strange, fully unused tcp cannot be open */
 		assert(0);
-	} 
+	}
 	if(!sme)
 		return NULL;
 	r = (struct xfrd_tcp_pipeline*)sme->key;
@@ -1464,7 +1464,7 @@ xfrd_tcp_read(struct xfrd_tcp_pipeline* tp)
 			xfrd_tcp_pipe_stop(tp);
 			return;
 		}
-	} else 
+	} else
 #endif
 		ret = conn_read(tcp);
 	if(ret == -1) {

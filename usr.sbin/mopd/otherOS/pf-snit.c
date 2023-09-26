@@ -85,29 +85,29 @@ pfInit(interface, mode, protocol, trans)
 	int	 ioarg;
 	char	 device[64];
 	unsigned long if_flags;
-	
+
 	struct ifreq ifr;
 	struct strioctl si;
-	
+
 	/* get clone */
 	if ((fd = open(DEV_NIT, mode)) < 0) {
 		syslog(LOG_ERR,"pfInit: open nit %m");
 		return(-1);
 	}
-	
+
 	/*
-	 * set filter for protocol 
+	 * set filter for protocol
 	 */
-	
+
 	if (setup_pf(fd, protocol, trans) < 0)
 		return(-1);
-	
+
 	/*
 	 * set options, bind to underlying interface
 	 */
-	
+
 	strncpy(ifr.ifr_name, interface, sizeof(ifr.ifr_name));
-	
+
 	/* bind */
 	si.ic_cmd = NIOCBIND;	/* bind to underlying interface */
 	si.ic_timout = 10;
@@ -117,7 +117,7 @@ pfInit(interface, mode, protocol, trans)
 		syslog(LOG_ERR,"pfinit: I_STR %m");
 		return(-1);
 	}
-	
+
 	if (promisc) {
 		if_flags = NI_PROMISC;
 		si.ic_cmd = NIOCSFLAGS;
@@ -129,7 +129,7 @@ pfInit(interface, mode, protocol, trans)
 			return(-1);
 		}
 	}
-	
+
 	/* set up messages */
 	if (ioctl(fd, I_SRDOPT, (char *)RMSGD) < 0) { /* want messages */
 		syslog(LOG_ERR,"pfInit: I_SRDOPT %m");
@@ -141,7 +141,7 @@ pfInit(interface, mode, protocol, trans)
 		syslog(LOG_ERR,"pfInit: I_FLUSH %m");
 		return(-1);
 	}
-	
+
 	return(fd);
 }
 
@@ -192,7 +192,7 @@ setup_pf(s, prot, trans)
 		syslog(LOG_ERR,"setup_pf: I_STR %m");
 		return(-1);
 	}
-	
+
 	return(0);
 }
 
@@ -207,14 +207,14 @@ u_char *addr;
 {
 	struct ifreq ifr;
 	struct sockaddr *sa;
-	
+
 	if (ioctl(fd, SIOCGIFADDR, &ifr) < 0) {
 		syslog(LOG_ERR,"pfEthAddr: SIOCGIFADDR %m");
 		return(-1);
 	}
 	sa = (struct sockaddr *)ifr.ifr_data;
 	bcopy((char *)sa->sa_data, (char *)addr, 6);
-	
+
 	return(0);
 }
 
@@ -229,13 +229,13 @@ pfAddMulti(s, interface, addr)
 {
 	struct ifreq ifr;
 	int fd;
-	
+
 	strncpy(ifr.ifr_name, interface, sizeof (ifr.ifr_name) -1);
 	ifr.ifr_name[sizeof(ifr.ifr_name)] = 0;
-	
+
 	ifr.ifr_addr.sa_family = AF_UNSPEC;
 	bcopy(addr, ifr.ifr_addr.sa_data, 6);
-	
+
 	/*
 	 * open a socket, temporarily, to use for SIOC* ioctls
 	 */
@@ -250,7 +250,7 @@ pfAddMulti(s, interface, addr)
 		return(-1);
 	}
 	close(fd);
-	
+
 	return(0);
 }
 
@@ -265,13 +265,13 @@ char *interface, *addr;
 {
 	struct ifreq ifr;
 	int fd;
-	
+
 	strncpy(ifr.ifr_name, interface, sizeof (ifr.ifr_name) -1);
 	ifr.ifr_name[sizeof(ifr.ifr_name)] = 0;
-	
+
 	ifr.ifr_addr.sa_family = AF_UNSPEC;
 	bcopy(addr, ifr.ifr_addr.sa_data, 6);
-	
+
 	/*
 	 * open a socket, temporarily, to use for SIOC* ioctls
 	 *
@@ -280,14 +280,14 @@ char *interface, *addr;
 		syslog(LOG_ERR,"pfDelMulti: socket() %m");
 		return(-1);
 	}
-	
+
 	if (ioctl(fd, SIOCDELMULTI, (caddr_t)&ifr) < 0) {
 		syslog(LOG_ERR,"pfDelMulti: SIOCDELMULTI %m");
 		close(fd);
 		return(-1);
 	}
 	close(fd);
-	
+
 	return(0);
 }
 
@@ -312,10 +312,10 @@ pfWrite(fd, buf, len, trans)
 	int fd, len, trans;
 	u_char *buf;
 {
-	
+
 	struct sockaddr sa;
 	struct strbuf pbuf, dbuf;
-	
+
 	sa.sa_family = AF_UNSPEC;
 	bcopy(buf, sa.sa_data, sizeof(sa.sa_data));
 
@@ -330,6 +330,6 @@ pfWrite(fd, buf, len, trans)
 
 	if (putmsg(fd, &pbuf, &dbuf, 0) == 0)
 	  return(len);
-	
+
 	return(-1);
 }

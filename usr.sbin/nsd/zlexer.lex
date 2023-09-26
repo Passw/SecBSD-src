@@ -1,7 +1,7 @@
 %{
 /*
  * zlexer.lex - lexical analyzer for (DNS) zone files
- * 
+ *
  * Copyright (c) 2001-2006, NLnet Labs. All rights reserved
  *
  * See LICENSE for the license.
@@ -119,7 +119,7 @@ int at_eof(void)
 		yy_current_buffer->yy_ch_buf[0] = ((at_bol)?'\n':' '); \
 	}
 #endif
-	
+
 %}
 %option noinput
 %option nounput
@@ -168,11 +168,11 @@ ANY     [^\"\n\\]|\\.
 	++parser->line;
 	parser->error_occurred = error_occurred;
 }
-<incl>.+ 		{ 	
+<incl>.+ 		{
 	char *tmp;
 	domain_type *origin = parser->origin;
 	int error_occurred = parser->error_occurred;
-	
+
 	BEGIN(INITIAL);
 	if (include_stack_ptr >= MAXINCLUDES ) {
 		zc_error("includes nested too deeply, skipped (>%d)",
@@ -186,7 +186,7 @@ ANY     [^\"\n\\]|\\.
 			*tmp = '\0';
 		}
 		strip_string(yytext);
-		
+
 		/* Parse origin for include file.  */
 		tmp = strrchr(yytext, ' ');
 		if (!tmp) {
@@ -194,7 +194,7 @@ ANY     [^\"\n\\]|\\.
 		}
 		if (tmp) {
 			const dname_type *dname;
-			
+
 			/* split the original yytext */
 			*tmp = '\0';
 			strip_string(yytext);
@@ -210,7 +210,7 @@ ANY     [^\"\n\\]|\\.
 					parser->db->domains, dname);
 			}
 		}
-		
+
 		if (strlen(yytext) == 0) {
 			zc_error("missing file name in $INCLUDE directive");
 		} else if (!(input = fopen(yytext, "r"))) {
@@ -258,7 +258,7 @@ ANY     [^\"\n\\]|\\.
 }
 {NEWLINE}	{
 	++parser->line;
-	if (!paren_open) { 
+	if (!paren_open) {
 		lexer_state = EXPECT_OWNER;
 		LEXOUT(("NL\n"));
 		return NL;
@@ -347,7 +347,7 @@ ANY     [^\"\n\\]|\\.
  * returned and the TYPE parameter is set to the RR type value.
  */
 static int
-rrtype_to_token(const char *word, uint16_t *type) 
+rrtype_to_token(const char *word, uint16_t *type)
 {
 	uint16_t t = rrtype_from_string(word);
 	if (t != 0) {
@@ -364,7 +364,7 @@ rrtype_to_token(const char *word, uint16_t *type)
  * Remove \DDD constructs from the input. See RFC 1035, section 5.1.
  */
 static size_t
-zoctet(char *text) 
+zoctet(char *text)
 {
 	/*
 	 * s follows the string, p lags behind and rebuilds the new
@@ -372,7 +372,7 @@ zoctet(char *text)
 	 */
 	char *s;
 	char *p;
-	
+
 	for (s = p = text; *s; ++s, ++p) {
 		assert(p <= s);
 		if (s[0] != '\\') {
@@ -415,7 +415,7 @@ parse_token(int token, char *yytext, enum lexer_state *lexer_state)
 		const char *t;
 		int token;
 		uint16_t rrclass;
-		
+
 		/* type */
 		token = rrtype_to_token(yytext, &yylval.type);
 		if (token != 0) {
@@ -445,7 +445,7 @@ parse_token(int token, char *yytext, enum lexer_state *lexer_state)
 
 	yylval.data.str = str;
 	yylval.data.len = len;
-	
+
 	LEXOUT(("%d[%s] ", token, yytext));
 	return token;
 }

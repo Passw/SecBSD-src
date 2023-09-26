@@ -92,8 +92,8 @@ struct pcscp_softc {
 #define	PCSCP_WRITE_REG(sc, reg, val) \
 	bus_space_write_1((sc)->sc_st, (sc)->sc_sh, (reg) << 2, (val))
 
-int	pcscp_match(struct device *, void *, void *); 
-void	pcscp_attach(struct device *, struct device *, void *);  
+int	pcscp_match(struct device *, void *, void *);
+void	pcscp_attach(struct device *, struct device *, void *);
 
 const struct cfattach pcscp_ca = {
 	sizeof(struct pcscp_softc), pcscp_match, pcscp_attach
@@ -216,7 +216,7 @@ pcscp_attach(struct device *parent, struct device *self, void *aux)
 	 * formula: 4 * period = (1000 / freq) * 4
 	 */
 
-	sc->sc_minsync = 1000 / sc->sc_freq; 
+	sc->sc_minsync = 1000 / sc->sc_freq;
 
 	/* Really no limit, but since we want to fit into the TCR... */
 	sc->sc_maxxfer = 16 * 1024 * 1024;
@@ -253,7 +253,7 @@ pcscp_attach(struct device *parent, struct device *self, void *aux)
 		    sc->sc_dev.dv_xname, error);
 		goto fail_1;
 	}
-	if ((error = bus_dmamap_create(esc->sc_dmat, 
+	if ((error = bus_dmamap_create(esc->sc_dmat,
 	    sizeof(u_int32_t) * MDL_SIZE, 1, sizeof(u_int32_t) * MDL_SIZE,
 	    0, BUS_DMA_NOWAIT, &esc->sc_mdldmap)) != 0) {
 		printf("%s: unable to map_create for the MDL, error = %d\n",
@@ -433,7 +433,7 @@ pcscp_dma_intr(struct ncr53c9x_softc *sc)
 			if (resid)
 				p = *esc->sc_dmaaddr;
 		}
-		
+
 		resid += PCSCP_READ_REG(esc, NCR_TCL) |
 		    (PCSCP_READ_REG(esc, NCR_TCM) << 8) |
 		    (PCSCP_READ_REG(esc, NCR_TCH) << 16);
@@ -462,7 +462,7 @@ pcscp_dma_intr(struct ncr53c9x_softc *sc)
 	 *  When this happens, the residual byte should be retrieved
 	 *  via PIO following completion of the BLAST operation.'
 	 */
-	
+
 	if (p) {
 		p += trans;
 		*p = PCSCP_READ_REG(esc, NCR_FIFO);
@@ -536,7 +536,7 @@ pcscp_dma_setup(struct ncr53c9x_softc *sc, caddr_t *addr, size_t *len,
 	}
 
 	/* set transfer length */
-	WRITE_DMAREG(esc, DMA_STC, *dmasize); 
+	WRITE_DMAREG(esc, DMA_STC, *dmasize);
 
 	/* set up MDL */
 	mdl = esc->sc_mdladdr;
@@ -548,7 +548,7 @@ pcscp_dma_setup(struct ncr53c9x_softc *sc, caddr_t *addr, size_t *len,
 	s_addr -= s_offset;
 
 	/* set the first MDL and offset */
-	WRITE_DMAREG(esc, DMA_SPA, s_offset); 
+	WRITE_DMAREG(esc, DMA_SPA, s_offset);
 	*mdl++ = htole32(s_addr);
 
 	/* the rest dmamap segments are aligned with 4k boundary */
@@ -575,7 +575,7 @@ pcscp_dma_go(struct ncr53c9x_softc *sc)
 
 	/* sync MDL */
 	bus_dmamap_sync(esc->sc_dmat, mdldmap,
-	    0, sizeof(u_int32_t) * dmap->dm_nsegs, BUS_DMASYNC_PREWRITE); 
+	    0, sizeof(u_int32_t) * dmap->dm_nsegs, BUS_DMASYNC_PREWRITE);
 
 	/* set Starting MDL Address */
 	WRITE_DMAREG(esc, DMA_SMDLA, mdldmap->dm_segs[0].ds_addr);

@@ -62,7 +62,7 @@ char	*acctfile;	/* accounting information file */
 __dead void usage(void);
 
 int
-main(int argc, char **argv) 
+main(int argc, char **argv)
 {
 	FILE *p = stdin, *o = stdout;
 	int i, col;
@@ -107,7 +107,7 @@ main(int argc, char **argv)
 
 	memset(buf, ' ',  sizeof(buf));
 	done = 0;
-	
+
 	while (!done) {
 		col = indent;
 		maxrep = -1;

@@ -3,7 +3,7 @@
 # alpha-specific libcrypto build rules
 
 # aes
-SRCS+= aes_core.c aes_cbc.c 
+SRCS+= aes_core.c aes_cbc.c
 # bf
 SRCS+= bf_enc.c
 # bn

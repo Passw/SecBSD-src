@@ -1169,7 +1169,7 @@ uftdi_8u232am_getrate(struct uftdi_softc *sc, speed_t speed, int *rate)
 	else if (d > FTDI_8U232AM_MAX_DIV)
 		d = FTDI_8U232AM_MAX_DIV;
 
-	/* 
+	/*
 	 * Calculate the frequency needed for d to exactly divide down
 	 * to our target speed, and check that the actual frequency is
 	 * within 3% of this.
@@ -1179,7 +1179,7 @@ uftdi_8u232am_getrate(struct uftdi_softc *sc, speed_t speed, int *rate)
 	    freq > (quad_t)(FTDI_8U232AM_FREQ << 4) * 100 / 97)
 		return (-1);
 
-	/* 
+	/*
 	 * Pack the divisor into the resultant value.  The lower
 	 * 14-bits hold the integral part, while the upper 2 bits
 	 * encode the fractional component: either 0, 0.5, 0.25, or

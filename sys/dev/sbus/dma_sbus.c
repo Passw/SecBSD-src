@@ -154,7 +154,7 @@ dmaattach_sbus(struct device *parent, struct device *self, void *aux)
 
 	/* Map registers */
 	if (sa->sa_npromvaddrs != 0) {
-		if (sbus_bus_map(sa->sa_bustag, 0, 
+		if (sbus_bus_map(sa->sa_bustag, 0,
 		    sa->sa_promvaddrs[0],
 		    sa->sa_size,		/* ???? */
 		    BUS_SPACE_MAP_PROMADDRESS,

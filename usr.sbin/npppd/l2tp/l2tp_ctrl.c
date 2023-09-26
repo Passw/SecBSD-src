@@ -759,7 +759,7 @@ l2tp_ctrl_input(l2tpd *_this, int listener_index, struct sockaddr *peer,
 		if (ctrl->peer.ss_family != peer->sa_family)
 			notmatch = 1;
 		else if (peer->sa_family == AF_INET) {
-			if (SIN(peer)->sin_addr.s_addr != 
+			if (SIN(peer)->sin_addr.s_addr !=
 			    SIN(&ctrl->peer)->sin_addr.s_addr ||
 			    SIN(peer)->sin_port != SIN(&ctrl->peer)->sin_port)
 				notmatch = 1;

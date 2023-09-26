@@ -256,7 +256,7 @@ bn_mul_mont:
 	cmplt	$i,$num,$tj	# borrow $tj
 	stq	$hi1,16($tp)
 	bne	$tj,.Louter
-
+
 	s8addq	$num,sp,$tj	# &tp[num]
 	mov	$rp,$bp		# put rp aside
 	mov	sp,$tp

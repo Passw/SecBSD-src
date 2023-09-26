@@ -22,8 +22,8 @@
 #ifndef __IRQSRCS_SDMA1_5_0_H__
 #define __IRQSRCS_SDMA1_5_0_H__
 
-#define SDMA1_5_0__SRCID__SDMA_ATOMIC_RTN_DONE				217		// 0xD9 SDMA atomic*_rtn ops complete 
-#define SDMA1_5_0__SRCID__SDMA_ATOMIC_TIMEOUT				218		// 0xDA SDMA atomic CMPSWAP loop timeout 
+#define SDMA1_5_0__SRCID__SDMA_ATOMIC_RTN_DONE				217		// 0xD9 SDMA atomic*_rtn ops complete
+#define SDMA1_5_0__SRCID__SDMA_ATOMIC_TIMEOUT				218		// 0xDA SDMA atomic CMPSWAP loop timeout
 #define SDMA1_5_0__SRCID__SDMA_IB_PREEMPT				219		// 0xDB sdma mid-command buffer preempt interrupt
 #define SDMA1_5_0__SRCID__SDMA_ECC					220		// 0xDC ECC  Error
 #define SDMA1_5_0__SRCID__SDMA_PAGE_FAULT				221		// 0xDD Page Fault Error from UTCL2 when nack=3

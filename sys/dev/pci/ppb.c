@@ -514,8 +514,8 @@ ppbactivate(struct device *self, int act)
 		break;
 	case DVACT_POWERDOWN:
 		rv = config_activate_children(self, act);
-		
-		if (pci_dopm) {	
+
+		if (pci_dopm) {
 			/*
 			 * Place the bridge into the lowest possible
 			 * power state.
@@ -555,7 +555,7 @@ ppb_alloc_busrange(struct ppb_softc *sc, struct pci_attach_args *pa,
 
 	if (busrange == 0) {
 		for (busrange = 16; busrange > 0; busrange >>= 1) {
-			if (extent_alloc(pa->pa_busex, busrange, 1, 0, 0, 
+			if (extent_alloc(pa->pa_busex, busrange, 1, 0, 0,
 			    EX_NOWAIT, &busnum) == 0)
 				break;
 		}

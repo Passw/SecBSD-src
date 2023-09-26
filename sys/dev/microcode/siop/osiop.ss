@@ -1,4 +1,4 @@
-;	$OpenBSD: osiop.ss,v 1.3 2023/01/04 10:05:44 jsg Exp $	
+;	$OpenBSD: osiop.ss,v 1.3 2023/01/04 10:05:44 jsg Exp $
 ;	$NetBSD: osiop.ss,v 1.1 2001/04/30 04:47:51 tsutsui Exp $
 
 ;

@@ -67,7 +67,7 @@ struct umidi_jack {
 	void			*arg;
 	int			binded;
 	int			opened;
-	SIMPLEQ_ENTRY(umidi_jack) intrq_entry;	
+	SIMPLEQ_ENTRY(umidi_jack) intrq_entry;
 	unsigned 		intr;
 	union {
 		struct {

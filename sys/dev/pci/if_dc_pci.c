@@ -478,16 +478,16 @@ dc_pci_attach(struct device *parent, struct device *self, void *aux)
 		command = pci_conf_read(pc, pa->pa_tag, DC_PCI_CFDD);
 		command &= ~(DC_CFDD_SNOOZE_MODE|DC_CFDD_SLEEP_MODE);
 		switch ((command >> 8) & 0xff) {
-		case 3: 
+		case 3:
 			sc->dc_srm_media = IFM_10_T;
 			break;
-		case 4: 
+		case 4:
 			sc->dc_srm_media = IFM_10_T | IFM_FDX;
 			break;
-		case 5: 
+		case 5:
 			sc->dc_srm_media = IFM_100_TX;
 			break;
-		case 6: 
+		case 6:
 			sc->dc_srm_media = IFM_100_TX | IFM_FDX;
 			break;
 		}
@@ -513,7 +513,7 @@ dc_pci_detach(struct device *self, int flags)
 	struct dc_softc *sc = &psc->psc_softc;
 
 	if (sc->sc_ih != NULL)
-		pci_intr_disestablish(psc->psc_pc, sc->sc_ih);	
+		pci_intr_disestablish(psc->psc_pc, sc->sc_ih);
 	dc_detach(sc);
 	bus_space_unmap(sc->dc_btag, sc->dc_bhandle, psc->psc_mapsize);
 

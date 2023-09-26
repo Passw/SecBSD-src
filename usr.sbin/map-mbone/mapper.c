@@ -8,7 +8,7 @@
 /*
  * Copyright (c) 1992, 2001 Xerox Corporation.  All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
  * Redistributions of source code must retain the above copyright notice,
@@ -19,11 +19,11 @@
  * and/or other materials provided with the distribution.
  *
  * Neither name of the Xerox, PARC, nor the names of its contributors may be used
- * to endorse or promote products derived from this software 
- * without specific prior written permission. 
+ * to endorse or promote products derived from this software
+ * without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE XEROX CORPORATION OR CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -32,7 +32,7 @@
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <string.h>
@@ -376,10 +376,10 @@ void accept_neighbors(u_int32_t src, u_int32_t dst, u_char *p, int datalen,
 	    ifc_node->tries = -1;
 	    ifc_node->u.alias = node;
 	}
-	
+
 	ifc = find_interface(ifc_addr, node);
 	old_neighbors = ifc->neighbors;
-	
+
 	/* Add the neighbors for this interface */
 	while (ncount--) {
 	    u_int32_t 	neighbor;
@@ -517,10 +517,10 @@ void accept_neighbors2(u_int32_t src, u_int32_t dst, u_char *p, int datalen,
 	    ifc_node->tries = -1;
 	    ifc_node->u.alias = node;
 	}
-	
+
 	ifc = find_interface(ifc_addr, node);
 	old_neighbors = ifc->neighbors;
-	
+
 	/* Add the neighbors for this interface */
 	while (ncount-- && datalen > 0) {
 	    u_int32_t 	neighbor;
@@ -610,7 +610,7 @@ void print_map(Node *node)
 {
     if (node) {
 	char *name, *addr;
-	
+
 	print_map(node->left);
 
 	addr = inet_fmt(node->addr, s1);
@@ -798,7 +798,7 @@ int main(int argc, char *argv[])
     int flood = FALSE, graph = FALSE;
     int ch;
     const char *errstr;
-    
+
     if (geteuid() != 0) {
       fprintf(stderr, "map-mbone: must be root\n");
       exit(1);
@@ -851,7 +851,7 @@ int main(int argc, char *argv[])
     }
     argc -= optind;
     argv += optind;
-    
+
     if (argc > 1)
 	usage();
     else if (argc == 1 && !(target_addr = host_addr(argv[0]))) {

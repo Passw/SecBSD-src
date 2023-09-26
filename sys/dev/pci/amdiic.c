@@ -351,7 +351,7 @@ amdiic_i2c_exec(void *cookie, i2c_op_t op, i2c_addr_t addr,
 		if (tsleep_nsec(sc, PRIBIO, "amdiic",
 		    SEC_TO_NSEC(AMDIIC_TIMEOUT)))
 			return (1);
-	}	
+	}
 
 	if (sc->sc_i2c_xfer.error)
 		return (1);

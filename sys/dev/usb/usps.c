@@ -70,7 +70,7 @@ struct usps_softc {
 	struct device		 sc_dev;
 	struct usbd_device	*sc_udev;
 	struct usbd_interface	*sc_iface;
-	struct usbd_pipe	*sc_ipipe; 
+	struct usbd_pipe	*sc_ipipe;
 	int			 sc_isize;
 	struct usbd_xfer	*sc_xfer;
 	uint8_t			 sc_buf[16];
@@ -212,7 +212,7 @@ usps_attach(struct device *parent, struct device *self, void *aux)
 	strlcpy(sc->sc_serial_sensor.desc, "unit serial#",
 	    sizeof(sc->sc_serial_sensor.desc));
 
-	/* 
+	/*
 	 * XXX: the device has mode of par port sensor, Watt of Ampair.
 	 * currently only watt mode is selected.
 	 */
@@ -255,7 +255,7 @@ usps_attach(struct device *parent, struct device *self, void *aux)
 		goto fail;
 	}
 
-	printf("%s: device#=%d, firmware version=V%02dL%02d\n", 
+	printf("%s: device#=%d, firmware version=V%02dL%02d\n",
 	    sc->sc_dev.dv_xname, sc->sc_device_serial,
 	    sc->sc_firmware_version[0],
 	    sc->sc_firmware_version[1]);
@@ -264,9 +264,9 @@ usps_attach(struct device *parent, struct device *self, void *aux)
 
 	/* open interrupt endpoint */
 	sc->sc_intrbuf = malloc(sc->sc_isize, M_USBDEV, M_WAITOK);
-	if (sc->sc_intrbuf == NULL) 
+	if (sc->sc_intrbuf == NULL)
 		goto fail;
-	err = usbd_open_pipe_intr(sc->sc_iface, ep_intr, 
+	err = usbd_open_pipe_intr(sc->sc_iface, ep_intr,
 	    USBD_SHORT_XFER_OK, &sc->sc_ipipe, sc, sc->sc_intrbuf,
 	    sc->sc_isize, usps_intr, USPS_INTR_TICKS);
 	if (err) {
@@ -401,7 +401,7 @@ usps_intr(struct usbd_xfer *xfer, void *priv, usbd_status status)
 	}
 
 	/* process intr packet */
-	if (sc->sc_intrbuf == NULL) 
+	if (sc->sc_intrbuf == NULL)
 		return;
 
 	pkt = (struct usps_port_pkt *)sc->sc_intrbuf;
@@ -409,7 +409,7 @@ usps_intr(struct usbd_xfer *xfer, void *priv, usbd_status status)
 	total = 0;
 	for (i = 0; i < FX5204_NUM_PORTS; i++) {
 		ps = &sc->sc_port_sensor[i];
-		if (sc->sc_count == 0) 
+		if (sc->sc_count == 0)
 			ps->vmax = ps->vmin = pkt->port[i];
 		if (pkt->port[i] > ps->vmax)
 			ps->vmax = pkt->port[i];
@@ -440,7 +440,7 @@ usps_get_device_info(struct usps_softc *sc)
 
 	/* get Firmware version */
 	usps_cmd(sc, USPS_CMD_GET_FIRMWARE, 0, 2);
-	sc->sc_firmware_version[0] = 
+	sc->sc_firmware_version[0] =
 	    (sc->sc_buf[0]>>4) * 10 + (sc->sc_buf[0] & 0xf);
 	sc->sc_firmware_version[1] =
 	    (sc->sc_buf[1]>>4) * 10 + (sc->sc_buf[1] & 0xf);

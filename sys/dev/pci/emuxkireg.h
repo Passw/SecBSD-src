@@ -33,7 +33,7 @@
 #ifndef _DEV_PCI_EMUXKIREG_H_
 #define _DEV_PCI_EMUXKIREG_H_
 
-/* 
+/*
  * Register values for Creative EMU10000. The register values have been
  * taken from GPLed SBLive! header file published by Creative. The comments
  * have been stripped to avoid GPL pollution in kernel. The Creative version

@@ -94,7 +94,7 @@ sb_isapnp_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_iobase = ia->ipa_io[0].base;
 	sc->sc_ic = ia->ia_ic;
 	sc->sc_drq8 = ia->ipa_drq[0].num;
-	
+
 	if (ia->ipa_ndrq > 1 && ia->ipa_drq[0].num != ia->ipa_drq[1].num) {
 		/* Some cards have the 16 bit drq first */
 		if (sc->sc_drq8 >= 4) {

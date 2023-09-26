@@ -239,7 +239,7 @@ radius_test(struct parse_result *res)
 	test.res = res;
 	test.sock = sock;
 	test.reqpkt = reqpkt;
-	
+
 	event_set(&test.ev_recv, sock, EV_READ|EV_PERSIST,
 	    radius_test_recv, &test);
 

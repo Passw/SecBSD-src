@@ -395,6 +395,6 @@ usage(void)
 	(void)fprintf(stderr,
 	    "usage: %s [-a arch] [-e entry] [-l loadaddr] [-n name] [-o os] "
 	    "[-t type] infile outfile\n", __progname);
-	
+
 	exit(1);
 }

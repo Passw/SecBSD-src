@@ -141,7 +141,7 @@ read_rrset(udb_base* udb, namedb_type* db, zone_type* zone,
 }
 
 /** read one elem from db, of type domain_d */
-static void read_node_elem(udb_base* udb, namedb_type* db, 
+static void read_node_elem(udb_base* udb, namedb_type* db,
 	region_type* dname_region, zone_type* zone, struct domain_d* d)
 {
 	const dname_type* dname;

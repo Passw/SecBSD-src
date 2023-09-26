@@ -40,8 +40,8 @@
  */
 
 #include <sys/param.h>
-#include <sys/systm.h> 
-#include <sys/mbuf.h>   
+#include <sys/systm.h>
+#include <sys/mbuf.h>
 #include <sys/malloc.h>
 #include <sys/kernel.h>
 #include <sys/socket.h>
@@ -49,7 +49,7 @@
 #include <sys/errno.h>
 #include <sys/device.h>
 #include <sys/endian.h>
- 
+
 #include <net/if.h>
 #include <net/if_media.h>
 #include <netinet/in.h>
@@ -205,7 +205,7 @@ rtw_pci_attach(struct device *parent, struct device *self, void *aux)
 		printf(": unable to map interrupt\n");
 		return;
 	}
-	intrstr = pci_intr_string(pc, psc->psc_ih); 
+	intrstr = pci_intr_string(pc, psc->psc_ih);
 	psc->psc_intrcookie = pci_intr_establish(pc, psc->psc_ih, IPL_NET,
 	    rtw_intr, sc, sc->sc_dev.dv_xname);
 	if (psc->psc_intrcookie == NULL) {

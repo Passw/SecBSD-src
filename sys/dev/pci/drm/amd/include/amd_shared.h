@@ -60,7 +60,7 @@ enum amd_apu_flags {
 * acquires the list of IP blocks for the GPU in use on initialization.
 * It can then operate on this list to perform standard driver operations
 * such as: init, fini, suspend, resume, etc.
-* 
+*
 *
 * IP block implementations are named using the following convention:
 * <functionality>_v<version> (E.g.: gfx_v6_0).

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007 Tehuti Networks. 
+ * Copyright (c) 2007 Tehuti Networks.
  *
  * All rights reserved.
  *

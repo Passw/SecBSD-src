@@ -94,7 +94,7 @@ lfp_to_d(struct l_fixedpt lfp)
 	/* see comment in ntp.h */
 	base = NTP_ERA;
 	if (lfp.int_partl <= INT32_MAX)
-		base++; 
+		base++;
 	ret = base * SECS_IN_ERA;
 	ret += (double)(lfp.int_partl) + ((double)lfp.fractionl / UINT_MAX);
 

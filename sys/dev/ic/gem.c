@@ -243,7 +243,7 @@ gem_config(struct gem_softc *sc)
 
 	mii_flags = MIIF_DOPAUSE;
 
-	/* 
+	/*
 	 * Look for an external PHY.
 	 */
 	if (sc->sc_mif_config & GEM_MIF_CONFIG_MDI1) {
@@ -293,7 +293,7 @@ gem_config(struct gem_softc *sc)
 		    MII_OFFSET_ANY, mii_flags);
 	}
 
-	/* 
+	/*
 	 * Try the external PCS SERDES if we didn't find any MII
 	 * devices.
 	 */
@@ -785,11 +785,11 @@ gem_init(struct ifnet *ifp)
 	gem_iff(sc);
 
 	/* step 6 & 7. Program Descriptor Ring Base Addresses */
-	bus_space_write_4(t, h, GEM_TX_RING_PTR_HI, 
+	bus_space_write_4(t, h, GEM_TX_RING_PTR_HI,
 	    (((uint64_t)GEM_CDTXADDR(sc,0)) >> 32));
 	bus_space_write_4(t, h, GEM_TX_RING_PTR_LO, GEM_CDTXADDR(sc, 0));
 
-	bus_space_write_4(t, h, GEM_RX_RING_PTR_HI, 
+	bus_space_write_4(t, h, GEM_RX_RING_PTR_HI,
 	    (((uint64_t)GEM_CDRXADDR(sc,0)) >> 32));
 	bus_space_write_4(t, h, GEM_RX_RING_PTR_LO, GEM_CDRXADDR(sc, 0));
 
@@ -820,7 +820,7 @@ gem_init(struct ifnet *ifp)
 	/* Encode Receive Descriptor ring size: four possible values */
 	v = gem_ringsize(GEM_NRXDESC /*XXX*/);
 	/* Enable DMA */
-	bus_space_write_4(t, h, GEM_RX_CONFIG, 
+	bus_space_write_4(t, h, GEM_RX_CONFIG,
 		v|(GEM_THRSH_1024<<GEM_RX_CONFIG_FIFO_THRS_SHIFT)|
 		(2<<GEM_RX_CONFIG_FBOFF_SHFT)|GEM_RX_CONFIG_RXDMA_EN|
 		(0<<GEM_RX_CONFIG_CXM_START_SHFT));
@@ -944,11 +944,11 @@ gem_init_regs(struct gem_softc *sc)
 	/*
 	 * Set the station address.
 	 */
-	bus_space_write_4(t, h, GEM_MAC_ADDR0, 
+	bus_space_write_4(t, h, GEM_MAC_ADDR0,
 		(sc->sc_arpcom.ac_enaddr[4]<<8) | sc->sc_arpcom.ac_enaddr[5]);
-	bus_space_write_4(t, h, GEM_MAC_ADDR1, 
+	bus_space_write_4(t, h, GEM_MAC_ADDR1,
 		(sc->sc_arpcom.ac_enaddr[2]<<8) | sc->sc_arpcom.ac_enaddr[3]);
-	bus_space_write_4(t, h, GEM_MAC_ADDR2, 
+	bus_space_write_4(t, h, GEM_MAC_ADDR2,
 		(sc->sc_arpcom.ac_enaddr[0]<<8) | sc->sc_arpcom.ac_enaddr[1]);
 }
 

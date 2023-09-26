@@ -211,7 +211,7 @@ static const ASN1_ADB_TABLE PKCS12_BAGS_adbtbl[] = {
 			.field_name = "value.x509cert",
 			.item = &ASN1_OCTET_STRING_it,
 		},
-	
+
 	},
 	{
 		.value = NID_x509Crl,
@@ -222,7 +222,7 @@ static const ASN1_ADB_TABLE PKCS12_BAGS_adbtbl[] = {
 			.field_name = "value.x509crl",
 			.item = &ASN1_OCTET_STRING_it,
 		},
-	
+
 	},
 	{
 		.value = NID_sdsiCertificate,
@@ -233,7 +233,7 @@ static const ASN1_ADB_TABLE PKCS12_BAGS_adbtbl[] = {
 			.field_name = "value.sdsicert",
 			.item = &ASN1_IA5STRING_it,
 		},
-	
+
 	},
 };
 
@@ -321,7 +321,7 @@ static const ASN1_ADB_TABLE PKCS12_SAFEBAG_adbtbl[] = {
 			.field_name = "value.keybag",
 			.item = &PKCS8_PRIV_KEY_INFO_it,
 		},
-	
+
 	},
 	{
 		.value = NID_pkcs8ShroudedKeyBag,
@@ -332,7 +332,7 @@ static const ASN1_ADB_TABLE PKCS12_SAFEBAG_adbtbl[] = {
 			.field_name = "value.shkeybag",
 			.item = &X509_SIG_it,
 		},
-	
+
 	},
 	{
 		.value = NID_safeContentsBag,
@@ -353,7 +353,7 @@ static const ASN1_ADB_TABLE PKCS12_SAFEBAG_adbtbl[] = {
 			.field_name = "value.bag",
 			.item = &PKCS12_BAGS_it,
 		},
-	
+
 	},
 	{
 		.value = NID_crlBag,
@@ -364,7 +364,7 @@ static const ASN1_ADB_TABLE PKCS12_SAFEBAG_adbtbl[] = {
 			.field_name = "value.bag",
 			.item = &PKCS12_BAGS_it,
 		},
-	
+
 	},
 	{
 		.value = NID_secretBag,
@@ -375,7 +375,7 @@ static const ASN1_ADB_TABLE PKCS12_SAFEBAG_adbtbl[] = {
 			.field_name = "value.bag",
 			.item = &PKCS12_BAGS_it,
 		},
-	
+
 	},
 };
 

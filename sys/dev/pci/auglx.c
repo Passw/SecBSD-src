@@ -22,7 +22,7 @@
  *
  * The following datasheets were helpful in the development of this
  * driver:
- * 
+ *
  * AMD Geode LX Processors Data Book
  * http://www.amd.com/files/connectivitysolutions/geode/geode_lx/\
  *     33234F_LX_databook.pdf
@@ -335,7 +335,7 @@ auglx_read_codec(void *v, u_int8_t reg, u_int16_t *val)
 	struct auglx_softc *sc = v;
 	u_int32_t codec_cntl, codec_status;
 	int i;
-	
+
 	codec_cntl = RW_CMD | ((u_int32_t)reg << 24) | CMD_NEW;
 	bus_space_write_4(sc->sc_iot, sc->sc_ioh, ACC_CODEC_CNTL, codec_cntl);
 
@@ -381,7 +381,7 @@ auglx_write_codec(void *v, u_int8_t reg, u_int16_t val)
 	DPRINTF(AUGLX_DBG_ACC, ("%s: write codec register 0x%02x: 0x%04x\n",
 	    sc->sc_dev.dv_xname, reg, val));
 
-	
+
 	codec_cntl = ((u_int32_t)reg << 24) | CMD_NEW | val;
 	bus_space_write_4(sc->sc_iot, sc->sc_ioh, ACC_CODEC_CNTL, codec_cntl);
 
@@ -767,7 +767,7 @@ auglx_trigger_input(void *v, void *start, void *end, int blksize,
 	sc->bm1.arg = arg;
 
 	mtx_enter(&audio_lock);
-	/* Program the BM1 PRD register */	
+	/* Program the BM1 PRD register */
 	bus_space_write_4(sc->sc_iot, sc->sc_ioh, ACC_BM1_PRD,
 	    sc->bm1.sc_prd->dm_segs[0].ds_addr);
 	/* Start Audio Bus Master 0 */
@@ -787,7 +787,7 @@ auglx_allocmem(struct auglx_softc *sc, size_t size, size_t align,
 	error = bus_dmamem_alloc(sc->sc_dmat, p->size, align, 0, p->segs, 1,
 	    &p->nsegs, BUS_DMA_NOWAIT);
 	if (error) {
-		DPRINTF(AUGLX_DBG_DMA, 
+		DPRINTF(AUGLX_DBG_DMA,
 		    ("%s: bus_dmamem_alloc failed: error %d\n",
 		    sc->sc_dev.dv_xname, error));
 		return error;
@@ -796,7 +796,7 @@ auglx_allocmem(struct auglx_softc *sc, size_t size, size_t align,
 	error = bus_dmamem_map(sc->sc_dmat, p->segs, 1, p->size, &p->addr,
 	    BUS_DMA_NOWAIT | sc->sc_dmamap_flags);
 	if (error) {
-		DPRINTF(AUGLX_DBG_DMA, 
+		DPRINTF(AUGLX_DBG_DMA,
 		    ("%s: bus_dmamem_map failed: error %d\n",
 		    sc->sc_dev.dv_xname, error));
 		goto free;
@@ -805,7 +805,7 @@ auglx_allocmem(struct auglx_softc *sc, size_t size, size_t align,
 	error = bus_dmamap_create(sc->sc_dmat, p->size, 1, p->size, 0,
 	    BUS_DMA_NOWAIT, &p->map);
 	if (error) {
-		DPRINTF(AUGLX_DBG_DMA, 
+		DPRINTF(AUGLX_DBG_DMA,
 		    ("%s: bus_dmamap_create failed: error %d\n",
 		    sc->sc_dev.dv_xname, error));
 		goto unmap;

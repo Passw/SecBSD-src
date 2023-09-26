@@ -182,24 +182,24 @@ static struct pcmcia_cis_quirk pcmcia_cis_quirks[] = {
 	  PCMCIA_CIS_INVALID,
 	  &pcmcia_3cxem556_func1, &pcmcia_3cxem556_func1_cfe0 },
 	{ PCMCIA_VENDOR_MEGAHERTZ2, PCMCIA_PRODUCT_MEGAHERTZ2_XJEM1144,
-	  PCMCIA_CIS_INVALID, 
+	  PCMCIA_CIS_INVALID,
 	  &pcmcia_megahertz_xjem1144_func0,
 	  &pcmcia_megahertz_xjem1144_func0_cfe0 },
 	{ PCMCIA_VENDOR_MEGAHERTZ2, PCMCIA_PRODUCT_MEGAHERTZ2_XJEM1144,
-	  PCMCIA_CIS_INVALID, 
+	  PCMCIA_CIS_INVALID,
 	  &pcmcia_megahertz_xjem1144_func1,
 	  &pcmcia_megahertz_xjem1144_func1_cfe0 },
 	{ PCMCIA_VENDOR_SIERRA, PCMCIA_PRODUCT_SIERRA_A550,
-	  PCMCIA_CIS_INVALID, 
+	  PCMCIA_CIS_INVALID,
 	  &pcmcia_sierra_a555_func1, &pcmcia_sierra_a555_func1_cfe0 },
 	{ PCMCIA_VENDOR_SIERRA, PCMCIA_PRODUCT_SIERRA_A555,
-	  PCMCIA_CIS_INVALID, 
+	  PCMCIA_CIS_INVALID,
 	  &pcmcia_sierra_a555_func1, &pcmcia_sierra_a555_func1_cfe0 },
 	{ PCMCIA_VENDOR_SIERRA, PCMCIA_PRODUCT_SIERRA_A710,
-	  PCMCIA_CIS_INVALID, 
+	  PCMCIA_CIS_INVALID,
 	  &pcmcia_sierra_a555_func1, &pcmcia_sierra_a555_func1_cfe0 },
 	{ PCMCIA_VENDOR_SIERRA, PCMCIA_PRODUCT_SIERRA_AC710,
-	  PCMCIA_CIS_INVALID, 
+	  PCMCIA_CIS_INVALID,
 	  &pcmcia_sierra_a555_func1, &pcmcia_sierra_a555_func1_cfe0 },
 	{ PCMCIA_VENDOR_INVALID, PCMCIA_PRODUCT_INVALID,
 	  PCMCIA_CIS_SVEC_LANCARD,
@@ -217,7 +217,7 @@ pcmcia_check_cis_quirks(struct pcmcia_softc *sc)
 	pf = NULL;
 	pf_last = NULL;
 
-	
+
 	for (i = 0; i < nitems(pcmcia_cis_quirks);
 	    i++) {
 		if ((sc->card.manufacturer == pcmcia_cis_quirks[i].manufacturer) &&

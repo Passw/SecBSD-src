@@ -185,7 +185,7 @@ int
 xe_pcmcia_match(struct device *parent, void *match, void *aux)
 {
 	struct pcmcia_attach_args *pa = aux;
-	
+
 	if (pa->pf->function != PCMCIA_FUNCTION_NETWORK)
 		return (0);
 
@@ -632,7 +632,7 @@ xe_intr(void *arg)
 	esr = bus_space_read_1(sc->sc_bst, sc->sc_bsh, sc->sc_offset + ESR);
 	isr = bus_space_read_1(sc->sc_bst, sc->sc_bsh, sc->sc_offset + ISR0);
 	rsr = bus_space_read_1(sc->sc_bst, sc->sc_bsh, sc->sc_offset + RSR);
-				
+
 	/* Check to see if card has been ejected. */
 	if (isr == 0xff) {
 		printf("%s: interrupt for dead card\n", sc->sc_dev.dv_xname);
@@ -672,7 +672,7 @@ xe_intr(void *arg)
 		rsr = bus_space_read_1(sc->sc_bst, sc->sc_bsh,
 		    sc->sc_offset + RSR);
 	}
-	
+
 	/* Packet too long? */
 	if (rsr & RSR_TOO_LONG) {
 		ifp->if_ierrors++;
@@ -700,7 +700,7 @@ xe_intr(void *arg)
 		    CLR_RX_OVERRUN);
 		DPRINTF(XED_INTR, ("overrun cleared\n"));
 	}
-			
+
 	/* Try to start more packets transmitting. */
 	if (ifq_empty(&ifp->if_snd) == 0)
 		xe_start(ifp);
@@ -713,7 +713,7 @@ xe_intr(void *arg)
 		    RESTART_TX);
 		ifp->if_oerrors++;
 	}
-	
+
 	if (tx_status & TX_ABORT)
 		ifp->if_oerrors++;
 
@@ -735,7 +735,7 @@ xe_get(struct xe_softc *sc)
 	struct ifnet *ifp = &sc->sc_arpcom.ac_if;
 	u_int16_t pktlen, len, recvcount = 0;
 	u_int8_t *data;
-	
+
 	PAGE(sc, 0);
 	rsr = bus_space_read_1(sc->sc_bst, sc->sc_bsh, sc->sc_offset + RSR);
 
@@ -758,7 +758,7 @@ xe_get(struct xe_softc *sc)
 	len = MHLEN;
 	top = 0;
 	mp = &top;
-	
+
 	while (pktlen > 0) {
 		if (top) {
 			MGET(m, M_DONTWAIT, MT_DATA);
@@ -998,12 +998,12 @@ xe_stop(struct xe_softc *sc)
 
 	PAGE(sc, 1);
 	bus_space_write_1(sc->sc_bst, sc->sc_bsh, sc->sc_offset + IMR0, 0);
-	
+
 	/* Power down, wait. */
 	PAGE(sc, 4);
 	bus_space_write_1(sc->sc_bst, sc->sc_bsh, sc->sc_offset + GP1, 0);
 	DELAY(40000);
-	
+
 	/* Cancel watchdog timer. */
 	sc->sc_arpcom.ac_if.if_timer = 0;
 }
@@ -1128,7 +1128,7 @@ xe_ioctl(struct ifnet *ifp, u_long command, caddr_t data)
 
 	case SIOCSIFFLAGS:
 		sc->sc_all_mcasts = (ifp->if_flags & IFF_ALLMULTI) ? 1 : 0;
-				
+
 		PAGE(sc, 0x42);
 		if ((ifp->if_flags & IFF_PROMISC) ||
 		    (ifp->if_flags & IFF_ALLMULTI))
@@ -1361,7 +1361,7 @@ xe_full_reset(struct xe_softc *sc)
 		DELAY(20000);
 	} else {
 		PAGE(sc, 0);
-				
+
 		/* XXX Do we need to do this? */
 		PAGE(sc, 0x42);
 		bus_space_write_1(bst, bsh, offset + SWC1, SWC1_AUTO_MEDIA);

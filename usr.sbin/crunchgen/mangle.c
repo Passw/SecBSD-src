@@ -34,7 +34,7 @@
 #include "mangle.h"
 
 /*
- * supports randomizing up to 32 characters, if an identifier is longer than 
+ * supports randomizing up to 32 characters, if an identifier is longer than
  * 32 characters, we only modify the first 32 characters of it.
  *
  * However not all of the 32 characters will really be randomized as
@@ -137,12 +137,12 @@ mangle_str(char *str)
 		len = MAX_KEY_STR_LEN;
 
 	keyval = key[len-1]++;
-	
+
 	for (i = 0; i < len; i++) {
 		int idx = keyval % NUM_KEYS;
 		keyval = keyval / NUM_KEYS;
 		str[i] = validchars[idx];
-		
+
 	}
 }
 

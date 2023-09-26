@@ -276,7 +276,7 @@ tascodec_set_port(void *priv, mixer_ctrl_t *mc)
 			tascodec_write(sc, PWR_CTL, mode);
 		}
 		return 0;
-		
+
 	}
 
 	return EINVAL;

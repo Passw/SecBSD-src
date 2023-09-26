@@ -131,7 +131,7 @@ struct vmxnet3_txdesc {
 #define VMXNET3_OM_TSO  3
 
 struct vmxnet3_txcompdesc {
-	u_int32_t		txc_word0;	
+	u_int32_t		txc_word0;
 #define VMXNET3_TXC_EOPIDX_M	0x00000fff	/* eop index in Tx ring */
 #define VMXNET3_TXC_EOPIDX_S	0
 #define VMXNET3_TXC_RES0_M	0x000fffff

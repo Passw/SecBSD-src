@@ -3,7 +3,7 @@
 # hppa-specific libcrypto build rules
 
 # aes
-SRCS+= aes_core.c aes_cbc.c 
+SRCS+= aes_core.c aes_cbc.c
 CFLAGS+= -DAES_ASM
 SSLASM+= aes aes-parisc aes-parisc
 # bf

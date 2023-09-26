@@ -559,6 +559,6 @@ int cbs_get_any_asn1_element_internal(CBS *cbs, CBS *out, unsigned int *out_tag,
 int CBS_asn1_indefinite_to_definite(CBS *in, uint8_t **out, size_t *out_len);
 #endif /* LIBRESSL_INTERNAL */
 
-__END_HIDDEN_DECLS 
+__END_HIDDEN_DECLS
 
 #endif  /* OPENSSL_HEADER_BYTESTRING_H */

@@ -1664,7 +1664,7 @@ pciide_mapregs_compat(struct pci_attach_args *pa, struct pciide_channel *cp,
 	csr = pci_conf_read(sc->sc_pc, sc->sc_tag, PCI_COMMAND_STATUS_REG);
 	pci_conf_write(sc->sc_pc, sc->sc_tag, PCI_COMMAND_STATUS_REG,
 	    csr | PCI_COMMAND_IO_ENABLE | PCI_COMMAND_MASTER_ENABLE);
-	
+
 	wdc_cp->cmd_iot = pa->pa_iot;
 
 	if (bus_space_map(wdc_cp->cmd_iot, PCIIDE_COMPAT_CMD_BASE(compatchan),
@@ -3465,7 +3465,7 @@ apollo_chip_map(struct pciide_softc *sc, struct pci_attach_args *pa)
 		sc->sc_wdcdev.UDMA_cap = 6;
 		break;
 	default:
-		/* 
+		/*
 		 * Determine the DMA capabilities by looking at the
 		 * ISA bridge.
 		 */
@@ -6837,7 +6837,7 @@ pdcsata_chip_map(struct pciide_softc *sc, struct pci_attach_args *pa)
 	    	    sc->sc_wdcdev.sc_dev.dv_xname);
 		break;
 	}
-		
+
 	if (sc->sc_pci_ih == NULL) {
 		printf(": couldn't establish native-PCI interrupt");
 		if (intrstr != NULL)
@@ -6902,10 +6902,10 @@ pdcsata_chip_map(struct pciide_softc *sc, struct pci_attach_args *pa)
 	case PCI_PRODUCT_PROMISE_PDC20571:
 		bus_space_write_4(ps->ba5_st, ps->ba5_sh, 0x60, 0x00ff00ff);
 		sc->sc_wdcdev.nchannels = PDC40718_NCHANNELS;
-  	 
+
 		sc->sc_wdcdev.reset = pdc205xx_do_reset;
 		sc->sc_wdcdev.drv_probe = pdc205xx_drv_probe;
-		
+
 		break;
 	case PCI_PRODUCT_PROMISE_PDC20575:
 	case PCI_PRODUCT_PROMISE_PDC20579:
@@ -6916,7 +6916,7 @@ pdcsata_chip_map(struct pciide_softc *sc, struct pci_attach_args *pa)
 
 		sc->sc_wdcdev.reset = pdc205xx_do_reset;
 		sc->sc_wdcdev.drv_probe = pdc205xx_drv_probe;
-		
+
 		break;
 	}
 
@@ -7803,7 +7803,7 @@ svwsata_write_reg(struct channel_softc *chp, enum wdc_regs reg, u_int8_t val)
 		    (reg & _WDC_REGMASK) << 2, val);
 	}
 }
- 
+
 void
 svwsata_lba48_write_reg(struct channel_softc *chp, enum wdc_regs reg, u_int16_t val)
 {
@@ -7815,7 +7815,7 @@ svwsata_lba48_write_reg(struct channel_softc *chp, enum wdc_regs reg, u_int16_t 
 		    (reg & _WDC_REGMASK) << 2, val);
 	}
 }
- 
+
 #define	ACARD_IS_850(sc) \
 	((sc)->sc_pp->ide_product == PCI_PRODUCT_ACARD_ATP850U)
 

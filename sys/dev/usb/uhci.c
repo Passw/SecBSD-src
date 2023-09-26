@@ -2849,7 +2849,7 @@ uhci_portreset(struct uhci_softc *sc, int index)
 		DPRINTFN(1,("uhci port %d reset timed out\n", index));
 		return (USBD_TIMEOUT);
 	}
-	
+
 	sc->sc_isreset = 1;
 	return (USBD_NORMAL_COMPLETION);
 }

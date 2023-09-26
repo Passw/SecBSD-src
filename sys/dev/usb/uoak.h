@@ -123,7 +123,7 @@ struct uoak_softc {
 	size_t			 sc_flen;	/* feature report length */
 	size_t			 sc_ilen;	/* input report length */
 	size_t			 sc_olen;	/* output report length */
-	uint8_t			*sc_ibuf;	
+	uint8_t			*sc_ibuf;
 
 	/* buffers */
 	struct uoak_rcmd	 sc_rcmd;

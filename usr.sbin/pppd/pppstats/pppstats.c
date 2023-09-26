@@ -185,9 +185,9 @@ intpr()
 				printf("OUT: COMPRESSED  INCOMPRESSIBLE   COMP\n");
 				bunit = dflag? "KB/S": "BYTE";
 				printf("    %s   PACK     %s   PACK  RATIO | ",
-				    bunit, bunit); 
+				    bunit, bunit);
 				printf("    %s   PACK     %s   PACK  RATIO",
-				    bunit, bunit);    
+				    bunit, bunit);
 			} else {
 				printf("%8.8s %6.6s %6.6s",
 					"IN", "PACK", "VJCOMP");

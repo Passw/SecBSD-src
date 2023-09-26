@@ -164,7 +164,7 @@ _vpaes_encrypt_core:
 	pshufb	%xmm1,	%xmm0
 	ret
 .size	_vpaes_encrypt_core,.-_vpaes_encrypt_core
-	
+
 ##
 ##  Decryption core
 ##
@@ -218,7 +218,7 @@ _vpaes_decrypt_core:
 	pshufb	%xmm3,	%xmm0		# 0 = sbdt
 	pxor	%xmm4,	%xmm0		# 0 = ch
 	sub	\$1,%rax		# nr--
-	
+
 	pshufb	%xmm5,	%xmm0		# MC ch
 	movdqa  0x20(%r10),%xmm4	# 4 : sbbu
 	pshufb	%xmm2,	%xmm4		# 4 = sbbu
@@ -226,7 +226,7 @@ _vpaes_decrypt_core:
 	movdqa  0x30(%r10),%xmm0	# 0 : sbbt
 	pshufb	%xmm3,	%xmm0		# 0 = sbbt
 	pxor	%xmm4,	%xmm0		# 0 = ch
-	
+
 	pshufb	%xmm5,	%xmm0		# MC ch
 	movdqa  0x40(%r10),%xmm4	# 4 : sbeu
 	pshufb	%xmm2,	%xmm4		# 4 = sbeu
@@ -236,7 +236,7 @@ _vpaes_decrypt_core:
 	pxor	%xmm4,	%xmm0		# 0 = ch
 
 	palignr	\$12,	%xmm5,	%xmm5
-	
+
 .Ldec_entry:
 	# top of round
 	movdqa  %xmm9, 	%xmm1	# 1 : i
@@ -328,7 +328,7 @@ _vpaes_schedule_core:
 ##
 .Lschedule_128:
 	mov	\$10, %esi
-	
+
 .Loop_schedule_128:
 	call 	_vpaes_schedule_round
 	dec	%rsi
@@ -362,7 +362,7 @@ _vpaes_schedule_core:
 
 .Loop_schedule_192:
 	call	_vpaes_schedule_round
-	palignr	\$8,%xmm6,%xmm0	
+	palignr	\$8,%xmm6,%xmm0
 	call	_vpaes_schedule_mangle	# save key n
 	call	_vpaes_schedule_192_smear
 	call	_vpaes_schedule_mangle	# save key n+1
@@ -388,7 +388,7 @@ _vpaes_schedule_core:
 	movdqu	16(%rdi),%xmm0		# load key part 2 (unaligned)
 	call	_vpaes_schedule_transform	# input transform
 	mov	\$7, %esi
-	
+
 .Loop_schedule_256:
 	call	_vpaes_schedule_mangle	# output low result
 	movdqa	%xmm0,	%xmm6		# save cur_lo in xmm6
@@ -397,7 +397,7 @@ _vpaes_schedule_core:
 	call	_vpaes_schedule_round
 	dec	%rsi
 	jz 	.Lschedule_mangle_last
-	call	_vpaes_schedule_mangle	
+	call	_vpaes_schedule_mangle
 
 	# low round. swap xmm7 and xmm6
 	pshufd	\$0xFF,	%xmm0,	%xmm0
@@ -405,10 +405,10 @@ _vpaes_schedule_core:
 	movdqa	%xmm6,	%xmm7
 	call	_vpaes_schedule_low_round
 	movdqa	%xmm5,	%xmm7
-	
+
 	jmp	.Loop_schedule_256
 
-	
+
 ##
 ##  .aes_schedule_mangle_last
 ##
@@ -509,9 +509,9 @@ _vpaes_schedule_round:
 	# rotate
 	pshufd	\$0xFF,	%xmm0,	%xmm0
 	palignr	\$1,	%xmm0,	%xmm0
-	
+
 	# fall through...
-	
+
 	# low round: same as high round, but no rotation and no rcon.
 _vpaes_schedule_low_round:
 	# smear xmm7
@@ -550,7 +550,7 @@ _vpaes_schedule_low_round:
 	pxor	%xmm4, 	%xmm0		# 0 = sbox output
 
 	# add in smeared stuff
-	pxor	%xmm7,	%xmm0	
+	pxor	%xmm7,	%xmm0
 	movdqa	%xmm0,	%xmm7
 	ret
 .size	_vpaes_schedule_round,.-_vpaes_schedule_round

@@ -242,7 +242,7 @@ getq(struct queue ***namelist)
 
 	/*
 	 * Estimate the array size by taking the size of the directory file
-	 * and dividing it by a multiple of the minimum size entry. 
+	 * and dividing it by a multiple of the minimum size entry.
 	 */
 	arraysz = (stbuf.st_size / 24);
 	queue = calloc(arraysz, sizeof(struct queue *));

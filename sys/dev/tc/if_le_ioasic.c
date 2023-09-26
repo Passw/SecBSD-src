@@ -219,13 +219,13 @@ le_ioasic_copytobuf_gap2(struct lance_softc *sc, void *fromv,
 {
 	volatile caddr_t buf = sc->sc_mem;
 	caddr_t from = fromv;
-	volatile u_int16_t *bptr;  
+	volatile u_int16_t *bptr;
 
 	if (boff & 0x1) {
 		/* handle unaligned first byte */
 		bptr = ((volatile u_int16_t *)buf) + (boff - 1);
 		*bptr = (*from++ << 8) | (*bptr & 0xff);
-		bptr += 2;  
+		bptr += 2;
 		len--;
 	} else
 		bptr = ((volatile u_int16_t *)buf) + boff;
@@ -341,7 +341,7 @@ le_ioasic_copytobuf_gap16(struct lance_softc *sc, void *fromv,
 		} while (len >= 16);
 		break;
 
-		default: 
+		default:
 		/* Does odd-aligned case ever happen? */
 		do {
 			bcopy(from, bptr, 16);

@@ -200,7 +200,7 @@ ihidev_attach(struct device *parent, struct device *self, void *aux)
 
 	if (sc->sc_refcnt > 0)
 		return;
-	
+
 	/* power down until we're opened */
 	if (ihidev_hid_command(sc, I2C_HID_CMD_SET_POWER, &I2C_HID_POWER_OFF)) {
 		printf("%s: failed to power down\n", sc->sc_dev.dv_xname);

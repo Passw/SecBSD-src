@@ -275,7 +275,7 @@ nlm_free_all_3(nlm_notify *argp, CLIENT *clnt)
 }
 
 
-int 
+int
 main(int argc, char **argv)
 {
 	CLIENT *cli;

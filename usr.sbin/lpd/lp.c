@@ -123,7 +123,7 @@ lp_scanprinters(struct lp_printer *lp)
 		if (r == -2)
 			goto fail;
 		return 1;
-	} else if (r == -1) 
+	} else if (r == -1)
 		fatal("cannot open %s", _PATH_PRINTCAP);
 	else if (r == -2)
 		errno = ELOOP; /* potential reference loop */

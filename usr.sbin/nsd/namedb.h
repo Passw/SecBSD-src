@@ -364,7 +364,7 @@ zone_type *namedb_find_zone(namedb_type *db, const dname_type *dname);
 /*
  * Delete a domain name from the domain table.  Removes dname_info node.
  * Only deletes if usage is 0, has no rrsets and no children.  Checks parents
- * for deletion as well.  Adjusts numberlist(domain.number), and 
+ * for deletion as well.  Adjusts numberlist(domain.number), and
  * wcard_child closest match.
  */
 void domain_table_deldomain(namedb_type* db, domain_type* domain);

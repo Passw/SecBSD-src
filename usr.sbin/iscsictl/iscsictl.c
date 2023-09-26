@@ -387,7 +387,7 @@ show_vscsi_stats(struct ctrlmsghdr *cmh, struct pdu *pdu)
 	    vs->cnt_probe, vs->cnt_detach);
 	printf("%llu I2T calls (%llu read, %llu writes)\n",
 	    vs->cnt_i2t,
-	    vs->cnt_i2t_dir[1], 
+	    vs->cnt_i2t_dir[1],
 	    vs->cnt_i2t_dir[2]);
 
 	if (fmt_scaled(vs->bytes_rd, buf) != 0)
@@ -399,8 +399,8 @@ show_vscsi_stats(struct ctrlmsghdr *cmh, struct pdu *pdu)
 
 	printf("%llu T2I calls (%llu done, %llu sense errors, %llu errors)\n",
 	    vs->cnt_t2i,
-	    vs->cnt_t2i_status[0], 
-	    vs->cnt_t2i_status[1], 
+	    vs->cnt_t2i_status[0],
+	    vs->cnt_t2i_status[1],
 	    vs->cnt_t2i_status[2]);
 }
 

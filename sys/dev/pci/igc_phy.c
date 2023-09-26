@@ -59,7 +59,7 @@ igc_null_set_page(struct igc_hw IGC_UNUSEDARG *hw, uint16_t IGC_UNUSEDARG data)
  *  @data: dummy variable
  **/
 int
-igc_null_read_reg(struct igc_hw IGC_UNUSEDARG *hw, 
+igc_null_read_reg(struct igc_hw IGC_UNUSEDARG *hw,
     uint32_t IGC_UNUSEDARG offset, uint16_t IGC_UNUSEDARG *data)
 {
 	DEBUGFUNC("igc_null_read_reg");

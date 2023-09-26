@@ -147,7 +147,7 @@ struct malo_cmd_body_channel {
 
 struct malo_cmd_body_txpower {
 	uint16_t	action;
-	int16_t		txpower;	
+	int16_t		txpower;
 } __packed;
 
 struct malo_cmd_body_antenna {

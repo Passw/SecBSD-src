@@ -352,7 +352,7 @@ aic_print_reg_dump_types(FILE *ofile)
 {
 	if (ofile == NULL)
 		return;
-		
+
 	fprintf(ofile,
 "typedef int (%sreg_print_t)(u_int, u_int *, u_int);\n"
 "typedef struct %sreg_parse_entry {\n"
@@ -386,7 +386,7 @@ aic_print_reg_dump_end(FILE *ofile, FILE *dfile,
 	lower_name = strdup(regnode->symbol->name);
 	if (lower_name == NULL)
 		 stop("Unable to strdup symbol name", EX_SOFTWARE);
-	
+
 	for (letter = lower_name; *letter != '\0'; letter++)
 		*letter = tolower(*letter);
 
@@ -647,7 +647,7 @@ symtable_dump(FILE *ofile, FILE *dfile)
 		free(curnode);
 	}
 
-	
+
 	fprintf(ofile, "\n\n/* Downloaded Constant Definitions */\n");
 
 	for (i = 0; SLIST_FIRST(&download_constants) != NULL; i++) {

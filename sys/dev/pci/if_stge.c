@@ -317,7 +317,7 @@ stge_attach(struct device *parent, struct device *self, void *aux)
 	} else {
 		uint16_t myaddr[ETHER_ADDR_LEN / 2];
 		for (i = 0; i < ETHER_ADDR_LEN / 2; i++) {
-			stge_read_eeprom(sc, STGE_EEPROM_StationAddress0 + i, 
+			stge_read_eeprom(sc, STGE_EEPROM_StationAddress0 + i,
 			    &myaddr[i]);
 			myaddr[i] = letoh16(myaddr[i]);
 		}

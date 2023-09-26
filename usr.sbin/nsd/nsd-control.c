@@ -4,22 +4,22 @@
  * Copyright (c) 2011, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -272,7 +272,7 @@ contact_server(const char* svr, struct nsd_options* cfg, int statuscmd)
 			fprintf(stderr, "could not parse port %s\n", ps);
 			exit(1);
 		}
-	} 
+	}
 	if(svr[0] == '/') {
 #ifdef HAVE_SYS_UN_H
 		struct sockaddr_un* usock = (struct sockaddr_un *) &addr;

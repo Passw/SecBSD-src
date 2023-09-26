@@ -4,7 +4,7 @@
  * Adapted from the following files in src/usr.sbin/lpr/lpd:
  *
  * extern.h,v 1.9 2015/09/29 02:37:29
- * key.c,v 1.8 2015/01/16 06:40:18 
+ * key.c,v 1.8 2015/01/16 06:40:18
  * modes.c,v 1.8 2015/01/16 06:40:18
  * printjob.c,v 1.58 2016/11/22 16:03:57
  */

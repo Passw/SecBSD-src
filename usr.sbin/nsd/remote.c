@@ -4,22 +4,22 @@
  * Copyright (c) 2008, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -38,7 +38,7 @@
  *
  * This file contains the remote control functionality for the daemon.
  * The remote control can be performed using either the commandline
- * nsd-control tool, or a TLS capable web browser. 
+ * nsd-control tool, or a TLS capable web browser.
  * The channel is secured using TLSv1, and certificates.
  * Both the server and the client(control tool) have their own keys.
  */
@@ -188,7 +188,7 @@ struct remote_stream {
 };
 typedef struct remote_stream RES;
 
-/** 
+/**
  * Print fixed line of text over ssl connection in blocking mode
  * @param res: print to
  * @param text: the text.
@@ -196,7 +196,7 @@ typedef struct remote_stream RES;
  */
 static int ssl_print_text(RES* res, const char* text);
 
-/** 
+/**
  * printf style printing to the ssl connection
  * @param res: the RES connection to print to. Blocking.
  * @param format: printf style format string.
@@ -246,7 +246,7 @@ log_crypto_err(const char* str)
 #ifdef BIND8_STATS
 /** subtract timers and the values do not overflow or become negative */
 static void
-timeval_subtract(struct timeval* d, const struct timeval* end, 
+timeval_subtract(struct timeval* d, const struct timeval* end,
 	const struct timeval* start)
 {
 #ifndef S_SPLINT_S
@@ -631,7 +631,7 @@ remote_accept_callback(int fd, short event, void* arg)
 		goto close_exit;
 	}
 
-	n->tval.tv_sec = REMOTE_CONTROL_TCP_TIMEOUT; 
+	n->tval.tv_sec = REMOTE_CONTROL_TCP_TIMEOUT;
 	n->tval.tv_usec = 0L;
 	n->fd = newfd;
 
@@ -693,7 +693,7 @@ remote_accept_callback(int fd, short event, void* arg)
 	rc->busy_list = n;
 	rc->active ++;
 
-	/* perform the first nonblocking read already, for windows, 
+	/* perform the first nonblocking read already, for windows,
 	 * so it can return wouldblock. could be faster too. */
 	remote_control_callback(newfd, EV_READ, n);
 }
@@ -753,7 +753,7 @@ clean_point(struct daemon_remote* rc, struct rc_state* s)
 static int
 ssl_print_text(RES* res, const char* text)
 {
-	if(!res) 
+	if(!res)
 		return 0;
 #ifdef HAVE_SSL
 	if(res->ssl) {
@@ -860,7 +860,7 @@ static char*
 skipwhite(char* str)
 {
 	/* EOS \0 is not a space */
-	while( isspace((unsigned char)*str) ) 
+	while( isspace((unsigned char)*str) )
 		str++;
 	return str;
 }
@@ -1260,7 +1260,7 @@ zonestat_inc_ifneeded(xfrd_state_type* xfrd)
 #ifdef USE_ZONE_STATS
 	if(xfrd->nsd->options->zonestatnames->count != xfrd->zonestat_safe)
 		task_new_zonestat_inc(xfrd->nsd->task[xfrd->nsd->mytask],
-			xfrd->last_task, 
+			xfrd->last_task,
 			xfrd->nsd->options->zonestatnames->count);
 #else
 	(void)xfrd;
@@ -1501,7 +1501,7 @@ do_addzones(RES* ssl, xfrd_state_type* xfrd)
 		if(buf[0] == 0x04 && buf[1] == 0)
 			break; /* end of transmission */
 		if(!perform_addzone(ssl, xfrd, buf)) {
-			if(!ssl_printf(ssl, "error for input line '%s'\n", 
+			if(!ssl_printf(ssl, "error for input line '%s'\n",
 				buf))
 				return;
 		} else {
@@ -1523,7 +1523,7 @@ do_delzones(RES* ssl, xfrd_state_type* xfrd)
 		if(buf[0] == 0x04 && buf[1] == 0)
 			break; /* end of transmission */
 		if(!perform_delzone(ssl, xfrd, buf)) {
-			if(!ssl_printf(ssl, "error for input line '%s'\n", 
+			if(!ssl_printf(ssl, "error for input line '%s'\n",
 				buf))
 				return;
 		} else {
@@ -1639,7 +1639,7 @@ add_cfgzone(xfrd_state_type* xfrd, const char* pname)
 	if(!zopt)
 		return;
 	zopt->part_of_config = 1;
-	zopt->name = region_strdup(xfrd->nsd->options->region, 
+	zopt->name = region_strdup(xfrd->nsd->options->region,
 		pname + strlen(PATTERN_IMPLICIT_MARKER));
 	zopt->pattern = pattern_options_find(xfrd->nsd->options, pname);
 	if(!zopt->name || !zopt->pattern)
@@ -2618,7 +2618,7 @@ print_longnum(RES* ssl, char* desc, uint64_t x)
 		/* more than a Gb */
 		size_t front = (size_t)(x / (uint64_t)1000000);
 		size_t back = (size_t)(x % (uint64_t)1000000);
-		return ssl_printf(ssl, "%s%lu%6.6lu\n", desc, 
+		return ssl_printf(ssl, "%s%lu%6.6lu\n", desc,
 			(unsigned long)front, (unsigned long)back);
 	} else {
 		return ssl_printf(ssl, "%s%lu\n", desc, (unsigned long)x);
@@ -2764,7 +2764,7 @@ zonestat_print(RES* ssl, xfrd_state_type* xfrd, int clear)
 		memcpy(&stat0, &xfrd->nsd->zonestat[0][n->id], sizeof(stat0));
 		memcpy(&stat1, &xfrd->nsd->zonestat[1][n->id], sizeof(stat1));
 		stats_add(&stat0, &stat1);
-		
+
 		/* save a copy of current (cumulative) stats in stat1 */
 		memcpy(&stat1, &stat0, sizeof(stat1));
 		/* subtract last total of stats that was 'cleared' */
@@ -2831,7 +2831,7 @@ print_stats(RES* ssl, xfrd_state_type* xfrd, struct timeval* now, int clear)
 		return;
 	if(!print_longnum(ssl, "size.xfrd.mem=", region_get_mem(xfrd->region)))
 		return;
-	if(!print_longnum(ssl, "size.config.disk=", 
+	if(!print_longnum(ssl, "size.config.disk=",
 		xfrd->nsd->options->zonelist_off))
 		return;
 	if(!print_longnum(ssl, "size.config.mem=", region_get_mem(

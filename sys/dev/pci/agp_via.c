@@ -238,7 +238,7 @@ agp_via_get_aperture(void *sc)
 	struct agp_via_softc	*vsc = sc;
 	bus_size_t		 apsize;
 
-	apsize = pci_conf_read(vsc->vsc_pc, vsc->vsc_tag, 
+	apsize = pci_conf_read(vsc->vsc_pc, vsc->vsc_tag,
 	    vsc->regs[REG_APSIZE]) & 0x1f;
 
 	/*

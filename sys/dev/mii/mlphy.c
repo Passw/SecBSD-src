@@ -183,7 +183,7 @@ mlphy_attach(struct device *parent, struct device *self, void *aux)
 	sc->mii_funcs = &mlphy_funcs;
 	sc->mii_pdata = mii;
 	sc->mii_flags = ma->mii_flags;
-	msc->ml_dev = parent; 
+	msc->ml_dev = parent;
 
 	PHY_RESET(sc);
 
@@ -230,7 +230,7 @@ mlphy_service(struct mii_softc *sc, struct mii_data *mii, int cmd)
 
 		switch (IFM_SUBTYPE(ife->ifm_media)) {
 		case IFM_AUTO:
-			msc->ml_state = ML_STATE_AUTO_SELF;         
+			msc->ml_state = ML_STATE_AUTO_SELF;
 			if (other != NULL) {
 				mii_phy_reset(other);
 				PHY_WRITE(other, MII_BMCR, BMCR_ISO);
@@ -244,7 +244,7 @@ mlphy_service(struct mii_softc *sc, struct mii_data *mii, int cmd)
 		 	 * companion PHY (of any), then setup ourselves
 			 * to match. This will put us in pass-through
 		 	 * mode and let the companion PHY do all the
-		 	 * work.   
+		 	 * work.
 		 	 * BMCR data is stored in the ifmedia entry.
 		 	 */
 			if (other != NULL) {
@@ -322,7 +322,7 @@ mlphy_service(struct mii_softc *sc, struct mii_data *mii, int cmd)
 		msc->ml_state = ML_STATE_AUTO_SELF;
 		if (other != NULL) {
 			mii_phy_reset(other);
-			PHY_WRITE(other, MII_BMCR, BMCR_ISO);  
+			PHY_WRITE(other, MII_BMCR, BMCR_ISO);
 		}
 		mii_phy_auto(sc, 0);
 		break;

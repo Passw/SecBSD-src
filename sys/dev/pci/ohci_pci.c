@@ -82,7 +82,7 @@ ohci_pci_match(struct device *parent, void *match, void *aux)
 	    PCI_SUBCLASS(pa->pa_class) == PCI_SUBCLASS_SERIALBUS_USB &&
 	    PCI_INTERFACE(pa->pa_class) == PCI_INTERFACE_OHCI)
 		return (1);
- 
+
 	return (0);
 }
 
@@ -181,7 +181,7 @@ ohci_pci_attach_deferred(struct device *self)
 	s = splusb();
 
 	sc->sc.sc_bus.dying = 0;
-	
+
 	r = ohci_init(&sc->sc);
 	if (r != USBD_NORMAL_COMPLETION) {
 		printf("%s: init failed, error=%d\n",

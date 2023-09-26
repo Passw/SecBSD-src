@@ -68,9 +68,9 @@ gcu_miibus_readreg(struct em_hw *hw, int phy, int reg)
 
 	while (!done && (i++ < GCU_MAX_ATTEMPTS)) {
 		DELAY(GCU_CMD_DELAY);
-		data = bus_space_read_4(gcu->tag, gcu->handle, 
+		data = bus_space_read_4(gcu->tag, gcu->handle,
 		    MDIO_COMMAND_REG);
-		done = !((data & MDIO_COMMAND_GO_MASK) >> 
+		done = !((data & MDIO_COMMAND_GO_MASK) >>
 		    MDIO_COMMAND_GO_OFFSET);
 	}
 	mtx_leave(&gcu->mdio_mtx);
@@ -116,9 +116,9 @@ gcu_miibus_writereg(struct em_hw *hw, int phy, int reg, int val)
 
 	while (!done && (i++ < GCU_MAX_ATTEMPTS)) {
 		DELAY(GCU_CMD_DELAY);
-		data = bus_space_read_4(gcu->tag, gcu->handle, 
+		data = bus_space_read_4(gcu->tag, gcu->handle,
 		    MDIO_COMMAND_REG);
-		done = !((data & MDIO_COMMAND_GO_MASK) >> 
+		done = !((data & MDIO_COMMAND_GO_MASK) >>
 		    MDIO_COMMAND_GO_OFFSET);
 	}
 	mtx_leave(&gcu->mdio_mtx);

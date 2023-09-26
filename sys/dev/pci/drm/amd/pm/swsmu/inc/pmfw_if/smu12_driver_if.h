@@ -25,7 +25,7 @@
 #define SMU12_DRIVER_IF_H
 
 // *** IMPORTANT ***
-// SMU TEAM: Always increment the interface version if 
+// SMU TEAM: Always increment the interface version if
 // any structure is changed in this file
 #define SMU12_DRIVER_IF_VERSION 14
 

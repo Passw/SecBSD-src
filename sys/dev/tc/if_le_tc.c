@@ -87,7 +87,7 @@ le_tc_attach(struct device *parent, struct device *self, void *aux)
 	 * baseboard implementation of a TC option card.
 	 */
 	lesc->sc_r1 = (struct lereg1 *)
-           TC_DENSE_TO_SPARSE(TC_PHYS_TO_UNCACHED(d->ta_addr + LE_OFFSET_LANCE)); 
+           TC_DENSE_TO_SPARSE(TC_PHYS_TO_UNCACHED(d->ta_addr + LE_OFFSET_LANCE));
 	sc->sc_mem = (void *)(d->ta_addr + LE_OFFSET_RAM);
 
 	sc->sc_copytodesc = lance_copytobuf_contig;

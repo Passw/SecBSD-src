@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* TORADEX OAK series sensors: common functions */ 
+/* TORADEX OAK series sensors: common functions */
 /* http://developer.toradex.com/files/toradex-dev/uploads/media/Oak/Oak_ProgrammingGuide.pdf */
 
 #include <sys/param.h>
@@ -86,7 +86,7 @@ uoak_get_cmd(struct uoak_softc *sc)
 	sc->sc_rcmd.dir = OAK_GET;
 
 	/* check the device is ready to request */
-	while (uoak_check_device_ready(sc) < 0) 
+	while (uoak_check_device_ready(sc) < 0)
 		usbd_delay_ms(sc->sc_udev, UOAK_RETRY_DELAY);
 
 	/* issue request */
@@ -96,8 +96,8 @@ uoak_get_cmd(struct uoak_softc *sc)
 		return EIO;
 
 	/* wait till the device ready to return the request */
-	while (uoak_check_device_ready(sc) < 0) 
-		usbd_delay_ms(sc->sc_udev, UOAK_RESPONSE_DELAY); 
+	while (uoak_check_device_ready(sc) < 0)
+		usbd_delay_ms(sc->sc_udev, UOAK_RESPONSE_DELAY);
 
 	return 0;
 }
@@ -118,7 +118,7 @@ uoak_get_device_name(struct uoak_softc *sc, enum uoak_target target)
 	if (uoak_get_cmd(sc) < 0)
 		return EIO;
 
-	strlcpy(sc->sc_config[target].devname, sc->sc_buf+1, 
+	strlcpy(sc->sc_config[target].devname, sc->sc_buf+1,
 	    sizeof(sc->sc_config[target].devname));
 	return 0;
 }
@@ -268,7 +268,7 @@ uoak_print_setting(struct uoak_softc *sc, enum uoak_target target)
 		printf(" reports changes");
 		break;
 	case OAK_REPORTMODE_FIXEDRATE:
-		printf(" rate %dms", 
+		printf(" rate %dms",
 		    sc->sc_config[target].report_rate);
 		break;
 	default:

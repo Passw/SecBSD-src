@@ -160,7 +160,7 @@ ELFNAME(copy_elf)(int ifd, const char *iname, int ofd, const char *oname,
 			    letoh32(phdr.p_type));
 		}
 
-		if (i == 0) 
+		if (i == 0)
 			vaddr = elfoff2h(phdr.p_vaddr);
 		else if (vaddr != elfoff2h(phdr.p_vaddr)) {
 #ifdef DEBUG

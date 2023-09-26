@@ -482,7 +482,7 @@ main(void *framep)
 
 	/*
 	 * Now can look at time, having had a chance to verify the time
-	 * from the file system. 
+	 * from the file system.
 	 */
 	LIST_FOREACH(pr, &allprocess, ps_list) {
 		nanouptime(&pr->ps_start);

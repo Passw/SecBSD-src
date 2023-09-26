@@ -179,7 +179,7 @@ aps_do_io(bus_space_tag_t iot, bus_space_handle_t ioh,
 	DPRINTF(("aps_do_io: CMD: 0x%02x, wmask: 0x%04x, rmask: 0x%04x\n",
 	       buf[0], wmask, rmask));
 
-	/* write init byte using arbitration */     
+	/* write init byte using arbitration */
 	for (n = 0; n < 100; n++) {
 		stat = bus_space_read_1(iot, ioh, APS_STR3);
 		if (stat & (APS_STR3_OBF3B | APS_STR3_SWMF)) {
@@ -449,15 +449,15 @@ aps_refresh_sensor_data(struct aps_softc *sc)
 	sc->sensors[APS_SENSOR_YACCEL].value = sc->aps_data.y_accel;
 
 	/* convert to micro (mu) degrees */
-	temp = sc->aps_data.temp1 * 1000000;	
+	temp = sc->aps_data.temp1 * 1000000;
 	/* convert to kelvin */
-	temp += 273150000; 
+	temp += 273150000;
 	sc->sensors[APS_SENSOR_TEMP1].value = temp;
 
 	/* convert to micro (mu) degrees */
-	temp = sc->aps_data.temp2 * 1000000;	
+	temp = sc->aps_data.temp2 * 1000000;
 	/* convert to kelvin */
-	temp += 273150000; 
+	temp += 273150000;
 	sc->sensors[APS_SENSOR_TEMP2].value = temp;
 
 	sc->sensors[APS_SENSOR_XVAR].value = sc->aps_data.x_var;
@@ -504,7 +504,7 @@ aps_activate(struct device *self, int act)
 		break;
 	case DVACT_RESUME:
 		/*
-		 * Redo the init sequence on resume, because APS is 
+		 * Redo the init sequence on resume, because APS is
 		 * as forgetful as it is deaf.
 		 */
 

@@ -63,7 +63,7 @@
 /*
  * Portions of this code are from the VOXware support for the ad1848
  * by Hannu Savolainen <hannu@voxware.pp.fi>
- * 
+ *
  * Portions also supplied from the SoundBlaster driver for NetBSD.
  */
 
@@ -238,7 +238,7 @@ ad1848_dump_regs(struct ad1848_softc *sc)
 {
 	int i;
 	u_char r;
-	
+
 	printf("ad1848 status=%02x", ADREAD(sc, AD1848_STATUS));
 	printf(" regs: ");
 	for (i = 0; i < 16; i++) {
@@ -381,7 +381,7 @@ ad1848_probe(struct ad1848_softc *sc)
 	default:
 		sc->chip_name = "unknown";
 		DPRINTF(("ad1848: unknown codec version %#02X\n", (tmp1 & 0x8f)));
-	}	
+	}
 
 #if 0
 	/*
@@ -538,7 +538,7 @@ ad1848_attach(struct ad1848_softc *sc)
 			if (ad1848_init_values[i] != 0) {
 				ad_write(sc, i, ad1848_init_values[i]);
 				timeout = AD1848_TIMO;
-				while (timeout > 0 && 
+				while (timeout > 0 &&
 				    ADREAD(sc, AD1848_IADDR) & SP_IN_INIT)
 					timeout--;
 			}
@@ -587,7 +587,7 @@ struct ad1848_mixerinfo {
 	{ SP_LEFT_AUX1_CONTROL, SP_RIGHT_AUX1_CONTROL, AUX_INPUT_ATTEN_BITS,
 		AUX_INPUT_ATTEN_MASK },
 	{ SP_LEFT_OUTPUT_CONTROL, SP_RIGHT_OUTPUT_CONTROL, OUTPUT_ATTEN_BITS,
-		OUTPUT_ATTEN_MASK }, 
+		OUTPUT_ATTEN_MASK },
 	{ CS_LEFT_LINE_CONTROL, CS_RIGHT_LINE_CONTROL, LINE_INPUT_ATTEN_BITS,
 		LINE_INPUT_ATTEN_MASK },
 	{ CS_MONO_IO_CONTROL, 0, MONO_INPUT_ATTEN_BITS, MONO_INPUT_ATTEN_MASK },
@@ -600,7 +600,7 @@ struct ad1848_mixerinfo {
  *  However, the driver occasionally wants to mute devices (e.g. when changing
  *  sampling rate). These operations should not affect the mute flags.
  */
-void 
+void
 ad1848_mute_channel(struct ad1848_softc *sc, int device, int mute)
 {
 	u_char reg;
@@ -690,7 +690,7 @@ int
 ad1848_set_rec_gain(struct ad1848_softc *sc, struct ad1848_volume *gp)
 {
 	u_char reg, gain;
-	
+
 	DPRINTF(("ad1848_set_rec_gain: %d:%d\n", gp->left, gp->right));
 
 	sc->rec_gain = *gp;
@@ -798,7 +798,7 @@ ad1848_mixer_get_port(struct ad1848_softc *ac, struct ad1848_devmap *map,
 		    dev > AD1848_MONITOR_CHANNEL)
 	  		break;
 		if (cp->un.value.num_channels != 1 &&
-		    mixer_channel_info[dev].right_reg == 0) 
+		    mixer_channel_info[dev].right_reg == 0)
 	  		break;
 		error = ad1848_get_device_gain(ac, dev, &vol);
 		if (!error)
@@ -843,7 +843,7 @@ ad1848_mixer_get_port(struct ad1848_softc *ac, struct ad1848_devmap *map,
 	return error;
 }
 
-int	 
+int
 ad1848_mixer_set_port(struct ad1848_softc *ac, struct ad1848_devmap *map,
     int cnt, mixer_ctrl_t *cp)
 {
@@ -865,7 +865,7 @@ ad1848_mixer_set_port(struct ad1848_softc *ac, struct ad1848_devmap *map,
 		    dev > AD1848_MONITOR_CHANNEL)
 			break;
 		if (cp->un.value.num_channels != 1 &&
-		    mixer_channel_info[dev].right_reg == 0) 
+		    mixer_channel_info[dev].right_reg == 0)
 			break;
 		ad1848_to_vol(cp, &vol);
 		error = ad1848_set_channel_gain(ac, dev, &vol);
@@ -914,7 +914,7 @@ ad1848_set_params(void *addr, int setmode, int usemode, struct audio_params *p,
 	struct ad1848_softc *sc = addr;
 	int error, bits, enc;
 
-	DPRINTF(("ad1848_set_params: %d %d %d %ld\n", 
+	DPRINTF(("ad1848_set_params: %d %d %d %ld\n",
 	     p->encoding, p->precision, p->channels, p->sample_rate));
 
 	enc = p->encoding;
@@ -1082,7 +1082,7 @@ ad1848_close(void *addr)
 
 	/* Disable interrupts */
 	DPRINTF(("ad1848_close: disable intrs\n"));
-	ad_write(sc, SP_PIN_CONTROL, 
+	ad_write(sc, SP_PIN_CONTROL,
 	    ad_read(sc, SP_PIN_CONTROL) & ~INTERRUPT_ENABLE);
 
 	DPRINTF(("ad1848_close: disable capture and playback\n"));
@@ -1171,7 +1171,7 @@ ad1848_commit_settings(void *addr)
 	ad1848_mute_monitor(sc, 0);
 
 	mtx_leave(&audio_lock);
-	
+
 	sc->need_commit = 0;
 
 	return 0;
@@ -1395,7 +1395,7 @@ ad1848_intr(void *arg)
 	mtx_enter(&audio_lock);
 	/* Get intr status */
 	status = ADREAD(sc, AD1848_STATUS);
-	
+
 #ifdef AUDIO_DEBUG
 	if (ad1848debug > 1)
 		printf("ad1848_intr: mode=%d pintr=%p prun=%d rintr=%p rrun=%d status=0x%x\n",

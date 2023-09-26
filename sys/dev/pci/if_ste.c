@@ -131,7 +131,7 @@ void	ste_init_tx_list(struct ste_softc *);
 
 
 #define MII_SET(x)		STE_SETBIT1(sc, STE_PHYCTL, x)
-#define MII_CLR(x)		STE_CLRBIT1(sc, STE_PHYCTL, x) 
+#define MII_CLR(x)		STE_CLRBIT1(sc, STE_PHYCTL, x)
 
 const struct pci_matchid ste_devices[] = {
 	{ PCI_VENDOR_DLINK, PCI_PRODUCT_DLINK_DFE550TX },
@@ -205,7 +205,7 @@ ste_mii_readreg(struct ste_softc *sc, struct ste_mii_frame *frame)
 	frame->mii_opcode = STE_MII_READOP;
 	frame->mii_turnaround = 0;
 	frame->mii_data = 0;
-	
+
 	CSR_WRITE_2(sc, STE_PHYCTL, 0);
 	/*
  	 * Turn on data xmit.
@@ -294,7 +294,7 @@ ste_mii_writereg(struct ste_softc *sc, struct ste_mii_frame *frame)
 	frame->mii_stdelim = STE_MII_STARTDELIM;
 	frame->mii_opcode = STE_MII_WRITEOP;
 	frame->mii_turnaround = STE_MII_TURNAROUND;
-	
+
 	/*
  	 * Turn on data output.
 	 */
@@ -385,7 +385,7 @@ ste_miibus_statchg(struct device *self)
 	STE_SETBIT4(sc, STE_DMACTL,
 	    STE_DMACTL_RXDMA_UNSTALL | STE_DMACTL_TXDMA_UNSTALL);
 }
- 
+
 int
 ste_ifmedia_upd(struct ifnet *ifp)
 {
@@ -483,7 +483,7 @@ ste_read_eeprom(struct ste_softc *sc, caddr_t dest, int off, int cnt, int swap)
 		if (swap)
 			*ptr = ntohs(word);
 		else
-			*ptr = word;	
+			*ptr = word;
 	}
 
 	return(err ? 1 : 0);
@@ -666,7 +666,7 @@ ste_rxeof(struct ste_softc *sc)
 			continue;
 		}
 
-		/* No errors; receive the packet. */	
+		/* No errors; receive the packet. */
 		m = cur_rx->ste_mbuf;
 		total_len = cur_rx->ste_ptr->ste_status & STE_RXSTAT_FRAMELEN;
 
@@ -1138,8 +1138,8 @@ ste_stop(struct ste_softc *sc)
 	STE_SETBIT2(sc, STE_DMACTL, STE_DMACTL_TXDMA_STALL);
 	STE_SETBIT2(sc, STE_DMACTL, STE_DMACTL_RXDMA_STALL);
 	ste_wait(sc);
-	/* 
-	 * Try really hard to stop the RX engine or under heavy RX 
+	/*
+	 * Try really hard to stop the RX engine or under heavy RX
 	 * data chip will write into de-allocated memory.
 	 */
 	ste_reset(sc);
@@ -1261,7 +1261,7 @@ encap_retry:
 
 	if (m != NULL) {
 		struct mbuf *mn;
-  	 
+
 		/*
 		 * We ran out of segments. We have to recopy this
 		 * mbuf chain first. Bail out if we can't get the
@@ -1346,7 +1346,7 @@ ste_start(struct ifnet *ifp)
 
 			/* Set TX polling interval to start TX engine */
 			CSR_WRITE_1(sc, STE_TX_DMAPOLL_PERIOD, 64);
-		  
+
 			STE_SETBIT4(sc, STE_DMACTL, STE_DMACTL_TXDMA_UNSTALL);
 			ste_wait(sc);
 		}else{

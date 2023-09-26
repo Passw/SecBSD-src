@@ -1,6 +1,6 @@
 /* $OpenBSD: cmll_local.h,v 1.3 2023/09/04 08:43:41 tb Exp $ */
 /* ====================================================================
- * Copyright 2006 NTT (Nippon Telegraph and Telephone Corporation) . 
+ * Copyright 2006 NTT (Nippon Telegraph and Telephone Corporation) .
  * ALL RIGHTS RESERVED.
  *
  * Intellectual Property information for Camellia:
@@ -24,7 +24,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in

@@ -1,6 +1,6 @@
 /* $OpenBSD: camellia.c,v 1.12 2022/11/26 16:08:51 tb Exp $ */
 /* ====================================================================
- * Copyright 2006 NTT (Nippon Telegraph and Telephone Corporation) . 
+ * Copyright 2006 NTT (Nippon Telegraph and Telephone Corporation) .
  * ALL RIGHTS RESERVED.
  *
  * Intellectual Property information for Camellia:
@@ -24,7 +24,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in

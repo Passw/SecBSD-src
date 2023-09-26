@@ -79,7 +79,7 @@ NR == 1 {
 	hsyncstart = $5;
 	hsyncend =   $6;
 	htotal =     $7;
-	
+
 	vdisplay =   $8;
 	vsyncstart = $9;
 	vsyncend =   $10;
@@ -140,7 +140,7 @@ END {
 
 	for ( i = 0; i < nmodes; i++ )
 	{
-		print dmodes[i]; 
+		print dmodes[i];
 	}
 
 	printf("};\n\n");

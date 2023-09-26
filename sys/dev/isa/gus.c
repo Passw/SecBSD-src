@@ -669,12 +669,12 @@ gus_dmaout_timeout(void *arg)
 	mtx_enter(&audio_lock);
 	SELECT_GUS_REG(iot, ioh2, GUSREG_DMA_CONTROL);
 	bus_space_write_1(iot, ioh2, GUS_DATA_HIGH, 0);
- 
+
 #if 0
 	/* XXX we will dmadone below? */
 	isa_dmaabort(sc->sc_dev.dv_parent, sc->sc_drq);
 #endif
- 
+
 	gus_dmaout_dointr(sc);
 	mtx_leave(&audio_lock);
 }

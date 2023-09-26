@@ -387,7 +387,7 @@ mtw_attachhook(struct device *self)
 
 	sc->mac_ver = tmp >> 16;
 	sc->mac_rev = tmp & 0xffff;
-	
+
 	/* retrieve RF rev. no and various other things from EEPROM */
 	mtw_read_eeprom(sc);
 
@@ -570,7 +570,7 @@ mtw_alloc_mcu_ring(struct mtw_softc *sc)
 	struct mtw_tx_ring *ring = &sc->sc_mcu;
 	struct mtw_tx_data *data = &ring->data[0];
 	int error = 0;
-	
+
 	ring->cur = ring->queued = 0;
 
 	data->sc = sc;	/* backpointer for callbacks */
@@ -1164,7 +1164,7 @@ int
 mtw_mcu_calibrate(struct mtw_softc *sc, int func, uint32_t val)
 {
 	struct mtw_mcu_cmd_8 cmd;
-	
+
 	cmd.func = htole32(func);
 	cmd.val = htole32(val);
 	return mtw_mcu_cmd(sc, 31, &cmd, sizeof(struct mtw_mcu_cmd_8));
@@ -1572,7 +1572,7 @@ mtw_newstate(struct ieee80211com *ic, enum ieee80211_state nstate, int arg)
 	return 0;
 }
 
-void	
+void
 mtw_newstate_cb(struct mtw_softc *sc, void *arg)
 {
 	struct mtw_cmd_newstate *cmd = arg;
@@ -1947,7 +1947,7 @@ mtw_newassoc(struct ieee80211com *ic, struct ieee80211_node *ni, int isnew)
 	    isnew, ether_sprintf(ni->ni_macaddr)));
 
 	ieee80211_amrr_node_init(&sc->amrr, &sc->amn);
-	
+
 	/* start at lowest available bit-rate, AMRR will raise */
 	ni->ni_txrate = 0;
 
@@ -2985,12 +2985,12 @@ mtw_wlan_enable(struct mtw_softc *sc, int enable)
 		mtw_read(sc, MTW_WLAN_CTRL, &tmp);
 		if (sc->asic_ver == 0x7612)
 			tmp &= ~0xfffff000;
-			
+
 		tmp &= ~MTW_WLAN_CLK_EN;
 		tmp |= MTW_WLAN_EN;
 		mtw_write(sc, MTW_WLAN_CTRL, tmp);
 		usbd_delay_ms(sc->sc_udev, 2);
-		
+
 		tmp |= MTW_WLAN_CLK_EN;
 		if (sc->asic_ver == 0x7612) {
 			tmp |= (MTW_WLAN_RESET | MTW_WLAN_RESET_RF);
@@ -3150,7 +3150,7 @@ mtw_init(struct ifnet *ifp)
 
 	/* clear RX WCID search table */
 	mtw_set_region_4(sc, MTW_WCID_ENTRY(0), 0xffffffff, 512);
-	
+
 	/* abort TSF synchronization */
 	mtw_abort_tsf_sync(sc);
 
@@ -3283,7 +3283,7 @@ mtw_stop(struct ifnet *ifp, int disable)
 	timeout_del(&sc->scan_to);
 	timeout_del(&sc->calib_to);
 
-	s = splusb();	
+	s = splusb();
 	ieee80211_new_state(ic, IEEE80211_S_INIT, -1);
 	/* wait for all queued asynchronous commands to complete */
 	usb_wait_task(sc->sc_udev, &sc->sc_task);

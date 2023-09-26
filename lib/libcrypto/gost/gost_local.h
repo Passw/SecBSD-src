@@ -66,7 +66,7 @@ typedef struct {
 	unsigned char k3[16];
 	unsigned char k2[16];
 	unsigned char k1[16];
-} gost_subst_block;		
+} gost_subst_block;
 
 #if defined(__i386) || defined(__i386__) || defined(__x86_64) || defined(__x86_64__)
 #  define c2l(c,l)	((l)=*((const unsigned int *)(c)), (c)+=4)

@@ -350,19 +350,19 @@ struct flash_spec {
 /* information which can be accessed by the driver.                         */
 /****************************************************************************/
 
-/* 
+/*
  * This value (in milliseconds) determines the frequency of the driver
  * issuing the PULSE message code.  The firmware monitors this periodic
- * pulse to determine when to switch to an OS-absent mode. 
+ * pulse to determine when to switch to an OS-absent mode.
  */
 #define DRV_PULSE_PERIOD_MS                 250
 
-/* 
+/*
  * This value (in milliseconds) determines how long the driver should
  * wait for an acknowledgement from the firmware before timing out.  Once
  * the firmware has timed out, the driver will assume there is no firmware
  * running and there won't be any firmware-driver synchronization during a
- * driver reset. 
+ * driver reset.
  */
 #define FW_ACK_TIME_OUT_MS                  1000
 
@@ -4579,7 +4579,7 @@ struct l2_fhdr {
 #define DMA_WRITE_CHANS	3
 
 /* Use the natural page size of the host CPU. */
-#define BCM_PAGE_BITS	PAGE_SHIFT	
+#define BCM_PAGE_BITS	PAGE_SHIFT
 #define BCM_PAGE_SIZE	PAGE_SIZE
 
 #define TX_PAGES	2
@@ -4895,7 +4895,7 @@ struct bnx_softc {
 	int			ctx_rsegs[4];
 	bus_dmamap_t		ctx_map[4];
 	void			*ctx_block[4];
-	
+
 
 	/* Driver maintained status block values. */
 	u_int16_t		last_status_idx;
@@ -5049,7 +5049,7 @@ struct bnx_firmware_header {
 	int		bnx_RXP_FwBssLen;
 	u_int32_t	bnx_RXP_FwSbssAddr;
 	int		bnx_RXP_FwSbssLen;
-	
+
 	int		bnx_TPAT_FwReleaseMajor;
 	int		bnx_TPAT_FwReleaseMinor;
 	int		bnx_TPAT_FwReleaseFix;
@@ -5085,13 +5085,13 @@ struct bnx_firmware_header {
 	 *
 	 * bnx_COM_FwText, bnx_COM_FwData, bnx_COM_FwRodata,
 	 * bnx_COM_FwBss, bnx_COM_FwSbss,
-	 * 
+	 *
 	 * bnx_RXP_FwText, bnx_RXP_FwData, bnx_RXP_FwRodata,
 	 * bnx_RXP_FwBss, bnx_RXP_FwSbss,
-	 * 
+	 *
 	 * bnx_TPAT_FwText, bnx_TPAT_FwData, bnx_TPAT_FwRodata,
 	 * bnx_TPAT_FwBss, bnx_TPAT_FwSbss,
-	 * 
+	 *
 	 * bnx_TXP_FwText, bnx_TXP_FwData, bnx_TXP_FwRodata,
 	 * bnx_TXP_FwBss, bnx_TXP_FwSbss,
 	 */

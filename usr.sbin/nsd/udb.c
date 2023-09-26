@@ -762,7 +762,7 @@ regen_its_ptrs(void* base, udb_base* udb, udb_chunk_d* atp,
 	arg[0] = rb_old; arg[1] = rb_new;
 	/* walk through the structs here and put them on their respective
 	 * relptr lists */
-	(*udb->walkfunc)(base, udb->walkarg, atp->type, data, dsz, 
+	(*udb->walkfunc)(base, udb->walkarg, atp->type, data, dsz,
 		&regen_relptr_func, arg);
 
 }
@@ -913,7 +913,7 @@ fsck_file(udb_base* udb, udb_alloc* alloc, int moved)
 			}
 		}
 	}
-	
+
 	/* rebuild freelists */
 	/* recalculate stats in alloc (except 'stat_data') */
 	/* possibly new end 'nextgrow' value */

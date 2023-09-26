@@ -481,7 +481,7 @@ udcf_bv_probe(void *xsc)
 	if (data == -1) {
 		DPRINTF(("bit detection failed\n"));
 		return;
-	}	
+	}
 
 	DPRINTFN(1, (data ? "0" : "1"));
 	if (!(data))
@@ -514,7 +514,7 @@ udcf_mg_probe(void *xsc)
 	if (gettime() - sc->sc_last_mg < 57) {
 		DPRINTF(("\nunexpected gap, resync\n"));
 		sc->sc_sync = sc->sc_minute = 1;
-		goto cleanbits;	
+		goto cleanbits;
 	}
 
 	/* extract bits w/o parity */
@@ -529,7 +529,7 @@ udcf_mg_probe(void *xsc)
 	p2_bit = sc->sc_tbits >> 35 & 1;
 	p3_bit = sc->sc_tbits >> 58 & 1;
 
-	minute_bits = sc->sc_tbits >> 21 & 0x7f;	
+	minute_bits = sc->sc_tbits >> 21 & 0x7f;
 	hour_bits = sc->sc_tbits >> 29 & 0x3f;
 	day_bits = sc->sc_tbits >> 36 & 0x3f;
 	wday = (sc->sc_tbits >> 42) & 0x07;

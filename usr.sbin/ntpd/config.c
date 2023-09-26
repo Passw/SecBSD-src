@@ -132,7 +132,7 @@ int
 host_dns(const char *s, int synced, struct ntp_addr **hn)
 {
 	int error, save_opts;
-	
+
 	log_debug("trying to resolve %s", s);
 	error = host_dns1(s, hn, 0);
 	if (!synced && error <= 0) {

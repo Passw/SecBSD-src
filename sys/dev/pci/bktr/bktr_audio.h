@@ -78,7 +78,7 @@ void	dpl_read_id( bktr_ptr_t bktr );
 /*
  * TDA98xx Audio Chip functions.
  */
-void	init_BTSC( bktr_ptr_t bktr ); 
+void	init_BTSC( bktr_ptr_t bktr );
 int	set_BTSC( bktr_ptr_t bktr, int control );
 
 

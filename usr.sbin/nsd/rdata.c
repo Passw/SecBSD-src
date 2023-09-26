@@ -671,7 +671,7 @@ rdata_svcparam_ipv4hint_to_string(buffer_type *output, uint16_t val_len,
 	uint16_t *data)
 {
 	char ip_str[INET_ADDRSTRLEN + 1];
-	
+
 	assert(val_len > 0); /* Guaranteed by rdata_svcparam_to_string */
 
 	if ((val_len % IP4ADDRLEN) == 0) {
@@ -698,7 +698,7 @@ rdata_svcparam_ipv6hint_to_string(buffer_type *output, uint16_t val_len,
 	uint16_t *data)
 {
 	char ip_str[INET6_ADDRSTRLEN + 1];
-	
+
 	assert(val_len > 0); /* Guaranteed by rdata_svcparam_to_string */
 
 	if ((val_len % IP6ADDRLEN) == 0) {
@@ -805,7 +805,7 @@ rdata_svcparam_to_string(buffer_type *output, rdata_atom_type rdata,
 	uint16_t  size = rdata_atom_size(rdata);
 	uint16_t* data = (uint16_t *)rdata_atom_data(rdata);
 	uint16_t  svcparamkey, val_len;
-	uint8_t*  dp; 
+	uint8_t*  dp;
 	size_t i;
 
 	if (size < 4)

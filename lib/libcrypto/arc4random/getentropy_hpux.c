@@ -102,7 +102,7 @@ getentropy(void *buf, size_t len)
 	 *       should raise(SIGKILL)
 	 *     - Do the best under the circumstances....
 	 *
-	 * This code path exists to bring light to the issue that hpux 
+	 * This code path exists to bring light to the issue that hpux
 	 * does not provide a failsafe API for entropy collection.
 	 *
 	 * We hope this demonstrates that hpux should consider

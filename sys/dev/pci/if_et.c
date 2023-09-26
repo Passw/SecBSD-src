@@ -1,14 +1,14 @@
 /*	$OpenBSD: if_et.c,v 1.42 2022/03/11 18:00:45 mpi Exp $	*/
 /*
  * Copyright (c) 2007 The DragonFly Project.  All rights reserved.
- * 
+ *
  * This code is derived from software contributed to The DragonFly Project
  * by Sepherosa Ziehau <sepherosa@gmail.com>
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -18,7 +18,7 @@
  * 3. Neither the name of The DragonFly Project nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific, prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -31,7 +31,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * $DragonFly: src/sys/dev/netif/et/if_et.c,v 1.1 2007/10/12 14:12:42 sephe Exp $
  */
 
@@ -49,7 +49,7 @@
 #include <sys/socket.h>
 
 #include <machine/bus.h>
- 
+
 #include <net/if.h>
 #include <net/if_dl.h>
 #include <net/if_media.h>
@@ -60,7 +60,7 @@
 #if NBPFILTER > 0
 #include <net/bpf.h>
 #endif
- 
+
 #include <dev/mii/miivar.h>
 
 #include <dev/pci/pcireg.h>
@@ -484,7 +484,7 @@ et_bus_config(struct et_softc *sc)
 	 */
 	pci_conf_read(sc->sc_pct, sc->sc_pcitag, ET_PCIR_EEPROM_MISC);
 	val = pci_conf_read(sc->sc_pct, sc->sc_pcitag, ET_PCIR_EEPROM_MISC);
-	
+
 	if (val & ET_PCIM_EEPROM_STATUS_ERROR) {
 		printf("%s: EEPROM status error 0x%02x\n",
 		    sc->sc_dev.dv_xname, val);
@@ -713,7 +713,7 @@ et_dma_free(struct et_softc *sc)
 	 * Destroy RX stat ring DMA stuffs
 	 */
 	et_dma_mem_destroy(sc, rxst_ring->rsr_stat, rxst_ring->rsr_dmap);
-			   
+
 	/*
 	 * Destroy RX status DMA stuffs
 	 */
@@ -806,7 +806,7 @@ et_dma_mbuf_destroy(struct et_softc *sc, int tx_done, const int rx_done[])
 
 			KASSERT(rb->rb_mbuf == NULL,
 			    ("RX mbuf in %d RX ring is not freed yet\n", i));
-			bus_dmamap_destroy(sc->sc_dmat, rb->rb_dmap); 
+			bus_dmamap_destroy(sc->sc_dmat, rb->rb_dmap);
 		}
 	}
 
@@ -1741,7 +1741,7 @@ et_rxeof(struct et_softc *sc)
 
 		if (buf_idx != rx_ring->rr_index) {
 			printf("%s: WARNING!! ring %d, "
-			    "buf_idx %d, rr_idx %d\n", sc->sc_dev.dv_xname, 
+			    "buf_idx %d, rr_idx %d\n", sc->sc_dev.dv_xname,
 			    ring_idx, buf_idx, rx_ring->rr_index);
 		}
 
@@ -1855,7 +1855,7 @@ et_encap(struct et_softc *sc, struct mbuf **m0)
 
 	bus_dmamap_sync(sc->sc_dmat, tx_ring->tr_dmap, 0,
 	    tx_ring->tr_dmap->dm_mapsize, BUS_DMASYNC_PREWRITE);
-			
+
 
 	tx_ready_pos = __SHIFTIN(tx_ring->tr_ready_index,
 		       ET_TX_READY_POS_INDEX);

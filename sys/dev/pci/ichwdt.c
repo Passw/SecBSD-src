@@ -135,7 +135,7 @@ ichwdt_attach(struct device *parent, struct device *self, void *aux)
 	/* Disable watchdog */
 	pci_conf_write(sc->sc_pc, sc->sc_tag, ICH_WDT_LOCK, 0);
 	sc->sc_period = 0;
-	
+
 	printf("\n");
 
 	/* Register new watchdog */

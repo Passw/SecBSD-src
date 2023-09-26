@@ -136,11 +136,11 @@ struct cs4281_softc {
 #define MAX_FIFO_SIZE 64 /* 128/2 channels */
 #endif
 
-/* 
+/*
  * Hardware imposes the buffer size to be twice the block size, this
  * is OK, except that round_blocksize() is the only mean to expose
  * this hardware constraint but it doesn't know the buffer size.
- * 
+ *
  * So we've no other choice than hardcoding a buffer size
  */
 #define DMA_SIZE	(1024 * 4 * 2)
@@ -240,7 +240,7 @@ int
 cs4281_match(struct device *parent, void *match, void *aux)
 {
 	struct pci_attach_args *pa = (struct pci_attach_args *)aux;
-	
+
 	if (PCI_VENDOR(pa->pa_id) != PCI_VENDOR_CIRRUS ||
 	    PCI_PRODUCT(pa->pa_id) != PCI_PRODUCT_CIRRUS_CS4281)
 		return (0);
@@ -330,7 +330,7 @@ cs4281_intr(void *p)
 {
 	struct cs4281_softc *sc = p;
 	u_int32_t intr, val;
-	
+
 	mtx_enter(&audio_lock);
 	intr = BA0READ4(sc, CS4281_HISR);
 	if (!(intr & (HISR_DMA0 | HISR_DMA1 | HISR_MIDI))) {
@@ -390,9 +390,9 @@ cs4281_set_params(void *addr, int setmode, int usemode,
 	    mode = mode == AUMODE_RECORD ? AUMODE_PLAY : -1) {
 		if ((setmode & mode) == 0)
 			continue;
-		
+
 		p = mode == AUMODE_PLAY ? play : rec;
-		
+
 		if (p == play) {
 			DPRINTFN(5,("play: samp=%ld precision=%d channels=%d\n",
 				p->sample_rate, p->precision, p->channels));
@@ -435,7 +435,7 @@ int
 cs4281_halt_output(void *addr)
 {
 	struct cs4281_softc *sc = addr;
-	
+
 	BA0WRITE4(sc, CS4281_DCR0, BA0READ4(sc, CS4281_DCR0) | DCRn_MSK);
 #ifdef DIAGNOSTIC
 	sc->sc_prun = 0;
@@ -699,7 +699,7 @@ cs4281_init(struct cs4281_softc *sc)
 	BA0WRITE4(sc, CS4281_CLKCR1, 0);
 	/* Start serial ports out in known state */
 	BA0WRITE4(sc, CS4281_SERMC, 0);
-	
+
 	/* Reset codec */
 	BA0WRITE4(sc, CS4281_ACCTL, 0);
 	delay(50);	/* delay 50us */
@@ -761,7 +761,7 @@ cs4281_init(struct cs4281_softc *sc)
 	/* Set the serial timing configuration */
 	/* XXX: undocumented but the Linux driver do this */
 	BA0WRITE4(sc, CS4281_SERMC, SERMC_PTCAC97);
-	
+
 	/* Wait for Codec ready signal */
 	n = 0;
 	do {
@@ -776,7 +776,7 @@ cs4281_init(struct cs4281_softc *sc)
 
 	/* Enable Valid Frame output on ASDOUT */
 	BA0WRITE4(sc, CS4281_ACCTL, ACCTL_ESYN | ACCTL_VFRM);
-	
+
 	/* Wait until Codec Calibration is finished. Codec register 26h */
 	n = 0;
 	do {
@@ -804,13 +804,13 @@ cs4281_init(struct cs4281_softc *sc)
 		}
 		dat32 = BA0READ4(sc, CS4281_ACISV) & (ACISV_ISV3 | ACISV_ISV4);
 	} while (dat32 != (ACISV_ISV3 | ACISV_ISV4));
-	
+
 	/* Start digital data transfer of audio data to the codec */
 	BA0WRITE4(sc, CS4281_ACOSV, (ACOSV_SLV3 | ACOSV_SLV4));
-	
+
 	cs4281_write_codec(sc, AC97_REG_HEADPHONE_VOLUME, 0);
 	cs4281_write_codec(sc, AC97_REG_MASTER_VOLUME, 0);
-	
+
 	/* Power on the DAC */
 	cs4281_read_codec(sc, AC97_REG_POWER, &data);
 	cs4281_write_codec(sc, AC97_REG_POWER, data &= 0xfdff);
@@ -824,7 +824,7 @@ cs4281_init(struct cs4281_softc *sc)
 		if (data & 0x02)
 			break;
 	}
-	
+
 	/* Power on the ADC */
 	cs4281_read_codec(sc, AC97_REG_POWER, &data);
 	cs4281_write_codec(sc, AC97_REG_POWER, data &= 0xfeff);
@@ -838,7 +838,7 @@ cs4281_init(struct cs4281_softc *sc)
 		if (data & 0x01)
 			break;
 	}
-	
+
 #if 0
 	/* Initialize SSCR register features */
 	/* XXX: hardware volume setting */
@@ -934,7 +934,7 @@ cs4281_init(struct cs4281_softc *sc)
 		0x01 <<  8 |   /* PRSS[4:0] Right PCM Playback */
 		0x00 <<  0;    /* PLSS[4:0] Left  PCM Playback */
 	BA0WRITE4(sc, CS4281_SRCSA, dat32);
-	
+
 	/* Set interrupt to occurred at Half and Full terminal
 	 * count interrupt enable for DMA channel 0 and 1.
 	 * To keep DMA stop, set MSK.
@@ -942,7 +942,7 @@ cs4281_init(struct cs4281_softc *sc)
 	dat32 = DCRn_HTCIE | DCRn_TCIE | DCRn_MSK;
 	BA0WRITE4(sc, CS4281_DCR0, dat32);
 	BA0WRITE4(sc, CS4281_DCR1, dat32);
-	
+
 	/* Set Auto-Initialize Control enable */
 	BA0WRITE4(sc, CS4281_DMR0,
 		  DMRn_DMA | DMRn_AUTO | DMRn_TR_READ);
@@ -1028,7 +1028,7 @@ cs4281_reset_codec(void *addr)
 	/* Set the serial timing configuration */
 	/* XXX: undocumented but the Linux driver do this */
 	BA0WRITE4(sc, CS4281_SERMC, SERMC_PTCAC97);
-	
+
 	/* Wait for Codec ready signal */
 	n = 0;
 	do {
@@ -1043,7 +1043,7 @@ cs4281_reset_codec(void *addr)
 
 	/* Enable Valid Frame output on ASDOUT */
 	BA0WRITE4(sc, CS4281_ACCTL, ACCTL_ESYN | ACCTL_VFRM);
-	
+
 	/* Wait until Codec Calibration is finished. Codec register 26h */
 	n = 0;
 	do {
@@ -1071,7 +1071,7 @@ cs4281_reset_codec(void *addr)
 		}
 		dat32 = BA0READ4(sc, CS4281_ACISV) & (ACISV_ISV3 | ACISV_ISV4) ;
 	} while (dat32 != (ACISV_ISV3 | ACISV_ISV4));
-	
+
 	/* Start digital data transfer of audio data to the codec */
 	BA0WRITE4(sc, CS4281_ACOSV, (ACOSV_SLV3 | ACOSV_SLV4));
 }
@@ -1091,7 +1091,7 @@ cs4281_close(void *addr)
 
 	(*sc->halt_output)(sc);
 	(*sc->halt_input)(sc);
-	
+
 	sc->sc_pintr = 0;
 	sc->sc_rintr = 0;
 }
@@ -1267,14 +1267,14 @@ cs4281_allocmem(struct cs4281_softc *sc, size_t size, int pool, int flags,
 		struct cs4281_dma *p)
 {
 	int error;
-	
+
 	if (size != DMA_SIZE) {
 		printf("%s: dma size is %zd should be %d\n",
 		    sc->sc_dev.dv_xname, size, DMA_SIZE);
 		return ENOMEM;
 
 	}
-	p->size = size;	
+	p->size = size;
 
 	/* allocate memory for upper audio driver */
 	error = bus_dmamem_alloc(sc->sc_dmatag, p->size, DMA_ALIGN, 0,

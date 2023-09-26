@@ -139,7 +139,7 @@ static struct cmn2asic_mapping yellow_carp_table_map[SMU_TABLE_COUNT] = {
 	TAB_MAP_VALID(CUSTOM_DPM),
 	TAB_MAP_VALID(DPMCLOCKS),
 };
-	
+
 static int yellow_carp_init_smc_tables(struct smu_context *smu)
 {
 	struct smu_table_context *smu_table = &smu->smu_table;

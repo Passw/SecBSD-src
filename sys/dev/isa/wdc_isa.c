@@ -178,7 +178,7 @@ static void
 wdc_isa_dma_setup(struct wdc_isa_softc *sc)
 {
 	if (isa_dmamap_create(sc->sc_isa, sc->sc_drq,
-	    MAXPHYS, BUS_DMA_NOWAIT|BUS_DMA_ALLOCNOW)) {			      
+	    MAXPHYS, BUS_DMA_NOWAIT|BUS_DMA_ALLOCNOW)) {
 		printf("%s: can't create map for drq %d\n",
 		    sc->sc_wdcdev.sc_dev.dv_xname, sc->sc_drq);
 		sc->sc_wdcdev.cap &= ~WDC_CAPABILITY_DMA;

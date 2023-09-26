@@ -224,13 +224,13 @@ probe_root_ns(void)
 	_res.retrans = 1;
 	_res.retry = 1;
 	_res.options |= RES_USE_CD;
-		
+
 	ret = res_query(".", C_IN, T_NS, buf, sizeof(buf));
 
 	_res.retrans = old_retrans;
 	_res.retry = old_retry;
 	_res.options = old_options;
-	
+
 	return ret;
 }
 
@@ -239,7 +239,7 @@ probe_root(void)
 {
 	int		n;
 
-	n = probe_root_ns();	
+	n = probe_root_ns();
 	if (n < 0) {
 		/* give programs like unwind a second chance */
 		sleep(1);

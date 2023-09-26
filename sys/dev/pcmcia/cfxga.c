@@ -140,7 +140,7 @@ struct cfxga_screen {
 	struct rasops_info scr_ri;	/* raster op glue */
 	struct wsdisplay_charcell *scr_mem;	/* backing memory */
 };
-	
+
 int	cfxga_copycols(void *, int, int, int, int);
 int	cfxga_copyrows(void *, int, int, int);
 int	cfxga_do_cursor(struct rasops_info *);
@@ -260,7 +260,7 @@ cfxga_remove_function(struct pcmcia_function *pf)
 	pf->pf_flags |= PFF_FAKE;
 }
 
-int 
+int
 cfxga_match(struct device *parent, void *match, void *aux)
 {
 	struct pcmcia_attach_args *pa = aux;
@@ -330,7 +330,7 @@ cfxga_activate(struct device *dev, int act)
 	return (rv);
 }
 
-void 
+void
 cfxga_attach(struct device *parent, struct device *self, void *aux)
 {
 	struct cfxga_softc *sc = (void *)self;
@@ -540,7 +540,7 @@ cfxga_alloc_screen(void *v, const struct wsscreen_descr *type, void **cookiep,
 
 	*cookiep = ri;
 	*curxp = *curyp = 0;
-	
+
 	return (0);
 }
 

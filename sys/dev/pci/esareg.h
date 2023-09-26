@@ -28,7 +28,7 @@
 
 /*
  * ESS Allegro-1 / Maestro3 Audio Driver
- * 
+ *
  * Lots of magic based on the FreeBSD maestro3 driver and
  * reverse engineering.
  * Original driver by Don Kim.
@@ -423,7 +423,7 @@
 #define ESA_KDATA_ADC2_LEFT_SUR_VOL	    (ESA_KDATA_BASE_ADDR + 0x0045)
 #define ESA_KDATA_ADC2_RIGHT_SUR_VOL	    (ESA_KDATA_BASE_ADDR + 0x0046)
 
-#define ESA_KDATA_CD_XFER0		    (ESA_KDATA_BASE_ADDR + 0x0047)					
+#define ESA_KDATA_CD_XFER0		    (ESA_KDATA_BASE_ADDR + 0x0047)
 #define ESA_KDATA_CD_XFER_ENDMARK	    (ESA_KDATA_BASE_ADDR + 0x0048)
 #define ESA_KDATA_CD_LEFT_VOLUME	    (ESA_KDATA_BASE_ADDR + 0x0049)
 #define ESA_KDATA_CD_RIGHT_VOLUME	    (ESA_KDATA_BASE_ADDR + 0x004A)

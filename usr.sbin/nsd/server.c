@@ -243,7 +243,7 @@ struct tcp_handler_data
 	 * The number of queries handled by this specific TCP connection.
 	 */
 	int					query_count;
-	
+
 	/*
 	 * The timeout in msec for this tcp connection
 	 */
@@ -1738,7 +1738,7 @@ server_send_soa_xfrd(struct nsd* nsd, int shortsoa)
 			cmd != NSD_RELOAD) {
 			log_msg(LOG_ERR, "did not get start signal from xfrd");
 			exit(1);
-		} 
+		}
 		if(nsd->signal_hint_shutdown) {
 			goto shutdown;
 		}
@@ -2129,7 +2129,7 @@ block_read(struct nsd* nsd, int s, void* p, ssize_t sz, int timeout)
 	memset(&fd, 0, sizeof(fd));
 	fd.fd = s;
 	fd.events = POLLIN;
-	
+
 	while( total < sz) {
 		ssize_t ret;
 		ret = poll(&fd, 1, (timeout==-1)?-1:timeout*1000);
@@ -4096,7 +4096,7 @@ handle_tcp_writing(int fd, short event, void* arg)
 #ifdef HAVE_WRITEV
 		struct iovec iov[2];
 		iov[0].iov_base = (uint8_t*)&n_tcplen + data->bytes_transmitted;
-		iov[0].iov_len = sizeof(n_tcplen) - data->bytes_transmitted; 
+		iov[0].iov_len = sizeof(n_tcplen) - data->bytes_transmitted;
 		iov[1].iov_base = buffer_begin(q->packet);
 		iov[1].iov_len = buffer_limit(q->packet);
 		sent = writev(fd, iov, 2);
@@ -4140,7 +4140,7 @@ handle_tcp_writing(int fd, short event, void* arg)
 		goto packet_could_be_done;
 #endif
  	}
- 
+
 	sent = write(fd,
 		     buffer_current(q->packet),
 		     buffer_remaining(q->packet));

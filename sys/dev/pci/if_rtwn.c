@@ -513,7 +513,7 @@ rtwn_alloc_rx_list(struct rtwn_pci_softc *sc)
 	}
 
 	error = bus_dmamem_map(sc->sc_dmat, &rx_ring->seg, rx_ring->nsegs,
-	    size, (caddr_t *)&rx_ring->desc, 
+	    size, (caddr_t *)&rx_ring->desc,
 	    BUS_DMA_NOWAIT | BUS_DMA_COHERENT);
 	if (error != 0) {
 		bus_dmamem_free(sc->sc_dmat, &rx_ring->seg, rx_ring->nsegs);
@@ -1236,7 +1236,7 @@ rtwn_tx_done(struct rtwn_pci_softc *sc, int qid)
 
 	if (tx_ring->queued < (RTWN_TX_LIST_COUNT - 1))
 		sc->qfullmsk &= ~(1 << qid);
-	
+
 	if (sc->qfullmsk == 0) {
 		ifq_clr_oactive(&ifp->if_snd);
 		(*ifp->if_start)(ifp);
@@ -1614,7 +1614,7 @@ int
 rtwn_is_oactive(void *cookie)
 {
 	struct rtwn_pci_softc *sc = cookie;
-	
+
 	return (sc->qfullmsk != 0);
 }
 

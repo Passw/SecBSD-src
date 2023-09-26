@@ -576,7 +576,7 @@ typedef struct usb_port_status usb_port_status_t;
 #define UICLASS_VIDEO		0x0e
 #define  UISUBCLASS_VIDEOCONTROL		1
 #define  UISUBCLASS_VIDEOSTREAM			2
-#define  UISUBCLASS_VIDEO_IF_COLLECTION		3 
+#define  UISUBCLASS_VIDEO_IF_COLLECTION		3
 
 #define UICLASS_DIAGNOSTIC	0xdc
 

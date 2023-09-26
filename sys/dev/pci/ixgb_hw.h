@@ -2,21 +2,21 @@
 
   Copyright (c) 2001-2005, Intel Corporation
   All rights reserved.
-  
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
-  
+
    1. Redistributions of source code must retain the above copyright notice,
       this list of conditions and the following disclaimer.
-  
+
    2. Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-  
+
    3. Neither the name of the Intel Corporation nor the names of its
       contributors may be used to endorse or promote products derived from
       this software without specific prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,7 +31,7 @@
 
 *******************************************************************************/
 
-/* $OpenBSD: ixgb_hw.h,v 1.3 2010/09/20 07:50:19 deraadt Exp $ */ 
+/* $OpenBSD: ixgb_hw.h,v 1.3 2010/09/20 07:50:19 deraadt Exp $ */
 
 #ifndef _IXGB_HW_H_
 #define _IXGB_HW_H_
@@ -176,7 +176,7 @@ typedef enum {
 #define IXGB_PCSC2   0x00708	/* PCS Control 2 - RW */
 #define IXGB_PCSS1   0x00710	/* PCS Status 1 - RO */
 #define IXGB_PCSS2   0x00718	/* PCS Status 2 - RO */
-#define IXGB_XPCSS   0x00720	/* 10GBASE-X PCS Status (or XGXS Lane Status) - 
+#define IXGB_XPCSS   0x00720	/* 10GBASE-X PCS Status (or XGXS Lane Status) -
 				 * RO */
 #define IXGB_UCCR    0x00728	/* Unilink Circuit Control Register */
 #define IXGB_XPCSTC  0x00730	/* 10GBASE-X PCS Test Control */
@@ -588,7 +588,7 @@ struct ixgb_rx_desc {
 
 #define IXGB_RX_DESC_SPECIAL_VLAN_MASK  0x0FFF	/* VLAN ID is in lower 12 bits */
 #define IXGB_RX_DESC_SPECIAL_PRI_MASK   0xE000	/* Priority is in upper 3 bits */
-#define IXGB_RX_DESC_SPECIAL_PRI_SHIFT  0x000D	/* Priority is in upper 3 of 16 
+#define IXGB_RX_DESC_SPECIAL_PRI_SHIFT  0x000D	/* Priority is in upper 3 of 16
 						 */
 
 /* Layout of a single transmit descriptor. */
@@ -723,7 +723,7 @@ struct ixgb_hw {
 	uint32_t mc_filter_type;	/* Multicast filter hash type */
 	uint32_t num_mc_addrs;	/* Number of current Multicast addrs */
 	/* Individual address currently programmed in MAC */
-	uint8_t curr_mac_addr[IXGB_ETH_LENGTH_OF_ADDRESS];	
+	uint8_t curr_mac_addr[IXGB_ETH_LENGTH_OF_ADDRESS];
 	uint32_t num_tx_desc;	/* Number of Transmit descriptors */
 	uint32_t num_rx_desc;	/* Number of Receive descriptors */
 	uint32_t rx_buffer_size;	/* Size of Receive buffer */
@@ -741,7 +741,7 @@ struct ixgb_hw {
 	uint32_t bar3;
 	uint16_t pci_cmd_word;	/* PCI command register id from PCI
 				 * configuration space */
-	uint16_t eeprom[IXGB_EEPROM_SIZE];	/* EEPROM contents read at init 
+	uint16_t eeprom[IXGB_EEPROM_SIZE];	/* EEPROM contents read at init
 						 * time */
 	unsigned long io_base;	/* Our I/O mapped location */
 	uint32_t lastLFC;

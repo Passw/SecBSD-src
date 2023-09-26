@@ -275,7 +275,7 @@ svc_get()
 			# these are expensive, make sure they are explicitly requested
 			if [ -z "${_var}" -o "${_var}" = "class" ]; then
 				getcap -f /etc/login.conf.d/${_svc}:/etc/login.conf \
-					${_svc} 1>/dev/null 2>&1 && daemon_class=${_svc} 
+					${_svc} 1>/dev/null 2>&1 && daemon_class=${_svc}
 				[ -z "${daemon_class}" ] && \
 					daemon_class="$(svc_getdef ${_svc} class)"
 			fi

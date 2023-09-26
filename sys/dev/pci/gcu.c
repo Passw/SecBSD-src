@@ -16,9 +16,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*                                                         
+/*
  * Driver for a GCU device that appears on embedded intel systems, like 80579
- */                                                                     
+ */
 
 #include <sys/param.h>
 #include <sys/systm.h>
@@ -37,7 +37,7 @@ int gcu_detach(struct device *, int);
 const struct pci_matchid gcu_devices[] = {
 	{ PCI_VENDOR_INTEL, PCI_PRODUCT_INTEL_EP80579_GCU }
 };
-        
+
 struct cfdriver gcu_cd = {
 	NULL, "gcu", DV_IFNET
 };
@@ -66,7 +66,7 @@ gcu_attach(struct device *parent, struct device *self, void *aux)
 		return;
 	}
 
-	if (pci_mapreg_map(pa, 0x10, PCI_MAPREG_MEM_TYPE(val), 0, &sc->tag, 
+	if (pci_mapreg_map(pa, 0x10, PCI_MAPREG_MEM_TYPE(val), 0, &sc->tag,
 	    &sc->handle, &sc->addr, &sc->size, 0)) {
 		printf(": cannot find mem space\n");
 		return;

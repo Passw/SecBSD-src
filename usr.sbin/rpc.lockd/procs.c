@@ -60,7 +60,7 @@
  * Notes:	Extracts the source address from the transport handle
  *		passed in as part of the called procedure specification
  */
-static void 
+static void
 log_from_addr(char *fun_name, struct svc_req *req)
 {
 	struct	sockaddr_in *addr;
@@ -195,7 +195,7 @@ get_client(struct sockaddr_in *host_addr, u_long vers)
  *		calling it with timeout 0 as a hack to just issue a datagram
  *		without expecting a result
  */
-void 
+void
 transmit_result(int opcode, nlm_res *result, struct sockaddr_in *addr)
 {
 	static char dummy;

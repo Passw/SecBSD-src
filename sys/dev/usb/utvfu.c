@@ -1561,11 +1561,11 @@ utvfu_vs_alloc_isoc(struct utvfu_softc *sc)
 
 	for (i = 0; i < UTVFU_ISOC_TRANSFERS; i++) {
 		sc->sc_iface.ixfer[i].sc = sc;
-		sc->sc_iface.ixfer[i].xfer = usbd_alloc_xfer(sc->sc_udev);	
+		sc->sc_iface.ixfer[i].xfer = usbd_alloc_xfer(sc->sc_udev);
 		if (sc->sc_iface.ixfer[i].xfer == NULL) {
 			printf("%s: could not allocate isoc VS xfer!\n",
 			    DEVNAME(sc));
-			return (USBD_NOMEM);	
+			return (USBD_NOMEM);
 		}
 
 		size = sc->sc_iface.psize * sc->sc_nframes;
@@ -1659,7 +1659,7 @@ utvfu_reqbufs(void *v, struct v4l2_requestbuffers *rb)
 	else
 		sc->sc_mmap_count = rb->count;
 
-	/* allocate the total mmap buffer */	
+	/* allocate the total mmap buffer */
 	sc->sc_mmap_bufsz = sc->sc_max_frame_sz;
 	if (INT_MAX / sc->sc_mmap_count < sc->sc_max_frame_sz) /* overflow */
 		return (ENOMEM);

@@ -96,8 +96,8 @@ Loop()
 	int     bufsize = 1100, maxfd =0;
 	struct if_info *ii;
 
-/* FIXME : this is a hack, for some reason specifying an interface would 
- * cause it to fail because bufsize is an impossible number, so I added a 
+/* FIXME : this is a hack, for some reason specifying an interface would
+ * cause it to fail because bufsize is an impossible number, so I added a
  * sanity check because I'm too lazy to figure out why. -- Karl
  */
 	if (bufsize > 1100)
@@ -108,7 +108,7 @@ Loop()
 		exit(0);
 	}
 
-	 buf = (u_char *) malloc((unsigned) bufsize); 
+	 buf = (u_char *) malloc((unsigned) bufsize);
 
 	if (buf == 0) {
 		syslog(LOG_ERR, "malloc: %m");
@@ -146,7 +146,7 @@ Loop()
 
 			bp = buf;
 			ep = bp + cc;
-	
+
 if(bp < ep)
 	{
 	mopProcess(ii,buf);
@@ -154,6 +154,6 @@ if(bp < ep)
 
 }
 
-}		
-}	
+}
+}
 

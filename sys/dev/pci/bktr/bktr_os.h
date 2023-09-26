@@ -12,7 +12,7 @@
  */
 
 /*
- * 1. Redistributions of source code must retain the 
+ * 1. Redistributions of source code must retain the
  * Copyright (c) 1997 Amancio Hasty, 1999 Roger Hardiman
  * All rights reserved.
  *
@@ -28,7 +28,7 @@
  *    must display the following acknowledgement:
  *	This product includes software developed by Amancio Hasty and
  *      Roger Hardiman
- * 4. The name of the author may not be used to endorse or promote products 
+ * 4. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR

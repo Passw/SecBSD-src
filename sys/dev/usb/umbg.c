@@ -182,7 +182,7 @@ umbg_attach(struct device *parent, struct device *self, void *aux)
 
 	sc->sc_timedelta.type = SENSOR_TIMEDELTA;
 	sc->sc_timedelta.status = SENSOR_S_UNKNOWN;
-	
+
 	switch (uaa->product) {
 	case USB_PRODUCT_MEINBERG_DCF600USB:
 		desc = "DCF600USB";
@@ -375,7 +375,7 @@ umbg_task(void *arg)
 
 bail_out:
 	timeout_add_sec(&sc->sc_to, t_wait);
-	
+
 }
 
 /* send a command and read back results */

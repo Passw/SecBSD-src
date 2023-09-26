@@ -79,7 +79,7 @@ int	crunchide_main(int argc, char *argv[]);
 extern char	*__progname;
 extern int elf_mangle;
 
-int 
+int
 crunchide_main(int argc, char *argv[])
 {
 	int             ch;
@@ -126,7 +126,7 @@ struct keep {
 	char           *sym;
 } *keep_list;
 
-void 
+void
 add_to_keep_list(char *symbol)
 {
 	struct keep    *newp, *prevp, *curp;
@@ -153,7 +153,7 @@ add_to_keep_list(char *symbol)
 		keep_list = newp;
 }
 
-int 
+int
 in_keep_list(char *symbol)
 {
 	struct keep    *curp;
@@ -166,7 +166,7 @@ in_keep_list(char *symbol)
 	return curp && cmp == 0;
 }
 
-void 
+void
 add_file_to_keep_list(char *filename)
 {
 	FILE           *keepf;
@@ -187,7 +187,7 @@ add_file_to_keep_list(char *filename)
 	fclose(keepf);
 }
 
-void 
+void
 hide_syms(char *filename)
 {
 	int             inf;

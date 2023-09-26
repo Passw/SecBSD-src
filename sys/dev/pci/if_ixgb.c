@@ -900,7 +900,7 @@ ixgb_identify_hardware(struct ixgb_softc *sc)
 
 int
 ixgb_allocate_pci_resources(struct ixgb_softc *sc)
-	
+
 {
 	int val;
 	pci_intr_handle_t	ih;
@@ -1092,13 +1092,13 @@ ixgb_dma_malloc(struct ixgb_softc *sc, bus_size_t size,
 	dma->dma_size = size;
 	return (0);
 
-fail_3: 
+fail_3:
 	bus_dmamem_unmap(dma->dma_tag, dma->dma_vaddr, size);
-fail_2: 
+fail_2:
 	bus_dmamem_free(dma->dma_tag, &dma->dma_seg, dma->dma_nseg);
-fail_1: 
+fail_1:
 	bus_dmamap_destroy(dma->dma_tag, dma->dma_map);
-fail_0: 
+fail_0:
 	dma->dma_map = NULL;
 	dma->dma_tag = NULL;
 
@@ -1813,17 +1813,17 @@ ixgb_rxeof(struct ixgb_softc *sc, int count)
 	 * descriptor back to hardware.
 	 *
 	 * if(Last written back descriptor == EOP bit set descriptor)
-	 * 	then avoid re-submitting the most recently received RX descriptor 
+	 * 	then avoid re-submitting the most recently received RX descriptor
 	 *	back to hardware.
 	 * if(Last written back descriptor != EOP bit set descriptor)
 	 *	then avoid re-submitting the most recently received RX descriptors
-	 * 	till last EOP bit set descriptor. 
+	 * 	till last EOP bit set descriptor.
 	 */
 	if (eop_desc != i) {
 		if (++eop_desc == sc->num_rx_desc)
 			eop_desc = 0;
 		i = eop_desc;
-	} 
+	}
 	/* Replenish the descriptors with new mbufs till last EOP bit set descriptor */
 	while (next_to_use != i) {
 		current_desc = &sc->rx_desc_base[next_to_use];
@@ -1837,7 +1837,7 @@ ixgb_rxeof(struct ixgb_softc *sc, int count)
 				break;
 		}
 		/* Advance our pointers to the next descriptor */
-		if (++next_to_use == sc->num_rx_desc) 
+		if (++next_to_use == sc->num_rx_desc)
 			next_to_use = 0;
 	}
 	sc->next_rx_desc_to_use = next_to_use;

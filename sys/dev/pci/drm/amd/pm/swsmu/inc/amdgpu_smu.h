@@ -1315,8 +1315,8 @@ struct pptable_funcs {
 	 * @get_ecc_table:  message SMU to get ECC INFO table.
 	 */
 	ssize_t (*get_ecc_info)(struct smu_context *smu, void *table);
-	
-	
+
+
 	/**
 	 * @stb_collect_info: Collects Smart Trace Buffers data.
 	 */

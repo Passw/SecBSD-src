@@ -76,7 +76,7 @@ size_t region_add_cleanup(region_type *region,
 			  void (*action)(void *),
 			  void *data);
 
-/* 
+/*
  * Remove cleanup, both action and data must match exactly.
  */
 void region_remove_cleanup(region_type *region,
@@ -98,7 +98,7 @@ void *region_alloc_array(region_type *region, size_t num, size_t size);
  */
 void *region_alloc_init(region_type *region, const void *init, size_t size);
 
-/** 
+/**
  * Allocate array (with integer overflow check on sizes), and init with
  * the given array copied into it.  Allocated in the region
  */
@@ -112,7 +112,7 @@ void *region_alloc_array_init(region_type *region, const void *init,
  */
 void *region_alloc_zero(region_type *region, size_t size);
 
-/** 
+/**
  * Allocate array (with integer overflow check on sizes), and zero it.
  * Allocated in the region.
  */

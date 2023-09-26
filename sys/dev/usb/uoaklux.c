@@ -172,7 +172,7 @@ uoaklux_attach(struct device *parent, struct device *self, void *aux)
 	uoak_sensor_attach(scc, &sc->sc_sensor.lux, SENSOR_LUX);
 
 	/* start sensor */
-	sc->sc_sensortask = sensor_task_register(sc, uoaklux_refresh, 
+	sc->sc_sensortask = sensor_task_register(sc, uoaklux_refresh,
 	    UOAKLUX_REFRESH_PERIOD);
 	if (sc->sc_sensortask == NULL) {
 		printf(", unable to register update task\n");
@@ -244,9 +244,9 @@ uoaklux_refresh(void *arg)
 	/* blink LED for each cycle */
 	if (uoak_led_status(scc, OAK_TARGET_RAM, &led) < 0)
 		DPRINTF(("status query error\n"));
-	if (led == OAK_LED_OFF) 
+	if (led == OAK_LED_OFF)
 		(void)uoak_led_ctrl(scc, OAK_TARGET_RAM, OAK_LED_ON);
-	else 
+	else
 		(void)uoak_led_ctrl(scc, OAK_TARGET_RAM, OAK_LED_OFF);
 
 	uoak_sensor_refresh(&sc->sc_sensor.lux, 1000000, 0);

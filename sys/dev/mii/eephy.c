@@ -219,7 +219,7 @@ eephy_reset(struct mii_softc *sc)
 	reg = PHY_READ(sc, E1000_CR);
 	reg |= E1000_CR_RESET;
 	PHY_WRITE(sc, E1000_CR, reg);
-	
+
 	for (i = 0; i < 500; i++) {
 		DELAY(1);
 		reg = PHY_READ(sc, E1000_CR);

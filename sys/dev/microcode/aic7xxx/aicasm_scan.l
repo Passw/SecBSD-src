@@ -129,7 +129,7 @@ if[ \t]*\(		{
 					 && string_buf_ptr != string_buf
 					 && string_buf_ptr[-1] == ' ')
 						yptr++;
-					else 
+					else
 						*string_buf_ptr++ = *yptr++;
 				}
 			}
@@ -430,7 +430,7 @@ else			{ return T_ELSE; }
 					return T_SYMBOL;
 				}
 			}
-.			{ 
+.			{
 				snprintf(buf, sizeof(buf), "Invalid character "
 					 "'%c'", yytext[0]);
 				stop(buf, EX_DATAERR);

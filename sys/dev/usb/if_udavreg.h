@@ -60,7 +60,7 @@
 #define	UDAV_NSR		0x01 /* Network Status Register */
 #define	 UDAV_NSR_SPEED		(1<<7) /* Media Speed (Int. PHY) */
 #define	 UDAV_NSR_LINKST	(1<<6) /* Link Status (Int. PHY) */
-#define	 UDAV_NSR_WAKEST	(1<<5) /* Wakeup Status */ 
+#define	 UDAV_NSR_WAKEST	(1<<5) /* Wakeup Status */
 #define	 UDAV_NSR_TXFULL	(1<<4) /* TX FIFO Full */
 #define	 UDAV_NSR_TX2END	(1<<3) /* TX Packet 2 Complete Status */
 #define	 UDAV_NSR_TX1END	(1<<2) /* TX Packet 1 Complete Status */

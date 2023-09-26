@@ -55,7 +55,7 @@ int	uslcomdebug = 0;
 #define USLCOM_UART_DISABLE	0x00
 #define USLCOM_UART_ENABLE	0x01
 
-#define USLCOM_CTRL_DTR_ON	0x0001	
+#define USLCOM_CTRL_DTR_ON	0x0001
 #define USLCOM_CTRL_DTR_SET	0x0100
 #define USLCOM_CTRL_RTS_ON	0x0002
 #define USLCOM_CTRL_RTS_SET	0x0200
@@ -505,7 +505,7 @@ void
 uslcom_get_status(void *vsc, int portno, u_char *lsr, u_char *msr)
 {
 	struct uslcom_softc *sc = vsc;
-	
+
 	if (msr != NULL)
 		*msr = sc->sc_msr;
 	if (lsr != NULL)
@@ -517,7 +517,7 @@ uslcom_break(void *vsc, int portno, int onoff)
 {
 	struct uslcom_softc *sc = vsc;
 	usb_device_request_t req;
-	int brk = onoff ? USLCOM_BREAK_ON : USLCOM_BREAK_OFF;	
+	int brk = onoff ? USLCOM_BREAK_ON : USLCOM_BREAK_OFF;
 
 	req.bmRequestType = USLCOM_WRITE;
 	req.bRequest = USLCOM_BREAK;

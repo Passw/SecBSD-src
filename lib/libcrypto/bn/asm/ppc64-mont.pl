@@ -154,7 +154,7 @@ $T0a="f24";	$T0b="f25";
 $T1a="f26";	$T1b="f27";
 $T2a="f28";	$T2b="f29";
 $T3a="f30";	$T3b="f31";
-
+
 # sp----------->+-------------------------------+
 #		| saved sp			|
 #		+-------------------------------+
@@ -189,7 +189,7 @@ $T3a="f30";	$T3b="f31";
 #		.				.
 #		.				.
 #		+-------------------------------+
-
+
 $code=<<___;
 .machine "any"
 .text
@@ -260,7 +260,7 @@ $code.=<<___;
 	li	$i,-64
 	add	$nap_d,$tp,$num
 	and	$nap_d,$nap_d,$i	; align to 64 bytes
-
+
 	mulld	$t7,$a0,$t3	; ap[0]*bp[0]
 	; nap_d is off by 1, because it's used with stfdu/lfdu
 	addi	$nap_d,$nap_d,-8
@@ -416,7 +416,7 @@ $code.=<<___;
 	stfd	$T2b,`$FRAME+40`($sp)
 	stfd	$T3a,`$FRAME+48`($sp)
 	stfd	$T3b,`$FRAME+56`($sp)
-
+
 .align	5
 L1st:
 ___
@@ -562,7 +562,7 @@ $code.=<<___;
 	 std	$t0,8($tp)		; tp[j-1]
 	 stdu	$t4,16($tp)		; tp[j]
 	bdnz-	L1st
-
+
 	fctid	$dota,$dota
 	fctid	$dotb,$dotb
 
@@ -614,7 +614,7 @@ $code.=<<___;
 
 	slwi	$t7,$num,2
 	subf	$nap_d,$t7,$nap_d	; rewind pointer
-
+
 	li	$i,8			; i=1
 .align	5
 Louter:
@@ -741,7 +741,7 @@ $code.=<<___;
 	stfd	$T2b,`$FRAME+40`($sp)
 	stfd	$T3a,`$FRAME+48`($sp)
 	stfd	$T3b,`$FRAME+56`($sp)
-
+
 .align	5
 Linner:
 	fmul	$T1a,$A1,$ba
@@ -857,7 +857,7 @@ $code.=<<___;
 	 std	$t3,-16($tp)		; tp[j-1]
 	 std	$t5,-8($tp)		; tp[j]
 	bdnz-	Linner
-
+
 	fctid	$dota,$dota
 	fctid	$dotb,$dotb
 	ld	$t0,`$FRAME+0`($sp)
@@ -933,7 +933,7 @@ $code.=<<___;
 	cmpw	$i,$num
 	blt-	Louter
 ___
-
+
 $code.=<<___ if ($SIZE_T==8);
 	subf	$np,$num,$np	; rewind np
 	addi	$j,$j,1		; restore counter
@@ -1048,7 +1048,7 @@ Lcopy:				; copy or in-place refresh
 	stdu	$i,16($tp)
 	bdnz-	Lcopy
 ___
-
+
 $code.=<<___;
 	$POP	$i,0($sp)
 	li	r3,1	; signal "handled"

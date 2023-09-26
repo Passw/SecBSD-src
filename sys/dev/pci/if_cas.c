@@ -253,14 +253,14 @@ next:
 
 			desc = buf + sizeof(*vpd);
 
-			/* 
+			/*
 			 * ...which is an instance property...
 			 */
 			if (desc[0] != 'I')
 				continue;
 			desc += 3;
 
-			/* 
+			/*
 			 * ...that's a byte array with the proper
 			 * length for a MAC address...
 			 */
@@ -274,7 +274,7 @@ next:
 			if (strcmp(desc, "local-mac-address") != 0)
 				continue;
 			desc += strlen("local-mac-address") + 1;
-					
+
 			bcopy(desc, sc->sc_arpcom.ac_enaddr, ETHER_ADDR_LEN);
 			sc->sc_arpcom.ac_enaddr[5] += pa->pa_device;
 			rv = 0;
@@ -521,7 +521,7 @@ cas_config(struct cas_softc *sc)
 	child = LIST_FIRST(&mii->mii_phys);
 	if (child == NULL &&
 	    sc->sc_mif_config & (CAS_MIF_CONFIG_MDI0|CAS_MIF_CONFIG_MDI1)) {
-		/* 
+		/*
 		 * Try the external PCS SERDES if we didn't find any
 		 * MII devices.
 		 */
@@ -1148,11 +1148,11 @@ cas_init_regs(struct cas_softc *sc)
 	/*
 	 * Set the station address.
 	 */
-	bus_space_write_4(t, h, CAS_MAC_ADDR0, 
+	bus_space_write_4(t, h, CAS_MAC_ADDR0,
 		(sc->sc_arpcom.ac_enaddr[4]<<8) | sc->sc_arpcom.ac_enaddr[5]);
-	bus_space_write_4(t, h, CAS_MAC_ADDR1, 
+	bus_space_write_4(t, h, CAS_MAC_ADDR1,
 		(sc->sc_arpcom.ac_enaddr[2]<<8) | sc->sc_arpcom.ac_enaddr[3]);
-	bus_space_write_4(t, h, CAS_MAC_ADDR2, 
+	bus_space_write_4(t, h, CAS_MAC_ADDR2,
 		(sc->sc_arpcom.ac_enaddr[0]<<8) | sc->sc_arpcom.ac_enaddr[1]);
 }
 

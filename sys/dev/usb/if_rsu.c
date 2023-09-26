@@ -1460,7 +1460,7 @@ rsu_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 		ifp->if_ierrors++;
 		goto resubmit;
 	}
-		
+
 	/* Determine if it is a firmware C2H event or an 802.11 frame. */
 	stat = (struct r92s_rx_stat *)data->buf;
 	if ((letoh32(stat->rxdw1) & 0x1ff) == 0x1ff)
@@ -2239,7 +2239,7 @@ rsu_init(struct ifnet *ifp)
 
 	/* Set MAC address. */
 	IEEE80211_ADDR_COPY(ic->ic_myaddr, LLADDR(ifp->if_sadl));
-	rsu_write_region_1(sc, R92S_MACID, ic->ic_myaddr, IEEE80211_ADDR_LEN);		
+	rsu_write_region_1(sc, R92S_MACID, ic->ic_myaddr, IEEE80211_ADDR_LEN);
 
 	/* Queue Rx xfers (XXX C2H pipe for 11-pipe configurations?) */
 	for (i = 0; i < RSU_RX_LIST_COUNT; i++) {

@@ -283,7 +283,7 @@ setit:
 		 */
 		if (++sc->mii_ticks <= sc->mii_anegticks)
 			break;
-		
+
 		sc->mii_ticks = 0;
 		rgephy_mii_phy_auto(sc);
 		break;
@@ -297,7 +297,7 @@ setit:
 	 * the DSP on the Realtek PHYs if the media changes.
 	 *
 	 */
-	if (sc->mii_media_active != mii->mii_media_active || 
+	if (sc->mii_media_active != mii->mii_media_active ||
 	    sc->mii_media_status != mii->mii_media_status ||
 	    cmd == MII_MEDIACHG)
 		rgephy_load_dspcode(sc);
@@ -334,7 +334,7 @@ rgephy_status(struct mii_softc *sc)
 		bmsr = PHY_READ(sc, RGEPHY_SR);
 		if (bmsr & RGEPHY_SR_LINK)
 			mii->mii_media_status |= IFM_ACTIVE;
-	}	
+	}
 
 	bmsr = PHY_READ(sc, MII_BMSR);
 
@@ -535,7 +535,7 @@ rgephy_load_dspcode(struct mii_softc *sc)
 	PHY_SETBIT(sc, 4, 0x0800);
 	PHY_CLRBIT(sc, 4, 0x0800);
 	PHY_WRITE(sc, 31, 0x0000);
-	
+
 	DELAY(40);
 }
 

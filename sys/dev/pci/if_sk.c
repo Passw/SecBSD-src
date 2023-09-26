@@ -1497,7 +1497,7 @@ sk_start(struct ifnet *ifp)
 			ifq_set_oactive(&ifp->if_snd);
 			break;
 		}
-		
+
 		m_head = ifq_dequeue(&ifp->if_snd);
 		if (m_head == NULL)
 			break;

@@ -253,7 +253,7 @@ handle_auto(uint8_t trusted, double offset)
 	v[count++] = offset;
 	if (count < AUTO_REPLIES)
 		return;
-	
+
 	/* we have enough */
 	qsort(v, count, sizeof(double), auto_cmp);
 	if (AUTO_REPLIES % 2 == 0)

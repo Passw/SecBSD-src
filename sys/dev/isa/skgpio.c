@@ -17,7 +17,7 @@
  */
 
 /*
- * Soekris net6501 GPIO and LEDs as implemented by the onboard Xilinx FPGA 
+ * Soekris net6501 GPIO and LEDs as implemented by the onboard Xilinx FPGA
  */
 
 #include <sys/param.h>

@@ -1988,7 +1988,7 @@ iavf_rxeof(struct iavf_softc *sc, struct ifiqueue *ifiq)
 		bus_dmamap_sync(sc->sc_dmat, map, 0, map->dm_mapsize,
 		    BUS_DMASYNC_POSTREAD);
 		bus_dmamap_unload(sc->sc_dmat, map);
-		
+
 		m = rxm->rxm_m;
 		rxm->rxm_m = NULL;
 

@@ -112,7 +112,7 @@ void            gen_outputs(void);
 
 extern int	crunchide_main(int, char *[]);
 
-int 
+int
 main(int argc, char *argv[])
 {
 	char           *p;
@@ -216,7 +216,7 @@ main(int argc, char *argv[])
 	exit(goterror);
 }
 
-void 
+void
 usage(void)
 {
 	fprintf(stderr,
@@ -239,7 +239,7 @@ void            add_special(int argc, char **argv);
 prog_t         *find_prog(char *str);
 void            add_prog(char *progname);
 
-void 
+void
 parse_conf_file(void)
 {
 	if (!is_nonempty_file(infilename)) {
@@ -254,7 +254,7 @@ parse_conf_file(void)
 	}
 }
 
-void 
+void
 parse_one_file(char *filename)
 {
 	char           *fieldv[MAXFIELDS];
@@ -311,7 +311,7 @@ parse_one_file(char *filename)
 	fclose(cf);
 }
 
-void 
+void
 parse_line(char *line, int *fc, char **fv, int nf)
 {
 	char           *p;
@@ -336,7 +336,7 @@ parse_line(char *line, int *fc, char **fv, int nf)
 		*p = '\0';	/* needed for '#' case */
 }
 
-void 
+void
 add_srcdirs(int argc, char **argv)
 {
 	int             i;
@@ -374,7 +374,7 @@ add_srcdirs(int argc, char **argv)
 	}
 }
 
-void 
+void
 add_libdirs(int argc, char **argv)
 {
 	int             i;
@@ -409,7 +409,7 @@ add_libdirs(int argc, char **argv)
 			if (is_dir(tmppath2))
 				add_string(&libdirs, tmppath2);
 			else {
-				snprintf(tmppath2, sizeof(tmppath2), 
+				snprintf(tmppath2, sizeof(tmppath2),
 				    "%s/obj.%s", tmppath, MACHINE);
 				if (is_dir(tmppath2))
 					add_string(&libdirs, tmppath2);
@@ -426,7 +426,7 @@ add_libdirs(int argc, char **argv)
 }
 
 
-void 
+void
 add_progs(int argc, char **argv)
 {
 	int             i;
@@ -435,7 +435,7 @@ add_progs(int argc, char **argv)
 		add_prog(argv[i]);
 }
 
-void 
+void
 add_prog(char *progname)
 {
 	prog_t         *p1, *p2;
@@ -463,7 +463,7 @@ add_prog(char *progname)
 	p2->goterror = 0;
 }
 
-void 
+void
 add_link(int argc, char **argv)
 {
 	int             i;
@@ -480,7 +480,7 @@ add_link(int argc, char **argv)
 		add_string(&p->links, argv[i]);
 }
 
-void 
+void
 add_libs(int argc, char **argv)
 {
 	int             i;
@@ -489,7 +489,7 @@ add_libs(int argc, char **argv)
 		add_string(&libs, argv[i]);
 }
 
-void 
+void
 add_special(int argc, char **argv)
 {
 	int             i;
@@ -570,7 +570,7 @@ void            output_strlst(FILE * outf, strlst_t * lst);
 char           *genident(char *str);
 char           *dir_search(char *progname);
 
-void 
+void
 gen_outputs(void)
 {
 	prog_t         *p;
@@ -584,7 +584,7 @@ gen_outputs(void)
 	gen_output_makefile();
 }
 
-void 
+void
 fillin_program(prog_t * p)
 {
 	char            path[PATH_MAX];
@@ -654,7 +654,7 @@ fillin_program(prog_t * p)
 	}
 }
 
-void 
+void
 fillin_program_objs(prog_t * p, char *path)
 {
 	char           *cp, *obj, tempfname[PATH_MAX], cwd[PATH_MAX];
@@ -730,7 +730,7 @@ fillin_program_objs(prog_t * p, char *path)
 	unlink(tempfname);
 }
 
-void 
+void
 remove_error_progs(void)
 {
 	prog_t         *p1, *p2;
@@ -753,7 +753,7 @@ remove_error_progs(void)
 	}
 }
 
-void 
+void
 gen_specials_cache(void)
 {
 	FILE           *cachef;
@@ -785,7 +785,7 @@ gen_specials_cache(void)
 	fclose(cachef);
 }
 
-void 
+void
 gen_output_makefile(void)
 {
 	prog_t         *p;
@@ -808,7 +808,7 @@ gen_output_makefile(void)
 	fclose(outmk);
 }
 
-void 
+void
 gen_output_cfile(void)
 {
 	extern char    *crunched_skel[];
@@ -883,7 +883,7 @@ dir_search(char *progname)
 	return NULL;
 }
 
-void 
+void
 top_makefile_rules(FILE * outmk)
 {
 	prog_t         *p;
@@ -961,7 +961,7 @@ top_makefile_rules(FILE * outmk)
 	fprintf(outmk, ".PHONY: all objs exe clean $(SUBMAKE_TARGETS)\n\n");
 }
 
-void 
+void
 prog_makefile_rules(FILE * outmk, prog_t * p)
 {
 	fprintf(outmk, "\n# -------- %s\n\n", p->name);
@@ -995,7 +995,7 @@ prog_makefile_rules(FILE * outmk, prog_t * p)
 	    elf_names ? "" : "_", p->ident);
 }
 
-void 
+void
 output_strlst(FILE * outf, strlst_t * lst)
 {
 	for (; lst != NULL; lst = lst->next)
@@ -1003,14 +1003,14 @@ output_strlst(FILE * outf, strlst_t * lst)
 	fprintf(outf, "\n");
 }
 
-void 
+void
 out_of_memory(void)
 {
 	fprintf(stderr, "%s: %d: out of memory, stopping.\n", infilename, linenum);
 	exit(1);
 }
 
-void 
+void
 add_string(strlst_t ** listp, char *str)
 {
 	strlst_t       *p1, *p2;
@@ -1034,7 +1034,7 @@ add_string(strlst_t ** listp, char *str)
 		p1->next = p2;
 }
 
-int 
+int
 is_dir(char *pathname)
 {
 	struct stat     buf;
@@ -1044,7 +1044,7 @@ is_dir(char *pathname)
 	return S_ISDIR(buf.st_mode);
 }
 
-int 
+int
 is_nonempty_file(char *pathname)
 {
 	struct stat     buf;

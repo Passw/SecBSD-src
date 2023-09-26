@@ -88,7 +88,7 @@ getwire(void)
 		    !(ifa->ifa_flags & IFF_UP) ||
 		    (ifa->ifa_flags & IFF_LOOPBACK))
 			continue;
-		
+
 		/*
 		 * Add interface to local network list
 		 */

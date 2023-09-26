@@ -32,7 +32,7 @@ struct pcic_pci_softc {
 	void *intr_est;			/* XXX */
 };
 
-/* 
+/*
  * Establish/disestablish interrupts for PCMCIA functions.
  */
 

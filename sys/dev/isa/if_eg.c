@@ -84,8 +84,8 @@ struct eg_softc {
 	bus_space_tag_t sc_bst;
 	bus_space_handle_t sc_bsh;
 	struct arpcom sc_arpcom;	/* Ethernet common part */
-	u_char  eg_rom_major;		/* Cards ROM version (major number) */ 
-	u_char  eg_rom_minor;		/* Cards ROM version (minor number) */ 
+	u_char  eg_rom_major;		/* Cards ROM version (major number) */
+	u_char  eg_rom_minor;		/* Cards ROM version (minor number) */
 	short	eg_ram;			/* Amount of RAM on the card */
 	u_char	eg_pcb[64];		/* Primary Command Block buffer */
 	u_char  eg_incount;		/* Number of buffers currently used */
@@ -125,12 +125,12 @@ static int egreadPCB(struct eg_softc *);
 /*
  * Support stuff
  */
-	
+
 static __inline void
 egprintpcb(struct eg_softc *sc)
 {
 	int i;
-	
+
 	for (i = 0; i < sc->eg_pcb[1] + 2; i++)
 		DPRINTF(("pcb[%2d] = %x\n", i, sc->eg_pcb[i]));
 }
@@ -153,7 +153,7 @@ egoutPCB(struct eg_softc *sc, u_char b)
 	DPRINTF(("egoutPCB failed\n"));
 	return (1);
 }
-	
+
 static int
 egreadPCBstat(struct eg_softc *sc, u_char statb)
 {
@@ -163,11 +163,11 @@ egreadPCBstat(struct eg_softc *sc, u_char statb)
 
 	for (i=0; i < 5000; i++) {
 		if ((bus_space_read_1(bst, bsh, EG_STATUS) & EG_PCB_STAT) !=
-		    EG_PCB_NULL) 
+		    EG_PCB_NULL)
 			break;
 		delay(10);
 	}
-	if ((bus_space_read_1(bst, bsh, EG_STATUS) & EG_PCB_STAT) == statb) 
+	if ((bus_space_read_1(bst, bsh, EG_STATUS) & EG_PCB_STAT) == statb)
 		return (0);
 	return (1);
 }
@@ -188,7 +188,7 @@ egreadPCBready(struct eg_softc *sc)
 	    bus_space_read_1(bst, bsh, EG_STATUS)));
 	return (1);
 }
-	
+
 static int
 egwritePCB(struct eg_softc *sc)
 {
@@ -204,7 +204,7 @@ egwritePCB(struct eg_softc *sc)
 	len = sc->eg_pcb[1] + 2;
 	for (i = 0; i < len; i++)
 		egoutPCB(sc, sc->eg_pcb[i]);
-	
+
 	for (i=0; i < 4000; i++) {
 		if (bus_space_read_1(bst, bsh, EG_STATUS) & EG_STAT_HCRE)
 			break;
@@ -220,8 +220,8 @@ egwritePCB(struct eg_softc *sc)
 	if (egreadPCBstat(sc, EG_PCB_ACCEPT))
 		return (1);
 	return (0);
-}	
-	
+}
+
 static int
 egreadPCB(struct eg_softc *sc)
 {
@@ -229,7 +229,7 @@ egreadPCB(struct eg_softc *sc)
 	bus_space_handle_t bsh = sc->sc_bsh;
 	int i;
 	u_char b;
-	
+
 	bus_space_write_1(bst, bsh, EG_CONTROL,
 	    (bus_space_read_1(bst, bsh, EG_CONTROL) & ~EG_PCB_STAT) |
 	    EG_PCB_NULL);
@@ -240,7 +240,7 @@ egreadPCB(struct eg_softc *sc)
 		return (1);
 
 	sc->eg_pcb[0] = bus_space_read_1(bst, bsh, EG_COMMAND);
-	
+
 	if (egreadPCBready(sc))
 		return (1);
 
@@ -250,7 +250,7 @@ egreadPCB(struct eg_softc *sc)
 		DPRINTF(("len %d too large\n", sc->eg_pcb[1]));
 		return (1);
 	}
-	
+
 	for (i = 0; i < sc->eg_pcb[1]; i++) {
 		if (egreadPCBready(sc))
 			return (1);
@@ -270,7 +270,7 @@ egreadPCB(struct eg_softc *sc)
 	    EG_PCB_ACCEPT);
 
 	return (0);
-}	
+}
 
 /*
  * Real stuff
@@ -289,7 +289,7 @@ egprobe(struct device *parent, void *match, void *aux)
 		DPRINTF(("Weird iobase %x\n", ia->ia_iobase));
 		return (0);
 	}
-	
+
 	if (bus_space_map(bst, ia->ia_iobase, EG_IO_PORTS, 0, &bsh)) {
 		DPRINTF(("%s: can't map i/o space\n", sc->sc_dev.dv_xname));
 		return (0);
@@ -297,12 +297,12 @@ egprobe(struct device *parent, void *match, void *aux)
 	sc->sc_bsh = bsh;
 
 	/* hard reset card */
-	bus_space_write_1(bst, bsh, EG_CONTROL, EG_CTL_RESET); 
+	bus_space_write_1(bst, bsh, EG_CONTROL, EG_CTL_RESET);
 	bus_space_write_1(bst, bsh, EG_CONTROL, 0);
 	for (i = 0; i < 5000; i++) {
 		delay(1000);
 		if ((bus_space_read_1(bst, bsh, EG_STATUS) & EG_PCB_STAT) ==
-		    EG_PCB_NULL) 
+		    EG_PCB_NULL)
 			break;
 	}
 	if ((bus_space_read_1(bst, bsh, EG_STATUS) & EG_PCB_STAT) !=
@@ -314,7 +314,7 @@ egprobe(struct device *parent, void *match, void *aux)
 	sc->eg_pcb[1] = 0;
 	if (egwritePCB(sc) != 0)
 		goto lose;
-	
+
 	if (egreadPCB(sc) != 0) {
 		egprintpcb(sc);
 		goto lose;
@@ -328,7 +328,7 @@ egprobe(struct device *parent, void *match, void *aux)
 	sc->eg_rom_major = sc->eg_pcb[3];
 	sc->eg_rom_minor = sc->eg_pcb[2];
 	sc->eg_ram = sc->eg_pcb[6] | (sc->eg_pcb[7] << 8);
-	
+
 	ia->ia_iosize = 0x08;
 	ia->ia_msize = 0;
 	bus_space_unmap(bst, bsh, EG_IO_PORTS);
@@ -347,7 +347,7 @@ egattach(struct device *parent, struct device *self, void *aux)
 	bus_space_tag_t bst = sc->sc_bst = ia->ia_iot;
 	bus_space_handle_t bsh;
 	struct ifnet *ifp = &sc->sc_arpcom.ac_if;
-	
+
 	if (bus_space_map(bst, ia->ia_iobase, EG_IO_PORTS, 0, &bsh)) {
 		printf("%s: can't map i/o space\n", sc->sc_dev.dv_xname);
 		return;
@@ -361,7 +361,7 @@ egattach(struct device *parent, struct device *self, void *aux)
 	if (egwritePCB(sc) != 0) {
 		DPRINTF(("write error\n"));
 		return;
-	}	
+	}
 	if (egreadPCB(sc) != 0) {
 		DPRINTF(("read error\n"));
 		egprintpcb(sc);
@@ -369,7 +369,7 @@ egattach(struct device *parent, struct device *self, void *aux)
 	}
 
 	/* check Get station address response */
-	if (sc->eg_pcb[0] != EG_RSP_GETEADDR || sc->eg_pcb[1] != 0x06) { 
+	if (sc->eg_pcb[0] != EG_RSP_GETEADDR || sc->eg_pcb[1] != 0x06) {
 		DPRINTF(("parse error\n"));
 		egprintpcb(sc);
 		return;
@@ -404,11 +404,11 @@ egattach(struct device *parent, struct device *self, void *aux)
 	ifp->if_ioctl = egioctl;
 	ifp->if_watchdog = egwatchdog;
 	ifp->if_flags = IFF_BROADCAST | IFF_SIMPLEX;
-	
+
 	/* Now we can attach the interface. */
 	if_attach(ifp);
 	ether_ifattach(ifp);
-	
+
 	sc->sc_ih = isa_intr_establish(ia->ia_ic, ia->ia_irq, IST_EDGE,
 	    IPL_NET, egintr, sc, sc->sc_dev.dv_xname);
 }
@@ -503,7 +503,7 @@ loop:
 	m0 = ifq_dequeue(&ifp->if_snd);
 	if (m0 == NULL)
 		return;
-	
+
 	ifq_set_oactive(&ifp->if_snd);
 
 	/* We need to use m->m_pkthdr.len, so require the header */
@@ -542,8 +542,8 @@ loop:
 
 	/* set direction bit: host -> adapter */
 	bus_space_write_1(bst, bsh, EG_CONTROL,
-	    bus_space_read_1(bst, bsh, EG_CONTROL) & ~EG_CTL_DIR); 
-	
+	    bus_space_read_1(bst, bsh, EG_CONTROL) & ~EG_CTL_DIR);
+
 	for (ptr = (u_short *)sc->eg_outbuf; len > 0; len -= 2) {
 		bus_space_write_2(bst, bsh, EG_DATA, *ptr++);
 		for (i = 10000; i != 0; i--) {
@@ -556,7 +556,7 @@ loop:
 			break;
 		}
 	}
-	
+
 	m_freem(m0);
 }
 
@@ -576,11 +576,11 @@ egintr(void *arg)
 		switch (sc->eg_pcb[0]) {
 		case EG_RSP_RECVPACKET:
 			len = sc->eg_pcb[6] | (sc->eg_pcb[7] << 8);
-	
+
 			/* Set direction bit : Adapter -> host */
 			bus_space_write_1(bst, bsh, EG_CONTROL,
 			    bus_space_read_1(bst, bsh, EG_CONTROL) |
-			    EG_CTL_DIR); 
+			    EG_CTL_DIR);
 
 			for (ptr = (u_short *)sc->eg_inbuf; len > 0; len -= 2) {
 				for (i = 10000; i != 0; i--) {
@@ -630,7 +630,7 @@ egintr(void *arg)
 			DPRINTF(("overrun errors %d\n",
 			    *(short *)&sc->eg_pcb[16]));
 			break;
-			
+
 		default:
 			DPRINTF(("egintr: Unknown response %x??\n",
 			    sc->eg_pcb[0]));
@@ -792,6 +792,6 @@ egstop(register struct eg_softc *sc)
 {
 	bus_space_tag_t bst = sc->sc_bst;
 	bus_space_handle_t bsh = sc->sc_bsh;
-	
+
 	bus_space_write_1(bst, bsh, EG_CONTROL, 0);
 }

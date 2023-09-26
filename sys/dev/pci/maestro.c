@@ -1,7 +1,7 @@
 /*	$OpenBSD: maestro.c,v 1.50 2022/10/28 15:09:46 kn Exp $	*/
 /* $FreeBSD: /c/ncvs/src/sys/dev/sound/pci/maestro.c,v 1.3 2000/11/21 12:22:11 julian Exp $ */
 /*
- * FreeBSD's ESS Agogo/Maestro driver 
+ * FreeBSD's ESS Agogo/Maestro driver
  * Converted from FreeBSD's pcm to OpenBSD's audio.
  * Copyright (c) 2000, 2001 David Leonard & Marc Espie
  * All rights reserved.
@@ -456,7 +456,7 @@ salloc_t salloc_new(caddr_t, size_t, int);
 void	salloc_destroy(salloc_t);
 caddr_t	salloc_alloc(salloc_t, size_t);
 void	salloc_free(salloc_t, caddr_t);
-void	salloc_insert(salloc_t, struct salloc_head *, 
+void	salloc_insert(salloc_t, struct salloc_head *,
 		struct salloc_zone *, int);
 
 int	maestro_match(struct device *, void *, void *);
@@ -466,7 +466,7 @@ int	maestro_intr(void *);
 
 int	maestro_open(void *, int);
 void	maestro_close(void *);
-int	maestro_set_params(void *, int, int, struct audio_params *, 
+int	maestro_set_params(void *, int, int, struct audio_params *,
 			    struct audio_params *);
 int	maestro_round_blocksize(void *, int);
 int	maestro_halt_output(void *);
@@ -624,7 +624,7 @@ maestro_attach(struct device *parent, struct device *self, void *aux)
 	pci_set_powerstate(pc, sc->pt, PCI_PMCSR_STATE_D0);
 
 	/* Map i/o */
-	if ((error = pci_mapreg_map(pa, PCI_MAPS, PCI_MAPREG_TYPE_IO, 
+	if ((error = pci_mapreg_map(pa, PCI_MAPS, PCI_MAPREG_TYPE_IO,
 	    0, &sc->iot, &sc->ioh, NULL, NULL, 0)) != 0) {
 		printf(", can't map i/o space\n");
 		goto bad;
@@ -632,32 +632,32 @@ maestro_attach(struct device *parent, struct device *self, void *aux)
 
 	/* Allocate fixed DMA segment :-( */
 	sc->dmasize = MAESTRO_BUFSIZ * 16;
-	if ((error = bus_dmamem_alloc(sc->dmat, sc->dmasize, NBPG, 0, 
+	if ((error = bus_dmamem_alloc(sc->dmat, sc->dmasize, NBPG, 0,
 	    &sc->dmaseg, 1, &rseg, BUS_DMA_NOWAIT)) != 0) {
 		printf(", unable to alloc dma, error %d\n", error);
 		goto bad;
 	}
 	dmastage = 1;
 	if ((error = bus_dmamem_map(sc->dmat, &sc->dmaseg, 1,
-	    sc->dmasize, &sc->dmabase, BUS_DMA_NOWAIT | 
+	    sc->dmasize, &sc->dmabase, BUS_DMA_NOWAIT |
 	    BUS_DMA_COHERENT)) != 0) {
 		printf(", unable to map dma, error %d\n", error);
 		goto bad;
 	}
 	dmastage = 2;
-	if ((error = bus_dmamap_create(sc->dmat, sc->dmasize, 1, 
+	if ((error = bus_dmamap_create(sc->dmat, sc->dmasize, 1,
 	    sc->dmasize, 0, BUS_DMA_NOWAIT, &sc->dmamap)) != 0) {
 		printf(", unable to create dma map, error %d\n", error);
 		goto bad;
 	}
 	dmastage = 3;
-	if ((error = bus_dmamap_load(sc->dmat, sc->dmamap, 
+	if ((error = bus_dmamap_load(sc->dmat, sc->dmamap,
 	    sc->dmabase, sc->dmasize, NULL, BUS_DMA_NOWAIT)) != 0) {
 		printf(", unable to load dma map, error %d\n", error);
 		goto bad;
 	}
 
-	/* XXX 
+	/* XXX
 	 * The first byte of the allocated memory is not usable,
 	 * the WP sometimes uses it to store status.
 	 */
@@ -667,7 +667,7 @@ maestro_attach(struct device *parent, struct device *self, void *aux)
 		printf(", unable to make dma pool\n");
 		goto bad;
 	}
-	
+
 	sc->physaddr = sc->dmamap->dm_segs[0].ds_addr;
 
 	printf("\n");
@@ -676,7 +676,7 @@ maestro_attach(struct device *parent, struct device *self, void *aux)
 	maestro_init(sc);
 	maestro_read_codec(sc, 0, &cdata);
 	if (cdata == 0x80) {
-		printf("%s: PT101 codec unsupported, no mixer\n", 
+		printf("%s: PT101 codec unsupported, no mixer\n",
 		    sc->dev.dv_xname);
 		/* Init values from Linux, no idea what this does. */
 		maestro_write_codec(sc, 0x2a, 0x0001);
@@ -773,7 +773,7 @@ maestro_init(struct maestro_softc *sc)
 	    WAVCACHE_ENABLED | WAVCACHE_WTSIZE_4MB);
 
 	for (reg = WAVCACHE_PCMBAR; reg < WAVCACHE_PCMBAR + 4; reg++)
-		wc_reg_write(sc, reg, 
+		wc_reg_write(sc, reg,
 			sc->physaddr >> WAVCACHE_BASEADDR_SHIFT);
 
 	/* Setup Codec/Ringbus. */
@@ -792,7 +792,7 @@ maestro_init(struct maestro_softc *sc)
 	bus_space_write_1(sc->iot, sc->ioh, PORT_ASSP_CTRL_A, 0x03);
 	bus_space_write_1(sc->iot, sc->ioh, PORT_ASSP_CTRL_C, 0x00);
 
-	/* 
+	/*
 	 * Reset hw volume to a known value so that we may handle diffs
 	 * off to AC'97.
 	 */
@@ -802,11 +802,11 @@ maestro_init(struct maestro_softc *sc)
 	if (sc->flags & MAESTRO_FLAG_SETUPGPIO) {
 		/* Matthew Braithwaite <matt@braithwaite.net> reported that
 		 * NEC Versa LX doesn't need GPIO operation. */
-		bus_space_write_2(sc->iot, sc->ioh, 
+		bus_space_write_2(sc->iot, sc->ioh,
 		    PORT_GPIO_MASK, 0x9ff);
 		bus_space_write_2(sc->iot, sc->ioh, PORT_GPIO_DIR,
 		    bus_space_read_2(sc->iot, sc->ioh, PORT_GPIO_DIR) | 0x600);
-		bus_space_write_2(sc->iot, sc->ioh, 
+		bus_space_write_2(sc->iot, sc->ioh,
 		    PORT_GPIO_DATA, 0x200);
 	}
 }
@@ -893,7 +893,7 @@ maestro_set_speed(struct maestro_channel *ch, u_long *prate)
 	ch->speed = *prate;
 	if ((ch->mode & (MAESTRO_8BIT | MAESTRO_STEREO)) == MAESTRO_8BIT)
 		ch->speed /= 2;
-		
+
 	/* special common case */
 	if (ch->speed == 48000) {
 		ch->dv = 0x10000;
@@ -903,7 +903,7 @@ maestro_set_speed(struct maestro_channel *ch, u_long *prate)
 		 ch->dv = (((ch->speed % 48000) << 16U) + 24000) / 48000
 		    + ((ch->speed / 48000) << 16U);
 		/* And this is the real rate obtained */
-		ch->speed = (ch->dv >> 16U) * 48000 + 
+		ch->speed = (ch->dv >> 16U) * 48000 +
 		    (((ch->dv & 0xffff)*48000)>>16U);
 	}
 	*prate = ch->speed;
@@ -947,7 +947,7 @@ maestro_set_params(void *hdl, int setmode, int usemode,
     struct audio_params *play, struct audio_params *rec)
 {
 	struct maestro_softc *sc = (struct maestro_softc *)hdl;
-	
+
 	if ((setmode & AUMODE_PLAY) == 0)
 		return (0);
 
@@ -1030,7 +1030,7 @@ maestro_channel_stop(struct maestro_channel *ch)
 	if (ch->mode & MAESTRO_STEREO)
 	    wp_apu_write(ch->sc, ch->num+3, APUREG_APUTYPE,
 		APUTYPE_INACTIVE << APU_APUTYPE_SHIFT);
-	
+
 }
 
 int
@@ -1132,10 +1132,10 @@ maestro_channel_start(struct maestro_channel *ch)
 		    | ((ch->dv & 0xff) << APU_FREQ_LOBYTE_SHIFT));
 		wp_apu_write(sc, n+1, APUREG_FREQ_HIWORD, ch->dv >> 8);
 		if (ch->mode & MAESTRO_8BIT)
-			wp_apu_write(sc, n, APUREG_WAVESPACE, 
+			wp_apu_write(sc, n, APUREG_WAVESPACE,
 			    ch->wpwa & 0xff00);
 		    else
-			wp_apu_write(sc, n, APUREG_WAVESPACE, 
+			wp_apu_write(sc, n, APUREG_WAVESPACE,
 			    (ch->wpwa|(APU_STEREO >> 1)) & 0xff00);
 		wp_apu_write(sc, n, APUREG_CURPTR, ch->current);
 		wp_apu_write(sc, n, APUREG_ENDPTR, ch->end);
@@ -1336,7 +1336,7 @@ maestro_initcodec(void *self)
 	}
 
 	/* Check the codec to see is still busy */
-	if ((bus_space_read_1(sc->iot, sc->ioh, PORT_CODEC_STAT) & 
+	if ((bus_space_read_1(sc->iot, sc->ioh, PORT_CODEC_STAT) &
 	    CODEC_STAT_MASK) != 0) {
 		printf("%s: codec failure\n", sc->dev.dv_xname);
 	}
@@ -1398,7 +1398,7 @@ maestro_channel_advance_dma(struct maestro_channel *ch)
 	for (;;) {
 		pos = wp_apu_read(ch->sc, ch->num, APUREG_CURPTR);
 		/* Are we still processing the current dma block ? */
-		if (pos >= ch->threshold && 
+		if (pos >= ch->threshold &&
 		    pos < ch->threshold + ch->blocksize/2)
 			break;
 		ch->threshold += ch->blocksize/2;
@@ -1412,7 +1412,7 @@ maestro_channel_advance_dma(struct maestro_channel *ch)
 
 #ifdef AUDIO_DEBUG
 	if (maestrodebug && maestrointr_called % 64 == 0)
-		printf("maestro: dma advanced %lu for %lu calls\n", 
+		printf("maestro: dma advanced %lu for %lu calls\n",
 			maestrodma_effective, maestrointr_called);
 #endif
 }
@@ -1460,7 +1460,7 @@ maestro_intr(void *arg)
 		/* Special case: Mute key */
 		if (n & 0x11) {
 			hwvol.type = AUDIO_MIXER_ENUM;
-			hwvol.dev = 
+			hwvol.dev =
 			    sc->codec_if->vtbl->get_portnum_by_name(sc->codec_if,
 				AudioCoutputs, AudioNmaster, AudioNmute);
 			sc->codec_if->vtbl->mixer_get_port(sc->codec_if, &hwvol);
@@ -1468,9 +1468,9 @@ maestro_intr(void *arg)
 		} else {
 			hwvol.type = AUDIO_MIXER_VALUE;
 			hwvol.un.value.num_channels = 2;
-			hwvol.dev = 
+			hwvol.dev =
 			    sc->codec_if->vtbl->get_portnum_by_name(
-			    	sc->codec_if, AudioCoutputs, AudioNmaster, 
+			    	sc->codec_if, AudioCoutputs, AudioNmaster,
 				    NULL);
 			sc->codec_if->vtbl->mixer_get_port(sc->codec_if, &hwvol);
 			/* XXX AC'97 yields five bits for master volume. */
@@ -1486,7 +1486,7 @@ maestro_intr(void *arg)
 		}
 		sc->codec_if->vtbl->mixer_set_port(sc->codec_if, &hwvol);
 		/* Reset to compute next diffs */
-		bus_space_write_1(sc->iot, sc->ioh, PORT_HWVOL_MASTER, 
+		bus_space_write_1(sc->iot, sc->ioh, PORT_HWVOL_MASTER,
 		    MIDDLE_VOLUME);
 	}
 
@@ -1686,13 +1686,13 @@ salloc_insert(salloc_t pool, struct salloc_head *head, struct salloc_zone *zone,
 {
 	struct salloc_zone *prev, *next;
 
-	/* 
+	/*
 	 * Insert a zone into an ordered list of zones, possibly
 	 * merging adjacent zones.
 	 */
 	prev = NULL;
 	SLIST_FOREACH(next, head, link) {
-		if (next->addr > zone->addr) 
+		if (next->addr > zone->addr)
 			break;
 		prev = next;
 	}
@@ -1717,7 +1717,7 @@ salloc_alloc(salloc_t pool, size_t size)
 {
 	struct salloc_zone *zone, *uzone;
 
-	SLIST_FOREACH(zone, &pool->free, link) 
+	SLIST_FOREACH(zone, &pool->free, link)
 		if (zone->size >= size)
 			break;
 	if (zone == NULL)
@@ -1744,7 +1744,7 @@ salloc_free(salloc_t pool, caddr_t addr)
 {
 	struct salloc_zone *zone;
 
-	SLIST_FOREACH(zone, &pool->used, link) 
+	SLIST_FOREACH(zone, &pool->used, link)
 		if (zone->addr == addr)
 			break;
 #ifdef DIAGNOSTIC

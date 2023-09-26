@@ -1079,7 +1079,7 @@ scan_out(int scfd, char *scsp, int dlm)
 		while (*--strp == BACKGND && strp >= outbuf)
 			;
 		strp++;
-		*strp++ = '\n';	
+		*strp++ = '\n';
 		(void)write(scfd, outbuf, strp-outbuf);
 	}
 }

@@ -59,7 +59,7 @@ struct uhid_softc *uhid_lookup(dev_t);
 
 int uhid_do_open(dev_t, int, int, struct proc *);
 
-void uhid_attach(struct device *, struct device *, void *); 
-int uhid_detach(struct device *, int); 
+void uhid_attach(struct device *, struct device *, void *);
+int uhid_detach(struct device *, int);
 
 #endif /* _KERNEL */

@@ -106,7 +106,7 @@ int
 ytphy_match(struct device *parent, void *match, void *aux)
 {
 	struct mii_attach_args *ma = aux;
-	
+
 	/*
 	 * The MotorComm YT8511 and TY8521 have bogus MII OUIs, so
 	 * match the complete ID including the rev.

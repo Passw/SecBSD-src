@@ -123,7 +123,7 @@ wi_pci_lookup(struct pci_attach_args *pa)
 	const struct wi_pci_product *pp;
 
 	for (pp = wi_pci_products; pp->pp_product != 0; pp++) {
-		if (PCI_VENDOR(pa->pa_id) == pp->pp_vendor && 
+		if (PCI_VENDOR(pa->pa_id) == pp->pp_vendor &&
 		    PCI_PRODUCT(pa->pa_id) == pp->pp_product)
 			return (pp);
 	}
@@ -280,7 +280,7 @@ wi_pci_acex_attach(struct pci_attach_args *pa, struct wi_softc *sc)
 		return (ENXIO);
 	}
 
-	/* 
+	/*
 	 * Enable I/O mode and level interrupts on the embedded PCMCIA
 	 * card.
 	 */
@@ -474,7 +474,7 @@ wi_pci_tmd_attach(struct pci_attach_args *pa, struct wi_softc *sc)
 		return (ENXIO);
 	}
 
-	/* 
+	/*
 	 * Enable I/O mode and level interrupts on the embedded PCMCIA
 	 * card.  The PCMCIA card's COR is the first byte of BAR 0.
 	 */

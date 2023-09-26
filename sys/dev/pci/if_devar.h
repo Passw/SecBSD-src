@@ -848,7 +848,7 @@ TULIP_PERFREAD(
 #define	TULIP_PERFDIFF(s, f)	((unsigned int) ((f) - (s)))
 #endif
 #else
-#define	TULIP_PERFSTART(name)	
+#define	TULIP_PERFSTART(name)
 #define	TULIP_PERFEND(name)	do { } while (0)
 #define	TULIP_PERFMERGE(s,n)	do { } while (0)
 #endif /* TULIP_PERFSTATS */

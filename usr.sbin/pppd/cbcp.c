@@ -71,7 +71,7 @@ struct protent cbcp_protent = {
     NULL
 };
 
-cbcp_state cbcp[NUM_PPP];	
+cbcp_state cbcp[NUM_PPP];
 
 /* internal prototypes */
 
@@ -138,7 +138,7 @@ cbcp_input(int unit, u_char *inpacket, int pktlen)
         return;
     }
     len -= CBCP_MINLEN;
- 
+
     switch(code) {
     case CBCP_REQ:
         us->us_id = id;
@@ -198,7 +198,7 @@ cbcp_printpkt(u_char *p, int plen, void (*printer)(void *, char *, ...),
     if (code >= 1 && code <= sizeof(cbcp_codenames) / sizeof(char *))
 	printer(arg, " %s", cbcp_codenames[code-1]);
     else
-	printer(arg, " code=0x%x", code); 
+	printer(arg, " code=0x%x", code);
 
     printer(arg, " id=0x%x", id);
     len -= HEADERLEN;
@@ -221,7 +221,7 @@ cbcp_printpkt(u_char *p, int plen, void (*printer)(void *, char *, ...),
 	    if (opt >= 1 && opt <= sizeof(cbcp_optionnames) / sizeof(char *))
 	    	printer(arg, " %s", cbcp_optionnames[opt-1]);
 	    else
-	        printer(arg, " option=0x%x", opt); 
+	        printer(arg, " option=0x%x", opt);
 
 	    if (olen > 2) {
 	        GETCHAR(delay, p);
@@ -366,13 +366,13 @@ cbcp_send(cbcp_state *us, u_char code, u_char *buf, int len)
     outp = outpacket_buf;
 
     outlen = 4 + len;
-    
+
     MAKEHEADER(outp, PPP_CBCP);
 
     PUTCHAR(code, outp);
     PUTCHAR(us->us_id, outp);
     PUTSHORT(outlen, outp);
-    
+
     if (len)
         BCOPY(buf, outp, len);
 

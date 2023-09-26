@@ -310,7 +310,7 @@ pap_response(pap *_this, int authok, const char *mes)
 		    "logtype=Failure username=\"%s\" realm=%s", _this->name,
 		    realm);
 		pap_stop(_this);
-		ppp_set_disconnect_cause(_this->ppp, 
+		ppp_set_disconnect_cause(_this->ppp,
 		    PPP_DISCON_AUTH_FAILED, PPP_PROTO_PAP, 1 /* peer */, NULL);
 		ppp_stop(_this->ppp, "Authentication Required");
 	} else {

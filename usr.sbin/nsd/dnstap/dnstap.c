@@ -547,7 +547,7 @@ dt_create(const char *socket_path, char* ip, unsigned num_workers,
 
 	fwopt = fstrm_writer_options_init();
 #ifndef NDEBUG
-	res = 
+	res =
 #else
 	(void)
 #endif

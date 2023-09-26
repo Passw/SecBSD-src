@@ -192,7 +192,7 @@ cgthreematch(struct device *parent, void *vcf, void *aux)
 	return (strcmp(cf->cf_driver->cd_name, sa->sa_name) == 0);
 }
 
-void    
+void
 cgthreeattach(struct device *parent, struct device *self, void *aux)
 {
 	struct cgthree_softc *sc = (struct cgthree_softc *)self;

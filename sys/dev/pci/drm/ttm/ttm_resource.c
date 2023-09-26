@@ -717,7 +717,7 @@ ttm_kmap_iter_linear_io_init(struct ttm_kmap_iter_linear_io *iter_io,
 			    &iter_io->dmap.bsh)) {
 				ret = -ENOMEM;
 				goto out_io_free;
-			}   
+			}
 			iter_io->dmap.size = bus_size;
 			iosys_map_set_vaddr(&iter_io->dmap,
 			    bus_space_vaddr(bdev->memt, iter_io->dmap.bsh));

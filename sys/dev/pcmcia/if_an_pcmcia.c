@@ -65,7 +65,7 @@ struct an_pcmcia_softc {
 #define	AN_PCMCIA_ATTACHED	3
 };
 
-const struct cfattach an_pcmcia_ca = {   
+const struct cfattach an_pcmcia_ca = {
 	sizeof(struct an_pcmcia_softc), an_pcmcia_match, an_pcmcia_attach,
 	an_pcmcia_detach, an_pcmcia_activate
 };

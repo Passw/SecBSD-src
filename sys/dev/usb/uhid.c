@@ -72,15 +72,15 @@ int	uhiddebug = 0;
 
 int uhid_match(struct device *, void *, void *);
 
-struct cfdriver uhid_cd = { 
-	NULL, "uhid", DV_DULL 
-}; 
+struct cfdriver uhid_cd = {
+	NULL, "uhid", DV_DULL
+};
 
-const struct cfattach uhid_ca = { 
-	sizeof(struct uhid_softc), 
-	uhid_match, 
-	uhid_attach, 
-	uhid_detach, 
+const struct cfattach uhid_ca = {
+	sizeof(struct uhid_softc),
+	uhid_match,
+	uhid_attach,
+	uhid_detach,
 };
 
 struct uhid_softc *

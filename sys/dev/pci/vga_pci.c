@@ -126,7 +126,7 @@ static const struct vga_device_description vga_devs[] = {
 	 *
 	 * The next entry is a list of corresponding masks.
 	 *
-	 * Finally the last value indicates if we should repost via 
+	 * Finally the last value indicates if we should repost via
 	 * vga_pci (i.e. the x86emulator) * bios.
 	 */
 	{	/* All machines with GMA500/Poulsbo */

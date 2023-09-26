@@ -416,7 +416,7 @@ viasio_hm_refresh(void *arg)
 
 	/* Convert to RPM */
 	/* XXX: conversion function is guessed */
-	if (val != 0) {		
+	if (val != 0) {
 		sc->sc_hm_sensors[VT1211_HMS_FAN1].value =
 		    (sc->sc_hm_clock * 60 / 2) / val;
 		sc->sc_hm_sensors[VT1211_HMS_FAN1].flags &= ~SENSOR_FINVALID;
@@ -432,7 +432,7 @@ viasio_hm_refresh(void *arg)
 
 	/* Convert to RPM */
 	/* XXX: conversion function is guessed */
-	if (val != 0) {		
+	if (val != 0) {
 		sc->sc_hm_sensors[VT1211_HMS_FAN2].value =
 		    (sc->sc_hm_clock * 60 / 2) / val;
 		sc->sc_hm_sensors[VT1211_HMS_FAN2].flags &= ~SENSOR_FINVALID;

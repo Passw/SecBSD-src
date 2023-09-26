@@ -745,14 +745,14 @@ next:
 
 			desc = buf + sizeof(*vpd);
 
-			/* 
+			/*
 			 * ...which is an instance property...
 			 */
 			if (desc[0] != 'I')
 				continue;
 			desc += 3;
 
-			/* 
+			/*
 			 * ...that's a byte array with the proper
 			 * length for a MAC address...
 			 */
@@ -766,7 +766,7 @@ next:
 			if (strcmp(desc, "local-mac-address") != 0)
 				continue;
 			desc += strlen("local-mac-address") + 1;
-					
+
 			memcpy(sc->sc_ac.ac_enaddr, desc, ETHER_ADDR_LEN);
 			sc->sc_ac.ac_enaddr[5] += pa->pa_function;
 			rv = 0;
@@ -995,7 +995,7 @@ nep_rx_proc(struct nep_softc *sc)
 
 	bus_dmamap_sync(sc->sc_dmat, NEP_DMA_MAP(sc->sc_rcring), 0,
 	    NEP_DMA_LEN(sc->sc_rcring), BUS_DMASYNC_POSTREAD);
-	
+
 	count = nep_read(sc, RCRSTAT_A(sc->sc_port));
 	while (count > 0) {
 		idx = sc->sc_rx_cons;
@@ -1573,7 +1573,7 @@ nep_up(struct nep_softc *sc)
 
 	sc->sc_rx_prod = 0;
 	if_rxr_init(&sc->sc_rx_ring, 16, NEP_NRBDESC);
-	
+
 	/* Allocate Rx completion descriptor ring. */
 	sc->sc_rcring = nep_dmamem_alloc(sc, NEP_NRCDESC * sizeof(uint64_t));
 	if (sc->sc_rcring == NULL)
@@ -2001,7 +2001,7 @@ nep_fill_rx_ring(struct nep_softc *sc)
 			break;
 		}
 		rb->nb_block = block;
-		sc->sc_rbdesc[desc++] = 
+		sc->sc_rbdesc[desc++] =
 		    htole32(rb->nb_map->dm_segs[0].ds_addr >> 12);
 		count++;
 		slots--;

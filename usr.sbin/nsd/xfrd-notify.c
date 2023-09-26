@@ -248,7 +248,7 @@ notify_pkt_retry(struct notify_zone* zone, int index)
 }
 
 static void
-xfrd_handle_notify_reply(struct notify_zone* zone, buffer_type* packet, 
+xfrd_handle_notify_reply(struct notify_zone* zone, buffer_type* packet,
 	struct sockaddr* src, socklen_t srclen)
 {
 	int i;

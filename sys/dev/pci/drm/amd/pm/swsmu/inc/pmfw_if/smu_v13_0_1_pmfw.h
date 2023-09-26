@@ -30,7 +30,7 @@
 
 #define ENABLE_DEBUG_FEATURES
 
-// Firmware features 
+// Firmware features
 // Feature Control Defines
 #define FEATURE_CCLK_DPM_BIT                 0
 #define FEATURE_FAN_CONTROLLER_BIT           1
@@ -92,7 +92,7 @@
 #define FEATURE_ZSTATES_ECO_BIT             57
 #define FEATURE_CC6_BIT                     58
 #define FEATURE_DS_UMCCLK_BIT               59
-#define FEATURE_DS_HSPCLK_BIT               60 
+#define FEATURE_DS_HSPCLK_BIT               60
 #define NUM_FEATURES                        61
 
 typedef struct {

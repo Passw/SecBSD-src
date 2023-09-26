@@ -38,7 +38,7 @@
 #define MTW_RXQ_COUNT		2
 #define MTW_TXQ_COUNT		6
 
-#define MTW_WCID_MAX		8	
+#define MTW_WCID_MAX		8
 #define MTW_AID2WCID(aid)	(1 + ((aid) & 0x7))
 
 struct mtw_rx_radiotap_header {

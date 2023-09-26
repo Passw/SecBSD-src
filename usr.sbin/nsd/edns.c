@@ -101,7 +101,7 @@ edns_handle_option(uint16_t optcode, uint16_t optlen, buffer_type* packet,
 	case COOKIE_CODE:
 		/* Cookies enabled? */
 		if(nsd->do_answer_cookie) {
-			if (optlen == 8) 
+			if (optlen == 8)
 				edns->cookie_status = COOKIE_INVALID;
 			else if (optlen < 16 || optlen > 40)
 				return 0; /* FORMERR */
@@ -255,7 +255,7 @@ void cookie_verify(query_type *q, struct nsd* nsd, uint32_t *now_p) {
 	            | (q->edns.cookie[13] << 16)
 	            | (q->edns.cookie[14] <<  8)
 	            |  q->edns.cookie[15];
-	
+
 	now_uint32 = *now_p ? *now_p : (*now_p = (uint32_t)time(NULL));
 
 	if(compare_1982(now_uint32, cookie_time) > 0) {
@@ -309,7 +309,7 @@ void cookie_create(query_type *q, struct nsd* nsd, uint32_t *now_p)
 {
 	uint8_t  hash[8];
 	uint32_t now_uint32;
-       
+
 	if (q->edns.cookie_status == COOKIE_VALID_REUSE)
 		return;
 

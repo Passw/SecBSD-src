@@ -165,7 +165,7 @@
 #define WB_TXTHRESH(x)		((x >> 5) << 14)
 #define WB_TXTHRESH_CHUNK	32
 #define WB_TXTHRESH_INIT	0 /*72*/
- 
+
 /*
  * Interrupt mask bits.
  */

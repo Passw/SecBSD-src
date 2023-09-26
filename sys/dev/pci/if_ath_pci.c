@@ -127,7 +127,7 @@ ath_pci_attach(struct device *parent, struct device *self, void *aux)
 	psc->sc_pc = pc;
 	psc->sc_pcitag = pt;
 
-	/* 
+	/*
 	 * Setup memory-mapping of PCI registers.
 	 */
 	mem_type = pci_mapreg_type(pc, pa->pa_tag, ATH_BAR0);

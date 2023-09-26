@@ -209,7 +209,7 @@ agtenattach(struct device *parent, struct device *self, void *args)
 	    sc->sc_sunfb.sf_depth);
 
 	sc->sc_sunfb.sf_ro.ri_bits = (void *)sc->sc_i128_fb;
-	
+
 	sc->sc_sunfb.sf_ro.ri_hw = sc;
 	fbwscons_init(&sc->sc_sunfb, 0, isconsole);
 	fbwscons_setcolormap(&sc->sc_sunfb, agten_setcolor);

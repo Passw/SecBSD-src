@@ -186,7 +186,7 @@ obsd_pci_mem_find(pci_chipset_tag_t pc, pcitag_t tag, int reg, pcireg_t type,
 #endif
 		return (EINVAL);
 	}
-	if (type != -1 && 
+	if (type != -1 &&
 	    PCI_MAPREG_MEM_TYPE(address) != PCI_MAPREG_MEM_TYPE(type)) {
 #ifdef DEBUG
 		printf("pci_mem_find: expected mem type %08x, found %08x\n",
@@ -265,7 +265,7 @@ pci_mapreg_probe(pci_chipset_tag_t pc, pcitag_t tag, int reg, pcireg_t *typep)
 {
 	pcireg_t address, mask, csr;
 	int s;
-	
+
 	s = splhigh();
 	csr = pci_conf_read(pc, tag, PCI_COMMAND_STATUS_REG);
 	if (csr & (PCI_COMMAND_IO_ENABLE | PCI_COMMAND_MEM_ENABLE))

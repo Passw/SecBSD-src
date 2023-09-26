@@ -90,21 +90,21 @@ void	udsbr_stop(struct udsbr_softc *sc);
 void	udsbr_setfreq(struct udsbr_softc *sc, int freq);
 int	udsbr_status(struct udsbr_softc *sc);
 
-int udsbr_match(struct device *, void *, void *); 
-void udsbr_attach(struct device *, struct device *, void *); 
-int udsbr_detach(struct device *, int); 
-int udsbr_activate(struct device *, int); 
+int udsbr_match(struct device *, void *, void *);
+void udsbr_attach(struct device *, struct device *, void *);
+int udsbr_detach(struct device *, int);
+int udsbr_activate(struct device *, int);
 
-struct cfdriver udsbr_cd = { 
-	NULL, "udsbr", DV_DULL 
-}; 
+struct cfdriver udsbr_cd = {
+	NULL, "udsbr", DV_DULL
+};
 
-const struct cfattach udsbr_ca = { 
-	sizeof(struct udsbr_softc), 
-	udsbr_match, 
-	udsbr_attach, 
-	udsbr_detach, 
-	udsbr_activate, 
+const struct cfattach udsbr_ca = {
+	sizeof(struct udsbr_softc),
+	udsbr_match,
+	udsbr_attach,
+	udsbr_detach,
+	udsbr_activate,
 };
 
 int

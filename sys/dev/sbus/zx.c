@@ -173,7 +173,7 @@ int
 zx_match(struct device *parent, void *vcf, void *aux)
 {
 	struct sbus_attach_args *sa = aux;
-	
+
 	if (strcmp(sa->sa_name, "SUNW,leo") == 0)
 		return (1);
 

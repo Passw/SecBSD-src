@@ -20,7 +20,7 @@
  * udl IOCTLs.
  */
 struct udl_ioctl_damage {
-	int	x1; 
+	int	x1;
 	int	x2;
 	int	y1;
 	int	y2;

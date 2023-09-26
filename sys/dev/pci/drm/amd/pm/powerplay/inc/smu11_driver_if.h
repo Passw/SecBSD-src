@@ -773,8 +773,8 @@ typedef struct {
   uint8_t   Gfx_IdleHystLimit;
   uint8_t   Gfx_FPS;
   uint8_t   Gfx_MinActiveFreqType;
-  uint8_t   Gfx_BoosterFreqType; 
-  uint8_t   Gfx_UseRlcBusy; 
+  uint8_t   Gfx_BoosterFreqType;
+  uint8_t   Gfx_UseRlcBusy;
   uint16_t  Gfx_MinActiveFreq;
   uint16_t  Gfx_BoosterFreq;
   uint16_t  Gfx_PD_Data_time_constant;
@@ -788,7 +788,7 @@ typedef struct {
   uint8_t   Soc_IdleHystLimit;
   uint8_t   Soc_FPS;
   uint8_t   Soc_MinActiveFreqType;
-  uint8_t   Soc_BoosterFreqType; 
+  uint8_t   Soc_BoosterFreqType;
   uint8_t   Soc_UseRlcBusy;
   uint16_t  Soc_MinActiveFreq;
   uint16_t  Soc_BoosterFreq;
@@ -804,7 +804,7 @@ typedef struct {
   uint8_t   Mem_FPS;
   uint8_t   Mem_MinActiveFreqType;
   uint8_t   Mem_BoosterFreqType;
-  uint8_t   Mem_UseRlcBusy; 
+  uint8_t   Mem_UseRlcBusy;
   uint16_t  Mem_MinActiveFreq;
   uint16_t  Mem_BoosterFreq;
   uint16_t  Mem_PD_Data_time_constant;

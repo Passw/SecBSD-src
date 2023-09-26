@@ -3999,7 +3999,7 @@ struct ixgbe_phy_operations {
 	int32_t (*write_i2c_eeprom)(struct ixgbe_hw *, uint8_t, uint8_t);
 	void (*i2c_bus_clear)(struct ixgbe_hw *);
 	/*depreatced*/
-	int32_t (*read_i2c_combined)(struct ixgbe_hw *, uint8_t addr, uint16_t reg, uint16_t *val); 
+	int32_t (*read_i2c_combined)(struct ixgbe_hw *, uint8_t addr, uint16_t reg, uint16_t *val);
 	int32_t (*write_i2c_combined)(struct ixgbe_hw *, uint8_t addr, uint16_t reg, uint16_t val);
 	int32_t (*read_i2c_combined_unlocked)(struct ixgbe_hw *, uint8_t addr, uint16_t reg,
 					      uint16_t *value);

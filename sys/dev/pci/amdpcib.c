@@ -97,7 +97,7 @@ const struct pci_matchid amdpcib_devices[] = {
 
 int
 amdpcib_match(struct device *parent, void *match, void *aux)
-{ 
+{
 	if (pci_matchbyid((struct pci_attach_args *)aux, amdpcib_devices,
 	    sizeof(amdpcib_devices) / sizeof(amdpcib_devices[0])))
 		return 2;

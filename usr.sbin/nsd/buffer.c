@@ -34,7 +34,7 @@ buffer_create(region_type *region, size_t capacity)
 	buffer->_limit = buffer->_capacity = capacity;
 	buffer->_fixed = 0;
 	buffer_invariant(buffer);
-	
+
 	region_add_cleanup(region, buffer_cleanup, buffer);
 
 	return buffer;
@@ -49,7 +49,7 @@ buffer_create_from(buffer_type *buffer, void *data, size_t size)
 	buffer->_limit = buffer->_capacity = size;
 	buffer->_data = (uint8_t *) data;
 	buffer->_fixed = 1;
-	
+
 	buffer_invariant(buffer);
 }
 
@@ -57,7 +57,7 @@ void
 buffer_clear(buffer_type *buffer)
 {
 	buffer_invariant(buffer);
-	
+
 	buffer->_position = 0;
 	buffer->_limit = buffer->_capacity;
 }
@@ -66,7 +66,7 @@ void
 buffer_flip(buffer_type *buffer)
 {
 	buffer_invariant(buffer);
-	
+
 	buffer->_limit = buffer->_position;
 	buffer->_position = 0;
 }
@@ -75,7 +75,7 @@ void
 buffer_rewind(buffer_type *buffer)
 {
 	buffer_invariant(buffer);
-	
+
 	buffer->_position = 0;
 }
 
@@ -109,7 +109,7 @@ buffer_printf(buffer_type *buffer, const char *format, ...)
 	va_list args;
 	int written;
 	size_t remaining;
-	
+
 	buffer_invariant(buffer);
 	assert(buffer->_limit == buffer->_capacity);
 

@@ -350,7 +350,7 @@ cleanpr(void)
 		}
      	} while (++i < nitems);
 }
- 
+
 static void
 unlinkf(char *name)
 {
@@ -1018,7 +1018,7 @@ topq(int argc, char **argv)
 
 out:
 	PRIV_END;
-} 
+}
 
 /*
  * Reposition the job by changing the modification time of
@@ -1052,8 +1052,8 @@ doarg(char *job)
 	FILE *fp;
 
 	/*
-	 * Look for a job item consisting of system name, colon, number 
-	 * (example: ucbarpa:114)  
+	 * Look for a job item consisting of system name, colon, number
+	 * (example: ucbarpa:114)
 	 */
 	if ((cp = strchr(job, ':')) != NULL) {
 		machine = job;

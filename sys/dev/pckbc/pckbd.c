@@ -127,10 +127,10 @@ void pckbdattach(struct device *, struct device *, void *);
 int pckbdactivate(struct device *, int);
 
 const struct cfattach pckbd_ca = {
-	sizeof(struct pckbd_softc), 
-	pckbdprobe, 
-	pckbdattach, 
-	NULL, 
+	sizeof(struct pckbd_softc),
+	pckbdprobe,
+	pckbdattach,
+	NULL,
 	pckbdactivate
 };
 
@@ -571,7 +571,7 @@ const u_int8_t pckbd_xtbl2[] = {
 	RAWKEY_w,
 	RAWKEY_2,
 	RAWKEY_Meta_L,
-/* 0x20 */	
+/* 0x20 */
 	0,
 	RAWKEY_c,
 	RAWKEY_x,
@@ -860,7 +860,7 @@ const u_int8_t pckbd_xtbl3[] = {
 	RAWKEY_w,
 	RAWKEY_2,
 	RAWKEY_f4,
-/* 0x20 */	
+/* 0x20 */
 	0,
 	RAWKEY_c,
 	RAWKEY_x,

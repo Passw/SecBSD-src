@@ -1060,7 +1060,7 @@ fdioctl(dev_t dev, u_long cmd, caddr_t addr, int flag, struct proc *p)
         case FD_GOPTS:                  /* get drive options */
                 *(int *)addr = fd->sc_opts;
                 return 0;
-                
+
         case FD_SOPTS:                  /* set drive options */
                 fd->sc_opts = *(int *)addr;
 		return 0;
@@ -1101,7 +1101,7 @@ fdformat(dev_t dev, struct fd_formb *finfo, struct proc *p)
 
         bp->b_bcount = sizeof(struct fd_idfield_data) * finfo->fd_formb_nsecs;
         bp->b_data = (caddr_t)finfo;
-        
+
 #ifdef DEBUG
 	printf("fdformat: blkno %llx count %lx\n", bp->b_blkno, bp->b_bcount);
 #endif

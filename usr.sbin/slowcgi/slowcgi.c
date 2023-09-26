@@ -307,7 +307,7 @@ main(int argc, char *argv[])
 			fcgi_socket = optarg;
 			break;
 		case 't':
-			timeout.tv_sec = strtonum(optarg, 1, TIMEOUT_MAX, 
+			timeout.tv_sec = strtonum(optarg, 1, TIMEOUT_MAX,
 			    &errstr);
 			if (errstr != NULL)
 				errx(1, "timeout is %s: %s", errstr, optarg);

@@ -18,7 +18,7 @@
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
  *	This product includes software developed by Mark Tinguely and Jim Lowe
- * 4. The name of the author may not be used to endorse or promote products 
+ * 4. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
@@ -369,8 +369,8 @@ struct bt848_registers {
 #define BKTR_GPIO_DATA			0x200
 #define BKTR_I2C_DATA_CTL		0x110
 #define BKTR_TGCTRL			0x084
-#define BKTR_PLL_F_LO			0x0F0 
-#define BKTR_PLL_F_HI			0x0F4 
+#define BKTR_PLL_F_LO			0x0F0
+#define BKTR_PLL_F_HI			0x0F4
 #define BKTR_PLL_F_XCI			0x0F8
 
 /*
@@ -396,8 +396,8 @@ struct TUNER {
 	u_char		type;
 	u_char		pllControl[4];
 	u_char		bandLimits[ 2 ];
-	u_char		bandAddrs[ 4 ];        /* 3 first for the 3 TV 
-					       ** bands. Last for radio 
+	u_char		bandAddrs[ 4 ];        /* 3 first for the 3 TV
+					       ** bands. Last for radio
 					       ** band (0x00=NoRadio).
 					       */
 
@@ -514,7 +514,7 @@ struct bktr_softc {
     u_int	vbi_sequence_number;	/* sequence number for VBI */
     int		vbi_read_blocked;	/* user process blocked on read() from /dev/vbi */
     struct selinfo vbi_select;	/* Data used by select() on /dev/vbi */
-    
+
 
     struct proc	*proc;		/* process to receive raised signal */
     int		signal;		/* signal to send to process */
@@ -548,7 +548,7 @@ struct bktr_softc {
     u_short     bktr_cap_ctl;
     volatile u_int	flags;
 #define	METEOR_INITIALIZED	0x00000001
-#define	METEOR_OPEN		0x00000002 
+#define	METEOR_OPEN		0x00000002
 #define	METEOR_MMAP		0x00000004
 #define	METEOR_INTR		0x00000008
 #define	METEOR_READ		0x00000010	/* XXX never gets referenced */
@@ -588,7 +588,7 @@ struct bktr_softc {
 #define METEOR_FIELD_MODE	0x80000000
     u_char	tflags;				/* Tuner flags (/dev/tuner) */
 #define	TUNER_INITIALIZED	0x00000001
-#define	TUNER_OPEN		0x00000002 
+#define	TUNER_OPEN		0x00000002
     u_char      vbiflags;			/* VBI flags (/dev/vbi) */
 #define VBI_INITIALIZED         0x00000001
 #define VBI_OPEN                0x00000002

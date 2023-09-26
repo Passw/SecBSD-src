@@ -79,7 +79,7 @@ sub AUTOLOAD()		# thunk [simplified] 32-bit style perlasm
     $arg = "\$$arg" if ($arg*1 eq $arg);
     $code .= "\t$opcode\t".join(',',$arg,reverse @_)."\n";
 }
-
+
 { my $N;
   sub loop() {
   my $inp = shift;
@@ -184,7 +184,7 @@ $code.=<<___;
 	ret
 .size	gcm_gmult_4bit,.-gcm_gmult_4bit
 ___
-
+
 # per-function register layout
 $inp="%rdx";
 $len="%rcx";
@@ -341,7 +341,7 @@ $code.=<<___;
 	ret
 .size	gcm_ghash_4bit,.-gcm_ghash_4bit
 ___
-
+
 ######################################################################
 # PCLMULQDQ version.
 
@@ -389,7 +389,7 @@ $code.=<<___;
 	psllq		\$57,$Xi		#
 	movdqa		$Xi,$T2			#
 	pslldq		\$8,$Xi
-	psrldq		\$8,$T2			#	
+	psrldq		\$8,$T2			#
 	pxor		$T1,$Xi
 	pxor		$T2,$Xhi		#
 
@@ -404,7 +404,7 @@ $code.=<<___;
 	pxor		$T2,$Xi			#
 ___
 }
-
+
 { my ($Htbl,$Xip)=@_4args;
 
 $code.=<<___;
@@ -465,7 +465,7 @@ $code.=<<___;
 .size	gcm_gmult_clmul,.-gcm_gmult_clmul
 ___
 }
-
+
 { my ($Xip,$Htbl,$inp,$len)=@_4args;
   my $Xn="%xmm6";
   my $Xhn="%xmm7";
@@ -552,7 +552,7 @@ $code.=<<___;
 	  psllq		\$57,$Xi		#
 	  movdqa	$Xi,$T2			#
 	  pslldq	\$8,$Xi
-	  psrldq	\$8,$T2			#	
+	  psrldq	\$8,$T2			#
 	  pxor		$T1,$Xi
 	  pxor		$T2,$Xhi		#
 
@@ -675,7 +675,7 @@ $code.=<<___;
 .align	64
 .text
 ___
-
+
 # EXCEPTION_DISPOSITION handler (EXCEPTION_RECORD *rec,ULONG64 frame,
 #		CONTEXT *context,DISPATCHER_CONTEXT *disp)
 if ($win64) {
@@ -802,7 +802,7 @@ se_handler:
 	.byte	0x04,0xa2,0x00,0x00	#sub	rsp,0x58
 ___
 }
-
+
 $code =~ s/\`([^\`]*)\`/eval($1)/gem;
 
 print $code;

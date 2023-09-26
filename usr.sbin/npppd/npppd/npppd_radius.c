@@ -55,7 +55,7 @@
 #define NPPPD_RADIUS_DBG(x) 	ppp_log x
 #define NPPPD_RADIUS_ASSERT(x)	ASSERT(x)
 #else
-#define NPPPD_RADIUS_DBG(x) 
+#define NPPPD_RADIUS_DBG(x)
 #define NPPPD_RADIUS_ASSERT(x)
 #endif
 
@@ -68,14 +68,14 @@ static void npppd_ppp_radius_acct_reqcb(void *, RADIUS_PACKET *, int, RADIUS_REQ
  * RADIUS common functions
  ***********************************************************************/
 /**
- * Retribute Framed-IP-Address and Framed-IP-Netmask attribute of from 
+ * Retribute Framed-IP-Address and Framed-IP-Netmask attribute of from
  * the given RADIUS packet and set them as the fields of ppp context.
- */ 
+ */
 void
 ppp_proccess_radius_framed_ip(npppd_ppp *_this, RADIUS_PACKET *pkt)
 {
 	struct in_addr ip4;
-	
+
 	if (radius_get_ipv4_attr(pkt, RADIUS_TYPE_FRAMED_IP_ADDRESS, &ip4)
 	    == 0)
 		_this->realm_framed_ip_address = ip4;

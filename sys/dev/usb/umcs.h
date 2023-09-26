@@ -115,8 +115,8 @@
 #define	UMCS_THR_VAL_HIGH3	0x44
 #define	UMCS_THR_VAL_LOW4	0x45
 #define	UMCS_THR_VAL_HIGH4	0x46
-				    
-				    
+
+
 /* Bits for SPx registers */
 #define	UMCS_SPx_LOOP_PIPES	0x01	/* Loop Out FIFO to In FIFO */
 #define	UMCS_SPx_SKIP_ERR_DATA	0x02	/* Drop data received with errors */
@@ -229,7 +229,7 @@
 #define	UMCS_MODE_IRDA		0x80	/* IrDA mode is activated (default) */
 
 /* All 8 bits is used as number of BAUD clocks of pause */
-#define	UMCS_SPx_ICG_DEF	0x24	
+#define	UMCS_SPx_ICG_DEF	0x24
 
 
 /*
@@ -286,7 +286,7 @@
 #define	UMCS_DCR0_RESERVED1	0x02	/* Unused */
 #define	UMCS_DCR0_GPIO_MASK	0x0c	/* GPIO Mode bits */
 #define	UMCS_DCR0_GPIO_IN	0x00	/* GPIO Mode - Input (0b00) */
-#define	UMCS_DCR0_GPIO_OUT	0x08	/* GPIO Mode - Input (0b10) */ 
+#define	UMCS_DCR0_GPIO_OUT	0x08	/* GPIO Mode - Input (0b10) */
 #define	UMCS_DCR0_RTS_ACTHI	0x10	/* RTS Active is High, (default low) */
 #define	UMCS_DCR0_RTS_AUTO	0x20	/* Control by state TX buffer or MCR */
 #define	UMCS_DCR0_IRDA		0x40	/* IrDA mode */

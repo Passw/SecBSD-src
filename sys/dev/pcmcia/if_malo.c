@@ -268,7 +268,7 @@ malo_pcmcia_wakeup(struct malo_softc *sc)
 	struct ieee80211com *ic = &sc->sc_ic;
 	struct ifnet *ifp = &ic->ic_if;
 	int s;
-	
+
 	s = splnet();
 	while (sc->sc_flags & MALO_BUSY)
 		tsleep_nsec(&sc->sc_flags, 0, "malopwr", INFSLP);
@@ -921,7 +921,7 @@ cmalo_rx(struct malo_softc *sc)
 		    psize - 1);
 		data = (uint8_t *)sc->sc_data;
 		data[psize - 1] = MALO_READ_1(sc, MALO_REG_DATA_READ);
-	} else 
+	} else
 		MALO_READ_MULTI_2(sc, MALO_REG_DATA_READ, sc->sc_data, psize);
 	MALO_WRITE_1(sc, MALO_REG_HOST_STATUS, MALO_VAL_RX_DL_OVER);
 	MALO_WRITE_2(sc, MALO_REG_CARD_INTR_CAUSE, MALO_VAL_RX_DL_OVER);
@@ -1895,7 +1895,7 @@ cmalo_cmd_set_80211d(struct malo_softc *sc)
 	psize += sizeof(*body_80211d);
 
 	hdr->size = htole16(psize - sizeof(*hdr));
-	
+
 	/* process command request */
 	if (cmalo_cmd_request(sc, psize, 0) != 0)
 		return (EIO);

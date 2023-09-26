@@ -179,7 +179,7 @@ chap_start(chap *_this)
 				chap_log(_this, LOG_ALERT,
 				    "Requested authentication type(0x%x) "
 				    "is not supported.", _this->type);
-				ppp_set_disconnect_cause(_this->ppp, 
+				ppp_set_disconnect_cause(_this->ppp,
 				    PPP_DISCON_AUTH_PROTOCOL_UNACCEPTABLE,
 				    PPP_PROTO_CHAP, 2 /* local */, NULL);
 				ppp_stop(_this->ppp, "Authentication Required");
@@ -229,7 +229,7 @@ chap_start(chap *_this)
 		} else {
 			chap_log(_this, LOG_INFO,
 			    "Client did't respond our challenage.");
-			ppp_set_disconnect_cause(_this->ppp, 
+			ppp_set_disconnect_cause(_this->ppp,
 			    PPP_DISCON_AUTH_FSM_TIMEOUT,
 			    PPP_PROTO_CHAP, 0, NULL);
 			ppp_stop(_this->ppp, "Authentication Required");

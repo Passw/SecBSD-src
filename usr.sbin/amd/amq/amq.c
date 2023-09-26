@@ -95,7 +95,7 @@ show_mti(amq_mount_tree *mt, enum show_opt e, int *mwid, int *dwid,
 		printf("%-*.*s %-*.*s %-*.*s %s\n\t%-5d %-7d %-6d"
 		    " %-7d %-7d %-6d %02d/%02d/%02d %02d:%02d:%02d\n",
 		    *dwid, *dwid, *mt->mt_directory ? mt->mt_directory : "/",
-		    *twid, *twid, mt->mt_type, *mwid, *mwid, 
+		    *twid, *twid, mt->mt_type, *mwid, *mwid,
 		    mt->mt_mountinfo, mt->mt_mountpoint, mt->mt_mountuid,
 		    mt->mt_getattr, mt->mt_lookup, mt->mt_readdir,
 		    mt->mt_readlink, mt->mt_statfs,

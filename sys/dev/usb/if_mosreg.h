@@ -84,8 +84,8 @@
 #define MOS_CTL_ALLMULTI	0x02
 #define MOS_CTL_SLEEP		0x04
 #define MOS_CTL_TX_ENB		0x08
-/* 
- * The documentation calls this bit 'reserved', but in the FreeBSD driver 
+/*
+ * The documentation calls this bit 'reserved', but in the FreeBSD driver
  * provided by the vendor, this enables the receiver.
  */
 #define MOS_CTL_RX_ENB		0x10

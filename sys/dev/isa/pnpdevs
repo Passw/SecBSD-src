@@ -74,7 +74,7 @@ wdc		PNP0600	# Generic ESDI/IDE/ATA compatible hard disk controller
 			# use PNPB0xx instead)
 #--Display Adapters--
 #		PNP0900	# VGA Compatible
-#		PNP0901	# Video Seven VRAM/VRAM II/1024i 
+#		PNP0901	# Video Seven VRAM/VRAM II/1024i
 #		PNP0902	# 8514/A Compatible
 #		PNP0903	# Trident VGA
 #		PNP0904	# Cirrus Logic Laptop VGA
@@ -125,9 +125,9 @@ wdc		PNP0600	# Generic ESDI/IDE/ATA compatible hard disk controller
 #		PNP0C03	# Plug and Play BIOS Event Notification Interrupt
 #		PNP0C04	# Math Coprocessor
 #		PNP0C05	# APM BIOS (Version independent)
-#		PNP0C06	# Reserved for identification of early Plug and Play 
+#		PNP0C06	# Reserved for identification of early Plug and Play
 			# BIOS implementation.
-#		PNP0C07	# Reserved for identification of early Plug and Play 
+#		PNP0C07	# Reserved for identification of early Plug and Play
 			# BIOS implementation.
 
 #--PCMCIA Controller Chipsets--
@@ -325,11 +325,11 @@ sb		PNPB002	# Sound Blaster Pro-compatible sound device
 sb		PNPB003	# Sound Blaster 16-compatible sound device
 #		PNPB004	# Thunderboard-compatible sound device
 #		PNPB005	# Adlib-compatible FM synthesizer device
-mpu		PNPB006	# MPU401 compatible 
+mpu		PNPB006	# MPU401 compatible
 #		PNPB007	# Microsoft Windows Sound System-compatible sound device
 #		PNPB008	# Compaq Business Audio
 #		PNPB009	# Plug and Play Microsoft Windows Sound System Device
-#		PNPB00A	# MediaVision Pro Audio Spectrum 
+#		PNPB00A	# MediaVision Pro Audio Spectrum
 			# (Trantor SCSI enabled, Thunder Chip Disabled)
 #		PNPB00B	# MediaVision Pro Audio 3D
 #		PNPB00C	# MusicQuest MQX-32M
@@ -350,7 +350,7 @@ com		PNPC000	# Compaq 14400 Modem (TBD)
 com		PNPC001	# Compaq 2400/9600 Modem (TBD)
 
 #
-# Everything else.  The following list is exclusively for devices which 
+# Everything else.  The following list is exclusively for devices which
 # do not have correct PNPxxx IDs set; in which case we must match on the
 # vendor specific ID
 #

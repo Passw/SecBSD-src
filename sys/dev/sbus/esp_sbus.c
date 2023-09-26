@@ -468,8 +468,8 @@ espattach(struct esp_softc *esc, struct ncr53c9x_glue *gluep)
 
 	/*
 	 * Alas, we must now modify the value a bit, because it's
-	 * only valid when can switch on FASTCLK and FASTSCSI bits  
-	 * in config register 3... 
+	 * only valid when can switch on FASTCLK and FASTSCSI bits
+	 * in config register 3...
 	 */
 	switch (sc->sc_rev) {
 	case NCR_VARIANT_ESP100:
@@ -511,7 +511,7 @@ int esp_sbus_debug = 0;
 
 static struct {
 	char *r_name;
-	int   r_flag; 
+	int   r_flag;
 } esp__read_regnames [] = {
 	{ "TCL", 0},			/* 0/00 */
 	{ "TCM", 0},			/* 1/04 */
@@ -678,7 +678,7 @@ db_esp(db_expr_t addr, int have_addr, db_expr_t count, char *modif)
 		if (!sc) continue;
 
 		db_printf("esp%d: nexus %p phase %x prev %x dp %p dleft %lx ify %x\n",
-			  u, sc->sc_nexus, sc->sc_phase, sc->sc_prevphase, 
+			  u, sc->sc_nexus, sc->sc_phase, sc->sc_prevphase,
 			  sc->sc_dp, sc->sc_dleft, sc->sc_msgify);
 		db_printf("\tmsgout %x msgpriq %x msgin %x:%x:%x:%x:%x\n",
 			  sc->sc_msgout, sc->sc_msgpriq, sc->sc_imess[0],
@@ -693,7 +693,7 @@ db_esp(db_expr_t addr, int have_addr, db_expr_t count, char *modif)
 			}
 		}
 		db_printf("\n");
-		
+
 		for (t=0; t<NCR_NTARG; t++) {
 			LIST_FOREACH(li, &sc->sc_tinfo[t].luns, link) {
 				db_printf("t%d lun %d untagged %p busy %d used %x\n",

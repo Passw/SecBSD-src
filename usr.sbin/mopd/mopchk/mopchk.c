@@ -77,7 +77,7 @@ main(int argc, char **argv)
 			/* NOTREACHED */
 		}
 	}
-	
+
 	if (VersionFlag)
 		printf("%s: Version %s\n", __progname, version);
 
@@ -95,7 +95,7 @@ main(int argc, char **argv)
 				if (p != NULL) {
 					if (strcmp(p,ii->if_name) == 0)
 						continue;
-				}	
+				}
 				printf("%-9s %x:%x:%x:%x:%x:%x\n",
 				       ii->if_name,
 				       ii->eaddr[0],ii->eaddr[1],ii->eaddr[2],
@@ -104,7 +104,7 @@ main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	if (VersionFlag || AllFlag)
 		i = 1;
 	else
@@ -147,7 +147,7 @@ Usage(void)
 }
 
 /*
- * Process incoming packages, NOT. 
+ * Process incoming packages, NOT.
  */
 void
 mopProcess(struct if_info *ii, u_char *pkt)

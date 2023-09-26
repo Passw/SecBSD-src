@@ -379,7 +379,7 @@ const keysym_t sunkbd5_keydesc_fr[] = {
 /* 004 Danish type 4 keyboard */
 const keysym_t sunkbd_keydesc_dk[] = {
     KC(0x0d),		KS_Multi_key,
-    KC(0x0f),		KS_asciitilde,	KS_asciicircum, 
+    KC(0x0f),		KS_asciitilde,	KS_asciicircum,
     KC(0x1f),		KS_2,		KS_quotedbl,	KS_at,
     KC(0x20),		KS_3,		KS_numbersign,	KS_sterling,
     KC(0x21),		KS_4,		KS_currency,	KS_dollar,
@@ -775,7 +775,7 @@ const keysym_t sunkbd5_keydesc_es[] = {
 /* 00b Swedish/Finnish type 4 keyboard */
 const keysym_t sunkbd_keydesc_sv[] = {
     KC(0x0d),		KS_Multi_key,
-    KC(0x0f),		KS_asciitilde,	KS_asciicircum, 
+    KC(0x0f),		KS_asciitilde,	KS_asciicircum,
     KC(0x1f),		KS_2,		KS_quotedbl,	KS_at,
     KC(0x20),		KS_3,		KS_numbersign,	KS_sterling,
     KC(0x21),		KS_4,		KS_currency,	KS_dollar,
@@ -809,7 +809,7 @@ const keysym_t sunkbd_keydesc_sv_nodead[] = {
 /* 02b Swedish type 5 keyboard */
 const keysym_t sunkbd5_keydesc_sv[] = {
     KC(0x0d),		KS_Mode_switch,
-    KC(0x0f),		KS_asciitilde,	KS_asciicircum, 
+    KC(0x0f),		KS_asciitilde,	KS_asciicircum,
     KC(0x1f),		KS_2,		KS_quotedbl,	KS_at,
     KC(0x20),		KS_3,		KS_numbersign,	KS_sterling,
     KC(0x21),		KS_4,		KS_currency,	KS_dollar,

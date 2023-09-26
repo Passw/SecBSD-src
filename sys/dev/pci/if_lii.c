@@ -194,7 +194,7 @@ const struct pci_matchid lii_devices[] = {
 int
 lii_match(struct device *parent, void *match, void *aux)
 {
-	return (pci_matchbyid((struct pci_attach_args *)aux, lii_devices,   
+	return (pci_matchbyid((struct pci_attach_args *)aux, lii_devices,
 	    nitems(lii_devices)));
 }
 
@@ -212,7 +212,7 @@ lii_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_dmat = pa->pa_dmat;
 
 	memtype = pci_mapreg_type(sc->sc_pc, sc->sc_tag, PCI_MAPREG_START);
-	if (pci_mapreg_map(pa, PCI_MAPREG_START, memtype, 0,  &sc->sc_mmiot, 
+	if (pci_mapreg_map(pa, PCI_MAPREG_START, memtype, 0,  &sc->sc_mmiot,
 	    &sc->sc_mmioh, NULL, &sc->sc_mmios, 0)) {
 		printf(": can't map mem space\n");
 		return;
@@ -697,7 +697,7 @@ lii_init(struct ifnet *ifp)
 	}
 
 	/*
-	 * Initialise MAC. 
+	 * Initialise MAC.
 	 */
 	val = LII_READ_4(sc, LII_MACC) & MACC_FDX;
 

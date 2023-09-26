@@ -565,7 +565,7 @@ l2tpd_reload(l2tpd *_this, struct l2tp_confs *l2tp_conf)
 	i = 0;
 	TAILQ_FOREACH(conf, l2tp_conf, entry) {
 		TAILQ_FOREACH(addr, &conf->listen, entry)
-			l2tpd_add_listener(_this, i++, conf, 
+			l2tpd_add_listener(_this, i++, conf,
 			    (struct sockaddr *)&addr->addr);
 	}
 	if (l2tpd_start(_this) != 0)

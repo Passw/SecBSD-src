@@ -156,7 +156,7 @@ spifmatch(struct device *parent, void *vcf, void *aux)
 	return (1);
 }
 
-void    
+void
 spifattach(struct device *parent, struct device *self, void *aux)
 {
 	struct spif_softc *sc = (struct spif_softc *)self;

@@ -205,8 +205,8 @@ repquota(struct fstab *fs, int type, char *qfpathname)
 			continue;
 		printf("%-10s", fup->fu_name);
 		printf("%c%c %7d %7d %7d %6s",
-			fup->fu_dqblk.dqb_bsoftlimit && 
-			    fup->fu_dqblk.dqb_curblocks >= 
+			fup->fu_dqblk.dqb_bsoftlimit &&
+			    fup->fu_dqblk.dqb_curblocks >=
 			    fup->fu_dqblk.dqb_bsoftlimit ? '+' : '-',
 			fup->fu_dqblk.dqb_isoftlimit &&
 			    fup->fu_dqblk.dqb_curinodes >=
@@ -217,8 +217,8 @@ repquota(struct fstab *fs, int type, char *qfpathname)
 			    / 1024),
 			(int)(dbtob((u_quad_t)fup->fu_dqblk.dqb_bhardlimit)
 			    / 1024),
-			fup->fu_dqblk.dqb_bsoftlimit && 
-			    fup->fu_dqblk.dqb_curblocks >= 
+			fup->fu_dqblk.dqb_bsoftlimit &&
+			    fup->fu_dqblk.dqb_curblocks >=
 			    fup->fu_dqblk.dqb_bsoftlimit ?
 			    timeprt(fup->fu_dqblk.dqb_btime) : "");
 		printf("  %6d %5d %5d %6s\n",

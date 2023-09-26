@@ -150,7 +150,7 @@ mii_phy_auto(struct mii_softc *sc, int waitfor)
 
 			anar = BMSR_MEDIA_TO_ANAR(sc->mii_capabilities) |
 			    ANAR_CSMA;
-			/* 
+			/*
 			 * Most 100baseTX PHY's only support symmetric
 			 * PAUSE, so we don't advertise asymmetric
 			 * PAUSE unless we also have 1000baseT capability.

@@ -598,7 +598,7 @@ iwm_is_mimo_ht_mcs(int mcs)
 {
 	int ridx = iwm_ht_mcs2ridx[mcs];
 	return iwm_is_mimo_ht_plcp(iwm_rates[ridx].ht_plcp);
-	
+
 }
 
 int
@@ -681,7 +681,7 @@ iwm_fw_info_free(struct iwm_fw_info *fw)
 	/* don't touch fw->fw_status */
 	memset(fw->fw_sects, 0, sizeof(fw->fw_sects));
 }
-	    
+
 void
 iwm_fw_version_str(char *buf, size_t bufsize,
     uint32_t major, uint32_t minor, uint32_t api)
@@ -1105,7 +1105,7 @@ iwm_read_mem(struct iwm_softc *sc, uint32_t addr, void *buf, int dwords)
 int
 iwm_write_mem(struct iwm_softc *sc, uint32_t addr, const void *buf, int dwords)
 {
-	int offs;	
+	int offs;
 	const uint32_t *vals = buf;
 
 	if (iwm_nic_lock(sc)) {
@@ -1709,7 +1709,7 @@ iwm_prepare_card_hw(struct iwm_softc *sc)
 	IWM_SETBITS(sc, IWM_CSR_DBG_LINK_PWR_MGMT_REG,
 	    IWM_CSR_RESET_LINK_PWR_MGMT_DISABLED);
 	DELAY(1000);
- 
+
 	for (ntries = 0; ntries < 10; ntries++) {
 		/* If HW is not ready, prepare the conditions to check again */
 		IWM_SETBITS(sc, IWM_CSR_HW_IF_CONFIG_REG,
@@ -2137,7 +2137,7 @@ iwm_stop_device(struct iwm_softc *sc)
 	 */
 	iwm_conf_msix_hw(sc, 1);
 
-	/* 
+	/*
 	 * Upon stop, the APM issues an interrupt if HW RF kill is set.
 	 * Clear the interrupt again.
 	 */
@@ -3444,7 +3444,7 @@ iwm_mac_ctxt_task(void *arg)
 	err = iwm_mac_ctxt_cmd(sc, in, IWM_FW_CTXT_ACTION_MODIFY, 1);
 	if (err)
 		printf("%s: failed to update MAC\n", DEVNAME(sc));
-	
+
 	iwm_unprotect_session(sc, in);
 
 	refcnt_rele_wake(&sc->task_refs);
@@ -3607,7 +3607,7 @@ iwm_sta_tx_agg(struct iwm_softc *sc, struct ieee80211_node *ni, uint8_t tid,
 	if (start && (sc->qenablemsk & (1 << qid)) == 0) {
 		if (!iwm_nic_lock(sc)) {
 			if (start)
-				ieee80211_addba_resp_refuse(ic, ni, tid, 
+				ieee80211_addba_resp_refuse(ic, ni, tid,
 				    IEEE80211_STATUS_UNSPECIFIED);
 			return EBUSY;
 		}
@@ -3618,7 +3618,7 @@ iwm_sta_tx_agg(struct iwm_softc *sc, struct ieee80211_node *ni, uint8_t tid,
 			printf("%s: could not enable Tx queue %d (error %d)\n",
 			    DEVNAME(sc), qid, err);
 			if (start)
-				ieee80211_addba_resp_refuse(ic, ni, tid, 
+				ieee80211_addba_resp_refuse(ic, ni, tid,
 				    IEEE80211_STATUS_UNSPECIFIED);
 			return err;
 		}
@@ -3647,7 +3647,7 @@ iwm_sta_tx_agg(struct iwm_softc *sc, struct ieee80211_node *ni, uint8_t tid,
 		printf("%s: could not update sta (error %d)\n",
 		    DEVNAME(sc), err);
 		if (start)
-			ieee80211_addba_resp_refuse(ic, ni, tid, 
+			ieee80211_addba_resp_refuse(ic, ni, tid,
 			    IEEE80211_STATUS_UNSPECIFIED);
 		return err;
 	}
@@ -4803,7 +4803,7 @@ iwm_rx_frame(struct iwm_softc *sc, struct mbuf *m, int chanidx,
 	struct ieee80211_frame *wh;
 	struct ieee80211_node *ni;
 
-	if (chanidx < 0 || chanidx >= nitems(ic->ic_channels))	
+	if (chanidx < 0 || chanidx >= nitems(ic->ic_channels))
 		chanidx = ieee80211_chan2ieee(ic, ic->ic_ibss_chan);
 
 	wh = mtod(m, struct ieee80211_frame *);
@@ -5410,7 +5410,7 @@ iwm_rx_mpdu_mq(struct iwm_softc *sc, struct mbuf *m, void *pktdata,
 			/* Padding is inserted after the IV. */
 			hdrlen += IEEE80211_CCMP_HDRLEN;
 		}
-	
+
 		memmove(m->m_data + 2, m->m_data, hdrlen);
 		m_adj(m, 2);
 	}
@@ -5446,7 +5446,7 @@ iwm_rx_mpdu_mq(struct iwm_softc *sc, struct mbuf *m, void *pktdata,
 
 			/* HW reverses addr3. */
 			iwm_flip_address(qwh->i_addr3);
-		}	
+		}
 	}
 
 	/*
@@ -5500,7 +5500,7 @@ iwm_ra_choose(struct iwm_softc *sc, struct ieee80211_node *ni)
 	else
 		ieee80211_ra_choose(&in->in_rn, ic, ni);
 
-	/* 
+	/*
 	 * If RA has chosen a new TX rate we must update
 	 * the firmware's LQ rate table.
 	 */
@@ -5628,7 +5628,7 @@ iwm_rx_tx_cmd_single(struct iwm_softc *sc, struct iwm_rx_packet *pkt,
 	int status = le16toh(tx_resp->status.status) & IWM_TX_STATUS_MSK;
 	uint32_t initial_rate = le32toh(tx_resp->initial_rate);
 	int txfail;
-	
+
 	KASSERT(tx_resp->frame_count == 1);
 
 	txfail = (status != IWM_TX_STATUS_SUCCESS &&
@@ -6439,7 +6439,7 @@ iwm_send_cmd(struct iwm_softc *sc, struct iwm_host_cmd *hcmd)
 		} else if (generation == sc->sc_generation) {
 			free(sc->sc_cmd_resp_pkt[idx], M_DEVBUF,
 			    sc->sc_cmd_resp_len[idx]);
-			sc->sc_cmd_resp_pkt[idx] = NULL;	
+			sc->sc_cmd_resp_pkt[idx] = NULL;
 		}
 	}
  out:
@@ -6540,7 +6540,7 @@ iwm_cmd_done(struct iwm_softc *sc, int qid, int idx, int code)
 		DPRINTF(("%s: unexpected firmware response to command 0x%x\n",
 		    DEVNAME(sc), code));
 	} else if (--ring->queued == 0) {
-		/* 
+		/*
 		 * 7000 family NICs are locked while commands are in progress.
 		 * All commands are now done so we may unlock the NIC again.
 		 */
@@ -6669,16 +6669,16 @@ iwm_tx_fill_cmd(struct iwm_softc *sc, struct iwm_node *in,
 		    ieee80211_node_supports_ht_chan40(ni))
 			sco = (ni->ni_htop0 & IEEE80211_HTOP0_SCO_MASK);
 		if (ni->ni_flags & IEEE80211_NODE_VHT)
-			rate_flags |= IWM_RATE_MCS_VHT_MSK; 
+			rate_flags |= IWM_RATE_MCS_VHT_MSK;
 		else
-			rate_flags |= IWM_RATE_MCS_HT_MSK; 
+			rate_flags |= IWM_RATE_MCS_HT_MSK;
 		if (vht_chan_width == IEEE80211_VHTOP0_CHAN_WIDTH_80 &&
 		    in->in_phyctxt != NULL &&
 		    in->in_phyctxt->vht_chan_width == vht_chan_width) {
 			rate_flags |= IWM_RATE_MCS_CHAN_WIDTH_80;
 			if (ieee80211_node_supports_vht_sgi80(ni))
 				rate_flags |= IWM_RATE_MCS_SGI_MSK;
-		} else if ((sco == IEEE80211_HTOP0_SCO_SCA || 
+		} else if ((sco == IEEE80211_HTOP0_SCO_SCA ||
 		    sco == IEEE80211_HTOP0_SCO_SCB) &&
 		    in->in_phyctxt != NULL && in->in_phyctxt->sco == sco) {
 			rate_flags |= IWM_RATE_MCS_CHAN_WIDTH_40;
@@ -7673,7 +7673,7 @@ iwm_fill_probe_req(struct iwm_softc *sc, struct iwm_scan_probe_req *preq)
 		frm = ieee80211_add_xrates(frm, rs);
 	remain -= frm - pos;
 
-	if (isset(sc->sc_enabled_capa, 
+	if (isset(sc->sc_enabled_capa,
 	    IWM_UCODE_TLV_CAPA_DS_PARAM_SET_IE_SUPPORT)) {
 		if (remain < 3)
 			return ENOBUFS;
@@ -7777,9 +7777,9 @@ iwm_lmac_scan(struct iwm_softc *sc, int bgscan)
 	else
 		req->scan_flags |=
 		    htole32(IWM_LMAC_SCAN_FLAG_PRE_CONNECTION);
-	if (isset(sc->sc_enabled_capa, 
+	if (isset(sc->sc_enabled_capa,
 	    IWM_UCODE_TLV_CAPA_DS_PARAM_SET_IE_SUPPORT) &&
-	    isset(sc->sc_enabled_capa, 
+	    isset(sc->sc_enabled_capa,
 	    IWM_UCODE_TLV_CAPA_WFA_TPC_REP_IE_SUPPORT))
 		req->scan_flags |= htole32(IWM_LMAC_SCAN_FLAGS_RRM_ENABLED);
 
@@ -8090,9 +8090,9 @@ iwm_umac_scan(struct iwm_softc *sc, int bgscan)
 	} else
 		req->general_flags |= htole32(IWM_UMAC_SCAN_GEN_FLAGS_PASSIVE);
 
-	if (isset(sc->sc_enabled_capa, 
+	if (isset(sc->sc_enabled_capa,
 	    IWM_UCODE_TLV_CAPA_DS_PARAM_SET_IE_SUPPORT) &&
-	    isset(sc->sc_enabled_capa, 
+	    isset(sc->sc_enabled_capa,
 	    IWM_UCODE_TLV_CAPA_WFA_TPC_REP_IE_SUPPORT))
 		req->general_flags |=
 		    htole32(IWM_UMAC_SCAN_GEN_FLAGS_RRM_ENABLED);
@@ -8195,7 +8195,7 @@ iwm_ack_rates(struct iwm_softc *sc, struct iwm_node *in, int *cck_rates,
 	}
 	for (i = IWM_FIRST_OFDM_RATE; i <= IWM_LAST_NON_HT_RATE; i++) {
 		if ((iwm_ridx2rate(rs, i) & IEEE80211_RATE_BASIC) == 0)
-			continue;	
+			continue;
 		ofdm |= (1 << (i - IWM_FIRST_OFDM_RATE));
 		if (lowest_present_ofdm == -1 || lowest_present_ofdm > i)
 			lowest_present_ofdm = i;
@@ -8394,7 +8394,7 @@ iwm_mac_ctxt_cmd(struct iwm_softc *sc, struct iwm_node *in, uint32_t action,
 		    IWM_MAC_FILTER_IN_PROBE_REQUEST |
 		    IWM_MAC_FILTER_IN_CRC32);
 	} else if (!assoc || !ni->ni_associd || !ni->ni_dtimperiod)
-		/* 
+		/*
 		 * Allow beacons to pass through as long as we are not
 		 * associated or we do not have dtim period information.
 		 */
@@ -8553,7 +8553,7 @@ iwm_scan(struct iwm_softc *sc)
 }
 
 int
-iwm_bgscan(struct ieee80211com *ic) 
+iwm_bgscan(struct ieee80211com *ic)
 {
 	struct iwm_softc *sc = IC2IFP(ic)->if_softc;
 	int err;
@@ -8771,7 +8771,7 @@ iwm_auth(struct iwm_softc *sc)
 			return err;
 	}
 	in->in_phyctxt = &sc->sc_phyctxt[0];
-	IEEE80211_ADDR_COPY(in->in_macaddr, in->in_ni.ni_macaddr); 
+	IEEE80211_ADDR_COPY(in->in_macaddr, in->in_ni.ni_macaddr);
 	iwm_setrates(in, 0);
 
 	err = iwm_mac_ctxt_cmd(sc, in, IWM_FW_CTXT_ACTION_ADD, 0);
@@ -8809,7 +8809,7 @@ iwm_auth(struct iwm_softc *sc)
 	if (in->in_ni.ni_intval)
 		duration = in->in_ni.ni_intval * 2;
 	else
-		duration = IEEE80211_DUR_TU; 
+		duration = IEEE80211_DUR_TU;
 	iwm_protect_session(sc, in, duration, in->in_ni.ni_intval / 2);
 
 	return 0;
@@ -8975,7 +8975,7 @@ iwm_run(struct iwm_softc *sc)
 		return err;
 	}
 #ifdef notyet
-	/* 
+	/*
 	 * Disabled for now. Default beacon filter settings
 	 * prevent net80211 from getting ERP and HT protection
 	 * updates from beacons.
@@ -9240,7 +9240,7 @@ iwm_calib_timeout(void *arg)
 	    ic->ic_opmode == IEEE80211_M_STA && ic->ic_bss) {
 		int old_txrate = ni->ni_txrate;
 		ieee80211_amrr_choose(&sc->sc_amrr, &in->in_ni, &in->in_amn);
-		/* 
+		/*
 		 * If AMRR has chosen a new TX rate we must update
 		 * the firwmare's LQ rate table.
 		 * ni_txrate may change again before the task runs so
@@ -10405,7 +10405,7 @@ iwm_init(struct ifnet *ifp)
 
 	ieee80211_begin_scan(ifp);
 
-	/* 
+	/*
 	 * ieee80211_begin_scan() ends up scheduling iwm_newstate_task().
 	 * Wait until the transition to SCAN state has completed.
 	 */
@@ -11298,7 +11298,7 @@ iwm_rx_pkt(struct iwm_softc *sc, struct iwm_rx_data *data, struct mbuf_list *ml)
 		/*
 		 * uCode sets bit 0x80 when it originates the notification,
 		 * i.e. when the notification is not a direct response to a
-		 * command sent by the driver. 
+		 * command sent by the driver.
 		 * For example, uCode issues IWM_REPLY_RX when it sends a
 		 * received frame to the driver.
 		 */
@@ -11827,7 +11827,7 @@ iwm_attach(struct device *parent, struct device *self, void *aux)
 
 		sc->sc_hw_rev = (sc->sc_hw_rev & 0xfff0) |
 				(IWM_CSR_HW_REV_STEP(sc->sc_hw_rev << 2) << 2);
-		
+
 		if (iwm_prepare_card_hw(sc) != 0) {
 			printf("%s: could not initialize hardware\n",
 			    DEVNAME(sc));
@@ -11867,7 +11867,7 @@ iwm_attach(struct device *parent, struct device *self, void *aux)
 		}
 	}
 
-	/* 
+	/*
 	 * Allocate DMA memory for firmware transfers.
 	 * Must be aligned on a 16-byte boundary.
 	 */
@@ -12041,7 +12041,7 @@ fail4:	while (--txq_i >= 0)
 	iwm_dma_contig_free(&sc->sched_dma);
 fail3:	if (sc->ict_dma.vaddr != NULL)
 		iwm_dma_contig_free(&sc->ict_dma);
-	
+
 fail2:	iwm_dma_contig_free(&sc->kw_dma);
 fail1:	iwm_dma_contig_free(&sc->fw_dma);
 	return;

@@ -11,12 +11,12 @@
  *             probe/attach and open/close/ioctl/read/mmap
  *             memory allocation
  *             PCI bus interfacing
- *             
+ *
  *
  */
 
 /*
- * 1. Redistributions of source code must retain the 
+ * 1. Redistributions of source code must retain the
  * Copyright (c) 1997 Amancio Hasty, 1999 Roger Hardiman
  * All rights reserved.
  *
@@ -32,7 +32,7 @@
  *    must display the following acknowledgement:
  *	This product includes software developed by Amancio Hasty and
  *      Roger Hardiman
- * 4. The name of the author may not be used to endorse or promote products 
+ * 4. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
@@ -192,7 +192,7 @@ bktr_attach(struct device *parent, struct device *self, void *aux)
 	 */
 	OUTL(bktr, BKTR_INT_MASK, ALL_INTS_DISABLED);
 	OUTW(bktr, BKTR_GPIO_DMA_CTL, FIFO_RISC_DISABLED);
-	
+
 	/*
 	 * map interrupt
 	 */
@@ -214,7 +214,7 @@ bktr_attach(struct device *parent, struct device *self, void *aux)
 	}
 	if (intrstr != NULL)
 		printf(": %s\n", intrstr);
-	
+
 /*
  * PCI latency timer.  32 is a good value for 4 bus mastering slots, if
  * you have more than four, then 16 would probably be a better value.
@@ -231,7 +231,7 @@ bktr_attach(struct device *parent, struct device *self, void *aux)
 			       bktr_name(bktr), BROOKTREE_DEF_LATENCY_VALUE);
 		}
 		latency = BROOKTREE_DEF_LATENCY_VALUE;
-		pci_conf_write(pa->pa_pc, pa->pa_tag, 
+		pci_conf_write(pa->pa_pc, pa->pa_tag,
 			       PCI_LATENCY_TIMER, latency<<8);
 	}
 
@@ -331,7 +331,7 @@ free_bktr_mem(bktr_ptr_t bktr, bus_dmamap_t dmap, vaddr_t kva)
     VBI_DEV : TUNER_DEV))
 
 /*
- * 
+ *
  */
 int
 bktr_open(dev_t dev, int flags, int fmt, struct proc *p)
@@ -348,7 +348,7 @@ bktr_open(dev_t dev, int flags, int fmt, struct proc *p)
 	bktr = bktr_cd.cd_devs[unit];
 
 	if (!(bktr->flags & METEOR_INITIALIZED)) /* device not found */
-		return(ENXIO);	
+		return(ENXIO);
 
 	switch (FUNCTION(dev)) {
 	case VIDEO_DEV:
@@ -364,7 +364,7 @@ bktr_open(dev_t dev, int flags, int fmt, struct proc *p)
 
 
 /*
- * 
+ *
  */
 int
 bktr_close(dev_t dev, int flags, int fmt, struct proc *p)
@@ -389,14 +389,14 @@ bktr_close(dev_t dev, int flags, int fmt, struct proc *p)
 }
 
 /*
- * 
+ *
  */
 int
 bktr_read(dev_t dev, struct uio *uio, int ioflag)
 {
 	bktr_ptr_t	bktr;
 	int		unit;
-	
+
 	unit = UNIT(dev);
 
 	bktr = bktr_cd.cd_devs[unit];
@@ -413,7 +413,7 @@ bktr_read(dev_t dev, struct uio *uio, int ioflag)
 
 
 /*
- * 
+ *
  */
 int
 bktr_write(dev_t dev, struct uio *uio, int ioflag)
@@ -423,7 +423,7 @@ bktr_write(dev_t dev, struct uio *uio, int ioflag)
 }
 
 /*
- * 
+ *
  */
 int
 bktr_ioctl(dev_t dev, ioctl_cmd_t cmd, caddr_t arg, int flag, struct proc* pr)
@@ -449,7 +449,7 @@ bktr_ioctl(dev_t dev, ioctl_cmd_t cmd, caddr_t arg, int flag, struct proc* pr)
 }
 
 /*
- * 
+ *
  */
 paddr_t
 bktr_mmap(dev_t dev, off_t offset, int nprot)
@@ -527,7 +527,7 @@ bktr_set_info(void *v, struct radio_info *ri)
 		tv->chnlset = ri->chnlset;
 	else
 		tv->chnlset = DEFAULT_CHNLSET;
-	
+
 	temp_mute(sc, FALSE);
 
 	return (0);
@@ -567,7 +567,7 @@ bktr_get_info(void *v, struct radio_info *ri)
 	 * The ri->info is for that purpose.
 	 */
 	ri->stereo = 1; /* Can't switch to mono, always stereo */
-	
+
 	ri->chan = tv->channel;
 	ri->chnlset = tv->chnlset;
 

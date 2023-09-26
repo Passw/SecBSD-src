@@ -410,7 +410,7 @@ gcm_ghash_neon:
 #ifdef __ARMEL__
 	vrev64.8	$Z,$Z
 #endif
-	sub		$Xi,#16	
+	sub		$Xi,#16
 	vst1.64		`&Dhi("$Z")`,[$Xi,:64]!	@ write out Xi
 	vst1.64		`&Dlo("$Z")`,[$Xi,:64]
 

@@ -458,7 +458,7 @@ regulator_gpio_set(int node, uint32_t value)
 		return EINVAL;
 
 	regulator_do_notify(phandle, value);
-	
+
 	i = 0;
 	gpio = gpios;
 	while (gpio && gpio < gpios + (glen / sizeof(uint32_t))) {

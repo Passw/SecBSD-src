@@ -45,7 +45,7 @@
 
 #define	MAC_STR		"%02x:%02x:%02x:%02x:%02x:%02x"
 #define	MAC_ARGS(mac)					\
-	mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] 
+	mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]
 
 typedef struct {
 	uint16_t		offset;

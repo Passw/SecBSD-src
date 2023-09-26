@@ -278,7 +278,7 @@ ale_get_macaddr(struct ale_softc *sc)
 		CSR_WRITE_4(sc, ALE_SPI_CTRL, reg);
 	}
 
-	if (pci_get_capability(sc->sc_pct, sc->sc_pcitag, PCI_CAP_VPD, 
+	if (pci_get_capability(sc->sc_pct, sc->sc_pcitag, PCI_CAP_VPD,
 	    &vpdc, NULL)) {
 		/*
 		 * PCI VPD capability found, let TWSI reload EEPROM.
@@ -626,7 +626,7 @@ ale_dma_alloc(struct ale_softc *sc)
 		return (ENOBUFS);
 
 	/* Allocate DMA'able memory for TX ring */
-	error = bus_dmamem_alloc(sc->sc_dmat, ALE_TX_RING_SZ, 
+	error = bus_dmamem_alloc(sc->sc_dmat, ALE_TX_RING_SZ,
 	    ETHER_ALIGN, 0, &sc->ale_cdata.ale_tx_ring_seg, 1,
 	    &nsegs, BUS_DMA_WAITOK | BUS_DMA_ZERO);
 	if (error) {
@@ -642,16 +642,16 @@ ale_dma_alloc(struct ale_softc *sc)
 		return (ENOBUFS);
 
 	/* Load the DMA map for Tx ring. */
-	error = bus_dmamap_load(sc->sc_dmat, sc->ale_cdata.ale_tx_ring_map, 
+	error = bus_dmamap_load(sc->sc_dmat, sc->ale_cdata.ale_tx_ring_map,
 	    sc->ale_cdata.ale_tx_ring, ALE_TX_RING_SZ, NULL, BUS_DMA_WAITOK);
 	if (error) {
 		printf("%s: could not load DMA'able memory for Tx ring.\n",
 		    sc->sc_dev.dv_xname);
-		bus_dmamem_free(sc->sc_dmat, 
+		bus_dmamem_free(sc->sc_dmat,
 		    (bus_dma_segment_t *)&sc->ale_cdata.ale_tx_ring, 1);
 		return error;
 	}
-	sc->ale_cdata.ale_tx_ring_paddr = 
+	sc->ale_cdata.ale_tx_ring_paddr =
 	    sc->ale_cdata.ale_tx_ring_map->dm_segs[0].ds_addr;
 
 	for (i = 0; i < ALE_RX_PAGES; i++) {
@@ -659,7 +659,7 @@ ale_dma_alloc(struct ale_softc *sc)
 		 * Create DMA stuffs for RX pages
 		 */
 		error = bus_dmamap_create(sc->sc_dmat, sc->ale_pagesize, 1,
-		    sc->ale_pagesize, 0, BUS_DMA_NOWAIT, 
+		    sc->ale_pagesize, 0, BUS_DMA_NOWAIT,
 		    &sc->ale_cdata.ale_rx_page[i].page_map);
 		if (error)
 			return (ENOBUFS);
@@ -673,9 +673,9 @@ ale_dma_alloc(struct ale_softc *sc)
 			    "Rx ring.\n", sc->sc_dev.dv_xname);
 			return error;
 		}
-		error = bus_dmamem_map(sc->sc_dmat, 
+		error = bus_dmamem_map(sc->sc_dmat,
 		    &sc->ale_cdata.ale_rx_page[i].page_seg, nsegs,
-		    sc->ale_pagesize, 
+		    sc->ale_pagesize,
 		    (caddr_t *)&sc->ale_cdata.ale_rx_page[i].page_addr,
 		    BUS_DMA_NOWAIT);
 		if (error)
@@ -719,11 +719,11 @@ ale_dma_alloc(struct ale_softc *sc)
 	error = bus_dmamem_map(sc->sc_dmat, &sc->ale_cdata.ale_tx_cmb_seg,
 	    nsegs, ALE_TX_CMB_SZ, (caddr_t *)&sc->ale_cdata.ale_tx_cmb,
 	    BUS_DMA_NOWAIT);
-	if (error) 
+	if (error)
 		return (ENOBUFS);
 
 	/* Load the DMA map for Tx CMB. */
-	error = bus_dmamap_load(sc->sc_dmat, sc->ale_cdata.ale_tx_cmb_map, 
+	error = bus_dmamap_load(sc->sc_dmat, sc->ale_cdata.ale_tx_cmb_map,
 	    sc->ale_cdata.ale_tx_cmb, ALE_TX_CMB_SZ, NULL, BUS_DMA_WAITOK);
 	if (error) {
 		printf("%s: could not load DMA'able memory for Tx CMB.\n",
@@ -733,7 +733,7 @@ ale_dma_alloc(struct ale_softc *sc)
 		return error;
 	}
 
-	sc->ale_cdata.ale_tx_cmb_paddr = 
+	sc->ale_cdata.ale_tx_cmb_paddr =
 	    sc->ale_cdata.ale_tx_cmb_map->dm_segs[0].ds_addr;
 
 	for (i = 0; i < ALE_RX_PAGES; i++) {
@@ -755,9 +755,9 @@ ale_dma_alloc(struct ale_softc *sc)
 			    "Rx CMB\n", sc->sc_dev.dv_xname);
 			return error;
 		}
-		error = bus_dmamem_map(sc->sc_dmat, 
+		error = bus_dmamem_map(sc->sc_dmat,
 		    &sc->ale_cdata.ale_rx_page[i].cmb_seg, nsegs,
-		    ALE_RX_CMB_SZ, 
+		    ALE_RX_CMB_SZ,
 		    (caddr_t *)&sc->ale_cdata.ale_rx_page[i].cmb_addr,
 		    BUS_DMA_NOWAIT);
 		if (error)
@@ -937,7 +937,7 @@ ale_encap(struct ale_softc *sc, struct mbuf *m)
 	for (i = 0; i < map->dm_nsegs; i++) {
 		desc = &sc->ale_cdata.ale_tx_ring[prod];
 		desc->addr = htole64(map->dm_segs[i].ds_addr);
-		desc->len = 
+		desc->len =
 		    htole32(ALE_TX_BYTES(map->dm_segs[i].ds_len) | vtag);
 		desc->flags = htole32(cflags);
 		sc->ale_cdata.ale_tx_cnt++;
@@ -1298,7 +1298,7 @@ ale_txeof(struct ale_softc *sc)
 	    sc->ale_cdata.ale_tx_ring_map->dm_mapsize, BUS_DMASYNC_POSTREAD);
 	if ((sc->ale_flags & ALE_FLAG_TXCMB_BUG) == 0) {
 		bus_dmamap_sync(sc->sc_dmat, sc->ale_cdata.ale_tx_cmb_map, 0,
-		    sc->ale_cdata.ale_tx_cmb_map->dm_mapsize, 
+		    sc->ale_cdata.ale_tx_cmb_map->dm_mapsize,
 		    BUS_DMASYNC_POSTREAD);
 		prod = *sc->ale_cdata.ale_tx_cmb & TPD_CNT_MASK;
 	} else

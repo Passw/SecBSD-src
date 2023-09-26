@@ -1202,7 +1202,7 @@ auich_allocmem(struct auich_softc *sc, size_t size, size_t align,
 	error = bus_dmamem_alloc(sc->dmat, p->size, align, 0, p->segs, 1,
 	    &p->nsegs, BUS_DMA_NOWAIT);
 	if (error) {
-		DPRINTF(AUICH_DEBUG_DMA, 
+		DPRINTF(AUICH_DEBUG_DMA,
 		    ("%s: bus_dmamem_alloc failed: error %d\n",
 		    sc->sc_dev.dv_xname, error));
 		return error;
@@ -1211,7 +1211,7 @@ auich_allocmem(struct auich_softc *sc, size_t size, size_t align,
 	error = bus_dmamem_map(sc->dmat, p->segs, 1, p->size, &p->addr,
 	    BUS_DMA_NOWAIT | sc->sc_dmamap_flags);
 	if (error) {
-		DPRINTF(AUICH_DEBUG_DMA, 
+		DPRINTF(AUICH_DEBUG_DMA,
 		    ("%s: bus_dmamem_map failed: error %d\n",
 		    sc->sc_dev.dv_xname, error));
 		goto free;
@@ -1220,7 +1220,7 @@ auich_allocmem(struct auich_softc *sc, size_t size, size_t align,
 	error = bus_dmamap_create(sc->dmat, p->size, 1, p->size, 0,
 	    BUS_DMA_NOWAIT, &p->map);
 	if (error) {
-		DPRINTF(AUICH_DEBUG_DMA, 
+		DPRINTF(AUICH_DEBUG_DMA,
 		    ("%s: bus_dmamap_create failed: error %d\n",
 		    sc->sc_dev.dv_xname, error));
 		goto unmap;
@@ -1405,7 +1405,7 @@ auich_calibrate(struct auich_softc *sc)
 		    AUICH_PCMI + sc->sc_sts_reg);
 		civ = bus_space_read_1(sc->iot, sc->aud_ioh,
 		    AUICH_PCMI + AUICH_CIV);
-	  
+
 		/* turn time delta into us */
 		wait_us = ((t2.tv_sec - t1.tv_sec) * 1000000) +
 		    t2.tv_usec - t1.tv_usec;

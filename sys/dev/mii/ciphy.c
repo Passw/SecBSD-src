@@ -196,7 +196,7 @@ setit:
 			PHY_WRITE(sc, MII_BMCR, speed);
 			PHY_WRITE(sc, MII_ANAR, ANAR_CSMA);
 
-			if (IFM_SUBTYPE(ife->ifm_media) != IFM_1000_T) 
+			if (IFM_SUBTYPE(ife->ifm_media) != IFM_1000_T)
 				break;
 
 			PHY_WRITE(sc, MII_100T2CR, gig);
@@ -234,7 +234,7 @@ setit:
 	 * Callback if something changed. Note that we need to poke
 	 * apply fixups for certain PHY revs.
 	 */
-	if (sc->mii_media_active != mii->mii_media_active || 
+	if (sc->mii_media_active != mii->mii_media_active ||
 	    sc->mii_media_status != mii->mii_media_status ||
 	    cmd == MII_MEDIACHG) {
 		ciphy_fixup(sc);

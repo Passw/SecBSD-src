@@ -28,7 +28,7 @@
 
 /*
  * ESS Allegro-1 / Maestro3 Audio Driver
- * 
+ *
  * Lots of magic based on the FreeBSD maestro3 driver and
  * reverse engineering.
  * Original driver by Don Kim.

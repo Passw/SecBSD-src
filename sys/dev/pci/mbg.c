@@ -48,7 +48,7 @@ struct mbg_softc {
 	struct ksensordev	sc_sensordev;
 	struct timeout		sc_timeout;	/* invalidate sensor */
 	int			sc_trust;	/* trust time in seconds */
-	
+
 	int			(*sc_read)(struct mbg_softc *, int cmd,
 				    char *buf, size_t len,
 				    struct timespec *tstamp);

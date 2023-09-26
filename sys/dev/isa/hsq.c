@@ -39,7 +39,7 @@
  *
  * Hostess may be the registered trademark of Comtrol Corp.
  * WARNING! The information that is below about Hostess family
- * serial cards is not based on any information from Comtrol, 
+ * serial cards is not based on any information from Comtrol,
  * and I DON'T guarantee this information is authentic or right.
  * For authentic information on Hostess serial cards visit
  * http://www.comtrol.com
@@ -51,7 +51,7 @@
  * muxes should work. It works ifine with my mux (it has ti16c750
  * UARTs on it, and current com driver detects them as 550A, so i
  * changed it a bit, to use the power of 750).
- * 
+ *
  * Hostess cards use scratch register of lead UART to control the mux.
  * When a byte is written to the register it is meant as mask, which
  * enables/disables interrupts from 1-8 UARTs by setting 0-7 bits to
@@ -66,7 +66,7 @@
  *
  * Shitty feature: UER's value upon power up is absolutely random,
  * so that UARTs can work and can not and you don't understand what's up...
- * Thus, we have to set its value to 0x0f to get all four UARTs 
+ * Thus, we have to set its value to 0x0f to get all four UARTs
  * interrupting, just after we've attached the mux...
  *
  * Use it and share my fun!

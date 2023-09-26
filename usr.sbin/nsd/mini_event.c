@@ -2,24 +2,24 @@
  * mini_event.c - implementation of part of libevent api, portably.
  *
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
- * 
+ *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -31,7 +31,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
 
 /**
@@ -52,7 +52,7 @@
 #ifdef HAVE_WINSOCK2_H
 #define FD_SET_T (u_int)
 #else
-#define FD_SET_T 
+#define FD_SET_T
 #endif
 
 #include <signal.h>
@@ -123,7 +123,7 @@ event_init(time_t* time_secs, struct timeval* time_tv)
 	if((int)FD_SETSIZE < base->capfd)
 		base->capfd = (int)FD_SETSIZE;
 #endif
-	base->fds = (struct event**)calloc((size_t)base->capfd, 
+	base->fds = (struct event**)calloc((size_t)base->capfd,
 		sizeof(struct event*));
 	if(!base->fds) {
 		event_base_free(base);
@@ -157,7 +157,7 @@ event_get_method(void)
 
 /** call timeouts handlers, and return how long to wait for next one or -1 */
 static int
-handle_timeouts(struct event_base* base, struct timeval* now, 
+handle_timeouts(struct event_base* base, struct timeval* now,
 	struct timeval* wait)
 {
 	struct event* p;
@@ -170,7 +170,7 @@ handle_timeouts(struct event_base* base, struct timeval* now,
 		!=RBTREE_NULL) {
 #ifndef S_SPLINT_S
 		if(p->ev_timeout.tv_sec > now->tv_sec ||
-			(p->ev_timeout.tv_sec==now->tv_sec && 
+			(p->ev_timeout.tv_sec==now->tv_sec &&
 		 	p->ev_timeout.tv_usec > now->tv_usec)) {
 			/* there is a next larger timeout. wait for it */
 			wait->tv_sec = p->ev_timeout.tv_sec - now->tv_sec;
@@ -179,7 +179,7 @@ handle_timeouts(struct event_base* base, struct timeval* now,
 				wait->tv_usec = 1000000 - (now->tv_usec -
 					p->ev_timeout.tv_usec);
 			} else {
-				wait->tv_usec = p->ev_timeout.tv_usec 
+				wait->tv_usec = p->ev_timeout.tv_usec
 					- now->tv_usec;
 			}
 			return tofired;
@@ -220,7 +220,7 @@ handle_select(struct event_base* base, struct timeval* wait)
 	}
 	if(settime(base) < 0)
 		return -1;
-	
+
 	for(i=0; i<base->maxfd+1; i++) {
 		short bits = 0;
 		if(!base->fds[i] || !(FD_ISSET(i, &base->ready))) {
@@ -236,7 +236,7 @@ handle_select(struct event_base* base, struct timeval* wait)
 		}
 		bits &= base->fds[i]->ev_flags;
 		if(bits) {
-			(*base->fds[i]->ev_callback)(base->fds[i]->ev_fd, 
+			(*base->fds[i]->ev_callback)(base->fds[i]->ev_fd,
 				bits, base->fds[i]->ev_arg);
 			if(ret==0)
 				break;
@@ -291,7 +291,7 @@ event_base_dispatch(struct event_base* base)
 
 /** exit that loop */
 int
-event_base_loopexit(struct event_base* base, 
+event_base_loopexit(struct event_base* base,
 	struct timeval* ATTR_UNUSED(tv))
 {
 	base->need_to_exit = 1;
@@ -320,7 +320,7 @@ event_base_free(struct event_base* base)
 
 /** set content of event */
 void
-event_set(struct event* ev, int fd, short bits, 
+event_set(struct event* ev, int fd, short bits,
 	void (*cb)(int, short, void *), void* arg)
 {
 	ev->node.key = ev;

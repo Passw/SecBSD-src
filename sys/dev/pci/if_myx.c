@@ -2070,7 +2070,7 @@ myx_tx_empty(struct myx_softc *sc)
 
 	while (cons != prod) {
 		ms = &sc->sc_tx_slots[cons];
-		
+
 		bus_dmamap_sync(sc->sc_dmat, ms->ms_map, 0,
 		    ms->ms_map->dm_mapsize, BUS_DMASYNC_POSTWRITE);
 		bus_dmamap_unload(sc->sc_dmat, ms->ms_map);

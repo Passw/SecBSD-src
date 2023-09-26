@@ -507,7 +507,7 @@ aha2840_load_seeprom(struct ahc_softc *ahc)
 
 	if (bootverbose)
 		printf("%s: Reading SEEPROM...", ahc_name(ahc));
-	have_seeprom = read_seeprom(&sd, 
+	have_seeprom = read_seeprom(&sd,
 				    (u_int16_t *)&sc,
 				    /*start_addr*/0,
 				    sizeof(sc)/2);

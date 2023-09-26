@@ -162,7 +162,7 @@ ciss_pci_attach(struct device *parent, struct device *self, void *aux)
 	if (cfg_bar != CISS_BAR) {
 		if (pci_mapreg_map(pa, cfg_bar, PCI_MAPREG_TYPE_MEM, 0,
 		    NULL, &sc->cfg_ioh, NULL, &cfgsz, 0)) {
-			printf(": can't map controller config space\n");  
+			printf(": can't map controller config space\n");
 			bus_space_unmap(sc->iot, sc->ioh, size);
 			return;
 		}

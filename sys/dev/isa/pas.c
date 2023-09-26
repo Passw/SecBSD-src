@@ -35,7 +35,7 @@
  *
  */
 /*
- * jfw 7/13/97 - The soundblaster code requires the generic bus-space 
+ * jfw 7/13/97 - The soundblaster code requires the generic bus-space
  * structures to be set up properly.  Rather than go to the effort of making
  * code for a dead line fully generic, properly set up the SB structures and
  * leave the rest x86/ISA/default-configuration specific.  If you have a
@@ -166,13 +166,13 @@ pasconf(int model, int sbbase, int sbirq, int sbdrq)
 
 	paswrite(I_C_2_PCM_DMA_DISABLED, IO_CONFIGURATION_2);
 	paswrite(I_C_3_PCM_IRQ_DISABLED, IO_CONFIGURATION_3);
-	
-#ifdef BROKEN_BUS_CLOCK 
+
+#ifdef BROKEN_BUS_CLOCK
 	paswrite(S_C_1_PCS_ENABLE | S_C_1_PCS_STEREO | S_C_1_PCS_REALSOUND |
 		  S_C_1_FM_EMULATE_CLOCK, SYSTEM_CONFIGURATION_1);
 #else
 	paswrite(S_C_1_PCS_ENABLE | S_C_1_PCS_STEREO | S_C_1_PCS_REALSOUND,
-		  SYSTEM_CONFIGURATION_1);     
+		  SYSTEM_CONFIGURATION_1);
 #endif
 
 	/*XXX*/
@@ -189,7 +189,7 @@ pasconf(int model, int sbbase, int sbirq, int sbdrq)
 
 	paswrite(P_M_MV508_ADDRESS | P_M_MV508_PCM, PARALLEL_MIXER);
 	paswrite(5, PARALLEL_MIXER);
-		
+
 	/*
 	 * Setup SoundBlaster emulation.
 	 */
@@ -202,7 +202,7 @@ pasconf(int model, int sbbase, int sbirq, int sbdrq)
 	 * Set mid-range levels.
 	 */
 	paswrite(P_M_MV508_ADDRESS | P_M_MV508_MODE, PARALLEL_MIXER);
-	paswrite(P_M_MV508_LOUDNESS | P_M_MV508_ENHANCE_NONE, PARALLEL_MIXER);	
+	paswrite(P_M_MV508_LOUDNESS | P_M_MV508_ENHANCE_NONE, PARALLEL_MIXER);
 
 	paswrite(P_M_MV508_ADDRESS | P_M_MV508_MASTER_A, PARALLEL_MIXER);
 	paswrite(50, PARALLEL_MIXER);
@@ -253,7 +253,7 @@ pasprobe(struct device *parent, void *match, void *aux)
 	 * warm boot reset of the card will screw up this detect code
 	 * something fierce.  Adding code to handle this means possibly
 	 * interfering with other cards on the bus if you have something
-	 * on base port 0x388.  SO be forewarned. 
+	 * on base port 0x388.  SO be forewarned.
 	 */
 	/* Talk to first board */
 	outb(MASTER_DECODE, 0xbc);
@@ -312,7 +312,7 @@ pasprobe(struct device *parent, void *match, void *aux)
                 if (ia->ia_irq == IRQUNK) {
                         DPRINTF(("pas: sb emulation requires known irq\n"));
                         return (0);
-                } 
+                }
                 pasconf(sc->model, ia->ia_iobase, ia->ia_irq, 1);
         } else {
                 DPRINTF(("pas: could not probe pas\n"));
@@ -355,7 +355,7 @@ pasprobe(struct device *parent, void *match, void *aux)
 	sc->sc_sbdsp.sc_drq8 = ia->ia_drq;
 	sc->sc_sbdsp.sc_drq16 = -1; /* XXX */
 	sc->sc_sbdsp.sc_ic = ia->ia_ic;
-	
+
 	if (sbdsp_probe(&sc->sc_sbdsp) == 0) {
 		DPRINTF(("pas: sbdsp probe failed\n"));
 		goto unmap;
@@ -379,7 +379,7 @@ pasattach(struct device *parent, struct device *self, void *aux)
 	struct pas_softc *sc = (struct pas_softc *)self;
 	struct isa_attach_args *ia = (struct isa_attach_args *)aux;
 	int iobase = ia->ia_iobase;
-	
+
 	sc->sc_sbdsp.sc_isa = parent;
 	sc->sc_sbdsp.sc_iobase = iobase;
 	sc->sc_sbdsp.sc_ih = isa_intr_establish(ia->ia_ic, ia->ia_irq,
@@ -387,7 +387,7 @@ pasattach(struct device *parent, struct device *self, void *aux)
 	    sbdsp_intr, &sc->sc_sbdsp, sc->sc_sbdsp.sc_dev.dv_xname);
 
 	printf(" ProAudio Spectrum %s [rev %d] ", pasnames[sc->model], sc->rev);
-	
+
 	sbdsp_attach(&sc->sc_sbdsp);
 
 	audio_attach_mi(&pas_hw_if, &sc->sc_sbdsp, NULL, &sc->sc_sbdsp.sc_dev);

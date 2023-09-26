@@ -112,7 +112,7 @@ fill_nsec3_iter(struct val_env* ve, char* s, int c)
 		s = e;
 		if(i>0 && ve->nsec3_keysize[i-1] >= ve->nsec3_keysize[i]) {
 			log_err("nsec3 key iterations not ascending: %d %d",
-				(int)ve->nsec3_keysize[i-1], 
+				(int)ve->nsec3_keysize[i-1],
 				(int)ve->nsec3_keysize[i]);
 			return 0;
 		}

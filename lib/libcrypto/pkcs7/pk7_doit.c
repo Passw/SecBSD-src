@@ -985,7 +985,7 @@ PKCS7_dataVerify(X509_STORE *cert_store, X509_STORE_CTX *ctx, BIO *bio,
 
 	return PKCS7_signatureVerify(bio, p7, si, x509);
 err:
-	
+
 	return ret;
 }
 LCRYPTO_ALIAS(PKCS7_dataVerify);

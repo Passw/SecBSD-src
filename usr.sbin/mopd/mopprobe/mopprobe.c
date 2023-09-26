@@ -95,7 +95,7 @@ main(int argc, char *argv[])
 		}
 	}
 	interface = argv[optind++];
-	
+
 	if ((AllFlag && interface) ||
 	    (!AllFlag && interface == 0) ||
 	    (Not3Flag && Not4Flag))
@@ -127,7 +127,7 @@ mopProcess(struct if_info *ii, u_char *pkt)
 	u_short	 ptype, moplen = 0, itype;
 	int	 idx, trans, len, i, hwa = 0;
 	struct once *o = NULL;
-	
+
 	/* We don't known with transport, Guess! */
 
 	trans = mopGetTrans(pkt, 0);
@@ -150,14 +150,14 @@ mopProcess(struct if_info *ii, u_char *pkt)
 	if (mopCmpEAddr(rc_mcst,dst) != 0) {
 		return;
 	}
-	
+
 	switch(ptype) {
 	case MOP_K_PROTO_RC:
 		break;
 	default:
 		return;
 	}
-	
+
 	if (OnceFlag) {
 		o = root;
 		while (o != NULL) {
@@ -184,10 +184,10 @@ mopProcess(struct if_info *ii, u_char *pkt)
 	if (mopcode != MOP_K_CODE_SID) {
 		return;
 	}
-	
+
 	mopGetChar(pkt,&idx);			/* Reserved */
 	mopGetShort(pkt,&idx);			/* Receipt # */
-		
+
 	device = 0;
 
 	switch(trans) {
@@ -199,7 +199,7 @@ mopProcess(struct if_info *ii, u_char *pkt)
 		break;
 	}
 
-	itype = mopGetShort(pkt,&idx); 
+	itype = mopGetShort(pkt,&idx);
 
 	while (idx < (int)(moplen)) {
 		ilen  = mopGetChar(pkt,&idx);
@@ -228,7 +228,7 @@ mopProcess(struct if_info *ii, u_char *pkt)
 			break;
 	        case MOP_K_INFO_SOFD:
 			device = mopGetChar(pkt,&idx);
-			if (VerboseFlag && 
+			if (VerboseFlag &&
 			    (device != NMA_C_SOFD_LCS) &&   /* DECserver 100 */
 			    (device != NMA_C_SOFD_DS2) &&   /* DECserver 200 */
 			    (device != NMA_C_SOFD_DP2) &&   /* DECserver 250 */
@@ -244,7 +244,7 @@ mopProcess(struct if_info *ii, u_char *pkt)
 			break;
 		case MOP_K_INFO_SFID:
 			tmpc = mopGetChar(pkt,&idx);
-			if ((tmpc > 0) && (tmpc < 17)) 
+			if ((tmpc > 0) && (tmpc < 17))
 				idx = idx + tmpc;
 			break;
 		case MOP_K_INFO_PRTY:
@@ -286,6 +286,6 @@ mopProcess(struct if_info *ii, u_char *pkt)
 				idx = idx + ilen;
 			};
 		}
-		itype = mopGetShort(pkt,&idx); 
+		itype = mopGetShort(pkt,&idx);
 	}
 }

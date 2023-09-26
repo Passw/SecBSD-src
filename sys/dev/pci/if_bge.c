@@ -3077,7 +3077,7 @@ bge_attach(struct device *parent, struct device *self, void *aux)
 	 * to hardware bugs.
 	 *
 	 * It seems all controllers have a bug that can generate UDP
-	 * datagrams with a checksum value 0 when TX UDP checksum     
+	 * datagrams with a checksum value 0 when TX UDP checksum
 	 * offloading is enabled. Generating UDP checksum value 0 is
 	 * a violation of RFC 768.
 	 */
@@ -3692,7 +3692,7 @@ bge_txeof(struct bge_softc *sc)
 	struct mbuf *m;
 
 	/* Nothing to do */
-	cons = sc->bge_tx_saved_considx; 
+	cons = sc->bge_tx_saved_considx;
 	newcons = sc->bge_rdata->bge_status_block.bge_idx[0].bge_tx_cons_idx;
 	if (cons == newcons)
 		return;
@@ -3882,7 +3882,7 @@ bge_stats_update_regs(struct bge_softc *sc)
 	 * bit of BGE_HDD_MODE, BGE_BMANMODE_LOMBUF_ATTN bit of BGE_BMAN_MODE
 	 * and BGE_MODECTL_FLOWCTL_ATTN_INTR bit of BGE_MODE_CTL. However
 	 * that change would generate more interrupts and there are still
-	 * possibilities of losing multiple frames during 
+	 * possibilities of losing multiple frames during
 	 * BGE_MODECTL_FLOWCTL_ATTN_INTR interrupt handling. Given that
 	 * the workaround still would not get correct counter I don't think
 	 * it's worth to implement it. So ignore reading the counter on
@@ -4092,7 +4092,7 @@ bge_cksum_pad(struct mbuf *m)
 			last = n;
 		}
 	}
-	
+
 	/* Now zero the pad area, to avoid the bge cksum-assist bug. */
 	memset(mtod(last, caddr_t) + last->m_len, 0, padlen);
 	last->m_len += padlen;
@@ -4128,7 +4128,7 @@ bge_encap(struct bge_softc *sc, struct mbuf *m, int *txinc)
 		}
 	}
 
-	if (sc->bge_flags & BGE_JUMBO_FRAME && 
+	if (sc->bge_flags & BGE_JUMBO_FRAME &&
 	    m->m_pkthdr.len > ETHER_MAX_LEN)
 		csum_flags |= BGE_TXBDFLAG_JUMBO_FRAME;
 
@@ -4196,7 +4196,7 @@ doit:
 	sc->bge_rdata->bge_tx_ring[cur].bge_flags |= BGE_TXBDFLAG_END;
 	sc->bge_cdata.bge_tx_chain[cur] = m;
 	sc->bge_cdata.bge_tx_map[cur] = dmamap;
-	
+
 	*txinc += dmamap->dm_nsegs;
 
 	return (0);

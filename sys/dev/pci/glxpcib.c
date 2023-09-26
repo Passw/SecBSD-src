@@ -257,7 +257,7 @@ const struct pci_matchid glxpcib_devices[] = {
 
 int
 glxpcib_match(struct device *parent, void *match, void *aux)
-{ 
+{
 	if (pci_matchbyid((struct pci_attach_args *)aux, glxpcib_devices,
 	    nitems(glxpcib_devices))) {
 		/* needs to win over pcib */

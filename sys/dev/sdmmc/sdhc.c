@@ -426,7 +426,7 @@ sdhc_host_found(struct sdhc_softc *sc, bus_space_tag_t iot,
 		error = 0;
 		goto err;
 	}
-	
+
 	return 0;
 
 err:
@@ -516,7 +516,7 @@ sdhc_host_reset(sdmmc_chipset_handle_t sch)
 	if ((error = sdhc_soft_reset(hp, SDHC_RESET_ALL)) != 0) {
 		splx(s);
 		return (error);
-	}	
+	}
 
 	/* Set data timeout counter value to max for now. */
 	HWRITE1(hp, SDHC_TIMEOUT_CTL, SDHC_TIMEOUT_MAX);
@@ -919,7 +919,7 @@ sdhc_start_command(struct sdhc_host *hp, struct sdmmc_command *cmd)
 	int error;
 	int seg;
 	int s;
-	
+
 	DPRINTF(1,("%s: start cmd %u arg=%#x data=%p dlen=%d flags=%#x\n",
 	    DEVNAME(hp->sc), cmd->c_opcode, cmd->c_arg, cmd->c_data,
 	    cmd->c_datalen, cmd->c_flags));
@@ -1274,7 +1274,7 @@ sdhc_wait_intr(struct sdhc_host *hp, int mask, int secs)
 
 	DPRINTF(2,("%s: intr status %#x error %#x\n", DEVNAME(hp->sc), status,
 	    hp->intr_error_status));
-	
+
 	/* Command timeout has higher priority than command complete. */
 	if (ISSET(status, SDHC_ERROR_INTERRUPT)) {
 		hp->intr_error_status = 0;

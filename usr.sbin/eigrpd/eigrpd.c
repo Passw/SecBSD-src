@@ -701,7 +701,7 @@ merge_config(struct eigrpd_conf *conf, struct eigrpd_conf *xconf,
 		}
 
 		/* TODO update existing ifaces */
-	}	
+	}
 
 	/* resend addresses to activate new interfaces */
 	if (proc == PROC_MAIN)

@@ -580,7 +580,7 @@ npppd_reset_routing_table(npppd *_this, int pool_only)
 #ifndef	NO_ROUTE_FOR_POOLED_ADDRESS
 	slist rtlist0;
 
-	if (_this->iface[0].using_pppx) 
+	if (_this->iface[0].using_pppx)
 		return 0;
 
 	slist_init(&rtlist0);

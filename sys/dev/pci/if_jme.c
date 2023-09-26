@@ -597,7 +597,7 @@ jme_attach(struct device *parent, struct device *self, void *aux)
 
 		if (jmedebug) {
 			printf("%s: FPGA revision : 0x%04x\n",
-			    sc->sc_dev.dv_xname, 
+			    sc->sc_dev.dv_xname,
 			    (reg & CHIPMODE_FPGA_REV_MASK) >>
 			    CHIPMODE_FPGA_REV_SHIFT);
 		}
@@ -1204,7 +1204,7 @@ jme_start(struct ifnet *ifp)
 	if (!(ifp->if_flags & IFF_RUNNING) || ifq_is_oactive(&ifp->if_snd))
 		return;
 	if ((sc->jme_flags & JME_FLAG_LINK) == 0)
-		return;  
+		return;
 	if (ifq_empty(&ifp->if_snd))
 		return;
 

@@ -54,21 +54,21 @@ struct uow_softc {
 	u_int8_t		 sc_fifo[DS2490_DATAFIFOSIZE];
 };
 
-int uow_match(struct device *, void *, void *); 
-void uow_attach(struct device *, struct device *, void *); 
-int uow_detach(struct device *, int); 
-int uow_activate(struct device *, int); 
+int uow_match(struct device *, void *, void *);
+void uow_attach(struct device *, struct device *, void *);
+int uow_detach(struct device *, int);
+int uow_activate(struct device *, int);
 
-struct cfdriver uow_cd = { 
-	NULL, "uow", DV_DULL 
-}; 
+struct cfdriver uow_cd = {
+	NULL, "uow", DV_DULL
+};
 
-const struct cfattach uow_ca = { 
-	sizeof(struct uow_softc), 
-	uow_match, 
-	uow_attach, 
-	uow_detach, 
-	uow_activate, 
+const struct cfattach uow_ca = {
+	sizeof(struct uow_softc),
+	uow_match,
+	uow_attach,
+	uow_detach,
+	uow_activate,
 };
 
 /* List of supported devices */

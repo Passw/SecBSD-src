@@ -79,7 +79,7 @@ struct l2tp_header {
 #define	L2TP_SESSION_ID_MASK		0x00007fff
 #define	L2TP_SESSION_ID_SHUFFLE_MARK	0x10000000
 
-#ifndef	L2TP_NCALL 
+#ifndef	L2TP_NCALL
 #define	L2TP_NCALL 		10000
 #endif
 

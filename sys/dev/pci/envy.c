@@ -1394,7 +1394,7 @@ void
 envy_midi_wait(struct envy_softc *sc)
 {
 	int i, st;
-	
+
 	for (i = 100;; i--) {
 		st = envy_ccs_read(sc, ENVY_CCS_MIDISTAT0);
 		if (!(st & ENVY_MIDISTAT_OBUSY(sc)))
@@ -1904,7 +1904,7 @@ envy_set_params(void *self, int setmode, int usemode,
 
 	/* only HT model supports rates above 96kHz */
 	if (!sc->isht && rate > 96000)
-		rate = 96000;	
+		rate = 96000;
 
 	for (i = 0; envy_rates[i].rate < rate; i++) {
 		if (envy_rates[i].rate == -1) {
@@ -1963,7 +1963,7 @@ envy_pintr(struct envy_softc *sc)
 	int i;
 
 	if (sc->spurious > 0 || envydebug >= 2) {
-		printf("%s: spurious = %u, start = %lld.%ld\n", 
+		printf("%s: spurious = %u, start = %lld.%ld\n",
 			DEVNAME(sc), sc->spurious,
 			(long long)sc->start_ts.tv_sec, sc->start_ts.tv_nsec);
 		for (i = 0; i < sc->nintr; i++) {
@@ -2492,7 +2492,7 @@ envy_midi_output(void *self, int data)
 {
 	struct envy_softc *sc = (struct envy_softc *)self;
 	int st;
-	
+
 	st = envy_ccs_read(sc, ENVY_CCS_MIDISTAT0);
 	if (st & ENVY_MIDISTAT_OBUSY(sc))
 		return 0;

@@ -377,14 +377,14 @@ em_defer_attach(struct device *self)
 
 		return;
 	}
-	
+
 	sc->hw.gcu = gcu;
-	
-	em_attach_miibus(self);			
 
-	em_setup_interface(sc);			
+	em_attach_miibus(self);
 
-	em_setup_link(&sc->hw);			
+	em_setup_interface(sc);
+
+	em_setup_link(&sc->hw);
 
 	em_update_link_status(sc);
 }
@@ -398,13 +398,13 @@ em_defer_attach(struct device *self)
  *
  *********************************************************************/
 
-void 
+void
 em_attach(struct device *parent, struct device *self, void *aux)
 {
 	struct pci_attach_args *pa = aux;
 	struct em_softc *sc;
 	int defer = 0;
-    
+
 	INIT_DEBUGOUT("em_attach: begin");
 
 	sc = (struct em_softc *)self;
@@ -455,7 +455,7 @@ em_attach(struct device *parent, struct device *self, void *aux)
 
 	/*
 	 * This controls when hardware reports transmit completion
-	 * status.   
+	 * status.
 	 */
 	sc->hw.report_tx_early = 1;
 
@@ -521,7 +521,7 @@ em_attach(struct device *parent, struct device *self, void *aux)
 			    MAX_JUMBO_FRAME_SIZE;
 	}
 
-	sc->hw.min_frame_size = 
+	sc->hw.min_frame_size =
 	    ETHER_MIN_LEN + ETHER_CRC_LEN;
 
 	if (em_allocate_desc_rings(sc) != 0) {
@@ -703,7 +703,7 @@ em_start(struct ifqueue *ifq)
 		bus_dmamap_sync(sc->sc_dmat, que->tx.sc_tx_dma.dma_map,
 		    0, que->tx.sc_tx_dma.dma_map->dm_mapsize,
 		    BUS_DMASYNC_PREREAD | BUS_DMASYNC_PREWRITE);
-		/* 
+		/*
 		 * Advance the Transmit Descriptor Tail (Tdt),
 		 * this tells the E1000 that this frame is
 		 * available to transmit.
@@ -933,7 +933,7 @@ em_init(void *arg)
 
 	/* Initialize the hardware */
 	if (em_hardware_init(sc)) {
-		printf("%s: Unable to initialize the hardware\n", 
+		printf("%s: Unable to initialize the hardware\n",
 		       DEVNAME(sc));
 		splx(s);
 		return;
@@ -946,7 +946,7 @@ em_init(void *arg)
 
 	/* Prepare transmit descriptors and buffers */
 	if (em_setup_transmit_structures(sc)) {
-		printf("%s: Could not setup transmit structures\n", 
+		printf("%s: Could not setup transmit structures\n",
 		       DEVNAME(sc));
 		em_stop(sc, 0);
 		splx(s);
@@ -956,7 +956,7 @@ em_init(void *arg)
 
 	/* Prepare receive descriptors and buffers */
 	if (em_setup_receive_structures(sc)) {
-		printf("%s: Could not setup receive structures\n", 
+		printf("%s: Could not setup receive structures\n",
 		       DEVNAME(sc));
 		em_stop(sc, 0);
 		splx(s);
@@ -995,7 +995,7 @@ em_init(void *arg)
  *  Interrupt Service routine
  *
  **********************************************************************/
-int 
+int
 em_intr(void *arg)
 {
 	struct em_softc	*sc = arg;
@@ -1297,7 +1297,7 @@ em_encap(struct em_queue *que, struct mbuf *m)
 
 	que->tx.sc_tx_desc_head = head;
 
-	/* 
+	/*
 	 * Last Descriptor of Packet
 	 * needs End Of Packet (EOP)
 	 * and Report Status (RS)
@@ -1563,7 +1563,7 @@ em_update_link_status(struct em_softc *sc)
 /*********************************************************************
  *
  *  This routine disables all traffic on the adapter by issuing a
- *  global reset on the MAC and deallocates TX/RX buffers. 
+ *  global reset on the MAC and deallocates TX/RX buffers.
  *
  **********************************************************************/
 
@@ -1649,7 +1649,7 @@ em_legacy_irq_quirk_spt(struct em_softc *sc)
 
 	/* Legacy interrupt: SPT needs a quirk. */
 	if (sc->hw.mac_type != em_pch_spt && sc->hw.mac_type != em_pch_cnp &&
-	    sc->hw.mac_type != em_pch_tgp && sc->hw.mac_type != em_pch_adp) 
+	    sc->hw.mac_type != em_pch_tgp && sc->hw.mac_type != em_pch_adp)
 		return;
 	if (sc->legacy_irq == 0)
 		return;
@@ -1768,8 +1768,8 @@ em_allocate_pci_resources(struct em_softc *sc)
 	if(sc->hw.mac_type == em_icp_xxxx) {
 		int offset;
 		pcireg_t val;
-		
-		if (!pci_get_capability(sc->osdep.em_pa.pa_pc, 
+
+		if (!pci_get_capability(sc->osdep.em_pa.pa_pc,
 		    sc->osdep.em_pa.pa_tag, PCI_CAP_ID_ST, &offset, &val)) {
 			return (0);
 		}
@@ -1898,7 +1898,7 @@ em_hardware_init(struct em_softc *sc)
 	em_legacy_irq_quirk_spt(sc);
 
 	/*
-	 * These parameters control the automatic generation (Tx) and 
+	 * These parameters control the automatic generation (Tx) and
 	 * response (Rx) to Ethernet PAUSE frames.
 	 * - High water mark should allow for at least two frames to be
 	 *   received after sending an XOFF.
@@ -1979,7 +1979,7 @@ em_setup_interface(struct em_softc *sc)
 		ifp->if_capabilities |= IFCAP_CSUM_TCPv6 | IFCAP_CSUM_UDPv6;
 	}
 
-	/* 
+	/*
 	 * Specify the media types supported by this adapter and register
 	 * callbacks to update media and link information
 	 */
@@ -1989,20 +1989,20 @@ em_setup_interface(struct em_softc *sc)
 	    sc->hw.media_type == em_media_type_internal_serdes) {
 		if (sc->hw.mac_type == em_82545)
 			fiber_type = IFM_1000_LX;
-		ifmedia_add(&sc->media, IFM_ETHER | fiber_type | IFM_FDX, 
+		ifmedia_add(&sc->media, IFM_ETHER | fiber_type | IFM_FDX,
 			    0, NULL);
-		ifmedia_add(&sc->media, IFM_ETHER | fiber_type, 
+		ifmedia_add(&sc->media, IFM_ETHER | fiber_type,
 			    0, NULL);
 	} else {
 		ifmedia_add(&sc->media, IFM_ETHER | IFM_10_T, 0, NULL);
-		ifmedia_add(&sc->media, IFM_ETHER | IFM_10_T | IFM_FDX, 
+		ifmedia_add(&sc->media, IFM_ETHER | IFM_10_T | IFM_FDX,
 			    0, NULL);
-		ifmedia_add(&sc->media, IFM_ETHER | IFM_100_TX, 
+		ifmedia_add(&sc->media, IFM_ETHER | IFM_100_TX,
 			    0, NULL);
-		ifmedia_add(&sc->media, IFM_ETHER | IFM_100_TX | IFM_FDX, 
+		ifmedia_add(&sc->media, IFM_ETHER | IFM_100_TX | IFM_FDX,
 			    0, NULL);
 		if (sc->hw.phy_type != em_phy_ife) {
-			ifmedia_add(&sc->media, IFM_ETHER | IFM_1000_T | IFM_FDX, 
+			ifmedia_add(&sc->media, IFM_ETHER | IFM_1000_T | IFM_FDX,
 				    0, NULL);
 			ifmedia_add(&sc->media, IFM_ETHER | IFM_1000_T, 0, NULL);
 		}
@@ -2066,13 +2066,13 @@ em_activate(struct device *self, int act)
  *
  *  Workaround for SmartSpeed on 82541 and 82547 controllers
  *
- **********************************************************************/	
+ **********************************************************************/
 void
 em_smartspeed(struct em_softc *sc)
 {
 	uint16_t phy_tmp;
- 
-	if (sc->link_active || (sc->hw.phy_type != em_phy_igp) || 
+
+	if (sc->link_active || (sc->hw.phy_type != em_phy_igp) ||
 	    !sc->hw.autoneg || !(sc->hw.autoneg_advertised & ADVERTISE_1000_FULL))
 		return;
 
@@ -2095,7 +2095,7 @@ em_smartspeed(struct em_softc *sc)
 				    !em_phy_setup_autoneg(&sc->hw) &&
 				    !em_read_phy_reg(&sc->hw, PHY_CTRL,
 						       &phy_tmp)) {
-					phy_tmp |= (MII_CR_AUTO_NEG_EN |  
+					phy_tmp |= (MII_CR_AUTO_NEG_EN |
 						    MII_CR_RESTART_AUTO_NEG);
 					em_write_phy_reg(&sc->hw,
 							 PHY_CTRL, phy_tmp);
@@ -2190,7 +2190,7 @@ em_allocate_transmit_structures(struct em_softc *sc)
 		que->tx.sc_tx_pkts_ring = mallocarray(sc->sc_tx_slots,
 		    sizeof(*que->tx.sc_tx_pkts_ring), M_DEVBUF, M_NOWAIT | M_ZERO);
 		if (que->tx.sc_tx_pkts_ring == NULL) {
-			printf("%s: Unable to allocate tx_buffer memory\n", 
+			printf("%s: Unable to allocate tx_buffer memory\n",
 			    DEVNAME(sc));
 			return (ENOMEM);
 		}
@@ -2201,7 +2201,7 @@ em_allocate_transmit_structures(struct em_softc *sc)
 
 /*********************************************************************
  *
- *  Allocate and initialize transmit structures. 
+ *  Allocate and initialize transmit structures.
  *
  **********************************************************************/
 int
@@ -2407,7 +2407,7 @@ em_tx_ctx_setup(struct em_queue *que, struct mbuf *mp, u_int head,
 	*olinfo_status = 0;
 	*cmd_type_len = 0;
 	TD = (struct e1000_adv_tx_context_desc *)&que->tx.sc_tx_desc_ring[head];
-	
+
 #if NVLAN > 0
 	if (ISSET(mp->m_flags, M_VLANTAG)) {
 		uint32_t vtag = mp->m_pkthdr.ether_vtag;
@@ -2513,22 +2513,22 @@ em_transmit_checksum_setup(struct em_queue *que, struct mbuf *mp, u_int head,
 	TXD = (struct em_context_desc *)&que->tx.sc_tx_desc_ring[head];
 
 	TXD->lower_setup.ip_fields.ipcss = ETHER_HDR_LEN;
-	TXD->lower_setup.ip_fields.ipcso = 
+	TXD->lower_setup.ip_fields.ipcso =
 	    ETHER_HDR_LEN + offsetof(struct ip, ip_sum);
-	TXD->lower_setup.ip_fields.ipcse = 
+	TXD->lower_setup.ip_fields.ipcse =
 	    htole16(ETHER_HDR_LEN + sizeof(struct ip) - 1);
 
-	TXD->upper_setup.tcp_fields.tucss = 
+	TXD->upper_setup.tcp_fields.tucss =
 	    ETHER_HDR_LEN + sizeof(struct ip);
 	TXD->upper_setup.tcp_fields.tucse = htole16(0);
 
 	if (que->tx.active_checksum_context == OFFLOAD_TCP_IP) {
-		TXD->upper_setup.tcp_fields.tucso = 
-		    ETHER_HDR_LEN + sizeof(struct ip) + 
+		TXD->upper_setup.tcp_fields.tucso =
+		    ETHER_HDR_LEN + sizeof(struct ip) +
 		    offsetof(struct tcphdr, th_sum);
 	} else if (que->tx.active_checksum_context == OFFLOAD_UDP_IP) {
-		TXD->upper_setup.tcp_fields.tucso = 
-		    ETHER_HDR_LEN + sizeof(struct ip) + 
+		TXD->upper_setup.tcp_fields.tucso =
+		    ETHER_HDR_LEN + sizeof(struct ip) +
 		    offsetof(struct udphdr, uh_sum);
 	}
 
@@ -2542,7 +2542,7 @@ em_transmit_checksum_setup(struct em_queue *que, struct mbuf *mp, u_int head,
  *
  *  Examine each tx_buffer in the used queue. If the hardware is done
  *  processing the packet then free associated resources. The
- *  tx_buffer is put back on the free queue. 
+ *  tx_buffer is put back on the free queue.
  *
  **********************************************************************/
 void
@@ -2652,9 +2652,9 @@ em_get_buf(struct em_queue *que, int i)
 
 /*********************************************************************
  *
- *  Allocate memory for rx_buffer structures. Since we use one 
- *  rx_buffer per received packet, the maximum number of rx_buffer's 
- *  that we'll need is equal to the number of receive descriptors 
+ *  Allocate memory for rx_buffer structures. Since we use one
+ *  rx_buffer per received packet, the maximum number of rx_buffer's
+ *  that we'll need is equal to the number of receive descriptors
  *  that we've allocated.
  *
  **********************************************************************/
@@ -2706,7 +2706,7 @@ fail:
 /*********************************************************************
  *
  *  Allocate and initialize receive structures.
- *  
+ *
  **********************************************************************/
 int
 em_setup_receive_structures(struct em_softc *sc)
@@ -2742,7 +2742,7 @@ em_setup_receive_structures(struct em_softc *sc)
 /*********************************************************************
  *
  *  Enable receive unit.
- *  
+ *
  **********************************************************************/
 void
 em_initialize_receive_unit(struct em_softc *sc)
@@ -2759,7 +2759,7 @@ em_initialize_receive_unit(struct em_softc *sc)
 	E1000_WRITE_REG(&sc->hw, RCTL, 0);
 
 	/* Set the Receive Delay Timer Register */
-	E1000_WRITE_REG(&sc->hw, RDTR, 
+	E1000_WRITE_REG(&sc->hw, RDTR,
 			sc->rx_int_delay | E1000_RDT_FPDB);
 
 	if (sc->hw.mac_type >= em_82540) {
@@ -2794,7 +2794,7 @@ em_initialize_receive_unit(struct em_softc *sc)
 		break;
 	case EM_RXBUFFER_4096:
 		reg_rctl |= E1000_RCTL_SZ_4096|E1000_RCTL_BSEX|E1000_RCTL_LPE;
-		break;		  
+		break;
 	case EM_RXBUFFER_8192:
 		reg_rctl |= E1000_RCTL_SZ_8192|E1000_RCTL_BSEX|E1000_RCTL_LPE;
 		break;
@@ -3123,7 +3123,7 @@ em_rxeof(struct em_queue *que)
 
 /*********************************************************************
  *
- *  Verify that the hardware indicated that the checksum is valid. 
+ *  Verify that the hardware indicated that the checksum is valid.
  *  Inform the stack about the status of checksum so that stack
  *  doesn't spend time verifying the checksum.
  *
@@ -3151,7 +3151,7 @@ em_receive_checksum(struct em_softc *sc, struct em_rx_desc *rx_desc,
 	}
 
 	if (rx_desc->status & E1000_RXD_STAT_TCPCS) {
-		/* Did it pass? */        
+		/* Did it pass? */
 		if (!(rx_desc->errors & E1000_RXD_ERR_TCPE))
 			mp->m_pkthdr.csum_flags |=
 				M_TCP_CSUM_IN_OK | M_UDP_CSUM_IN_OK;
@@ -3162,7 +3162,7 @@ em_receive_checksum(struct em_softc *sc, struct em_rx_desc *rx_desc,
  * This turns on the hardware offload of the VLAN
  * tag insertion and strip
  */
-void 
+void
 em_enable_hw_vlans(struct em_softc *sc)
 {
 	uint32_t ctrl;
@@ -3681,7 +3681,7 @@ static const struct em_counter em_counters[em_stat_count] = {
 
 /**********************************************************************
  *
- *  Update the board statistics counters. 
+ *  Update the board statistics counters.
  *
  **********************************************************************/
 int
@@ -3714,9 +3714,9 @@ em_kstat_read(struct kstat *ks)
 		kstat_kv_u64(&kvs[em_stat_tncrs]) +=
 		    E1000_READ_REG(hw, TNCRS);
 #if 0
-		sc->stats.tsctc += 
+		sc->stats.tsctc +=
 		E1000_READ_REG(hw, TSCTC);
-		sc->stats.tsctfc += 
+		sc->stats.tsctfc +=
 		E1000_READ_REG(hw, TSCTFC);
 #endif
 	}
@@ -3821,7 +3821,7 @@ em_tbi_adjust_stats(struct em_softc *sc, uint32_t frame_len, uint8_t *mac_addr)
 	if (ETHER_IS_BROADCAST(mac_addr)) {
 		/* Broadcast packet */
 		kstat_kv_u64(&kvs[em_stat_bprc])++;
-	} else if (ETHER_IS_MULTICAST(mac_addr)) { 
+	} else if (ETHER_IS_MULTICAST(mac_addr)) {
 		/* Multicast packet */
 		kstat_kv_u64(&kvs[em_stat_mprc])++;
 	}

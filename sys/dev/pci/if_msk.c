@@ -85,7 +85,7 @@
  * XMAC registers. This driver takes advantage of these features to allow
  * both XMACs to operate as independent interfaces.
  */
- 
+
 #include "bpfilter.h"
 #include "kstat.h"
 
@@ -389,7 +389,7 @@ msk_miibus_readreg(struct device *dev, int phy, int reg)
 
         SK_YU_WRITE_2(sc_if, YUKON_SMICR, YU_SMICR_PHYAD(phy) |
 		      YU_SMICR_REGAD(reg) | YU_SMICR_OP_READ);
-        
+
 	for (i = 0; i < SK_TIMEOUT; i++) {
 		DELAY(1);
 		val = SK_YU_READ_2(sc_if, YUKON_SMICR);
@@ -402,7 +402,7 @@ msk_miibus_readreg(struct device *dev, int phy, int reg)
 		       sc_if->sk_dev.dv_xname);
 		return (0);
 	}
-        
+
  	DPRINTFN(9, ("msk_miibus_readreg: i=%d, timeout=%d\n", i,
 		     SK_TIMEOUT));
 
@@ -1852,7 +1852,7 @@ msk_fill_rx_tick(void *xsc_if)
 void
 msk_tick(void *xsc_if)
 {
-	struct sk_if_softc *sc_if = xsc_if;  
+	struct sk_if_softc *sc_if = xsc_if;
 	struct mii_data *mii = &sc_if->sk_mii;
 	int s;
 
@@ -2049,7 +2049,7 @@ msk_init_yukon(struct sk_if_softc *sc_if)
 	/* Setup Yukon's address */
 	for (i = 0; i < 3; i++) {
 		/* Write Source Address 1 (unicast filter) */
-		SK_YU_WRITE_2(sc_if, YUKON_SAL1 + i * 4, 
+		SK_YU_WRITE_2(sc_if, YUKON_SAL1 + i * 4,
 			      sc_if->arpcom.ac_enaddr[i * 2] |
 			      sc_if->arpcom.ac_enaddr[i * 2 + 1] << 8);
 	}
@@ -2477,7 +2477,7 @@ msk_dump_bytes(const char *data, int len)
 			if ((j & 0xf) == 7 && j > 0)
 				printf(" ");
 		}
-		
+
 		for (; j < 16; j++)
 			printf("   ");
 		printf("  ");
@@ -2486,9 +2486,9 @@ msk_dump_bytes(const char *data, int len)
 			int ch = data[i + j] & 0xff;
 			printf("%c", ' ' <= ch && ch <= '~' ? ch : ' ');
 		}
-		
+
 		printf("\n");
-		
+
 		if (c < 16)
 			break;
 	}

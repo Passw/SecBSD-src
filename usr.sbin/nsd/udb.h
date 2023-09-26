@@ -104,7 +104,7 @@ struct udb_rel_ptr {
 	udb_void next;
 };
 
-/** 
+/**
  * This is the routine that is called for every relptr
  * @param base: the baseptr for REL.
  * @param p: the relptr, a real pointer to it.
@@ -112,7 +112,7 @@ struct udb_rel_ptr {
  */
 typedef void udb_walk_relptr_cb(void*, udb_rel_ptr*, void*);
 
-/** 
+/**
  * This routine calls the callback for every relptr in a datablock
  * params in order:
  * base: the baseptr for REL macro.
@@ -246,7 +246,7 @@ struct udb_chunk_d {
 	uint8_t flags;
 	/** padding onto 8-alignment */
 	uint8_t pad[5];
-	/** udb_rel_ptr* first in list of rel-ptrs that point back here 
+	/** udb_rel_ptr* first in list of rel-ptrs that point back here
 	 * In the free chunk this is the previous pointer. */
 	udb_void ptrlist;
 	/* user data space starts here, 64-bit aligned */
@@ -289,7 +289,7 @@ struct udb_xl_chunk_d {
 	uint8_t flags;
 	/** padding onto 8-alignment */
 	uint8_t pad[5];
-	/** udb_rel_ptr* first in list of rel-ptrs that point back here 
+	/** udb_rel_ptr* first in list of rel-ptrs that point back here
 	 * In the free chunk this is the previous pointer. */
 	udb_void ptrlist;
 	/** size of this chunk in bytes */
@@ -312,7 +312,7 @@ struct udb_alloc_d {
 	uint64_t stat_free;
 	/** stats: number of bytes in alloced chunks, sum of their 2**x size */
 	uint64_t stat_alloc;
-	/** offset to create next chunk at. can be before file-end, or be 
+	/** offset to create next chunk at. can be before file-end, or be
 	 * fsize, volatile because it is used as a 'commit', and thus we want
 	 * this to be written to memory (and thus disk) immediately. */
 	volatile uint64_t nextgrow;
@@ -332,7 +332,7 @@ struct udb_alloc {
 	udb_alloc_d* disk;
 };
 
-/** 
+/**
  * file header length, the file start with
  * 64bit: magic number to identify file (and prevent stupid mistakes)
  * globdata: global data. Fixed size segment. (starts with size uint64)
@@ -424,15 +424,15 @@ udb_rel_ptr* udb_base_get_userdata(udb_base* udb);
  */
 void udb_base_set_userdata(udb_base* udb, udb_void user);
 
-/** 
- * Set the user flags (to any value, uint8). 
+/**
+ * Set the user flags (to any value, uint8).
  * @param udb: the udb.
  * @param v: new value.
  */
 void udb_base_set_userflags(udb_base* udb, uint8_t v);
 
-/** 
- * Get the user flags. 
+/**
+ * Get the user flags.
  * @param udb: the udb.
  * @param v: new value.
  */
@@ -556,7 +556,7 @@ udb_void udb_alloc_realloc(udb_alloc* alloc, udb_void r, size_t osz,
  */
 int udb_alloc_grow(udb_alloc* alloc, size_t sz, size_t num);
 
-/** 
+/**
  * attempt to compact the data and move free space to the end
  * can shrink the db, which calls sync on the db (for portability).
  * @param udb: the udb base.
@@ -564,7 +564,7 @@ int udb_alloc_grow(udb_alloc* alloc, size_t sz, size_t num);
  */
 int udb_compact(udb_base* udb);
 
-/** 
+/**
  * set the udb to inhibit or uninhibit compaction.  Does not perform
  * the compaction itself if enabled, for that call udb_compact.
  * @param udb: the udb base
@@ -608,13 +608,13 @@ int udb_valid_dataptr(udb_base* udb, udb_void to);
 int udb_valid_rptr(udb_base* udb, udb_void rptr, udb_void to);
 
 /*** UDB_REL_PTR ***/
-/** 
+/**
  * Init a new UDB rel ptr at NULL.
  * @param ptr: sysptr, becomes inited.
  */
 void udb_rel_ptr_init(udb_rel_ptr* ptr);
 
-/** 
+/**
  * Unlink a UDB rel ptr.
  * @param base: the udb base
  * @param ptr: sysptr, unlinked

@@ -411,7 +411,7 @@ void
 uxrcom_get_status(void *vsc, int portno, u_char *lsr, u_char *msr)
 {
 	struct uxrcom_softc *sc = vsc;
-	
+
 	if (msr != NULL)
 		*msr = sc->sc_msr;
 	if (lsr != NULL)

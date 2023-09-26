@@ -357,7 +357,7 @@ struct uaudio_softc {
 
 		/* pointer to first byte available */
 		unsigned char *ring_pos;
-		
+
 		/* audio(9) block size in bytes */
 		int ring_blksz;
 
@@ -2966,7 +2966,7 @@ uaudio_stream_open(struct uaudio_softc *sc, int dir,
 	/*
 	 * Require at least 2ms block size to ensure no
 	 * transfer exceeds two blocks.
-	 * 
+	 *
 	 * XXX: use s->nframes_mask instead of 1000
 	 */
 	if (1000 * blksz < 2 * sc->rate * bpa) {

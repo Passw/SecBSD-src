@@ -557,7 +557,7 @@ static int process_diff_domain(FILE* spool, struct ixfr_create* ixfrcr,
 	 * later, the notseen ones from the new zone are added RRsets.
 	 * For the ones not in the new zone, they are deleted RRsets.
 	 * If they exist in old and new, check for RR differences. */
-	uint32_t spool_type_count, i; 
+	uint32_t spool_type_count, i;
 	uint16_t marktypes[65536];
 	size_t marktypes_used = 0;
 	if(!read_spool_u32(spool, &spool_type_count)) {
@@ -780,7 +780,7 @@ static int process_spool_for_domain(FILE* spool, struct ixfr_create* ixfrcr,
 	if(!process_spool_before_domain(spool, ixfrcr, store, domain, iter,
 		tmp_region))
 		return 0;
-	
+
 	if(ixfr_create_too_large(ixfrcr, store))
 		return 0;
 	/* are we at the correct domain now? */

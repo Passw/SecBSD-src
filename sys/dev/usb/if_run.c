@@ -449,7 +449,7 @@ static const struct {
 	RT5592_DEF_BBP
 };
 
-/* 
+/*
  * Default values for BBP register R196 for RT5592.
  */
 static const uint8_t rt5592_bbp_r196[] = {
@@ -3233,7 +3233,7 @@ run_rt3593_set_chan(struct run_softc *sc, u_int chan)
 
 	run_rt3070_rf_write(sc, 31, (chan <= 14) ? 0xa0 : 0x80);
 
-	h20mhz = (sc->rf24_20mhz & 0x20) >> 5; 
+	h20mhz = (sc->rf24_20mhz & 0x20) >> 5;
 	run_rt3070_rf_read(sc, 30, &rf);
 	rf = (rf & ~0x06) | (h20mhz << 1) | (h20mhz << 2);
 	run_rt3070_rf_write(sc, 30, rf);
@@ -3260,7 +3260,7 @@ run_rt3593_set_chan(struct run_softc *sc, u_int chan)
 	else
 		rf |= 0x40;
 	run_rt3070_rf_write(sc, 6, rf);
-		
+
 	run_rt3070_rf_read(sc, 30, &rf);
 	rf = (rf & ~0x18) | 0x10;
 	run_rt3070_rf_write(sc, 30, rf);
@@ -3505,7 +3505,7 @@ run_rt5592_set_chan(struct run_softc *sc, u_int chan)
 
 		run_rt3070_rf_write(sc, 55, 0x43);
 
-		/* 
+		/*
 		 * RF R49/R50 Tx power ALC code.
 		 * G-band bit<7:6>=1:0, bit<5:0> range from 0x0 ~ 0x27.
 		 */
@@ -3525,7 +3525,7 @@ run_rt5592_set_chan(struct run_softc *sc, u_int chan)
 			}
 		}
 
-		/* 
+		/*
 		 * RF R49/R50 Tx power ALC code.
 		 * A-band bit<7:6>=1:1, bit<5:0> range from 0x0 ~ 0x2b.
 		 */
@@ -3932,7 +3932,7 @@ run_rt3070_rf_init(struct run_softc *sc)
 		}
 	}
 	if (sc->mac_ver == 0x3070 && sc->mac_rev < 0x0201) {
-		/* 
+		/*
 		 * Change voltage from 1.2V to 1.35V for RT3070.
 		 * The DAC issue (RT3070_LDO_CFG0) has been fixed
 		 * in RT3070(F).

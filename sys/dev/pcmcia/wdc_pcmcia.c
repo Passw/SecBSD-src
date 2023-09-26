@@ -296,7 +296,7 @@ wdc_pcmcia_attach(struct device *parent, struct device *self, void *aux)
 	    sc->sc_pioh.size, &sc->sc_pioh, &sc->sc_iowindow)) {
 		printf(": can't map first i/o space\n");
 		goto iomap_failed;
-	} 
+	}
 
 	/*
 	 * Currently, # of iospace is 1 except DIGITAL Mobile Media CD-ROM.
@@ -385,8 +385,8 @@ wdc_pcmcia_detach(struct device *self, int flags)
         if (sc->sc_iowindow == -1)
                 /* Nothing to detach */
                 return (0);
-	
-	if ((error = wdcdetach(&sc->wdc_channel, flags)) != 0) 
+
+	if ((error = wdcdetach(&sc->wdc_channel, flags)) != 0)
 		return (error);
 
         if (sc->wdc_channel.ch_queue != NULL)
@@ -423,7 +423,7 @@ wdc_pcmcia_activate(struct device *self, int act)
 		break;
 	case DVACT_RESUME:
 		pcmcia_function_enable(sc->sc_pf);
-		sc->sc_ih = pcmcia_intr_establish(sc->sc_pf, IPL_BIO, 
+		sc->sc_ih = pcmcia_intr_establish(sc->sc_pf, IPL_BIO,
 		    wdcintr, &sc->wdc_channel, sc->sc_wdcdev.sc_dev.dv_xname);
 		wdcreset(&sc->wdc_channel, VERBOSE);
 		rv = config_activate_children(self, act);

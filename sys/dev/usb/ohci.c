@@ -685,7 +685,7 @@ ohci_handover(struct ohci_softc *sc)
 	if (ctl & OHCI_IR) {
 		/* SMM active, request change */
 		DPRINTF(("ohci_handover: SMM active, request owner change\n"));
-		if ((sc->sc_intre & (OHCI_OC | OHCI_MIE)) == 
+		if ((sc->sc_intre & (OHCI_OC | OHCI_MIE)) ==
 		    (OHCI_OC | OHCI_MIE))
 			OWRITE4(sc, OHCI_INTERRUPT_ENABLE, OHCI_MIE);
 		s = OREAD4(sc, OHCI_COMMAND_STATUS);

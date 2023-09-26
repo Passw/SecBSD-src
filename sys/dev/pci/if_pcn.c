@@ -1911,9 +1911,9 @@ pcn_79c971_mediainit(struct pcn_softc *sc)
 	/*
 	 * The built-in 10BASE-T interface is mapped to the MII
 	 * on the PCNet-FAST.  Unfortunately, there's no EEPROM
-	 * word that tells us which PHY to use. 
-	 * This driver used to ignore all but the first PHY to 
-	 * answer, but this code was removed to support multiple 
+	 * word that tells us which PHY to use.
+	 * This driver used to ignore all but the first PHY to
+	 * answer, but this code was removed to support multiple
 	 * external PHYs. As the default instance will be the first
 	 * one to answer, no harm is done by letting the possibly
 	 * non-connected internal PHY show up.

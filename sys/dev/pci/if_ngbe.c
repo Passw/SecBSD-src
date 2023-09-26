@@ -364,8 +364,8 @@ ngbe_detach(struct device *self, int flags)
 
 	ngbe_free_pci_resources(sc);
 
-	ngbe_free_transmit_structures(sc);                                     
-	ngbe_free_receive_structures(sc); 
+	ngbe_free_transmit_structures(sc);
+	ngbe_free_receive_structures(sc);
 	ngbe_free_isb(sc);
 	free(sc->mta, M_DEVBUF, ETHER_ADDR_LEN * NGBE_SP_RAR_ENTRIES);
 
@@ -416,7 +416,7 @@ ngbe_init(void *arg)
 
 	ngbe_setup_isb(sc);
 
-	/* Setup the receive address. */                                
+	/* Setup the receive address. */
 	hw->mac.ops.set_rar(sc, 0, hw->mac.addr, 0, NGBE_PSR_MAC_SWC_AD_H_AV);
 
 	/* Get the latest mac address, user can use a LAA. */
@@ -642,7 +642,7 @@ ngbe_rxfill(struct rx_ring *rxr)
 	int i, post = 0;
 	u_int slots;
 
-	bus_dmamap_sync(rxr->rxdma.dma_tag, rxr->rxdma.dma_map, 0, 
+	bus_dmamap_sync(rxr->rxdma.dma_tag, rxr->rxdma.dma_map, 0,
 	    rxr->rxdma.dma_map->dm_mapsize, BUS_DMASYNC_POSTWRITE);
 
 	i = rxr->last_desc_filled;
@@ -872,7 +872,7 @@ ngbe_update_link_status(struct ngbe_softc *sc)
 			    ~NGBE_MAC_TX_CFG_SPEED_MASK) | NGBE_MAC_TX_CFG_TE |
 			    NGBE_MAC_TX_CFG_SPEED_1G);
 		}
-		
+
 		reg = NGBE_READ_REG(hw, NGBE_MAC_RX_CFG);
 		NGBE_WRITE_REG(hw, NGBE_MAC_RX_CFG, reg);
 		NGBE_WRITE_REG(hw, NGBE_MAC_PKT_FLT, NGBE_MAC_PKT_FLT_PR);
@@ -1022,7 +1022,7 @@ ngbe_setup_interface(struct ngbe_softc *sc)
 	ifp->if_ioctl = ngbe_ioctl;
 	ifp->if_qstart = ngbe_start;
 	ifp->if_watchdog = ngbe_watchdog;
-	ifp->if_hardmtu = NGBE_MAX_JUMBO_FRAME_SIZE - ETHER_HDR_LEN - 
+	ifp->if_hardmtu = NGBE_MAX_JUMBO_FRAME_SIZE - ETHER_HDR_LEN -
 	    ETHER_CRC_LEN;
 	ifq_set_maxlen(&ifp->if_snd, sc->num_tx_desc - 1);
 
@@ -1184,7 +1184,7 @@ ngbe_allocate_queues(struct ngbe_softc *sc)
 		printf("%s: unable to allocate Tx ring\n", DEVNAME(sc));
 		goto fail;
 	}
-	
+
 	/* Allocate the Rx ring. */
 	sc->rx_rings = mallocarray(sc->sc_nqueues, sizeof(struct rx_ring),
 	    M_DEVBUF, M_NOWAIT | M_ZERO);
@@ -1516,7 +1516,7 @@ ngbe_addr_list_itr(struct ngbe_hw *hw, uint8_t **mc_addr_ptr, uint32_t *vmdq)
 	return addr;
 }
 
-void 
+void
 ngbe_iff(struct ngbe_softc *sc)
 {
 	struct ngbe_hw *hw = &sc->hw;
@@ -1596,7 +1596,7 @@ ngbe_initialize_receive_unit(struct ngbe_softc *sc)
 	mhadd = NGBE_READ_REG(hw, NGBE_PSR_MAX_SZ);
 	if (mhadd != NGBE_MAX_JUMBO_FRAME_SIZE)
 		NGBE_WRITE_REG(hw, NGBE_PSR_MAX_SZ, NGBE_MAX_JUMBO_FRAME_SIZE);
-	
+
 	bufsz = MCLBYTES >> NGBE_PX_RR_CFG_BSIZEPKT_SHIFT;
 
 	for (i = 0; i < sc->sc_nqueues; i++, rxr++) {
@@ -1831,7 +1831,7 @@ ngbe_init_hw(struct ngbe_softc *sc)
 
 	/* Reset the hardware */
 	status = hw->mac.ops.reset_hw(sc);
-	
+
 	if (!status)
 		status = hw->mac.ops.start_hw(sc);
 
@@ -1956,7 +1956,7 @@ ngbe_init_shared_code(struct ngbe_softc *sc)
 	struct ngbe_hw *hw = &sc->hw;
 
 	hw->subsystem_device_id = PCI_PRODUCT(pci_conf_read(pa->pa_pc,
-	    pa->pa_tag, PCI_SUBSYS_ID_REG));  
+	    pa->pa_tag, PCI_SUBSYS_ID_REG));
 
 	hw->phy.type = ngbe_phy_internal;
 
@@ -2312,7 +2312,7 @@ ngbe_check_mac_link(struct ngbe_hw *hw, uint32_t *speed, int *link_up,
 			*speed = NGBE_LINK_SPEED_10_FULL;
 	} else
 		*speed = NGBE_LINK_SPEED_UNKNOWN;
-		
+
 	return status;
 }
 
@@ -2418,7 +2418,7 @@ void
 ngbe_configure_pb(struct ngbe_softc *sc)
 {
 	struct ngbe_hw *hw = &sc->hw;
-	
+
 	hw->mac.ops.setup_rxpba(hw, 0, 0, PBA_STRATEGY_EQUAL);
 	ngbe_pbthresh_setup(sc);
 }
@@ -2796,7 +2796,7 @@ ngbe_get_eeprom_semaphore(struct ngbe_softc *sc)
 		if (!(swsm & NGBE_MIS_SWSM_SMBI)) {
 			status = 0;
 			break;
-		}	
+		}
 		DELAY(50);
 	}
 
@@ -2812,7 +2812,7 @@ ngbe_get_eeprom_semaphore(struct ngbe_softc *sc)
 		ngbe_release_eeprom_semaphore(hw);
 		DELAY(50);
 
-		/* 
+		/*
 		 * One last try if the SMBI bit is 0 when we read it,
 		 * then the bit will be set and we have the semaphore.
 		 */
@@ -2977,8 +2977,8 @@ ngbe_host_interface_command(struct ngbe_softc *sc, uint32_t *buffer,
 
 	dword_len = length >> 2;
 
-	/* 
-	 * The device driver writes the relevant command block 
+	/*
+	 * The device driver writes the relevant command block
 	 * into the ram area.
 	 */
 	for (i = 0; i < dword_len; i++) {
@@ -2999,7 +2999,7 @@ ngbe_host_interface_command(struct ngbe_softc *sc, uint32_t *buffer,
 		status = EINVAL;
 		goto rel_out;
 	}
-		
+
 	for (i = 0; i < timeout; i++) {
 		if (ngbe_check_mng_access(hw)) {
 			hicr = NGBE_READ_REG(hw, NGBE_MNG_MBOX_CTL);
@@ -3025,7 +3025,7 @@ ngbe_host_interface_command(struct ngbe_softc *sc, uint32_t *buffer,
 
 	/* Calculate length in DWORDs */
 	dword_len = hdr_size >> 2;
-		
+
 	/* First pull in the header so we know the buffer length */
 	for (bi = 0; bi < dword_len; bi++) {
 		if (ngbe_check_mng_access(hw)) {
@@ -3048,7 +3048,7 @@ ngbe_host_interface_command(struct ngbe_softc *sc, uint32_t *buffer,
 		status = EINVAL;
 		goto rel_out;
 	}
-	
+
 	/* Calculate length in DWORDs, add 3 for odd lengths */
 	dword_len = (buf_len + 3) >> 2;
 
@@ -3206,7 +3206,7 @@ ngbe_pbthresh_setup(struct ngbe_softc *sc)
 
 	hw->fc.high_water = ngbe_hpbthresh(sc);
 	hw->fc.low_water = ngbe_lpbthresh(sc);
-	
+
 	/* Low water marks must not be larger than high water marks */
 	if (hw->fc.low_water > hw->fc.high_water)
 		hw->fc.low_water = 0;
@@ -3549,7 +3549,7 @@ ngbe_phy_setup_link(struct ngbe_softc *sc, uint32_t speed, int need_restart)
 	hw->phy.ops.read_reg(hw, 9, 0, &value);
 	if (!(speed & NGBE_LINK_SPEED_1GB_FULL))
 		value &= 0xfdff;
-	else 
+	else
 		value |= 0x200;
 	hw->phy.ops.write_reg(hw, 9, 0, value);
 
@@ -3574,7 +3574,7 @@ ngbe_phy_setup_link(struct ngbe_softc *sc, uint32_t speed, int need_restart)
 skip_an:
 	hw->phy.ops.phy_led_ctrl(sc);
 	hw->phy.ops.check_event(sc);
-	
+
 	return 0;
 }
 
@@ -3720,7 +3720,7 @@ ngbe_reset_hw(struct ngbe_softc *sc)
 					break;
 				msec_delay(100);
 			}
-			
+
 			if (reset_status & NGBE_MIS_RST_ST_DEV_RST_ST_MASK) {
 				status = ETIMEDOUT;
 				printf("%s: software reset polling failed to "
@@ -4006,7 +4006,7 @@ ngbe_set_rx_drop_en(struct ngbe_softc *sc)
 			srrctl |= NGBE_PX_RR_CFG_DROP_EN;
 			NGBE_WRITE_REG(&sc->hw, NGBE_PX_RR_CFG(i), srrctl);
 		}
-			
+
 	} else {
 		for (i = 0; i < sc->sc_nqueues; i++) {
 			srrctl = NGBE_READ_REG(&sc->hw, NGBE_PX_RR_CFG(i));
@@ -4099,7 +4099,7 @@ ngbe_setup_fc(struct ngbe_softc *sc)
 		/* Flow control completely disabled by software override. */
 		break;
 	case ngbe_fc_tx_pause:
-		/* 
+		/*
 		 * Tx Flow control is enabled, and Rx Flow control is
 		 * disabled by software override.
 		 */

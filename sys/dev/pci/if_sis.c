@@ -376,9 +376,9 @@ void
 sis_mii_sync(struct sis_softc *sc)
 {
 	int			i;
- 
+
  	SIO_SET(SIS_MII_DIR|SIS_MII_DATA);
- 
+
  	for (i = 0; i < 32; i++) {
  		SIO_SET(SIS_MII_CLK);
  		DELAY(1);
@@ -386,7 +386,7 @@ sis_mii_sync(struct sis_softc *sc)
  		DELAY(1);
  	}
 }
- 
+
 /*
  * Clock a series of bits through the MII.
  */
@@ -394,9 +394,9 @@ void
 sis_mii_send(struct sis_softc *sc, u_int32_t bits, int cnt)
 {
 	int			i;
- 
+
 	SIO_CLR(SIS_MII_CLK);
- 
+
 	for (i = (0x1 << (cnt - 1)); i; i >>= 1) {
 		if (bits & i)
 			SIO_SET(SIS_MII_DATA);
@@ -408,7 +408,7 @@ sis_mii_send(struct sis_softc *sc, u_int32_t bits, int cnt)
 		SIO_SET(SIS_MII_CLK);
 	}
 }
- 
+
 /*
  * Read an PHY register through the MII.
  */
@@ -416,9 +416,9 @@ int
 sis_mii_readreg(struct sis_softc *sc, struct sis_mii_frame *frame)
 {
 	int			i, ack, s;
- 
+
 	s = splnet();
- 
+
 	/*
 	 * Set up frame for RX.
 	 */
@@ -426,14 +426,14 @@ sis_mii_readreg(struct sis_softc *sc, struct sis_mii_frame *frame)
 	frame->mii_opcode = SIS_MII_READOP;
 	frame->mii_turnaround = 0;
 	frame->mii_data = 0;
- 	
+
 	/*
  	 * Turn on data xmit.
 	 */
 	SIO_SET(SIS_MII_DIR);
 
 	sis_mii_sync(sc);
- 
+
 	/*
 	 * Send command/address info.
 	 */
@@ -441,23 +441,23 @@ sis_mii_readreg(struct sis_softc *sc, struct sis_mii_frame *frame)
 	sis_mii_send(sc, frame->mii_opcode, 2);
 	sis_mii_send(sc, frame->mii_phyaddr, 5);
 	sis_mii_send(sc, frame->mii_regaddr, 5);
- 
+
 	/* Idle bit */
 	SIO_CLR((SIS_MII_CLK|SIS_MII_DATA));
 	DELAY(1);
 	SIO_SET(SIS_MII_CLK);
 	DELAY(1);
- 
+
 	/* Turn off xmit. */
 	SIO_CLR(SIS_MII_DIR);
- 
+
 	/* Check for ack */
 	SIO_CLR(SIS_MII_CLK);
 	DELAY(1);
 	ack = CSR_READ_4(sc, SIS_EECTL) & SIS_MII_DATA;
 	SIO_SET(SIS_MII_CLK);
 	DELAY(1);
- 
+
 	/*
 	 * Now try reading data bits. If the ack failed, we still
 	 * need to clock through 16 cycles to keep the PHY(s) in sync.
@@ -471,7 +471,7 @@ sis_mii_readreg(struct sis_softc *sc, struct sis_mii_frame *frame)
 		}
 		goto fail;
 	}
- 
+
 	for (i = 0x8000; i; i >>= 1) {
 		SIO_CLR(SIS_MII_CLK);
 		DELAY(1);
@@ -497,7 +497,7 @@ fail:
 		return (1);
 	return (0);
 }
- 
+
 /*
  * Write to a PHY register through the MII.
  */
@@ -505,43 +505,43 @@ int
 sis_mii_writereg(struct sis_softc *sc, struct sis_mii_frame *frame)
 {
 	int			s;
- 
+
 	s = splnet();
  	/*
  	 * Set up frame for TX.
  	 */
- 
+
  	frame->mii_stdelim = SIS_MII_STARTDELIM;
  	frame->mii_opcode = SIS_MII_WRITEOP;
  	frame->mii_turnaround = SIS_MII_TURNAROUND;
- 	
+
  	/*
   	 * Turn on data output.
  	 */
  	SIO_SET(SIS_MII_DIR);
- 
+
  	sis_mii_sync(sc);
- 
+
  	sis_mii_send(sc, frame->mii_stdelim, 2);
  	sis_mii_send(sc, frame->mii_opcode, 2);
  	sis_mii_send(sc, frame->mii_phyaddr, 5);
  	sis_mii_send(sc, frame->mii_regaddr, 5);
  	sis_mii_send(sc, frame->mii_turnaround, 2);
  	sis_mii_send(sc, frame->mii_data, 16);
- 
+
  	/* Idle bit. */
  	SIO_SET(SIS_MII_CLK);
  	DELAY(1);
  	SIO_CLR(SIS_MII_CLK);
  	DELAY(1);
- 
+
  	/*
  	 * Turn off xmit.
  	 */
  	SIO_CLR(SIS_MII_DIR);
- 
+
  	splx(s);
- 
+
  	return (0);
 }
 
@@ -1534,7 +1534,7 @@ sis_tick(void *xsc)
 
 	if (!sc->sis_link)
 		sis_miibus_statchg(&sc->sc_dev);
-	
+
 	timeout_add_sec(&sc->sis_timeout, 1);
 
 	splx(s);
@@ -1654,7 +1654,7 @@ sis_encap(struct sis_softc *sc, struct mbuf *m_head, u_int32_t *txidx)
 
 	bus_dmamap_sync(sc->sc_dmat, sc->sc_listmap,
 	    offsetof(struct sis_list_data, sis_tx_list[0]),
-	    sizeof(struct sis_desc) * SIS_TX_LIST_CNT,  
+	    sizeof(struct sis_desc) * SIS_TX_LIST_CNT,
 	    BUS_DMASYNC_PREREAD | BUS_DMASYNC_PREWRITE);
 
 	return (0);

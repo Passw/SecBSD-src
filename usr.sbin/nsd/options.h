@@ -57,7 +57,7 @@ struct nsd_options {
 
 	/* tree of zonestat names and their id values, entries are struct
 	 * zonestatname with malloced key=stringname. The number of items
-	 * is the max statnameid, no items are freed from this. 
+	 * is the max statnameid, no items are freed from this.
 	 * kept correct in the xfrd process, and on startup. */
 	rbtree_type* zonestatnames;
 

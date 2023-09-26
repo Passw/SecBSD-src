@@ -1792,8 +1792,8 @@ static const struct iwn_chan_band {
 	{ 11, { 36, 44, 52, 60, 100, 108, 116, 124, 132, 149, 157 } }
 };
 
-#define IWN1000_OTP_NBLOCKS	3 
-#define IWN6000_OTP_NBLOCKS	4 
+#define IWN1000_OTP_NBLOCKS	3
+#define IWN6000_OTP_NBLOCKS	4
 #define IWN6050_OTP_NBLOCKS	7
 
 /* HW rate indices. */
@@ -1809,7 +1809,7 @@ static const struct iwn_rate {
 	uint8_t	ht_plcp;
 	uint8_t	ht_flags;
 } iwn_rates[IWN_RIDX_MAX + 1] = {
-		/* Legacy */		/* HT */ 
+		/* Legacy */		/* HT */
 	{   2,  10, IWN_RFLAG_CCK,	IWN_PLCP_INVALID, 0 },
 	{   4,  20, IWN_RFLAG_CCK,	IWN_PLCP_INVALID, 0 },
 	{  11,  55, IWN_RFLAG_CCK,	IWN_PLCP_INVALID, 0 },

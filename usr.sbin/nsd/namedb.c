@@ -34,7 +34,7 @@ allocate_domain_info(domain_table_type* table,
 	result = (domain_type *) region_alloc(table->region,
 					      sizeof(domain_type));
 #ifdef USE_RADIX_TREE
-	result->dname 
+	result->dname
 #else
 	result->node.key
 #endif

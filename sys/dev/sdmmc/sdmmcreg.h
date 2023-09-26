@@ -217,7 +217,7 @@
 #define SD_CSD_CAPACITY(resp)		((SD_CSD_C_SIZE((resp))+1) << \
 					 (SD_CSD_C_SIZE_MULT((resp))+2))
 #define SD_CSD_V2_C_SIZE(resp)		MMC_RSP_BITS((resp), 48, 22)
-#define SD_CSD_V2_CAPACITY(resp)	((SD_CSD_V2_C_SIZE((resp))+1) << 10) 
+#define SD_CSD_V2_CAPACITY(resp)	((SD_CSD_V2_C_SIZE((resp))+1) << 10)
 #define SD_CSD_V2_BL_LEN		0x9	/* 512 */
 #define SD_CSD_VDD_R_CURR_MIN(resp)	MMC_RSP_BITS((resp), 59, 3)
 #define SD_CSD_VDD_R_CURR_MAX(resp)	MMC_RSP_BITS((resp), 56, 3)

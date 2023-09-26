@@ -32,7 +32,7 @@
  */
 
 
-#define CS4281_BA0_SIZE		
+#define CS4281_BA0_SIZE
 #define CS4281_BA1_SIZE	 	0x10000
 #define CS4281_BUFFER_SIZE      0x10000
 

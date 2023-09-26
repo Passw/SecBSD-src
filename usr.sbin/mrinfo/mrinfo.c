@@ -337,7 +337,7 @@ main(int argc, char *argv[])
 	}
 	argc -= optind;
 	argv += optind;
-			
+
 	if (argc > 1)
 		usage();
 	if (argc == 1)

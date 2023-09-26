@@ -2807,7 +2807,7 @@ ixl_tx_setup_offload(struct mbuf *m0)
 		offload |= ISSET(m0->m_pkthdr.csum_flags, M_IPV4_CSUM_OUT) ?
 		    IXL_TX_DESC_CMD_IIPT_IPV4_CSUM :
 		    IXL_TX_DESC_CMD_IIPT_IPV4;
- 
+
 		hlen = ext.ip4->ip_hl << 2;
 #ifdef INET6
 	} else if (ext.ip6) {
@@ -3232,7 +3232,7 @@ ixl_rxeof(struct ixl_softc *sc, struct ixl_rx_ring *rxr)
 		bus_dmamap_sync(sc->sc_dmat, map, 0, map->dm_mapsize,
 		    BUS_DMASYNC_POSTREAD);
 		bus_dmamap_unload(sc->sc_dmat, map);
-		
+
 		m = rxm->rxm_m;
 		rxm->rxm_m = NULL;
 

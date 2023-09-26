@@ -147,10 +147,10 @@ rdcphy_attach(struct device *parent, struct device *self, void *aux)
 
 	PHY_RESET(&sc->sc_mii);
 
-	sc->sc_mii.mii_capabilities = 
+	sc->sc_mii.mii_capabilities =
 	    PHY_READ(&sc->sc_mii, MII_BMSR) & ma->mii_capmask;
 	if (sc->sc_mii.mii_capabilities & BMSR_EXTSTAT)
-		sc->sc_mii.mii_extcapabilities = 
+		sc->sc_mii.mii_extcapabilities =
 		    PHY_READ(&sc->sc_mii, MII_EXTSR);
 
 	if (sc->sc_mii.mii_capabilities & BMSR_MEDIAMASK)
@@ -306,7 +306,7 @@ rdcphy_status(struct mii_softc *sc)
 		return;
 	}
 	if ((physts & STATUS_FULL_DUPLEX) != 0)
-		mii->mii_media_active |= IFM_FDX | 
+		mii->mii_media_active |= IFM_FDX |
 		    mii_phy_flowstatus(sc);
 	else
 		mii->mii_media_active |= IFM_HDX;

@@ -367,7 +367,7 @@ zsms_stint(struct zs_chanstate *cs, int force)
 
 	if (ISSET(delta, cs->cs_rr0_mask)) {
 		SET(cs->cs_rr0_delta, delta);
-		
+
 		sc->sc_intr_flags |= INTR_ST_CHECK;
 		cs->cs_softreq = 1;
 	}

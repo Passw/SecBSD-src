@@ -327,7 +327,7 @@ elstart(struct ifnet *ifp)
 		for (i = 0;
 		    i < ETHER_MIN_LEN - ETHER_CRC_LEN - m0->m_pkthdr.len; i++)
 			outb(iobase+EL_BUF, 0);
-			
+
 		m_freem(m0);
 
 		/* Now transmit the datagram. */

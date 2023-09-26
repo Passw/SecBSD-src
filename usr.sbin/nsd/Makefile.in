@@ -154,7 +154,7 @@ uninstall:
 	@echo
 	@echo "You still need to remove $(DESTDIR)$(configdir), $(DESTDIR)$(piddir), $(DESTDIR)$(dbfile) directory by hand."
 
-test: 
+test:
 
 nsd:	$(NSD_OBJ) $(LIBOBJS)
 	$(LINK) -o $@ $(NSD_OBJ) $(LIBOBJS) $(SSL_LIBS) $(LIBS)
@@ -388,7 +388,7 @@ config.h.in:	configure.ac
 configure:	configure.ac
 	autoconf
 
-tags: 	
+tags:
 	ctags *.[ch]
 
 # dependency generation

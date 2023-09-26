@@ -126,7 +126,7 @@ radnode_find_prev_from_idx(struct radnode* n, unsigned from)
 	return NULL;
 }
 
-/** 
+/**
  * Find a prefix of the key, in whole-nodes.
  * Finds the longest prefix that corresponds to a whole radnode entry.
  * There may be a slightly longer prefix in one of the array elements.
@@ -413,7 +413,7 @@ radsel_split(struct region* region, struct radsel* r, uint8_t* k,
 		r->node->array[add->pidx].str = split_str;
 		r->node->array[add->pidx].len = split_len;
 	} else {
-		/* okay we need to create a new node that chooses between 
+		/* okay we need to create a new node that chooses between
 		 * the nodes 'add' and r.node
 		 * We do this so that r.node stays the same pointer for its
 		 * key name. */
@@ -595,7 +595,7 @@ struct radnode* radix_insert(struct radtree* rt, uint8_t* k,
 			/* use bucket but it has a shared prefix,
 			 * split that out and create a new intermediate
 			 * node to split out between the two.
-			 * One of the two might exactmatch the new 
+			 * One of the two might exactmatch the new
 			 * intermediate node */
 			if(!radsel_split(rt->region, &n->array[byte-n->offset],
 				k, pos+1, len, add)) {
@@ -773,8 +773,8 @@ radnode_cleanup_leaf(struct region* region, struct radnode* n,
 	}
 }
 
-/** 
- * Cleanup a radix node that was made smaller, see if it can 
+/**
+ * Cleanup a radix node that was made smaller, see if it can
  * be merged with others.
  * @param rt: tree to remove root if needed.
  * @param n: node to cleanup
@@ -1055,7 +1055,7 @@ void radname_d2r(uint8_t* k, radstrlen_type* len, const uint8_t* dname,
 	 * because the only allowed empty label is the final root label,
 	 * we can also remove the last 00 label-end.
 	 * The total result length is one-or-two less than the dname.
-	 * 
+	 *
 	 * examples (numbers are bytes, letters are ascii):
 	 * - root: dname: 0, radname: ''
 	 * - nl.:  dname: 3nl0, radname: 'nl'
@@ -1078,7 +1078,7 @@ void radname_d2r(uint8_t* k, radstrlen_type* len, const uint8_t* dname,
 		*len = 0;
 		return;
 	}
-	
+
 	/* walk through domain name and remember label positions */
 	do {
 		/* compression pointers not allowed */
@@ -1259,7 +1259,7 @@ struct radnode* radname_search(struct radtree* rt, const uint8_t* d,
 					/* if last label, no match since
 					 * we are in the additional string */
 					if(lab == 0)
-						return NULL; 
+						return NULL;
 					/* next label, search for byte 00 */
 					lpos = 0;
 					lab--;
@@ -1392,7 +1392,7 @@ int radname_find_less_equal(struct radtree* rt, const uint8_t* d, size_t max,
 						 * this array element */
 						*result =radix_prev(
 							n->array[byte].node);
-						return 0; 
+						return 0;
 					}
 					/* next label, search for byte 00 */
 					lpos = 0;
@@ -1402,7 +1402,7 @@ int radname_find_less_equal(struct radtree* rt, const uint8_t* d, size_t max,
 				if(b < n->array[byte].str[i]) {
 					*result =radix_prev(
 						n->array[byte].node);
-					return 0; 
+					return 0;
 				} else if(b > n->array[byte].str[i]) {
 					/* the key is after the additional,
 					 * so everything in its subtree is

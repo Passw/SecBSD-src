@@ -176,7 +176,7 @@ mopStartLoad(u_char *dst, u_char *src, struct dllist *dl_rpr, int trans)
 			bcopy(dst,  dllist[i].eaddr, 6);
 		}
 
-	/* If no slot yet, then return. No slot is free */	
+	/* If no slot yet, then return. No slot is free */
 	if (slot == -1)
 		return;
 
@@ -248,7 +248,7 @@ mopNextLoad(u_char *dst, u_char *src, u_char new_count, int trans)
 				slot = i;
 		}
 
-	/* If no slot yet, then return. No slot is free */	
+	/* If no slot yet, then return. No slot is free */
 	if (slot == -1)
 		return;
 

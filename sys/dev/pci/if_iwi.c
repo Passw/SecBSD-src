@@ -1052,7 +1052,7 @@ iwi_notification_intr(struct iwi_softc *sc, struct iwi_rx_data *data,
 		}
 		break;
 	}
-	case IWI_NOTIF_TYPE_BEACON:	
+	case IWI_NOTIF_TYPE_BEACON:
 	{
 		struct iwi_notif_beacon *beacon =
 		    (struct iwi_notif_beacon *)(notif + 1);

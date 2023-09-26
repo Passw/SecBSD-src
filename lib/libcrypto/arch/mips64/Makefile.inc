@@ -3,7 +3,7 @@
 # mips64-specific libcrypto build rules
 
 # aes
-SRCS+= aes_cbc.c 
+SRCS+= aes_cbc.c
 CFLAGS+= -DAES_ASM
 SSLASM+= aes aes-mips aes-mips
 # bf

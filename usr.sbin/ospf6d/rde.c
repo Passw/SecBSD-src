@@ -1174,7 +1174,7 @@ rde_asext_lookup(struct in6_addr prefix, int plen)
 	struct iface		*iface;
 	struct iface_addr	*ia;
 	struct in6_addr		 ina, inb;
-	
+
 	LIST_FOREACH(area, &rdeconf->area_list, entry) {
 		LIST_FOREACH(iface, &area->iface_list, entry) {
 			TAILQ_FOREACH(ia, &iface->ifa_list, entry) {

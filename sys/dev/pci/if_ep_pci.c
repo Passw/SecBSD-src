@@ -31,12 +31,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "bpfilter.h" 
- 
+#include "bpfilter.h"
+
 #include <sys/param.h>
 #include <sys/systm.h>
-#include <sys/mbuf.h> 
-#include <sys/socket.h> 
+#include <sys/mbuf.h>
+#include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <sys/errno.h>
 #include <sys/timeout.h>
@@ -48,7 +48,7 @@
 
 #include <netinet/in.h>
 #include <netinet/if_ether.h>
- 
+
 #if NBPFILTER > 0
 #include <net/bpf.h>
 #endif

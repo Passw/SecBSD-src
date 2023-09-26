@@ -29,7 +29,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 #include <sys/param.h>
 #include <sys/systm.h>
@@ -136,15 +136,15 @@ edid_is_valid(uint8_t *d)
 {
 	int sum = 0, i;
 	uint8_t sig[8] = EDID_SIGNATURE;
-	
+
 	if (memcmp(d, sig, 8) != 0)
 		return EINVAL;
-	
+
 	for (i = 0; i < 128; i++)
 		sum += d[i];
 	if ((sum & 0xff) != 0)
 		return EINVAL;
-		
+
 	return 0;
 }
 
@@ -363,7 +363,7 @@ edid_det_timing(uint8_t *data, struct videomode *vmp)
 	vblank = EDID_DET_TIMING_VBLANK(data);
 	vsyncwid = EDID_DET_TIMING_VSYNC_WIDTH(data);
 	vsyncoff = EDID_DET_TIMING_VSYNC_OFFSET(data);
-	
+
 	/* XXX: I'm not doing anything with the borders, should I? */
 
 	vmp->hdisplay = hactive;
@@ -406,7 +406,7 @@ edid_block(struct edid_info *edid, uint8_t *data)
 				edid->edid_preferred_mode =
 				    &edid->edid_modes[edid->edid_nmodes];
 			}
-			edid->edid_nmodes++;	
+			edid->edid_nmodes++;
 		}
 		return;
 	}
@@ -428,13 +428,13 @@ edid_block(struct edid_info *edid, uint8_t *data)
 
 	case EDID_DESC_BLOCK_TYPE_RANGE:
 		edid->edid_have_range = 1;
-		edid->edid_range.er_min_vfreq =	
+		edid->edid_range.er_min_vfreq =
 		    EDID_DESC_RANGE_MIN_VFREQ(data);
-		edid->edid_range.er_max_vfreq =	
+		edid->edid_range.er_max_vfreq =
 		    EDID_DESC_RANGE_MAX_VFREQ(data);
-		edid->edid_range.er_min_hfreq =	
+		edid->edid_range.er_min_hfreq =
 		    EDID_DESC_RANGE_MIN_HFREQ(data);
-		edid->edid_range.er_max_hfreq =	
+		edid->edid_range.er_max_hfreq =
 		    EDID_DESC_RANGE_MAX_HFREQ(data);
 		edid->edid_range.er_max_clock =
 		    EDID_DESC_RANGE_MAX_CLOCK(data);
@@ -500,7 +500,7 @@ edid_parse(uint8_t *data, struct edid_info *edid)
 	edid->edid_vendor[2] = EDID_MANFID_2(manfid);
 	edid->edid_vendor[3] = 0;	/* null terminate for convenience */
 
-	edid->edid_product = data[EDID_OFFSET_PRODUCT_ID] + 
+	edid->edid_product = data[EDID_OFFSET_PRODUCT_ID] +
 	    (data[EDID_OFFSET_PRODUCT_ID + 1] << 8);
 
 	name = edid_findvendor(edid->edid_vendor);

@@ -686,7 +686,8 @@ $code.=<<___;
 .size	bn_mul4x_mont,.-bn_mul4x_mont
 ___
 }}}
-{{{
+
+{{{
 ######################################################################
 # void bn_sqr4x_mont(
 my $rptr="%rdi";	# const BN_ULONG *rptr,
@@ -1191,7 +1192,8 @@ $code.=<<___;
 	mov	$S[2],-16($tptr)
 	mov	$S[3],-8($tptr)
 ___
-}
+}
+
 ##############################################################
 # Montgomery reduction part, "word-by-word" algorithm.
 #
@@ -1398,7 +1400,8 @@ $code.=<<___;
 	mov	0(%rsp),$num		# restore $num
 	mov	$topbit,($tptr)		# save $topbit
 ___
-}
+}
+
 ##############################################################
 # Post-condition, 4x unrolled copy from bn_mul_mont
 #

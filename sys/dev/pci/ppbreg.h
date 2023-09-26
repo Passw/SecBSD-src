@@ -96,7 +96,7 @@
 #define PPB_MEM_SHIFT  16
 #define PPB_MEM_MIN    0x00100000
 
-/* 
+/*
  * bridge control register (see table 3.9 of ppb rev. 1.1)
  *
  * Note these are in the *upper* 16 bits of the Bridge Control

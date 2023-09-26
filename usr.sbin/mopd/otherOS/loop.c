@@ -136,7 +136,7 @@ Loop()
 		fprintf(stderr,"no interfaces");
 		exit(0);
 	}
-	
+
 	/*
          * Find the highest numbered file descriptor for select().
          * Initialize the set of descriptors to listen to.

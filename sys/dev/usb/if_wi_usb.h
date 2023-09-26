@@ -55,7 +55,7 @@ struct wi_rridreq {
 	u_int16_t		type;		/* 0x00 */
 	u_int16_t		frmlen;		/* 0x02 */
 	u_int16_t		rid;		/* 0x04 */
-	u_int8_t		pad[58]; 	/* 0x06	+ sizeof(.) == 64 */	
+	u_int8_t		pad[58]; 	/* 0x06	+ sizeof(.) == 64 */
 };
 struct wi_rridresp {
 	u_int16_t		type;		/* 0x00 */

@@ -39,7 +39,7 @@
 #define NVI_SMBASE(x)		((x) & 0xfffc)
 #define NVI_SMBASE_SIZE		8
 
-/* SMBus 2.0 registers */   
+/* SMBus 2.0 registers */
 #define NVI_SMB_PRTCL		0x00	/* protocol, PEC */
 #define NVI_SMB_STS		0x01	/* status */
 #define NVI_SMB_ADDR		0x02	/* address */

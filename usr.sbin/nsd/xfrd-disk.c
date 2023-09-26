@@ -304,7 +304,7 @@ xfrd_read_state(struct xfrd_state* xfrd)
 		{
 			zone->state = xfrd_zone_expired;
 			xfrd_set_refresh_now(zone);
-		} 
+		}
 
 		/* there is a zone read and it matches what we had before */
 		if(zone->soa_nsd_acquired && zone->state != xfrd_zone_expired
@@ -313,7 +313,7 @@ xfrd_read_state(struct xfrd_state* xfrd)
 			zone->state = state;
 			xfrd_set_timer(zone,
 				within_refresh_bounds(zone, timeout));
-		}	
+		}
 		if((zone->soa_nsd_acquired == 0 && soa_nsd_acquired_read == 0 &&
 			soa_disk_acquired_read == 0) ||
 			(zone->state != xfrd_zone_ok && timeout != 0)) {

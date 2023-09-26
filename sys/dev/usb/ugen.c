@@ -899,7 +899,7 @@ ugen_isoc_rintr(struct usbd_xfer *xfer, void *addr, usbd_status status)
 	selwakeup(&sce->rsel);
 }
 
-int 
+int
 ugen_set_interface(struct ugen_softc *sc, int ifaceno, int altno)
 {
 	struct usbd_interface *iface;

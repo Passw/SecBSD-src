@@ -898,7 +898,7 @@ vr_rxeof(struct vr_softc *sc)
 				continue;
 			}
 			m = m0;
-		} 
+		}
 #else
 		m->m_pkthdr.len = m->m_len = total_len;
 #endif

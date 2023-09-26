@@ -54,7 +54,7 @@
  * tulip registers are typically spaced 8 bytes apart, the Winbond
  * registers are spaced 4 bytes apart. The receiver filter is also
  * programmed differently.
- * 
+ *
  * Like the tulip, the Winbond chip uses small descriptors containing
  * a status word, a control word and 32-bit areas that can either be used
  * to point to two external data blocks, or to point to a single block
@@ -329,7 +329,7 @@ wb_mii_readreg(struct wb_softc *sc, struct wb_mii_frame *frame)
 	frame->mii_opcode = WB_MII_READOP;
 	frame->mii_turnaround = 0;
 	frame->mii_data = 0;
-	
+
 	CSR_WRITE_4(sc, WB_SIO, 0);
 
 	/*
@@ -422,7 +422,7 @@ wb_mii_writereg(struct wb_softc *sc, struct wb_mii_frame *frame)
 	frame->mii_stdelim = WB_MII_STARTDELIM;
 	frame->mii_opcode = WB_MII_WRITEOP;
 	frame->mii_turnaround = WB_MII_TURNAROUND;
-	
+
 	/*
  	 * Turn on data output.
 	 */
@@ -857,7 +857,7 @@ wb_list_rx_init(struct wb_softc *sc)
 		wb_newbuf(sc, &cd->wb_rx_chain[i]);
 		if (i == (WB_RX_LIST_CNT - 1)) {
 			cd->wb_rx_chain[i].wb_nextdesc = &cd->wb_rx_chain[0];
-			ld->wb_rx_list[i].wb_next = 
+			ld->wb_rx_list[i].wb_next =
 					VTOPHYS(&ld->wb_rx_list[0]);
 		} else {
 			cd->wb_rx_chain[i].wb_nextdesc =
@@ -925,7 +925,7 @@ wb_rxeof(struct wb_softc *sc)
 			break;
 		}
 
-		/* No errors; receive the packet. */	
+		/* No errors; receive the packet. */
 		total_len = WB_RXBYTES(cur_rx->wb_ptr->wb_status);
 
 		/*
@@ -1200,7 +1200,7 @@ wb_encap(struct wb_softc *sc, struct wb_chain *c, struct mbuf *m_head)
 				return(1);
 			}
 		}
-		m_copydata(m_head, 0, m_head->m_pkthdr.len,	
+		m_copydata(m_head, 0, m_head->m_pkthdr.len,
 					mtod(m_new, caddr_t));
 		m_new->m_pkthdr.len = m_new->m_len = m_head->m_pkthdr.len;
 		m_freem(m_head);

@@ -714,7 +714,7 @@ constraint_msg_close(u_int32_t id, u_int8_t *data, size_t len)
 		    " received in time, next query %ds",
 		    log_sockaddr((struct sockaddr *)
 		    &cstr->addr->ss), CONSTRAINT_SCAN_INTERVAL);
-		
+
 		cnt = 0;
 		TAILQ_FOREACH(tmp, &conf->constraints, entry)
 			cnt++;

@@ -307,7 +307,7 @@ xl_pci_detach(struct device *self, int flags)
 	return (0);
 }
 
-void            
+void
 xl_pci_intr_ack(struct xl_softc *sc)
 {
 	bus_space_write_4(sc->xl_funct, sc->xl_funch, XL_PCI_INTR,

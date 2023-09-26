@@ -137,7 +137,7 @@ athn_pci_attach(struct device *parent, struct device *self, void *aux)
 		sc->sc_disable_aspm = athn_pci_disable_aspm;
 		sc->flags |= ATHN_FLAG_PCIE;
 	}
-	/* 
+	/*
 	 * Clear device-specific "PCI retry timeout" register (41h) to prevent
 	 * PCI Tx retries from interfering with C3 CPU state.
 	 */
@@ -145,7 +145,7 @@ athn_pci_attach(struct device *parent, struct device *self, void *aux)
 	if (reg & 0xff00)
 		pci_conf_write(pa->pa_pc, pa->pa_tag, 0x40, reg & ~0xff00);
 
-	/* 
+	/*
 	 * Set the cache line size to a reasonable value if it is 0.
 	 * Change latency timer; default value yields poor results.
 	 */

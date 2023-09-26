@@ -855,7 +855,7 @@ zyd_cmd_write(struct zyd_softc *sc, u_int16_t code, const void *data, int len)
 
 int
 zyd_write16(struct zyd_softc *sc, uint16_t reg, uint16_t val)
-{ 
+{
 	struct zyd_io io;
 
 	io.reg = htole16(reg);

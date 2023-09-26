@@ -601,7 +601,7 @@ int
 azalia_pci_activate(struct device *self, int act)
 {
 	azalia_t *sc = (azalia_t*)self;
-	int rv = 0; 
+	int rv = 0;
 
 	switch (act) {
 	case DVACT_SUSPEND:
@@ -1080,7 +1080,7 @@ azalia_init_corb(azalia_t *az, int resuming)
 	AZ_WRITE_4(az, CORBLBASE, (uint32_t)AZALIA_DMA_DMAADDR(&az->corb_dma));
 	AZ_WRITE_4(az, CORBUBASE, PTR_UPPER32(AZALIA_DMA_DMAADDR(&az->corb_dma)));
 	AZ_WRITE_1(az, CORBSIZE, az->corbsize);
- 
+
 	/* reset CORBRP */
 	corbrp = AZ_READ_2(az, CORBRP);
 	AZ_WRITE_2(az, CORBRP, corbrp | HDA_CORBRP_CORBRPRST);
@@ -1914,7 +1914,7 @@ azalia_codec_sort_pins(codec_t *this)
 		conv = -1;
 
 		/* analog out */
-		if ((w->d.pin.cap & COP_PINCAP_OUTPUT) && 
+		if ((w->d.pin.cap & COP_PINCAP_OUTPUT) &&
 		    !(w->widgetcap & COP_AWCAP_DIGITAL)) {
 			add = nd = 0;
 			conv = azalia_codec_find_defdac(this, w->nid, 0);
@@ -1947,7 +1947,7 @@ azalia_codec_sort_pins(codec_t *this)
 			}
 		}
 		/* digital out */
-		if ((w->d.pin.cap & COP_PINCAP_OUTPUT) && 
+		if ((w->d.pin.cap & COP_PINCAP_OUTPUT) &&
 		    (w->widgetcap & COP_AWCAP_DIGITAL)) {
 			conv = azalia_codec_find_defdac(this, w->nid, 0);
 			switch(w->d.pin.device) {
@@ -1992,7 +1992,7 @@ azalia_codec_sort_pins(codec_t *this)
 			}
 		}
 		/* digital in */
-		if ((w->d.pin.cap & COP_PINCAP_INPUT) && 
+		if ((w->d.pin.cap & COP_PINCAP_INPUT) &&
 		    (w->widgetcap & COP_AWCAP_DIGITAL)) {
 			conv = azalia_codec_find_defadc(this, w->nid, 0);
 			switch(w->d.pin.device) {
@@ -2179,7 +2179,7 @@ azalia_codec_select_dacs(codec_t *this)
 
 /* Connect the speaker to a DAC that no other output pin is connected
  * to by default.  If that is not possible, connect to a DAC other
- * than the one the first output pin is connected to. 
+ * than the one the first output pin is connected to.
  */
 int
 azalia_codec_select_spkrdac(codec_t *this)

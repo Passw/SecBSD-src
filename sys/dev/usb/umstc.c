@@ -200,7 +200,7 @@ umstc_brightness_task(void *arg)
 		steps = -steps;
 		dir = -1;
 	}
-	
+
 	while (steps--)
 		wsdisplay_brightness_step(NULL, dir);
 }

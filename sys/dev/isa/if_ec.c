@@ -413,7 +413,7 @@ ec_attach(struct device *parent, struct device *self, void *aux)
 
 		sc->tx_page_start = ELINK2_TX_PAGE_OFFSET_16BIT;
 		sc->rec_page_start = ELINK2_RX_PAGE_OFFSET_16BIT;
-		sc->rec_page_stop = (memsize >> ED_PAGE_SHIFT) + 
+		sc->rec_page_stop = (memsize >> ED_PAGE_SHIFT) +
 		    sc->rec_page_start;
 		sc->mem_ring = sc->mem_start;
 	} else {
@@ -657,7 +657,7 @@ ec_write_mbuf(struct dp8390_softc *sc, struct mbuf *m, int buf)
 	if (esc->sc_16bitp)
 		bus_space_write_1(asict, asich, ELINK2_GACFR,
 		    ELINK2_GACFR_RSEL | ELINK2_GACFR_MBS0);
-	
+
 	return (savelen);
 }
 

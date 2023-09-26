@@ -543,7 +543,7 @@ struct tl_stats {
  * 3) To read a bit from the EEPROM, clear the TXENABLE bit,
  *    then set ECLOK. The bit can then be read by reading EDATA.
  *    ECLOCK should then be cleared again. This can be repeated
- *    8 times to read a whole byte, after which the 
+ *    8 times to read a whole byte, after which the
  *
  * 4) We need to send the address byte to the EEPROM. For this
  *    we have to send the write control byte to the EEPROM to

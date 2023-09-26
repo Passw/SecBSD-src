@@ -126,7 +126,7 @@ void	acpipci_intr_disestablish(void *, void *);
 
 uint32_t acpipci_iort_map_msi(pci_chipset_tag_t, pcitag_t,
 	    struct interrupt_controller **);
-	
+
 extern LIST_HEAD(, interrupt_controller) interrupt_controllers;
 
 int

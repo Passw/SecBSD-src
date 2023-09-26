@@ -61,7 +61,7 @@ struct ad1848_softc {
 	int	sc_irq;			/* interrupt */
 	int	sc_drq;			/* DMA */
 	int	sc_recdrq;		/* record/capture DMA */
-	
+
 	int	sc_flags;
 #define AD1848_FLAG_32REGS	0x01	/* newer chip (cs4231 compatible) */
 
@@ -79,10 +79,10 @@ struct ad1848_softc {
 
 	char	*chip_name;
 	int	mode;
-	
+
 	u_int	precision;		/* 8/16 bits */
 	int	channels;
-	
+
 	u_char	speed_bits;
 	u_char	format_bits;
 	u_char	need_commit;
@@ -175,7 +175,7 @@ void	ad1848_attach(struct ad1848_softc *);
 
 int	ad1848_open(void *, int);
 void	ad1848_close(void *);
-    
+
 void	ad1848_forceintr(struct ad1848_softc *);
 
 int	ad1848_set_params(void *, int, int, struct audio_params *, struct audio_params *);

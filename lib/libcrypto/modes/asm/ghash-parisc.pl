@@ -121,7 +121,7 @@ $code.=<<___ if ($SIZE_T==4);
 	b	L\$parisc1_gmult
 	nop
 ___
-
+
 $code.=<<___;
 	ldb	15($Xi),$nlo
 	ldo	8($Htbl),$Hll
@@ -207,7 +207,7 @@ L\$oop_gmult_pa2
 	std	$Zll,8($Xi)
 	std	$Zhh,0($Xi)
 ___
-
+
 $code.=<<___ if ($SIZE_T==4);
 	b	L\$done_gmult
 	nop
@@ -378,7 +378,7 @@ $code.=<<___ if ($SIZE_T==4);
 	b	L\$parisc1_ghash
 	nop
 ___
-
+
 $code.=<<___;
 	ldb	15($Xi),$nlo
 	ldo	8($Htbl),$Hll
@@ -475,7 +475,7 @@ L\$oop_ghash_pa2
 	cmpb,*<> $inp,$len,L\$outer_ghash_pa2
 	copy	$Zll,$nlo
 ___
-
+
 $code.=<<___ if ($SIZE_T==4);
 	b	L\$done_ghash
 	nop

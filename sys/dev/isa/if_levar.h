@@ -56,5 +56,5 @@ struct le_softc {
 };
 
 void		le_isa_wrcsr(struct lance_softc *, uint16_t, uint16_t);
-uint16_t	le_isa_rdcsr(struct lance_softc *, uint16_t);  
+uint16_t	le_isa_rdcsr(struct lance_softc *, uint16_t);
 int		le_isa_intredge(void *);

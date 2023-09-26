@@ -38,11 +38,11 @@
  * ES1371/AC97:	Ezra Story         <ezy@panix.com>
  */
 
-/* 
+/*
  * Ensoniq ES1370 + AK4531 and ES1371/ES1373 + AC97
  *
  * Documentation links:
- * 
+ *
  * ftp://ftp.alsa-project.org/pub/manuals/ensoniq/
  * ftp://ftp.alsa-project.org/pub/manuals/asahi_kasei/4531.pdf
  */
@@ -387,7 +387,7 @@ eap1371_src_wait(struct eap_softc *sc)
 {
 	int to;
 	u_int32_t src = 0;
-	
+
 	for (to = 0; to < EAP_READ_TIMEOUT; to++) {
 		src = EREAD4(sc, E1371_SRC);
 		if (!(src & E1371_SRC_RBUSY))
@@ -407,7 +407,7 @@ eap1371_src_write(struct eap_softc *sc, int a, int d)
 	r |= E1371_SRC_RAMWE | E1371_SRC_ADDR(a) | E1371_SRC_DATA(d);
 	EWRITE4(sc, E1371_SRC, r);
 }
-	
+
 void
 eap_attach(struct device *parent, struct device *self, void *aux)
 {
@@ -559,7 +559,7 @@ eap_attach(struct device *parent, struct device *self, void *aux)
 		sc->host_if.reset = eap1371_reset_codec;
 		sc->host_if.flags = eap_flags_codec;
 		sc->flags = AC97_HOST_DONT_READ;
-	
+
 		if (ac97_attach(&sc->host_if) == 0) {
 			/* Interrupt enable */
 			EWRITE4(sc, EAP_SIC, EAP_P2_INTR_EN | EAP_R1_INTR_EN);
@@ -638,7 +638,7 @@ int
 eap1371_attach_codec(void *sc_, struct ac97_codec_if *codec_if)
 {
 	struct eap_softc *sc = sc_;
-	
+
 	sc->codec_if = codec_if;
 	return (0);
 }
@@ -723,7 +723,7 @@ eap_intr(void *p)
 		if (EREAD1(sc, EAP_UART_STATUS) & EAP_US_TXINT) {
 			sc->sc_uctrl &= ~EAP_UC_TXINTEN;
 			EWRITE1(sc, EAP_UART_CONTROL, sc->sc_uctrl);
-			if (sc->sc_ointr) 
+			if (sc->sc_ointr)
 				sc->sc_ointr(sc->sc_arg);
 		}
 	}
@@ -792,7 +792,7 @@ void
 eap_close(void *addr)
 {
 	struct eap_softc *sc = addr;
-    
+
 	eap_halt_output(sc);
 	eap_halt_input(sc);
 
@@ -1034,7 +1034,7 @@ eap_halt_output(void *addr)
 {
 	struct eap_softc *sc = addr;
 	u_int32_t icsc;
-	
+
 	DPRINTF(("eap: eap_halt_output\n"));
 	mtx_enter(&audio_lock);
 	icsc = EREAD4(sc, EAP_ICSC);
@@ -1051,7 +1051,7 @@ eap_halt_input(void *addr)
 {
 	struct eap_softc *sc = addr;
 	u_int32_t icsc;
-    
+
 	DPRINTF(("eap: eap_halt_input\n"));
 	mtx_enter(&audio_lock);
 	icsc = EREAD4(sc, EAP_ICSC);

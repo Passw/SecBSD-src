@@ -293,7 +293,7 @@ checkfilename(char *name)
 		for (cp = name; *cp; cp++)
 			if (*cp == '\n')
 				*cp = '?';
-		message(MT_NERROR, 
+		message(MT_NERROR,
 			"Refuse to handle filename containing newline: %s",
 			name);
 		return(-1);

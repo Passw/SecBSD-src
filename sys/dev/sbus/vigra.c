@@ -491,7 +491,7 @@ vigra_loadcmap_immediate(struct vigra_softc *sc, int start, int ncolors)
 {
 	u_int32_t *colp = &sc->sc_cmap.cm_chip[start];
 	volatile u_int32_t *lutp;
-       
+
 	if (sc->sc_g300)
 		lutp = &(sc->sc_ramdac->g300.cmap[start]);
 	else

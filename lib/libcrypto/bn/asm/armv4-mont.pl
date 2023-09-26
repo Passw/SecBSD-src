@@ -16,7 +16,7 @@
 # [depending on key length, less for longer keys] on ARM920T, and
 # +115-80% on Intel IXP425. This is compared to pre-bn_mul_mont code
 # base and compiler generated code with in-lined umull and even umlal
-# instructions. The latter means that this code didn't really have an 
+# instructions. The latter means that this code didn't really have an
 # "advantage" of utilizing some "secret" instruction.
 #
 # The code is interoperable with Thumb ISA and is rather compact, less
@@ -110,7 +110,7 @@ bn_mul_mont:
 	adc	$nhi,$nhi,#0
 	str	$nlo,[$num]		@ tp[num-1]=
 	str	$nhi,[$num,#4]		@ tp[num]=
-
+
 .Louter:
 	sub	$tj,$num,sp		@ "original" $num-1 value
 	sub	$ap,$ap,$tj		@ "rewind" ap to &ap[1]
@@ -158,7 +158,7 @@ bn_mul_mont:
 
 	cmp	$tp,$tj
 	bne	.Louter
-
+
 	ldr	$rp,[$_rp]		@ pull rp
 	add	$num,$num,#4		@ $num to point at &tp[num]
 	sub	$aj,$num,sp		@ "original" num value

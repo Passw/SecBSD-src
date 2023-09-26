@@ -423,7 +423,7 @@ xge_attach(struct device *parent, struct device *self, void *aux)
 	if ((val = PIF_RCSR(XMSI_ADDRESS)) != SWAPPER_MAGIC) {
 		printf(": failed configuring endian (write), %llx != %llx!\n",
 			(unsigned long long)val, SWAPPER_MAGIC);
-	} 
+	}
 
 	/*
 	 * Fix for all "FFs" MAC address problems observed on

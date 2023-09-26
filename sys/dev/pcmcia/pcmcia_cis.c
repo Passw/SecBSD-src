@@ -703,7 +703,7 @@ pcmcia_parse_cis_tuple(struct pcmcia_tuple *tuple, void *arg)
 	case PCMCIA_CISTPL_END:
 		/*
 		 * If we've seen a LONGLINK_MFC, and this is the first
-		 * END after it, reset the function list.  
+		 * END after it, reset the function list.
 		 *
 		 * XXX This might also be the right place to start a
 		 * new function, but that assumes that a function

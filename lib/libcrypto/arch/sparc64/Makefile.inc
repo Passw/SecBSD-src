@@ -3,7 +3,7 @@
 # sparc64-specific libcrypto build rules
 
 # aes
-SRCS+= aes_core.c aes_cbc.c 
+SRCS+= aes_core.c aes_cbc.c
 CFLAGS+= -DAES_ASM
 SSLASM+= aes aes-sparcv9 aes-sparcv9
 # bf

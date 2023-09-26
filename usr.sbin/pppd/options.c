@@ -1107,7 +1107,7 @@ setpassfilter(argv)
 {
     pc.linktype = DLT_PPP;
     pc.snapshot = PPP_HDRLEN;
- 
+
     if (pcap_compile(&pc, &pass_filter, *argv, 1, netmask) == 0)
 	return 1;
     option_error("error in pass-filter expression: %s\n", pcap_geterr(&pc));
@@ -1123,7 +1123,7 @@ setactivefilter(argv)
 {
     pc.linktype = DLT_PPP;
     pc.snapshot = PPP_HDRLEN;
- 
+
     if (pcap_compile(&pc, &active_filter, *argv, 1, netmask) == 0)
 	return 1;
     option_error("error in active-filter expression: %s\n", pcap_geterr(&pc));
@@ -1426,7 +1426,7 @@ setdisconnector(argv)
 	novm("disconnect script");
     disconnector_info.priv = privileged_option;
     disconnector_info.source = option_source;
-  
+
     return (1);
 }
 
@@ -1470,7 +1470,7 @@ setmaxconnect(argv)
 }
 
 /*
- * setdomain - Set domain name to append to hostname 
+ * setdomain - Set domain name to append to hostname
  */
 static int
 setdomain(argv)
@@ -1592,7 +1592,7 @@ setdevname(cp, quiet)
     default_device = FALSE;
     devnam_info.priv = privileged_option;
     devnam_info.source = option_source;
-  
+
     return 1;
 }
 
@@ -1609,13 +1609,13 @@ setipaddr(arg)
     struct in_addr ina;
     u_int32_t local, remote;
     ipcp_options *wo = &ipcp_wantoptions[0];
-  
+
     /*
      * IP address pair separated by ":".
      */
     if ((colon = strchr(arg, ':')) == NULL)
 	return 0;
-  
+
     /*
      * If colon first character, then no local addr.
      */
@@ -1640,7 +1640,7 @@ setipaddr(arg)
 	    wo->ouraddr = local;
 	*colon = ':';
     }
-  
+
     /*
      * If colon last character, then no remote addr.
      */

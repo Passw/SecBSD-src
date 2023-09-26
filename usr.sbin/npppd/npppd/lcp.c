@@ -214,7 +214,7 @@ lcp_open(fsm *f)
 			    "failed to negotiate a auth protocol.");
 			fsm_close(f, "Authentication is required");
 			ppp_set_disconnect_cause(f->ppp,
-			    PPP_DISCON_AUTH_PROTOCOL_UNACCEPTABLE, 
+			    PPP_DISCON_AUTH_PROTOCOL_UNACCEPTABLE,
 			    _this->auth_order[0] /* first one */,
 			    1 /* peer refused */, NULL);
 			ppp_stop(f->ppp, "Authentication is required");
@@ -746,7 +746,7 @@ lcp_nakci(fsm *f, u_char *inp, int inlen)
 				    "auth proto=%s",
 				    peer_auth);
 				ppp_set_disconnect_cause(f->ppp,
-				    PPP_DISCON_AUTH_PROTOCOL_UNACCEPTABLE, 
+				    PPP_DISCON_AUTH_PROTOCOL_UNACCEPTABLE,
 				    authproto, 2 /* couldn't accept peer's */,
 				    NULL);
 				ppp_stop(f->ppp, "Authentication is required");

@@ -1,31 +1,31 @@
 /*******************************************************************************
 
-  Copyright (c) 2001-2005, Intel Corporation 
+  Copyright (c) 2001-2005, Intel Corporation
   All rights reserved.
-  
-  Redistribution and use in source and binary forms, with or without 
+
+  Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
-  
-   1. Redistributions of source code must retain the above copyright notice, 
+
+   1. Redistributions of source code must retain the above copyright notice,
       this list of conditions and the following disclaimer.
-  
-   2. Redistributions in binary form must reproduce the above copyright 
-      notice, this list of conditions and the following disclaimer in the 
+
+   2. Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-  
-   3. Neither the name of the Intel Corporation nor the names of its 
-      contributors may be used to endorse or promote products derived from 
+
+   3. Neither the name of the Intel Corporation nor the names of its
+      contributors may be used to endorse or promote products derived from
       this software without specific prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 
@@ -2326,10 +2326,10 @@ struct em_host_command_info {
 
 #define E1000_MDALIGN          4096
 
-#define E1000_MDICNFG_EXT_MDIO    0x80000000      /* MDI ext/int destination */ 
-#define E1000_MDICNFG_COM_MDIO    0x40000000      /* MDI shared w/ lan 0 */ 
-#define E1000_MDICNFG_PHY_MASK    0x03E00000 
-#define E1000_MDICNFG_PHY_SHIFT   21   
+#define E1000_MDICNFG_EXT_MDIO    0x80000000      /* MDI ext/int destination */
+#define E1000_MDICNFG_COM_MDIO    0x40000000      /* MDI shared w/ lan 0 */
+#define E1000_MDICNFG_PHY_MASK    0x03E00000
+#define E1000_MDICNFG_PHY_SHIFT   21
 
 /* I350 EEE defines */
 #define E1000_IPCNFG_EEE_1G_AN    0x00000008 /* IPCNFG EEE Ena 1G AN */
@@ -3658,7 +3658,7 @@ union ich8_hws_flash_regacc {
 #define PCI_ST_SMIA_OFFSET 0x04
 
 #define E1000_IMC1     0x008D8  /* Interrupt Mask Clear 1 - RW */
-#define E1000_IMC2     0x008F8  /* Interrupt Mask Clear 2 - RW */ 
+#define E1000_IMC2     0x008F8  /* Interrupt Mask Clear 2 - RW */
 #define E1000_82542_IMC1     E1000_IMC1
 #define E1000_82542_IMC2     E1000_IMC2
 

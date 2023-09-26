@@ -966,7 +966,7 @@ tht_up(struct tht_softc *sc)
 
 	ifp->if_flags |= IFF_RUNNING;
 	ifq_clr_oactive(&ifp->if_snd);
-	
+
 	/* enable interrupts */
 	sc->sc_imr = THT_IMR_UP(sc->sc_port);
 	tht_write(sc, THT_REG_IMR, sc->sc_imr);

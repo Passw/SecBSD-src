@@ -170,7 +170,7 @@ uark_attach(struct device *parent, struct device *self, void *aux)
 	uca.methods = &uark_methods;
 	uca.arg = sc;
 	uca.info = NULL;
-	
+
 	sc->sc_subdev = config_found_sm(self, &uca, ucomprint, ucomsubmatch);
 }
 
@@ -280,7 +280,7 @@ void
 uark_get_status(void *vsc, int portno, u_char *lsr, u_char *msr)
 {
 	struct uark_softc *sc = vsc;
-	
+
 	if (msr != NULL)
 		*msr = sc->sc_msr;
 	if (lsr != NULL)

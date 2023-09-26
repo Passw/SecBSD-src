@@ -1074,7 +1074,7 @@ sbdsp_trigger_input(void *addr, void *start, void *end, int blksize,
 #ifdef DIAGNOSTIC
 		if (sc->sc_i.dmachan != sc->sc_drq8) {
 			printf("sbdsp_trigger_input: width=%d bad chan %d\n",
-			    width, sc->sc_i.dmachan);			
+			    width, sc->sc_i.dmachan);
 			return (EIO);
 		}
 #endif
@@ -1332,7 +1332,7 @@ sbdsp_intr(void *arg)
 	mtx_enter(&audio_lock);
 	DPRINTFN(2, ("sbdsp_intr: intr8=%p, intr16=%p\n",
 		   sc->sc_intr8, sc->sc_intr16));
-	if (ISSB16CLASS(sc)) {		
+	if (ISSB16CLASS(sc)) {
 		bus_space_write_1(sc->sc_iot, sc->sc_ioh,
 		    SBP_MIXER_ADDR, SBP_IRQ_STATUS);
 		delay(20);

@@ -4865,7 +4865,7 @@ ulBootUpEngineClock:              VBIOS bootup Engine clock frequency, in 10kHz 
 ulDentistVCOFreq:                 Dentist VCO clock in 10kHz unit.
 ulBootUpUMAClock:                 System memory boot up clock frequency in 10Khz unit.
 sDISPCLK_Voltage:                 Report Display clock voltage requirement.
- 
+
 ulBootUpReqDisplayVector:         VBIOS boot up display IDs, following are supported devices in Liano/Ontaio projects:
                                   ATOM_DEVICE_CRT1_SUPPORT                  0x0001
                                   ATOM_DEVICE_CRT2_SUPPORT                  0x0010

@@ -238,7 +238,7 @@ main(int argc, char *argv[])
 		int longformat = 0, stringformat = 0, error = 0, n;
 		uint32_t mask = ~0;
 		char format[10], buf[1024];
-		
+
 		n = strlen(dformat);
 		if (n == 0)
 			errx(1, "illegal format");

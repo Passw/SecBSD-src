@@ -59,7 +59,7 @@
  *
  * where <card type> is one of the following card defines.
  */
- 
+
 #define CARD_UNKNOWN		0
 #define CARD_MIRO		1
 #define CARD_HAUPPAUGE		2

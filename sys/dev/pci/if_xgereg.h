@@ -166,9 +166,9 @@
 #define	TX_FIFO_P3		TDMAB(0x0120)
 #define	 TX_FIFO_ENABLE		(1ULL<<63)
 #define	 TX_FIFO_NUM0(x)	((uint64_t)(x) << 56)
-#define	 TX_FIFO_LEN0(x)	((uint64_t)((x)-1) << 32)	
+#define	 TX_FIFO_LEN0(x)	((uint64_t)((x)-1) << 32)
 #define	 TX_FIFO_NUM1(x)	((uint64_t)(x) << 24)
-#define	 TX_FIFO_LEN1(x)	((uint64_t)((x)-1) << 0)	
+#define	 TX_FIFO_LEN1(x)	((uint64_t)((x)-1) << 0)
 
 /* Transmit interrupts */
 #define	TTI_COMMAND_MEM		TDMAB(0x150)
@@ -298,7 +298,7 @@ struct txd {
 struct rxd1 {
 	uint64_t rxd_hcontrol;
 	uint64_t rxd_control1;
-	uint64_t rxd_control2;  
+	uint64_t rxd_control2;
 	uint64_t rxd_buf0;
 };
 
@@ -315,8 +315,8 @@ struct rxd3 {
 	uint64_t rxd_control1;
 	uint64_t rxd_control2;
 	uint64_t rxd_buf0;
-	uint64_t rxd_buf1;      
-	uint64_t rxd_buf2;      
+	uint64_t rxd_buf1;
+	uint64_t rxd_buf2;
 };
 
 struct rxd5 {

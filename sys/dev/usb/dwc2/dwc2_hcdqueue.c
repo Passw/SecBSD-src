@@ -2132,7 +2132,7 @@ dwc2_usb_calc_bus_time(int speed, int is_input, int isoc, int bytecount)
 			    tmp;
 		}
 	case USB_SPEED_FULL:	/* ISOC or INTR */
-		if (isoc) { 
+		if (isoc) {
 			tmp = (8354L * (31L + 10L * BitTime (bytecount))) /
 			    1000L;
 			return ((is_input) ? 7268L : 6265L) + BW_HOST_DELAY +

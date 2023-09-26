@@ -102,7 +102,7 @@ initiator_shutdown(struct initiator *i)
 	log_debug("initiator_shutdown: going down");
 
 	TAILQ_FOREACH(s, &initiator->sessions, entry)
-		session_shutdown(s);	
+		session_shutdown(s);
 }
 
 int
@@ -287,7 +287,7 @@ initiator_login_kvp(struct connection *c, u_int8_t stage)
 	default:
 		log_warnx("initiator_login_kvp: exit stage left");
 		return NULL;
-	} 
+	}
 	return kvp;
 }
 

@@ -165,7 +165,7 @@ cy_pci_attach(struct device *parent, struct device *self, void *aux)
 	default:
 		bus_space_write_2(psc->sc_iot, psc->sc_ioh, CY_PCI_INTENA,
 		    bus_space_read_2(psc->sc_iot, psc->sc_ioh,
-		    CY_PCI_INTENA) | CY_PLX_9060_ICS_IENABLE | 
+		    CY_PCI_INTENA) | CY_PLX_9060_ICS_IENABLE |
 		    CY_PLX_9060_ICS_LOCAL_IENABLE);
 	}
 }

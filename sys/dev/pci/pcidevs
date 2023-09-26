@@ -5738,7 +5738,7 @@ product INTEL EHL_PSE_LH2OSE	0x4bb3	Elkhart Lake LH2OSE
 product INTEL EHL_PSE_DMA_0	0x4bb4	Elkhart Lake DMA
 product INTEL EHL_PSE_DMA_1	0x4bb5	Elkhart Lake DMA
 product INTEL EHL_PSE_DMA_2	0x4bb6	Elkhart Lake DMA
-product INTEL EHL_PSE_PWM	0x4bb7	Elkhart Lake PWM 
+product INTEL EHL_PSE_PWM	0x4bb7	Elkhart Lake PWM
 product INTEL EHL_PSE_I2C_0	0x4bb9	Elkhart Lake I2C
 product INTEL EHL_PSE_I2C_1	0x4bba	Elkhart Lake I2C
 product INTEL EHL_PSE_I2C_2	0x4bbb	Elkhart Lake I2C
@@ -6964,7 +6964,7 @@ product INTEL RPL_HX_HB_4	0xa728	Core 13G Host
 product INTEL RPL_HX_HB_5	0xa729	Core 13G Host
 product INTEL RPL_HX_HB_6	0xa72a	Core 13G Host
 product INTEL RPL_PCIE_2	0xa72d	Core 13G PCIE
-product INTEL RPL_TBT_PCIE2	0xa72f	Core 13G PCIE	
+product INTEL RPL_TBT_PCIE2	0xa72f	Core 13G PCIE
 product INTEL RPL_TBT_DMA0	0xa73e	Core 13G TBT
 product INTEL RPL_TBT_PCIE1	0xa73f	Core 13G PCIE
 product INTEL RPL_PCIE_3	0xa74d	Core 13G PCIE

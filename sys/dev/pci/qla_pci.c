@@ -167,7 +167,7 @@ qla_pci_attach(struct device *parent, struct device *self, void *aux)
 		sc->sc_isp_gen = QLA_GEN_ISP2200;
 		sc->sc_isp_type = QLA_ISP2200;
 		break;
-		
+
 	case PCI_PRODUCT_QLOGIC_ISP2300:
 		sc->sc_isp_type = QLA_ISP2300;
 		sc->sc_isp_gen = QLA_GEN_ISP23XX;

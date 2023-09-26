@@ -578,7 +578,7 @@ id-cmc 19		: id-cmc-responseInfo
 id-cmc 21		: id-cmc-queryPending
 id-cmc 22		: id-cmc-popLinkRandom
 id-cmc 23		: id-cmc-popLinkWitness
-id-cmc 24		: id-cmc-confirmCertAcceptance 
+id-cmc 24		: id-cmc-confirmCertAcceptance
 
 # other names
 id-on 1			: id-on-personalData
@@ -1309,7 +1309,7 @@ cryptocom 1 8 1		: id-GostR3410-2001-ParamSet-cc : GOST R 3410-2001 Parameter Se
 # Definitions for Camellia cipher - ECB, CFB, OFB MODE
 
 !Alias ntt-ds 0 3 4401 5
-!Alias camellia ntt-ds 3 1 9 
+!Alias camellia ntt-ds 3 1 9
 
 camellia 1		: CAMELLIA-128-ECB		: camellia-128-ecb
 !Cname camellia-128-ofb128

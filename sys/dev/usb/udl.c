@@ -1372,7 +1372,7 @@ udl_set_enc_key(struct udl_softc *sc, uint8_t *buf, uint8_t len)
 		printf("%s: %s: %s!\n", DN(sc), FUNC, usbd_errstr(error));
 		return (error);
 	}
-	
+
 	return (USBD_NORMAL_COMPLETION);
 }
 
@@ -2036,7 +2036,7 @@ udl_select_mode(struct udl_softc *sc)
 		    (sc->sc_edid_info.edid_preferred_mode->dot_clock * 1000) /
 		    (sc->sc_edid_info.edid_preferred_mode->htotal *
 		     sc->sc_edid_info.edid_preferred_mode->vtotal);
-		mode.clock = 
+		mode.clock =
 		    sc->sc_edid_info.edid_preferred_mode->dot_clock / 10;
 		mode.hdisplay =
 		    sc->sc_edid_info.edid_preferred_mode->hdisplay;
@@ -2059,7 +2059,7 @@ udl_select_mode(struct udl_softc *sc)
 			    (sc->sc_edid_info.edid_modes[i].dot_clock * 1000) /
 			    (sc->sc_edid_info.edid_modes[i].htotal *
 			     sc->sc_edid_info.edid_modes[i].vtotal);
-			mode.clock = 
+			mode.clock =
 			    sc->sc_edid_info.edid_modes[i].dot_clock / 10;
 			mode.hdisplay =
 			    sc->sc_edid_info.edid_modes[i].hdisplay;
@@ -2145,7 +2145,7 @@ udl_fb_line_write(struct udl_softc *sc, uint16_t rgb16, uint32_t x,
 	off = (y * sc->sc_width) + x;
 
 	while (width) {
-		if (width > UDL_CMD_MAX_PIXEL_COUNT)	
+		if (width > UDL_CMD_MAX_PIXEL_COUNT)
 			block = UDL_CMD_MAX_PIXEL_COUNT;
 		else
 			block = width;
@@ -2334,7 +2334,7 @@ udl_fb_line_write_comp(struct udl_softc *sc, uint16_t rgb16, uint32_t x,
 	off = (y * sc->sc_width) + x;
 
 	while (width) {
-		if (width > UDL_CMD_MAX_PIXEL_COUNT)	
+		if (width > UDL_CMD_MAX_PIXEL_COUNT)
 			block = UDL_CMD_MAX_PIXEL_COUNT;
 		else
 			block = width;

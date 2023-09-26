@@ -24,17 +24,17 @@
 #ifndef SMU_13_0_1_PPSMC_H
 #define SMU_13_0_1_PPSMC_H
 
-/** @def PPS_PMFW_IF_VER 
+/** @def PPS_PMFW_IF_VER
 * PPS (PPLib) to PMFW IF version 1.0
 */
-#define PPS_PMFW_IF_VER "1.0" ///< Major.Minor 
+#define PPS_PMFW_IF_VER "1.0" ///< Major.Minor
 
-/** @defgroup ResponseCodes PMFW Response Codes: 
+/** @defgroup ResponseCodes PMFW Response Codes:
 *  @{
 */
-#define PPSMC_Result_OK                    0x1  ///< Message Response OK 
-#define PPSMC_Result_Failed                0xFF ///< Message Response Failed 
-#define PPSMC_Result_UnknownCmd            0xFE ///< Message Response Unknown Command 
+#define PPSMC_Result_OK                    0x1  ///< Message Response OK
+#define PPSMC_Result_Failed                0xFF ///< Message Response Failed
+#define PPSMC_Result_UnknownCmd            0xFE ///< Message Response Unknown Command
 #define PPSMC_Result_CmdRejectedPrereq     0xFD ///< Message Response Command Failed Prerequisite
 #define PPSMC_Result_CmdRejectedBusy       0xFC ///< Message Response Command Rejected due to PMFW is busy. Sender should retry sending this message
 /** @}*/
@@ -42,7 +42,7 @@
 /** @defgroup definitions Message definitions
 *  @{
 */
-#define PPSMC_MSG_TestMessage                   0x01 ///< To check if PMFW is alive and responding. Requirement specified by PMFW team 
+#define PPSMC_MSG_TestMessage                   0x01 ///< To check if PMFW is alive and responding. Requirement specified by PMFW team
 #define PPSMC_MSG_GetSmuVersion                 0x02 ///< Get PMFW version
 #define PPSMC_MSG_GetDriverIfVersion            0x03 ///< Get PMFW_DRIVER_IF version
 #define PPSMC_MSG_EnableGfxOff                  0x04 ///< Enable GFXOFF
@@ -55,7 +55,7 @@
 #define PPSMC_MSG_ForcePowerDownGfx             0x0B ///< Force power down GFX, i.e. enter GFXOFF
 #define PPSMC_MSG_PrepareMp1ForUnload           0x0C ///< Prepare PMFW for GFX driver unload
 #define PPSMC_MSG_SetDriverDramAddrHigh         0x0D ///< Set high 32 bits of DRAM address for Driver table transfer
-#define PPSMC_MSG_SetDriverDramAddrLow          0x0E ///< Set low 32 bits of DRAM address for Driver table transfer 
+#define PPSMC_MSG_SetDriverDramAddrLow          0x0E ///< Set low 32 bits of DRAM address for Driver table transfer
 #define PPSMC_MSG_TransferTableSmu2Dram         0x0F ///< Transfer driver interface table from PMFW SRAM to DRAM
 #define PPSMC_MSG_TransferTableDram2Smu         0x10 ///< Transfer driver interface table from DRAM to PMFW SRAM
 #define PPSMC_MSG_GfxDeviceDriverReset          0x11 ///< Request GFX mode 2 reset
@@ -84,14 +84,14 @@
 #define PPSMC_MSG_QueryActiveWgp                0x28 ///< Query the anumber of active WGP number
 #define PPSMC_Message_Count                     0x29 ///< Total number of PPS messages
 /** @}*/
- 
-/** @enum Mode_Reset_e 
-* Mode reset type, argument for PPSMC_MSG_GfxDeviceDriverReset 
-*/ 
+
+/** @enum Mode_Reset_e
+* Mode reset type, argument for PPSMC_MSG_GfxDeviceDriverReset
+*/
 typedef enum {
   MODE1_RESET = 1,  ///< Mode reset type 1
   MODE2_RESET = 2   ///< Mode reset type 2
-} Mode_Reset_e;    
+} Mode_Reset_e;
 /** @}*/
 
 #endif

@@ -148,7 +148,7 @@ void udb_radix_tree_delete(udb_base* udb, udb_ptr* rt)
 	udb_ptr_free_space(rt, udb, sizeof(struct udb_radtree_d));
 }
 
-/** 
+/**
  * Find a prefix of the key, in whole-nodes.
  * Finds the longest prefix that corresponds to a whole radnode entry.
  * There may be a slightly longer prefix in one of the array elements.
@@ -407,7 +407,7 @@ static int udb_radnode_str_space(udb_base* udb, udb_ptr* n,
 
 /** copy remainder from prefixes for a split:
  * plen: len prefix, l: longer bstring, llen: length of l. */
-static void udb_radsel_prefix_remainder(udb_radstrlen_type plen, 
+static void udb_radsel_prefix_remainder(udb_radstrlen_type plen,
 	uint8_t* l, udb_radstrlen_type llen,
 	uint8_t* s, udb_radstrlen_type* slen)
 {
@@ -554,7 +554,7 @@ static int udb_radsel_split(udb_base* udb, udb_ptr* n, uint8_t idx, uint8_t* k,
 		}
 		udb_ptr_unlink(&rnode, udb);
 	} else {
-		/* okay we need to create a new node that chooses between 
+		/* okay we need to create a new node that chooses between
 		 * the nodes 'add' and r.node
 		 * We do this so that r.node stays the same pointer for its
 		 * key name. */
@@ -756,7 +756,7 @@ udb_void udb_radix_insert(udb_base* udb, udb_ptr* rt, uint8_t* k,
 			/* use bucket but it has a shared prefix,
 			 * split that out and create a new intermediate
 			 * node to split out between the two.
-			 * One of the two might exactmatch the new 
+			 * One of the two might exactmatch the new
 			 * intermediate node */
 			if(!udb_radsel_split(udb, &n, byte-RADNODE(&n)->offset,
 				k, pos+1, len, &add)) {
@@ -988,8 +988,8 @@ udb_radnode_cleanup_leaf(udb_base* udb, udb_ptr* n, udb_ptr* par)
 	return 1;
 }
 
-/** 
- * Cleanup a radix node that was made smaller, see if it can 
+/**
+ * Cleanup a radix node that was made smaller, see if it can
  * be merged with others.
  * @param udb: the udb
  * @param rt: tree to remove root if needed.

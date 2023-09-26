@@ -99,7 +99,7 @@ cgsixmatch(struct device *parent, void *vcf, void *aux)
 	return (strcmp(cf->cf_driver->cd_name, sa->sa_name) == 0);
 }
 
-void    
+void
 cgsixattach(struct device *parent, struct device *self, void *aux)
 {
 	struct cgsix_softc *sc = (struct cgsix_softc *)self;

@@ -34,7 +34,7 @@ struct acl_options;
 struct xfrd_state;
 
 /** number of concurrent notify packets in flight */
-#define NOTIFY_CONCURRENT_MAX 16 
+#define NOTIFY_CONCURRENT_MAX 16
 
 /** notify packet info */
 struct notify_pkt {

@@ -98,7 +98,7 @@ struct utvfu_frame_buf {
 	uint		off;
 	uint		size;
 	uint16_t	chunks_done;
-	uint8_t		fid; 
+	uint8_t		fid;
 	uint8_t		last_odd;
 	uint8_t		*buf;
 };

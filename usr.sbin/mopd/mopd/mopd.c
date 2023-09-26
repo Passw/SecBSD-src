@@ -45,7 +45,7 @@
 #include "pwd.h"
 
 /*
- * The list of all interfaces that are being listened to. 
+ * The list of all interfaces that are being listened to.
  * "selects" on the descriptors in this list.
  */
 struct if_info	*iflist;
@@ -181,7 +181,7 @@ mopProcess(struct if_info *ii, u_char *pkt)
 	/*
 	 * Ignore our own transmissions
 	 *
-	 */	
+	 */
 	if (mopCmpEAddr(ii->eaddr,src) == 0)
 		return;
 

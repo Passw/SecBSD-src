@@ -32,7 +32,7 @@
 
 /*
  * iPAQ driver
- * 
+ *
  * 19 July 2003:	Incorporated changes suggested by Sam Lawrance from
  * 			the uppc module
  *

@@ -126,7 +126,7 @@ pdu_to_text(char *buf, size_t len)
 	return k;
 }
 
-/* Modified version of strtonum() to fit iscsid's need 
+/* Modified version of strtonum() to fit iscsid's need
  *
  * Copyright (c) 2004 Ted Unangst and Todd Miller
  * All rights reserved.
@@ -198,7 +198,7 @@ text_to_bool(const char *buf, const char **errstrp)
 		errno = 0;
 	} else if (!strcmp(buf, "No"))
 		errno = 0;
-	else 
+	else
 		errno = EINVAL;
 
 	if (errstrp != NULL) {

@@ -500,7 +500,7 @@ pci_probe_device(struct pci_softc *sc, pcitag_t tag,
 			} else
 				addr = PCI_HT_MSI_FIXED_ADDR;
 
-			/* 
+			/*
 			 * XXX This will fail to enable MSI on systems
 			 * that don't use the canonical address.
 			 */
@@ -907,7 +907,7 @@ pci_reserve_resources(struct pci_attach_args *pa)
 	default:
 		return (0);
 	}
-    
+
 	for (reg = reg_start; reg < reg_end; reg += 4) {
 		if (!pci_mapreg_probe(pc, tag, reg, &type))
 			continue;
@@ -1186,7 +1186,7 @@ pci_disable_legacy_vga(struct device *dev)
 /*
  * This is the user interface to PCI configuration space.
  */
-  
+
 #include <sys/pciio.h>
 #include <sys/fcntl.h>
 
@@ -1206,7 +1206,7 @@ int pciclose(dev_t dev, int flag, int devtype, struct proc *p);
 int pciioctl(dev_t dev, u_long cmd, caddr_t data, int flag, struct proc *p);
 
 int
-pciopen(dev_t dev, int oflags, int devtype, struct proc *p) 
+pciopen(dev_t dev, int oflags, int devtype, struct proc *p)
 {
 	PCIDEBUG(("pciopen ndevs: %d\n" , pci_cd.cd_ndevs));
 
@@ -1278,7 +1278,7 @@ pciioctl(dev_t dev, u_long cmd, caddr_t data, int flag, struct proc *p)
 		return ENXIO;
 
 	/* Check bounds */
-	if (pci->sc_bus >= 256 || 
+	if (pci->sc_bus >= 256 ||
 	    sel->pc_dev >= pci_bus_maxdevs(pci->sc_pc, pci->sc_bus) ||
 	    sel->pc_func >= 8)
 		return EINVAL;
@@ -1308,7 +1308,7 @@ pciioctl(dev_t dev, u_long cmd, caddr_t data, int flag, struct proc *p)
 			    io->pi_reg >= pci_conf_size(pc, tag))
 				return EINVAL;
 			/* Make sure the register is properly aligned */
-			if (io->pi_reg & 0x3) 
+			if (io->pi_reg & 0x3)
 				return EINVAL;
 			io->pi_data = pci_conf_read(pc, tag, io->pi_reg);
 			error = 0;
@@ -1676,7 +1676,7 @@ pci_suspend_msix(pci_chipset_tag_t pc, pcitag_t tag,
 	}
 
 	pci_msix_table_unmap(pc, tag, memt, memh);
-	
+
 	*mc = reg;
 }
 

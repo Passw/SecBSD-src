@@ -578,7 +578,7 @@ ee16_probe(struct ie_softc *sc, struct isa_attach_args *ia)
 		}
 
 	if (board_id != IEE16_ID)
-		return 0;		
+		return 0;
 
 	/* need sc->sc_iobase for ee16_read_eeprom */
 	sc->sc_iobase = ia->ia_iobase;
@@ -588,10 +588,10 @@ ee16_probe(struct ie_softc *sc, struct isa_attach_args *ia)
 	 * If ia->maddr == MADDRUNK, use value in eeprom location 6.
 	 *
 	 * The shared RAM location on the EE16 is encoded into bits
-	 * 3-7 of EEPROM location 6.  We zero the upper byte, and 
+	 * 3-7 of EEPROM location 6.  We zero the upper byte, and
 	 * shift the 5 bits right 3.  The resulting number tells us
 	 * the RAM location.  Because the EE16 supports either 16k or 32k
-	 * of shared RAM, we only worry about the 32k locations. 
+	 * of shared RAM, we only worry about the 32k locations.
 	 *
 	 * NOTE: if a 64k EE16 exists, it should be added to this switch.
 	 *       then the ia->ia_msize would need to be set per case statement.
@@ -603,7 +603,7 @@ ee16_probe(struct ie_softc *sc, struct isa_attach_args *ia)
 	 *	0x0C	0x8000	0xD4000
 	 *	0x18	0x8000	0xD8000
 	 *
-	 */ 
+	 */
 
 	if ((ia->ia_maddr == MADDRUNK) || (ia->ia_msize == 0)) {
 		i = (ee16_read_eeprom(sc, 6) & 0x00ff ) >> 3;
@@ -624,27 +624,27 @@ ee16_probe(struct ie_softc *sc, struct isa_attach_args *ia)
 				return 0 ;
 				break; /* NOTREACHED */
 		}
-		ia->ia_msize = 0x8000; 
+		ia->ia_msize = 0x8000;
 	}
 
 	/* need to set these after checking for MADDRUNK */
 	sc->sc_maddr = ISA_HOLE_VADDR(ia->ia_maddr);
-	sc->sc_msize = ia->ia_msize; 
+	sc->sc_msize = ia->ia_msize;
 
 	/* need to put the 586 in RESET, and leave it */
-	outb( PORT + IEE16_ECTRL, IEE16_RESET_586);  
+	outb( PORT + IEE16_ECTRL, IEE16_RESET_586);
 
 	/* read the eeprom and checksum it, should == IEE16_ID */
 	for(i=0 ; i< 0x40 ; i++)
 		checksum += ee16_read_eeprom(sc, i);
 
 	if (checksum != IEE16_ID)
-		return 0;	
+		return 0;
 
 	/*
 	 * Size and test the memory on the board.  The size of the memory
 	 * can be one of 16k, 32k, 48k or 64k.  It can be located in the
-	 * address range 0xC0000 to 0xEFFFF on 16k boundaries. 
+	 * address range 0xC0000 to 0xEFFFF on 16k boundaries.
 	 *
 	 * If the size does not match the passed in memory allocation size
 	 * issue a warning, but continue with the minimum of the two sizes.
@@ -1924,7 +1924,7 @@ ieinit(struct ie_softc *sc)
 		bart_config &= ~IEE16_BART_LOOPBACK;
 		bart_config |= IEE16_BART_MCS16_TEST; /* inb doesn't get bit! */
 		outb(PORT + IEE16_CONFIG, bart_config);
-		ee16_interrupt_enable(sc); 
+		ee16_interrupt_enable(sc);
 		ee16_chan_attn(sc);
 		}
 	}

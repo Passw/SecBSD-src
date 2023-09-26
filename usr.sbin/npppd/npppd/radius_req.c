@@ -292,7 +292,7 @@ radius_prepare(radius_req_setting *setting, void *context,
 	if (pctx != NULL)
 		*pctx = lap;
 
-	radius_req_setting_ref(setting);	
+	radius_req_setting_ref(setting);
 
 	return 0;
 fail:

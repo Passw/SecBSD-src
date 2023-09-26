@@ -199,7 +199,7 @@ netio_dispatch(netio_type *netio, const struct timespec *timeout, const sigset_t
 #endif /* HAVE_PPOLL */
 	if (rc == -1) {
 		if(errno == EINVAL || errno == EACCES || errno == EBADF) {
-			log_msg(LOG_ERR, "fatal error poll: %s.", 
+			log_msg(LOG_ERR, "fatal error poll: %s.",
 				strerror(errno));
 			exit(1);
 		}

@@ -173,13 +173,13 @@ char *states[TSTATE_STATES+1] = {
 #endif
 
 /* USB device probe/attach/detach functions */
-int umass_match(struct device *, void *, void *); 
-void umass_attach(struct device *, struct device *, void *); 
-int umass_detach(struct device *, int); 
+int umass_match(struct device *, void *, void *);
+void umass_attach(struct device *, struct device *, void *);
+int umass_detach(struct device *, int);
 
-struct cfdriver umass_cd = { 
-	NULL, "umass", DV_DULL 
-}; 
+struct cfdriver umass_cd = {
+	NULL, "umass", DV_DULL
+};
 
 const struct cfattach umass_ca = {
 	sizeof(struct umass_softc), umass_match, umass_attach, umass_detach
@@ -842,7 +842,7 @@ umass_adjust_transfer(struct umass_softc *sc)
 		}
 		break;
 	case UMASS_CPROTO_ATAPI:
-		sc->cbw.bCDBLength = UFI_COMMAND_LENGTH; 
+		sc->cbw.bCDBLength = UFI_COMMAND_LENGTH;
 		break;
 	}
 }

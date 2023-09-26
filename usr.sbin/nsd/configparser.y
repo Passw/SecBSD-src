@@ -993,7 +993,7 @@ pattern_or_zone_option:
     {
       cfg_parser->pattern->min_retry_time = $2;
       cfg_parser->pattern->min_retry_time_is_default = 0;
-    } 
+    }
   | VAR_MIN_EXPIRE_TIME STRING
     {
       long long num;

@@ -119,7 +119,7 @@ pcic_isa_bus_width_probe(struct pcic_softc *sc, bus_space_tag_t iot,
 	 * range-- apparently missing a bit or more of address lines.
 	 * (e.g. CIRRUS_PD672X with Linksys EthernetCard ne2000 clone
 	 * in TI TravelMate 5000 -- not clear which is at fault)
-	 * 
+	 *
 	 * Add a kludge to detect 10 bit wide buses and deal with them,
 	 * and also a config file option to override the probe.
 	 */
@@ -206,7 +206,7 @@ pcic_isa_chip_intr_establish(pcmcia_chipset_handle_t pch,
 	    h->pcmcia->dv_xname);
 }
 
-void 
+void
 pcic_isa_chip_intr_disestablish(pcmcia_chipset_handle_t pch, void *ih)
 {
 	struct pcic_handle *h = (struct pcic_handle *) pch;

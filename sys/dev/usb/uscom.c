@@ -140,7 +140,7 @@ uscom_attach(struct device *parent, struct device *self, void *aux)
 	uca.methods = &uscom_methods;
 	uca.arg = sc;
 	uca.info = NULL;
-	
+
 	sc->sc_subdev = config_found_sm(self, &uca, ucomprint, ucomsubmatch);
 }
 

@@ -827,7 +827,7 @@ static const char * const wpi_fw_errmsg[] = {
 
 #define WPI_SETBITS(sc, reg, mask)					\
 	WPI_WRITE(sc, reg, WPI_READ(sc, reg) | (mask))
- 
+
 #define WPI_CLRBITS(sc, reg, mask)					\
 	WPI_WRITE(sc, reg, WPI_READ(sc, reg) & ~(mask))
 

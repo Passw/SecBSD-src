@@ -63,7 +63,7 @@ igc_write_vfta_generic(struct igc_hw *hw, uint32_t offset, uint32_t value)
  *  register to the devices MAC address and clearing all the other receive
  *  address registers to 0.
  **/
-void 
+void
 igc_init_rx_addrs_generic(struct igc_hw *hw, uint16_t rar_count)
 {
 	uint32_t i;

@@ -123,21 +123,21 @@ const struct midi_hw_if umidi_hw_if = {
 	0,		/* ioctl */
 };
 
-int umidi_match(struct device *, void *, void *); 
-void umidi_attach(struct device *, struct device *, void *); 
-int umidi_detach(struct device *, int); 
-int umidi_activate(struct device *, int); 
+int umidi_match(struct device *, void *, void *);
+void umidi_attach(struct device *, struct device *, void *);
+int umidi_detach(struct device *, int);
+int umidi_activate(struct device *, int);
 
-struct cfdriver umidi_cd = { 
-	NULL, "umidi", DV_DULL 
-}; 
+struct cfdriver umidi_cd = {
+	NULL, "umidi", DV_DULL
+};
 
-const struct cfattach umidi_ca = { 
-	sizeof(struct umidi_softc), 
-	umidi_match, 
-	umidi_attach, 
-	umidi_detach, 
-	umidi_activate, 
+const struct cfattach umidi_ca = {
+	sizeof(struct umidi_softc),
+	umidi_match,
+	umidi_attach,
+	umidi_detach,
+	umidi_activate,
 };
 
 int
@@ -868,7 +868,7 @@ open_out_jack(struct umidi_jack *jack, void *arg, void (*intr)(void *))
 	init_packet(&jack->packet);
 	jack->opened = 1;
 	jack->endpoint->num_open++;
-	
+
 	return USBD_NORMAL_COMPLETION;
 }
 
@@ -881,8 +881,8 @@ open_in_jack(struct umidi_jack *jack, void *arg, void (*intr)(void *, int))
 	jack->arg = arg;
 	jack->u.in.intr = intr;
 	jack->opened = 1;
-	jack->endpoint->num_open++;	
-	
+	jack->endpoint->num_open++;
+
 	return USBD_NORMAL_COMPLETION;
 }
 
@@ -1088,7 +1088,7 @@ start_input_transfer(struct umidi_endpoint *ep)
 			USBD_SHORT_XFER_OK | USBD_NO_COPY, USBD_NO_TIMEOUT, in_intr);
 	err = usbd_transfer(ep->xfer);
 	if (err != USBD_NORMAL_COMPLETION && err != USBD_IN_PROGRESS) {
-		DPRINTF(("%s: %s: usbd_transfer() failed err=%s\n", 
+		DPRINTF(("%s: %s: usbd_transfer() failed err=%s\n",
 			ep->sc->sc_dev.dv_xname, __func__, usbd_errstr(err)));
 		return err;
 	}
@@ -1105,7 +1105,7 @@ start_output_transfer(struct umidi_endpoint *ep)
 			USBD_NO_COPY, USBD_NO_TIMEOUT, out_intr);
 	err = usbd_transfer(ep->xfer);
 	if (err != USBD_NORMAL_COMPLETION && err != USBD_IN_PROGRESS) {
-		DPRINTF(("%s: %s: usbd_transfer() failed err=%s\n", 
+		DPRINTF(("%s: %s: usbd_transfer() failed err=%s\n",
 			ep->sc->sc_dev.dv_xname, __func__, usbd_errstr(err)));
 		return err;
 	}
@@ -1144,7 +1144,7 @@ out_jack_output(struct umidi_jack *j, int d)
 			SIMPLEQ_INSERT_TAIL(&ep->intrq, j, intrq_entry);
 			ep->pending++;
 			j->intr = 1;
-		}		
+		}
 		splx(s);
 		return 0;
 	}
@@ -1170,8 +1170,8 @@ out_jack_flush(struct umidi_jack *j)
 
 	if (usbd_is_dying(ep->sc->sc_udev) || !j->opened)
 		return;
-		
-	s = splusb();	
+
+	s = splusb();
 	if (ep->used != 0 && !ep->busy) {
 		ep->busy = 1;
 		start_output_transfer(ep);
@@ -1220,7 +1220,7 @@ out_intr(struct usbd_xfer *xfer, void *priv, usbd_status status)
 	struct umidi_softc *sc = ep->sc;
 	struct umidi_jack *j;
 	unsigned pending;
-	
+
 	if (usbd_is_dying(sc->sc_udev))
 		return;
 
@@ -1255,7 +1255,7 @@ static const unsigned int umidi_evlen[] = { 4, 4, 4, 4, 3, 3, 4 };
 #define EV_SYSEX_STOP	0xf7
 
 static int
-out_build_packet(int cable_number, struct umidi_packet *packet, 
+out_build_packet(int cable_number, struct umidi_packet *packet,
     uByte data, u_char *obuf)
 {
 	if (data >= 0xf8) {		/* is it a realtime message ? */
@@ -1274,12 +1274,12 @@ out_build_packet(int cable_number, struct umidi_packet *packet,
 		case EV_SYSEX_STOP:
 			if (packet->status != EV_SYSEX) break;
 			if (packet->index == 0)
-				packet->index = 1; 
+				packet->index = 1;
 			packet->status = data;
 			packet->buf[packet->index++] = data;
 			packet->buf[0] = (0x4 - 1 + packet->index) | cable_number << 4;
 			goto packetready;
-		case EV_TUNE_REQ: 
+		case EV_TUNE_REQ:
 			packet->status = data;
 			packet->buf[0] = 0x5 | cable_number << 4;
 			packet->index = 1;
@@ -1289,19 +1289,19 @@ out_build_packet(int cable_number, struct umidi_packet *packet,
 			break;
 		}
 		return 0;
-	}	
+	}
 	if (data >= 0x80) {		/* is it a voice message ? */
 		packet->status = data;
 		packet->index = 0;
 		return 0;
-	} 
+	}
 
-	/* else it is a data byte */	
+	/* else it is a data byte */
 	if (packet->status >= 0xf0) {
 		switch(packet->status) {
 		case EV_SYSEX:		/* sysex starts or continues */
 			if (packet->index == 0)
-				packet->index = 1; 
+				packet->index = 1;
 
 			packet->buf[packet->index++] = data;
 			if (packet->index >= UMIDI_PACKET_SIZE) {
@@ -1310,7 +1310,7 @@ out_build_packet(int cable_number, struct umidi_packet *packet,
 			}
 			break;
 		case EV_MTC:		/* messages with 1 data byte */
-		case EV_SONGSEL:	
+		case EV_SONGSEL:
 			packet->buf[0] = 0x2 | cable_number << 4;
 			packet->buf[1] = packet->status;
 			packet->buf[2] = data;
@@ -1344,7 +1344,7 @@ out_build_packet(int cable_number, struct umidi_packet *packet,
 	}
 	/* ignore data with unknown status */
 	return 0;
-	
+
 packetready:
 	while (packet->index < UMIDI_PACKET_SIZE)
 		packet->buf[packet->index++] = 0;

@@ -2290,7 +2290,7 @@
 /*
  * This magic number is written to the firmware mailbox at 0xb50
  * before a software reset is issued.  After the internal firmware
- * has completed its initialization it will write the opposite of 
+ * has completed its initialization it will write the opposite of
  * this value, ~BGE_MAGIC_NUMBER, to the same location, allowing the
  * driver to synchronize with the firmware.
  */
@@ -2651,7 +2651,7 @@ struct bge_stats {
 
 	/* Statistics maintained by Transmit MAC. */
 	struct bge_tx_mac_stats txstats;
- 
+
 	bge_hostaddr		Unused2[31];
 
 	/* Statistics maintained by Receive List Placement. */
@@ -2719,7 +2719,7 @@ struct bge_gib {
  * Vital product data and structures.
  */
 #define	BGE_VPD_FLAG		0x8000
- 
+
 #define	VPD_RES_ID	0x82	/* ID string */
 #define	VPD_RES_READ	0x90	/* start of read only area */
 #define	VPD_RES_WRITE	0x81	/* start of read/write area */
@@ -2796,7 +2796,7 @@ struct bge_ring_data {
  * chosen to make the total struct size an even power of two. It's
  * critical that no TxCB be split across a page boundary since
  * no attempt is made to allocate physically contiguous memory.
- * 
+ *
  */
 #ifdef __LP64__
 #define	BGE_NTXSEG      30

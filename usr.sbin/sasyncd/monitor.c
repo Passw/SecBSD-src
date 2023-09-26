@@ -484,7 +484,7 @@ m_priv_iked_imsg(u_int cmd)
 
 	if (connect(fd, (struct sockaddr *)&sun, sizeof(sun)) == -1) {
 		log_err("m_priv_iked_imsg: connect");
-		goto out;				
+		goto out;
 	}
 
 	imsg_init(&ibuf, fd);

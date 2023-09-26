@@ -154,8 +154,8 @@ sbmatch(struct sbdsp_softc *sc)
 	}
 
         if (0 <= sc->sc_drq16 && sc->sc_drq16 <= 3)
-        	/* 
-                 * XXX Some ViBRA16 cards seem to have two 8 bit DMA 
+        	/*
+                 * XXX Some ViBRA16 cards seem to have two 8 bit DMA
                  * channels.  I've no clue how to use them, so ignore
                  * one of them for now.  -- augustss@netbsd.org
                  */
@@ -171,7 +171,7 @@ sbmatch(struct sbdsp_softc *sc)
 		}
 	} else
 		sc->sc_drq16 = sc->sc_drq8;
-	
+
 	if (ISSBPROCLASS(sc)) {
 		if (!SBP_IRQ_VALID(sc->sc_irq)) {
 			DPRINTF(("%s: configured irq %d invalid\n",

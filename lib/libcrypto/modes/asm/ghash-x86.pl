@@ -125,7 +125,7 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA32_SSE2/); }
 ($Zhh,$Zhl,$Zlh,$Zll) = ("ebp","edx","ecx","ebx");
 $inp  = "edi";
 $Htbl = "esi";
-
+
 $unroll = 0;	# Affects x86 loop. Folded loop performs ~7% worse
 		# than unrolled, which has to be weighted against
 		# 2.5x x86-specific code size reduction.
@@ -243,7 +243,7 @@ sub deposit_rem_4bit {
 	&mov	(&DWP($bias+56,"esp"),0xA9C0<<16);
 	&mov	(&DWP($bias+60,"esp"),0xB5E0<<16);
 }
-
+
 $suffix = $x86only ? "" : "_x86";
 
 &function_begin("gcm_gmult_4bit".$suffix);
@@ -326,7 +326,7 @@ $suffix = $x86only ? "" : "_x86";
 	&mov	(&DWP(0,$inp),$Zhh);
 	&stack_pop(16+4+1);
 &function_end("gcm_ghash_4bit".$suffix);
-
+
 if (!$x86only) {{{
 
 &static_label("rem_4bit");
@@ -425,7 +425,7 @@ $S=12;		# shift factor for rem_4bit
 	&mov	(&DWP(8,$inp),$Zlh);
 	&mov	(&DWP(0,$inp),$Zhh);
 &function_end("gcm_gmult_4bit_mmx");
-
+
 # Streamed version performs 20% better on P4, 7% on Opteron,
 # 10% on Core2 and PIII...
 &function_begin("gcm_ghash_4bit_mmx");
@@ -477,7 +477,7 @@ $S=12;		# shift factor for rem_4bit
 
 	&stack_pop(4+1);
 &function_end("gcm_ghash_4bit_mmx");
-
+
 }} else {{	# "June" MMX version...
 		# ... has slower "April" gcm_gmult_4bit_mmx with folded
 		# loop. This is done to conserve code size...
@@ -593,7 +593,7 @@ sub mmx_loop() {
 	&mov	(&DWP(8,$inp),$Zlh);
 	&mov	(&DWP(0,$inp),$Zhh);
 &function_end("gcm_gmult_4bit_mmx");
-
+
 ######################################################################
 # Below subroutine is "528B" variant of "4-bit" GCM GHASH function
 # (see gcm128.c for details). It provides further 20-40% performance
@@ -782,7 +782,7 @@ sub mmx_loop() {
     &bswap	($dat);
     &pshufw	($Zhi,$Zhi,0b00011011);		# 76543210
     &bswap	("ebx");
-    
+
     &cmp	("ecx",&DWP(528+16+8,"esp"));	# are we done?
     &jne	(&label("outer"));
   }
@@ -797,7 +797,7 @@ sub mmx_loop() {
 }
 &function_end("gcm_ghash_4bit_mmx");
 }}
-
+
 if ($sse2) {{
 ######################################################################
 # PCLMULQDQ version.
@@ -862,7 +862,7 @@ my ($Xhi,$Xi,$Hkey)=@_;
 	&pxor		($Xhi,$T2);
 	&pxor		($Xi,$T3);		#
 }
-
+
 if (1) {		# Algorithm 9 with <<1 twist.
 			# Reduction is shorter and uses only two
 			# temporary registers, which makes it better
@@ -1015,7 +1015,7 @@ my ($Xhi,$Xi) = @_;
 	  &psllq	($Xi,57);		#
 	  &movdqa	($T2,$Xi);		#
 	  &pslldq	($Xi,8);
-	  &psrldq	($T2,8);		#	
+	  &psrldq	($T2,8);		#
 	  &pxor		($Xi,$T1);
 	&pshufd		($T1,$T3,0b01001110);
 	  &pxor		($Xhi,$T2);		#
@@ -1073,7 +1073,7 @@ my ($Xhi,$Xi) = @_;
 	&pshufb		($Xi,$T3);
 	&movdqu		(&QWP(0,$Xip),$Xi);
 &function_end("gcm_ghash_clmul");
-
+
 } else {		# Algorithm 5. Kept for reference purposes.
 
 sub reduction_alg5 {	# 19/16 times faster than Intel version
@@ -1250,7 +1250,7 @@ my ($Xhi,$Xi)=@_;
 &function_end("gcm_ghash_clmul");
 
 }
-
+
 	&rodataseg();
 &set_label("bswap",64);
 	&data_byte(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0);

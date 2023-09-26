@@ -41,7 +41,7 @@
 #include "common/get.h"
 
 /*
- * The list of all interfaces that are being listened to. 
+ * The list of all interfaces that are being listened to.
  * "selects" on the descriptors in this list.
  */
 struct if_info *iflist;
@@ -52,7 +52,7 @@ void   mopProcess(struct if_info *, u_char *);
 int     AllFlag = 0;		/* listen on "all" interfaces  */
 int     DebugFlag = 0;		/* print debugging messages    */
 int	Not3Flag = 0;		/* Ignore MOP V3 messages      */
-int	Not4Flag = 0;		/* Ignore MOP V4 messages      */ 
+int	Not4Flag = 0;		/* Ignore MOP V4 messages      */
 int	promisc = 1;		/* Need promisc mode           */
 extern char *__progname;
 
@@ -87,7 +87,7 @@ main(int argc, char *argv[])
 	}
 
 	interface = argv[optind++];
-	
+
 	if ((AllFlag && interface) ||
 	    (!AllFlag && interface == 0) ||
 	    (Not3Flag && Not4Flag))
@@ -129,7 +129,7 @@ mopProcess(struct if_info *ii, u_char *pkt)
 	fprintf(stdout, "Interface    : %s", ii->if_name);
 	mopPrintHeader(stdout, pkt, trans);
 	mopPrintMopHeader(stdout, pkt, trans);
-	
+
 	mopDumpDL(stdout, pkt, trans);
 	mopDumpRC(stdout, pkt, trans);
 

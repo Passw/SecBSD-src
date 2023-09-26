@@ -7,9 +7,9 @@
 \- NSD remote server control utility.
 .SH "SYNOPSIS"
 .B nsd\-control
-.RB [ \-c 
+.RB [ \-c
 .IR cfgfile ]
-.RB [ \-s 
+.RB [ \-s
 .IR server ]
 .IR command
 .SH "DESCRIPTION"
@@ -34,7 +34,7 @@ address is read from the config file.
 There are several commands that the server understands.
 .TP
 .B start
-Start the server. Simply execs \fInsd\fR(8).  The nsd executable 
+Start the server. Simply execs \fInsd\fR(8).  The nsd executable
 is not searched for in the \fBPATH\fR set in the environment.  Instead the
 default location relative to the installation prefix specified at
 compile-time.  The executable location can be overridden by setting
@@ -67,7 +67,7 @@ and create a new logfile.  The log can also be reopened with kill \-HUP
 (which also reloads all zonefiles).
 .TP
 .B status
-Display server status. Exit code 3 if not running (the connection to the 
+Display server status. Exit code 3 if not running (the connection to the
 port is refused), 1 on error, 0 if running.
 .TP
 .B stats
@@ -223,13 +223,13 @@ Show the current configured cookie secrets with their status.
 .SH "EXIT CODE"
 The nsd\-control program exits with status code 1 on error, 0 on success.
 .SH "SET UP"
-The setup requires a self\-signed certificate and private keys for both 
+The setup requires a self\-signed certificate and private keys for both
 the server and client.  The script \fInsd\-control\-setup\fR generates
 these in the default run directory, or with \-d in another directory.
 If you change the access control permissions on the key files you can decide
 who can use nsd\-control, by default owner and group but not all users.
 The script preserves private keys present in the directory.
-After running the script as root, turn on \fBcontrol\-enable\fR in 
+After running the script as root, turn on \fBcontrol\-enable\fR in
 \fInsd.conf\fR.
 .SH "STATISTIC COUNTERS"
 The \fIstats\fR command shows a number of statistic counters.
@@ -339,6 +339,6 @@ nsd configuration file.
 directory with private keys (nsd_server.key and nsd_control.key) and
 self\-signed certificates (nsd_server.pem and nsd_control.pem).
 .SH "SEE ALSO"
-\fInsd.conf\fR(5), 
+\fInsd.conf\fR(5),
 \fInsd\fR(8),
 \fInsd\-checkconf\fR(8)

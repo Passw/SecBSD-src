@@ -652,11 +652,11 @@ ubsa_intr(struct usbd_xfer *xfer, void *priv, usbd_status status)
 
 #if 1 /* test */
 	if (cdcbuf->bmRequestType == UCDC_NOTIFICATION) {
-		printf("%s: this device is using CDC notify message in" 
+		printf("%s: this device is using CDC notify message in"
 		    " intr pipe.\n"
 		    "Please send your dmesg to <bugs@openbsd.org>, thanks.\n",
 		    sc->sc_dev.dv_xname);
-		printf("%s: intr buffer 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n", 
+		printf("%s: intr buffer 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n",
 		    sc->sc_dev.dv_xname,
 		    buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6]);
 

@@ -918,7 +918,7 @@ zparser_conv_svcbparam_ipv6hint_value(region_type *region, const char *val)
 		}
 	}
 
-	/* count == number of comma's in val + 1 
+	/* count == number of comma's in val + 1
 	 * so actually the number of IPv6 addresses in val
 	 */
 	r = alloc_rdata(region, 2 * sizeof(uint16_t) + IP6ADDRLEN * count);
@@ -987,7 +987,7 @@ zparser_conv_svcbparam_mandatory_value(region_type *region,
 	for(;;) {
 		if (!(next_key = strchr(val, ','))) {
 			*key_dst = htons(svcbparam_lookup_key(val, val_len));
-			break;	
+			break;
 		} else {
 			*key_dst = htons(svcbparam_lookup_key(val, next_key - val));
 		}
@@ -1613,7 +1613,7 @@ zadd_rdata_txt_wireformat(uint16_t *data, int first)
 		zc_error_prev_line("too many rdata txt elements");
 		return;
 	}
-	
+
 	/* First STR in str_seq, allocate 65K in first unused rdata
 	 * else find last used rdata */
 	if (first) {
@@ -1628,12 +1628,12 @@ zadd_rdata_txt_wireformat(uint16_t *data, int first)
 	}
 	else
 		rd = &parser->current_rr.rdatas[parser->current_rr.rdata_count-1];
-	
+
 	if ((size_t)rd->data[0] + (size_t)data[0] > 65535) {
 		zc_error_prev_line("too large rdata element");
 		return;
 	}
-	
+
 	memcpy((uint8_t *)rd->data + 2 + rd->data[0], data + 1, data[0]);
 	rd->data[0] += data[0];
 }
@@ -1648,7 +1648,7 @@ zadd_rdata_txt_clean_wireformat()
 	rdata_atom_type *rd = &parser->current_rr.rdatas[parser->current_rr.rdata_count-1];
 	if(!rd || !rd->data)
 		return; /* previous syntax failure */
-	if ((tmp_data = (uint16_t *) region_alloc(parser->region, 
+	if ((tmp_data = (uint16_t *) region_alloc(parser->region,
 		((size_t)rd->data[0]) + ((size_t)2))) != NULL) {
 		memcpy(tmp_data, rd->data, rd->data[0] + 2);
 		/* rd->data of u16+65535 freed when rr_region is freed */
@@ -1696,7 +1696,7 @@ zadd_rdata_svcb_check_wireformat()
 	 * in each rdata in the remainder of this function.
 	 */
 	memset(paramkeys, 0, sizeof(paramkeys));
-	/* 
+	/*
 	 * In draft-ietf-dnsop-svcb-https-04 Section 7:
 	 * In wire format, the keys are represented by their numeric values in
 	 * network byte order, concatenated in ascending order.
@@ -1715,13 +1715,13 @@ zadd_rdata_svcb_check_wireformat()
 		assert(parser->current_rr.rdatas[i].data);
 		assert(rdata_atom_data(parser->current_rr.rdatas[i]));
 		assert(rdata_atom_size(parser->current_rr.rdatas[i]) >= sizeof(uint16_t));
-		 
+
 		key = read_uint16(rdata_atom_data(parser->current_rr.rdatas[i]));
 
 		/* In draft-ietf-dnsop-svcb-https-04 Section 7:
 		 *
 		 *     Keys (...) MUST NOT appear more than once.
-		 * 
+		 *
 		 * If they key has already been seen, we have a duplicate
 		 */
 		if (!paramkeys[key])
@@ -1756,7 +1756,7 @@ zadd_rdata_svcb_check_wireformat()
 
 	if (size % 2)
 		zc_error_prev_line("mandatory rdata must be a multiple of shorts");
-		
+
 	else for (i = 0; i < (size - 4)/2; i++) {
 		key = ntohs(mandatory_values[i]);
 

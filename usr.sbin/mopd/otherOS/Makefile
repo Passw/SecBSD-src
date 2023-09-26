@@ -42,7 +42,7 @@ INSTMAN="#"
 #sparc-linux2#INSTMAN=	install -c -o root -g root -m 644
 
 # Change these to cc/lex/yacc if you don't have gcc, flex and/or bison.
-CC = cc 
+CC = cc
 LEX = lex
 YACC = yacc -y
 MAKE = make
@@ -58,7 +58,7 @@ DIRS=	mopchk mopd mopprobe moptrace
 CHDOC=	mopchk.1
 CHFIL=	mopchk.c
 CHOBJ=	mopchk.o
-CHHDR=	
+CHHDR=
 LDDOC=	mopd.8
 LDFIL=	mopd.c process.c
 LDOBJ=	mopd.o process.o
@@ -225,7 +225,7 @@ mopprobe: $(PBOBJ) $(COOBJ) $(OTOBJ) version.o
 moptrace: $(TROBJ) $(COOBJ) $(OTOBJ) version.o
 	$(CC) $(CFLAGS) -o $@ $(TROBJ) $(COOBJ) $(OTOBJ) version.o $(LIB)
 
-VERSION: 
+VERSION:
 	@ln -s ../../../common/VERSION VERSION
 
 version.o: version.c

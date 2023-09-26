@@ -883,7 +883,7 @@ ipw_data_intr(struct ipw_softc *sc, struct ipw_status *status,
 	}
 
 	m = sbuf->m;
-	sbuf->m = mnew;	
+	sbuf->m = mnew;
 	sbd->bd->physaddr = htole32(sbuf->map->dm_segs[0].ds_addr);
 
 	/* finalize mbuf */

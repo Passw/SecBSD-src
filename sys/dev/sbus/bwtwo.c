@@ -134,7 +134,7 @@ bwtwomatch(struct device *parent, void *vcf, void *aux)
 	return (strcmp(cf->cf_driver->cd_name, sa->sa_name) == 0);
 }
 
-void    
+void
 bwtwoattach(struct device *parent, struct device *self, void *aux)
 {
 	struct bwtwo_softc *sc = (struct bwtwo_softc *)self;
@@ -186,7 +186,7 @@ bwtwoattach(struct device *parent, struct device *self, void *aux)
 	    sc->sc_vid_regs);
 	sc->sc_sunfb.sf_ro.ri_hw = sc;
 	fbwscons_init(&sc->sc_sunfb, 0, console);
-	
+
 	if (console)
 		fbwscons_console_init(&sc->sc_sunfb, -1);
 

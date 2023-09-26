@@ -48,7 +48,7 @@ struct radnode {
 	/** capacity of the lookup array (can be larger than length) */
 	uint16_t capacity;
 	/** the lookup array by [byte-offset] */
-	struct radsel* array; 
+	struct radsel* array;
 } ATTR_PACKED;
 
 /**

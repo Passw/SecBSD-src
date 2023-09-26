@@ -263,7 +263,7 @@ establish_ppp(fd)
 	/*
 	 * Find out which interface we were given.
 	 */
-	if (ioctl(fd, PPPIOCGUNIT, &ifunit) == -1) {	
+	if (ioctl(fd, PPPIOCGUNIT, &ifunit) == -1) {
 	    syslog(LOG_ERR, "ioctl(PPPIOCGUNIT): %m");
 	    die(1);
 	}
@@ -271,7 +271,7 @@ establish_ppp(fd)
 	/*
 	 * Check that we got the same unit again.
 	 */
-	if (ioctl(fd, PPPIOCGUNIT, &x) == -1) {	
+	if (ioctl(fd, PPPIOCGUNIT, &x) == -1) {
 	    syslog(LOG_ERR, "ioctl(PPPIOCGUNIT): %m");
 	    die(1);
 	}
@@ -332,7 +332,7 @@ restore_loop()
     /*
      * Check that we got the same unit again.
      */
-    if (ioctl(loop_slave, PPPIOCGUNIT, &x) == -1) {	
+    if (ioctl(loop_slave, PPPIOCGUNIT, &x) == -1) {
 	syslog(LOG_ERR, "ioctl(PPPIOCGUNIT): %m");
 	die(1);
     }
@@ -534,7 +534,7 @@ open_ppp_loopback()
 	    syslog(LOG_WARNING, "couldn't set attributes on loopback: %m");
     }
 
-    if ((flags = fcntl(loop_master, F_GETFL)) != -1) 
+    if ((flags = fcntl(loop_master, F_GETFL)) != -1)
 	if (fcntl(loop_master, F_SETFL, flags | O_NONBLOCK) == -1)
 	    syslog(LOG_WARNING, "couldn't set loopback to nonblock: %m");
 
@@ -547,7 +547,7 @@ open_ppp_loopback()
     /*
      * Find out which interface we were given.
      */
-    if (ioctl(ppp_fd, PPPIOCGUNIT, &ifunit) == -1) {	
+    if (ioctl(ppp_fd, PPPIOCGUNIT, &ifunit) == -1) {
 	syslog(LOG_ERR, "ioctl(PPPIOCGUNIT): %m");
 	die(1);
     }

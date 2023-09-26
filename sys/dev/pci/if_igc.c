@@ -380,7 +380,7 @@ igc_allocate_queues(struct igc_softc *sc)
 		printf("%s: unable to allocate TX ring\n", DEVNAME(sc));
 		goto fail;
 	}
-	
+
 	/* Allocate the RX ring. */
 	sc->rx_rings = mallocarray(sc->sc_nqueues, sizeof(struct rx_ring),
 	    M_DEVBUF, M_NOWAIT | M_ZERO);
@@ -1233,7 +1233,7 @@ igc_rxfill(struct rx_ring *rxr)
 	int i, post = 0;
 	u_int slots;
 
-	bus_dmamap_sync(rxr->rxdma.dma_tag, rxr->rxdma.dma_map, 0, 
+	bus_dmamap_sync(rxr->rxdma.dma_tag, rxr->rxdma.dma_map, 0,
 	    rxr->rxdma.dma_map->dm_mapsize, BUS_DMASYNC_POSTWRITE);
 
 	i = rxr->last_desc_filled;
@@ -1330,7 +1330,7 @@ igc_rxeof(struct rx_ring *rxr)
 		    IGC_PKTTYPE_MASK;
 		hash = letoh32(rxdesc->wb.lower.hi_dword.rss);
 		hashtype = le16toh(rxdesc->wb.lower.lo_dword.hs_rss.pkt_info) &
-		    IGC_RXDADV_RSSTYPE_MASK;    
+		    IGC_RXDADV_RSSTYPE_MASK;
 
 		if (staterr & IGC_RXDEXT_STATERR_RXE) {
 			if (rxbuf->fmp) {

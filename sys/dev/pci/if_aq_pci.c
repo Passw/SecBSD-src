@@ -2548,7 +2548,7 @@ aq_hw_init_rx_path(struct aq_softc *sc)
 			bits = 0x11111111;
 			break;
 		case 4:
-			bits = 0x22222222;	
+			bits = 0x22222222;
 			break;
 		case 8:
 			bits = 0x33333333;
@@ -2806,7 +2806,7 @@ aq_init_rss(struct aq_softc *sc)
 	int bits, queue;
 	int error;
 	int i;
-	
+
 	if (sc->sc_nqueues == 1)
 		return 0;
 

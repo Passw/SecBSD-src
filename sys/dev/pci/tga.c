@@ -6,17 +6,17 @@
  * All rights reserved.
  *
  * Author: Chris G. Demetriou
- * 
+ *
  * Permission to use, copy, modify and distribute this software and
  * its documentation is hereby granted, provided that both the copyright
  * notice and this permission notice appear in all copies of the
  * software, derivative works or modified versions, and any portions
  * thereof, and that both notices appear in supporting documentation.
- * 
- * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS" 
- * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND 
+ *
+ * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+ * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND
  * FOR ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
- * 
+ *
  * Carnegie Mellon requests users of this software to return to
  *
  *  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU
@@ -236,7 +236,7 @@ tga_getdevconfig(memt, pc, tag, dc)
 	dc->dc_paddr = ALPHA_K0SEG_TO_PHYS(dc->dc_vaddr);	/* XXX */
 #endif
 	DPRINTF("tga_getdevconfig: allocating subregion\n");
-	bus_space_subregion(dc->dc_memt, dc->dc_memh, 
+	bus_space_subregion(dc->dc_memt, dc->dc_memh,
 			    TGA_MEM_CREGS, TGA_CREGS_SIZE,
 			    &dc->dc_regs);
 
@@ -274,7 +274,7 @@ tga_getdevconfig(memt, pc, tag, dc)
 	if (dc->dc_tga2) {
 		tga2_init(dc);
 	}
-	
+
 	i = TGARREG(dc, TGA_REG_VHCR) & 0x1ff;
 	DPRINTF("tga_getdevconfig: TGA_REG_VHCR & 0x1ff = %d\n", i);
 	switch (i) {		/* XXX */
@@ -319,14 +319,14 @@ tga_getdevconfig(memt, pc, tag, dc)
 	    1 * tgac->tgac_vvbr_units;
 	dc->dc_blanked = 1;
 	tga_unblank(dc);
-	
+
 	DPRINTF("tga_getdevconfig: dc_videobase = 0x%016llx\n"
 		"                  dc_vaddr = 0x%016llx\n"
 		"                  tgac_dbuf[0] = %d\n"
 		"                  tgac_vvbr_units = %d\n",
 		dc->dc_videobase, dc->dc_vaddr, tgac->tgac_dbuf[0],
 		tgac->tgac_vvbr_units);
-	       
+
 	/*
 	 * Set all bits in the pixel mask, to enable writes to all pixels.
 	 * It seems that the console firmware clears some of them
@@ -362,10 +362,10 @@ tga_getdevconfig(memt, pc, tag, dc)
 
 	DPRINTF("tga_getdevconfig: wsfont_init\n");
 	wsfont_init();
-	if (rip->ri_width > 80*12) 
+	if (rip->ri_width > 80*12)
 		/* High res screen, choose a big font */
 		cookie = wsfont_find(NULL, 12, 0, 0);
-	else 
+	else
 		/*  lower res, choose a 8 pixel wide font */
 		cookie = wsfont_find(NULL, 8, 0, 0);
 	if (cookie <= 0)
@@ -384,17 +384,17 @@ tga_getdevconfig(memt, pc, tag, dc)
 	rip->ri_wsfcookie = cookie;
 	/* fill screen size */
 	rasops_init(rip, rip->ri_height / rip->ri_font->fontheight,
-	    rip->ri_width / rip->ri_font->fontwidth); 
-	
+	    rip->ri_width / rip->ri_font->fontwidth);
+
 	/* add our accelerated functions */
-	/* XXX shouldn't have to do this; rasops should leave non-NULL 
+	/* XXX shouldn't have to do this; rasops should leave non-NULL
 	 * XXX entries alone.
 	 */
 	rip->ri_ops.copyrows = tga_copyrows;
 	rip->ri_ops.eraserows = tga_eraserows;
 	rip->ri_ops.erasecols = tga_erasecols;
 	rip->ri_ops.copycols = tga_copycols;
-	rip->ri_ops.putchar = tga_putchar;	
+	rip->ri_ops.putchar = tga_putchar;
 
 	tga_stdscreen.nrows = rip->ri_rows;
 	tga_stdscreen.ncols = rip->ri_cols;
@@ -489,18 +489,18 @@ tgaattach(parent, self, aux)
 		    "bt485_funcs\n",
 		    (sc->sc_dc->dc_tgaconf->ramdac_funcs == bt485_funcs)
 		    ? "==" : "!=");
-	    if (sc->sc_dc->dc_tgaconf->ramdac_funcs == bt485_funcs) 
-		  sc->sc_dc->dc_ramdac_cookie = 
+	    if (sc->sc_dc->dc_tgaconf->ramdac_funcs == bt485_funcs)
+		  sc->sc_dc->dc_ramdac_cookie =
 			sc->sc_dc->dc_ramdac_funcs->ramdac_register(sc->sc_dc,
 		    tga_sched_update, tga_ramdac_wr, tga_ramdac_rd);
 		else
-		  sc->sc_dc->dc_ramdac_cookie = 
+		  sc->sc_dc->dc_ramdac_cookie =
 			sc->sc_dc->dc_ramdac_funcs->ramdac_register(sc->sc_dc,
 		    tga_sched_update, tga_bt463_wr, tga_bt463_rd);
 	} else {
 	        DPRINTF("tgaattach: sc->sc_dc->dc_tga2\n");
-		sc->sc_dc->dc_ramdac_cookie = 
-			sc->sc_dc->dc_ramdac_funcs->ramdac_register(sc->sc_dc, 
+		sc->sc_dc->dc_ramdac_cookie =
+			sc->sc_dc->dc_ramdac_funcs->ramdac_register(sc->sc_dc,
 			tga_sched_update, tga2_ramdac_wr, tga2_ramdac_rd);
 
 		/* XXX this is a bit of a hack, setting the dotclock here */
@@ -548,14 +548,14 @@ tgaattach(parent, self, aux)
 #endif
 }
 
-void 
+void
 tga_config_interrupts (d)
 	struct device *d;
 {
 	struct tga_softc *sc = (struct tga_softc *)d;
 	sc->sc_dc->dc_intrenabled = 1;
 }
-	
+
 
 int
 tga_ioctl(v, cmd, data, flag, p)
@@ -585,7 +585,7 @@ tga_ioctl(v, cmd, data, flag, p)
 		default:
 			/* XXX it this useful, except for not breaking Xtga? */
 			TGAWREG(dc, TGA_REG_VVBR, 1);
-			break;			
+			break;
 		}
 		break;
 
@@ -663,7 +663,7 @@ tga_sched_update(v, f)
 		TGAWREG(dc, TGA_REG_SISR, 0x00000001);
 		TGAREGWB(dc, TGA_REG_SISR, 1);
 	}
-		
+
 	return 0;
 }
 
@@ -685,7 +685,7 @@ tga_intr(v)
 			TGAREGWB(dc, TGA_REG_SISR, 1);
 			/* This was our interrupt, even if we're puzzled as to why
 			 * we got it.  Don't make the interrupt handler think it
-			 * was a stray.  
+			 * was a stray.
 			 */
 			return -1;
 		} else {
@@ -715,7 +715,7 @@ tga_mmap(v, offset, prot)
 		return -1;
 
 	if (sc->sc_mode == WSDISPLAYIO_MODE_DUMBFB) {
-		/* 
+		/*
 		 * The framebuffer starts at the upper half of tga mem
 		 */
 		offset += dc->dc_tgaconf->tgac_cspace_size / 2;
@@ -744,7 +744,7 @@ tga_alloc_screen(v, type, cookiep, curxp, curyp, attrp)
 	*cookiep = &sc->sc_dc->dc_rinfo; /* one and only for now */
 	*curxp = 0;
 	*curyp = 0;
-	sc->sc_dc->dc_rinfo.ri_ops.pack_attr(&sc->sc_dc->dc_rinfo, 
+	sc->sc_dc->dc_rinfo.ri_ops.pack_attr(&sc->sc_dc->dc_rinfo,
 		0, 0, 0, &defattr);
 	*attrp = defattr;
 	sc->nscreens++;
@@ -875,7 +875,7 @@ tga_cnattach(iot, memt, pc, bus, device, function)
 	}
 	dcp->dc_rinfo.ri_ops.pack_attr(&dcp->dc_rinfo, 0, 0, 0, &defattr);
 	wsdisplay_cnattach(&tga_stdscreen, &dcp->dc_rinfo, 0, 0, defattr);
-	
+
 	return(0);
 }
 
@@ -957,7 +957,7 @@ tga_builtin_set_cursor(dc, cursorp)
 			TGAWREG(dc, TGA_REG_VVVR, TGARREG(dc, TGA_REG_VVVR) & ~0x04);
 	}
 	if (v & WSDISPLAY_CURSOR_DOPOS) {
-		TGAWREG(dc, TGA_REG_CXYR, 
+		TGAWREG(dc, TGA_REG_CXYR,
 		    ((cursorp->pos.y & 0xfff) << 12) | (cursorp->pos.x & 0xfff));
 	}
 	if (v & WSDISPLAY_CURSOR_DOCMAP) {
@@ -1194,9 +1194,9 @@ tga_rop_vtov(dst, dx, dy, w, h, src, sx, sy)
 
 	srcb = sy * src->ri_stride + sx * (src->ri_depth/8);
 	dstb = dy * dst->ri_stride + dx * (dst->ri_depth/8);
-	tga_srcb = offset + (sy + src->ri_yorigin) * src->ri_stride + 
+	tga_srcb = offset + (sy + src->ri_yorigin) * src->ri_stride +
 		(sx + src->ri_xorigin) * (src->ri_depth/8);
-	tga_dstb = offset + (dy + dst->ri_yorigin) * dst->ri_stride + 
+	tga_dstb = offset + (dy + dst->ri_yorigin) * dst->ri_stride +
 		(dx + dst->ri_xorigin) * (dst->ri_depth/8);
 
 	TGAWALREG(dc, TGA_REG_GMOR, 3, 0x0007); /* Copy mode */
@@ -1218,7 +1218,7 @@ tga_rop_vtov(dst, dx, dy, w, h, src, sx, sy)
 			     x <= xend && xleft >= 4*64;
 			     x += XINC256, xleft -= XINC256) {
 
-				/* XXX XXX Eight writes to different addresses should fill 
+				/* XXX XXX Eight writes to different addresses should fill
 				 * XXX XXX up the write buffers on 21064 and 21164 chips,
 				 * XXX XXX but later CPUs might have larger write buffers which
 				 * XXX XXX require further unrolling of this loop, or the
@@ -1265,7 +1265,7 @@ tga_rop_vtov(dst, dx, dy, w, h, src, sx, sy)
 			     x >= xend && xleft >= 4*64;
 			     x -= XINC256, xleft -= XINC256) {
 
-				/* XXX XXX Eight writes to different addresses should fill 
+				/* XXX XXX Eight writes to different addresses should fill
 				 * XXX XXX up the write buffers on 21064 and 21164 chips,
 				 * XXX XXX but later CPUs might have larger write buffers which
 				 * XXX XXX require further unrolling of this loop, or the
@@ -1339,7 +1339,7 @@ tga_putchar(c, row, col, uc, attr)
 	ri->ri_ops.unpack_attr(c, attr, &fg, &bg, &ul);
 	TGAWREG(dc, TGA_REG_GFGR, ri->ri_devcmap[fg]);
 	TGAWREG(dc, TGA_REG_GBGR, ri->ri_devcmap[bg]);
-	
+
 	/* Set raster operation to "copy"... */
 	if (ri->ri_depth == 8)
 		TGAWREG(dc, TGA_REG_GOPR, 0x3);
@@ -1351,15 +1351,15 @@ tga_putchar(c, row, col, uc, attr)
 
 	/* Set drawing mode to opaque stipple. */
 	TGAWREG(dc, TGA_REG_GMOR, 0x1);
-	
+
 	/* Insert write barrier before actually sending data */
 	/* XXX Abuses the fact that there is only one write barrier on Alphas */
 	TGAREGWB(dc, TGA_REG_GMOR, 1);
 
 	while (height--) {
 		/* The actual stipple write */
-		*rp = fr[0] | (fr[1] << 8) | (fr[2] << 16) | (fr[3] << 24); 
-						  
+		*rp = fr[0] | (fr[1] << 8) | (fr[2] << 16) | (fr[3] << 24);
+
 		fr += fs;
 		rp = (int32_t *)((caddr_t)rp + ri->ri_stride);
 	}
@@ -1418,7 +1418,7 @@ tga_eraserows(c, row, num, attr)
 
 	/* Set drawing mode to block fill. */
 	TGAWREG(dc, TGA_REG_GMOR, 0x2d);
-	
+
 	/* Insert write barrier before actually sending data */
 	/* XXX Abuses the fact that there is only one write barrier on Alphas */
 	TGAREGWB(dc, TGA_REG_GMOR, 1);
@@ -1430,7 +1430,7 @@ tga_eraserows(c, row, num, attr)
 
 	/* Set graphics mode back to normal. */
 	TGAWREG(dc, TGA_REG_GMOR, 0);
-	
+
 	return 0;
 }
 
@@ -1475,7 +1475,7 @@ tga_erasecols (c, row, col, num, attr)
 
 	/* Set drawing mode to block fill. */
 	TGAWREG(dc, TGA_REG_GMOR, 0x2d);
-	
+
 	/* Insert write barrier before actually sending data */
 	/* XXX Abuses the fact that there is only one write barrier on Alphas */
 	TGAREGWB(dc, TGA_REG_GMOR, 1);
@@ -1519,7 +1519,7 @@ tga2_ramdac_wr(v, btreg, val)
 	if (btreg > BT485_REG_MAX)
 		panic("tga_ramdac_wr: reg %d out of range", btreg);
 
-	bus_space_subregion(dc->dc_memt, dc->dc_memh, TGA2_MEM_RAMDAC + 
+	bus_space_subregion(dc->dc_memt, dc->dc_memh, TGA2_MEM_RAMDAC +
 		(0xe << 12) + (btreg << 8), 4, &ramdac);
 	bus_space_write_4(dc->dc_memt, ramdac, 0, val & 0xff);
 	bus_space_barrier(dc->dc_memt, ramdac, 0, 4, BUS_SPACE_BARRIER_WRITE);
@@ -1533,11 +1533,11 @@ tga_bt463_rd(v, btreg)
 	struct tga_devconfig *dc = v;
 	tga_reg_t rdval;
 
-	/* 
-	 * Strobe CE# (high->low->high) since status and data are latched on 
+	/*
+	 * Strobe CE# (high->low->high) since status and data are latched on
 	 * the falling and rising edges (respectively) of this active-low signal.
 	 */
-	
+
 	TGAREGWB(dc, TGA_REG_EPSR, 1);
 	TGAWREG(dc, TGA_REG_EPSR, (btreg << 2) | 2 | 1);
 	TGAREGWB(dc, TGA_REG_EPSR, 1);
@@ -1560,12 +1560,12 @@ tga_bt463_wr(v, btreg, val)
 {
 	struct tga_devconfig *dc = v;
 
-	/* 
+	/*
 	 * In spite of the 21030 documentation, to set the MPU bus bits for
 	 * a write, you set them in the upper bits of EPDR, not EPSR.
 	 */
-	
-	/* 
+
+	/*
 	 * Strobe CE# (high->low->high) since status and data are latched on
 	 * the falling and rising edges of this active-low signal.
 	 */
@@ -1609,7 +1609,7 @@ tga2_ramdac_rd(v, btreg)
 	if (btreg > BT485_REG_MAX)
 		panic("tga_ramdac_rd: reg %d out of range", btreg);
 
-	bus_space_subregion(dc->dc_memt, dc->dc_memh, TGA2_MEM_RAMDAC + 
+	bus_space_subregion(dc->dc_memt, dc->dc_memh, TGA2_MEM_RAMDAC +
 		(0xe << 12) + (btreg << 8), 4, &ramdac);
 	retval = bus_space_read_4(dc->dc_memt, ramdac, 0) & 0xff;
 	bus_space_barrier(dc->dc_memt, ramdac, 0, 4, BUS_SPACE_BARRIER_READ);
@@ -1646,19 +1646,19 @@ tga2_init(dc)
 		tga2_ics9110_wr(dc, m->dotclock);
 	}
 #if 0
-	TGAWREG(dc, TGA_REG_VHCR, 
+	TGAWREG(dc, TGA_REG_VHCR,
 	     ((m->hbp / 4) << 21) |
 	     ((m->hsync / 4) << 14) |
 	    (((m->hfp - 4) / 4) << 9) |
 	     ((m->cols + 4) / 4));
 #else
-	TGAWREG(dc, TGA_REG_VHCR, 
+	TGAWREG(dc, TGA_REG_VHCR,
 	     ((m->hbp / 4) << 21) |
 	     ((m->hsync / 4) << 14) |
 	    (((m->hfp) / 4) << 9) |
 	     ((m->cols) / 4));
 #endif
-	TGAWREG(dc, TGA_REG_VVCR, 
+	TGAWREG(dc, TGA_REG_VVCR,
 	    (m->vbp << 22) |
 	    (m->vsync << 16) |
 	    (m->vfp << 11) |
@@ -1730,14 +1730,14 @@ tga2_ics9110_wr(dc, dotclock)
 
 	for (i = 24; i > 0; i--) {
 		u_int32_t writeval;
-                
+
 		writeval = valU & 0x1;
-		if (i == 1)  
-			writeval |= 0x2; 
+		if (i == 1)
+			writeval |= 0x2;
 		valU >>= 1;
 		bus_space_write_4(dc->dc_memt, clock, 0, writeval);
 		bus_space_barrier(dc->dc_memt, clock, 0, 4, BUS_SPACE_BARRIER_WRITE);
-        }       
+        }
 	bus_space_subregion(dc->dc_memt, dc->dc_memh, TGA2_MEM_EXTDEV +
 	    TGA2_MEM_CLOCK + (0xe << 12) + (0x1 << 11) + (0x1 << 11), 4,
 		&clock); /* XXX */

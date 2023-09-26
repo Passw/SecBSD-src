@@ -551,7 +551,7 @@ nge_miibus_statchg(struct device *dev)
 	}
 
 	txcfg |= NGE_TXCFG_AUTOPAD;
-	
+
 	CSR_WRITE_4(sc, NGE_TX_CFG, txcfg);
 	CSR_WRITE_4(sc, NGE_RX_CFG, rxcfg);
 
@@ -810,7 +810,7 @@ nge_attach(struct device *parent, struct device *self, void *aux)
 		DPRINTFN(5, ("%s: TBI mode\n", sc->sc_dv.dv_xname));
 		sc->nge_tbi = 1;
 
-		ifmedia_init(&sc->nge_ifmedia, 0, nge_ifmedia_tbi_upd, 
+		ifmedia_init(&sc->nge_ifmedia, 0, nge_ifmedia_tbi_upd,
 			     nge_ifmedia_tbi_sts);
 
 		ifmedia_add(&sc->nge_ifmedia, IFM_ETHER|IFM_NONE, 0, NULL),
@@ -820,10 +820,10 @@ nge_attach(struct device *parent, struct device *self, void *aux)
 		ifmedia_add(&sc->nge_ifmedia, IFM_ETHER|IFM_AUTO, 0, NULL);
 
 		ifmedia_set(&sc->nge_ifmedia, IFM_ETHER|IFM_AUTO);
-	    
+
 		CSR_WRITE_4(sc, NGE_GPIO, CSR_READ_4(sc, NGE_GPIO)
-			    | NGE_GPIO_GP4_OUT 
-			    | NGE_GPIO_GP1_OUTENB | NGE_GPIO_GP2_OUTENB 
+			    | NGE_GPIO_GP4_OUT
+			    | NGE_GPIO_GP1_OUTENB | NGE_GPIO_GP2_OUTENB
 			    | NGE_GPIO_GP3_OUTENB | NGE_GPIO_GP4_OUTENB
 			    | NGE_GPIO_GP5_OUTENB);
 
@@ -838,9 +838,9 @@ nge_attach(struct device *parent, struct device *self, void *aux)
 			     nge_ifmedia_mii_sts);
 		mii_attach(&sc->sc_dv, &sc->nge_mii, 0xffffffff, MII_PHY_ANY,
 			   MII_OFFSET_ANY, 0);
-		
+
 		if (LIST_FIRST(&sc->nge_mii.mii_phys) == NULL) {
-			
+
 			printf("%s: no PHY found!\n", sc->sc_dv.dv_xname);
 			ifmedia_add(&sc->nge_mii.mii_media,
 				    IFM_ETHER|IFM_MANUAL, 0, NULL);
@@ -1193,15 +1193,15 @@ nge_tick(void *xsc)
 				splx(s);
 				return;
 			}
-				
+
 			anlpar = CSR_READ_4(sc, NGE_TBI_ANLPAR);
 			txcfg = CSR_READ_4(sc, NGE_TX_CFG);
 			rxcfg = CSR_READ_4(sc, NGE_RX_CFG);
-			
+
 			DPRINTFN(2, ("%s: nge_tick: anlpar=%#x, txcfg=%#x, "
 				     "rxcfg=%#x\n", sc->sc_dv.dv_xname, anlpar,
 				     txcfg, rxcfg));
-			
+
 			if (anlpar == 0 || anlpar & NGE_TBIANAR_FDX) {
 				txcfg |= (NGE_TXCFG_IGN_HBEAT|
 					  NGE_TXCFG_IGN_CARR);
@@ -1231,7 +1231,7 @@ nge_tick(void *xsc)
 			if (!ifq_empty(&ifp->if_snd))
 				nge_start(ifp);
 		}
-		
+
 	}
 
 	splx(s);
@@ -1295,7 +1295,7 @@ nge_intr(void *arg)
 		}
 
 #if 0
-		/* 
+		/*
 		 * XXX: nge_tick() is not ready to be called this way
 		 * it screws up the aneg timeout because mii_tick() is
 		 * only to be called once per second.
@@ -1577,7 +1577,7 @@ nge_init(void *xsc)
 	}
 
 	txcfg |= NGE_TXCFG_AUTOPAD;
-	
+
 	CSR_WRITE_4(sc, NGE_TX_CFG, txcfg);
 	CSR_WRITE_4(sc, NGE_RX_CFG, rxcfg);
 
@@ -1675,7 +1675,7 @@ nge_ifmedia_tbi_upd(struct ifnet *ifp)
 
 	sc->nge_link = 0;
 
-	if (IFM_SUBTYPE(sc->nge_ifmedia.ifm_cur->ifm_media) 
+	if (IFM_SUBTYPE(sc->nge_ifmedia.ifm_cur->ifm_media)
 	    == IFM_AUTO) {
 		u_int32_t anar, bmcr;
 		anar = CSR_READ_4(sc, NGE_TBI_ANAR);
@@ -1706,7 +1706,7 @@ nge_ifmedia_tbi_upd(struct ifnet *ifp)
 		CSR_WRITE_4(sc, NGE_TX_CFG, txcfg);
 		CSR_WRITE_4(sc, NGE_RX_CFG, rxcfg);
 	}
-	
+
 	NGE_CLRBIT(sc, NGE_GPIO, NGE_GPIO_GP3_OUT);
 
 	return(0);
@@ -1722,12 +1722,12 @@ nge_ifmedia_tbi_sts(struct ifnet *ifp, struct ifmediareq *ifmr)
 	u_int32_t		bmcr;
 
 	bmcr = CSR_READ_4(sc, NGE_TBI_BMCR);
-	
+
 	if (IFM_SUBTYPE(sc->nge_ifmedia.ifm_cur->ifm_media) == IFM_AUTO) {
 		u_int32_t bmsr = CSR_READ_4(sc, NGE_TBI_BMSR);
 		DPRINTFN(2, ("%s: nge_ifmedia_tbi_sts bmsr=%#x, bmcr=%#x\n",
 			     sc->sc_dv.dv_xname, bmsr, bmcr));
-	
+
 		if (!(bmsr & NGE_TBIBMSR_ANEG_DONE)) {
 			ifmr->ifm_active = IFM_ETHER|IFM_NONE;
 			ifmr->ifm_status = IFM_AVALID;
@@ -1737,18 +1737,18 @@ nge_ifmedia_tbi_sts(struct ifnet *ifp, struct ifmediareq *ifmr)
 		DPRINTFN(2, ("%s: nge_ifmedia_tbi_sts bmcr=%#x\n",
 			     sc->sc_dv.dv_xname, bmcr));
 	}
-		
+
 	ifmr->ifm_status = IFM_AVALID|IFM_ACTIVE;
 	ifmr->ifm_active = IFM_ETHER|IFM_1000_SX;
-	
+
 	if (bmcr & NGE_TBIBMCR_LOOPBACK)
 		ifmr->ifm_active |= IFM_LOOP;
-	
+
 	if (IFM_SUBTYPE(sc->nge_ifmedia.ifm_cur->ifm_media) == IFM_AUTO) {
 		u_int32_t anlpar = CSR_READ_4(sc, NGE_TBI_ANLPAR);
 		DPRINTFN(2, ("%s: nge_ifmedia_tbi_sts anlpar=%#x\n",
 			     sc->sc_dv.dv_xname, anlpar));
-		
+
 		ifmr->ifm_active |= IFM_AUTO;
 		if (anlpar & NGE_TBIANLPAR_FDX) {
 			ifmr->ifm_active |= IFM_FDX;
@@ -1756,12 +1756,12 @@ nge_ifmedia_tbi_sts(struct ifnet *ifp, struct ifmediareq *ifmr)
 			ifmr->ifm_active |= IFM_HDX;
 		} else
 			ifmr->ifm_active |= IFM_FDX;
-		
+
 	} else if ((sc->nge_ifmedia.ifm_cur->ifm_media & IFM_GMASK) == IFM_FDX)
 		ifmr->ifm_active |= IFM_FDX;
 	else
 		ifmr->ifm_active |= IFM_HDX;
-	
+
 }
 
 int
@@ -1811,7 +1811,7 @@ nge_ioctl(struct ifnet *ifp, u_long command, caddr_t data)
 	case SIOCGIFMEDIA:
 	case SIOCSIFMEDIA:
 		if (sc->nge_tbi) {
-			error = ifmedia_ioctl(ifp, ifr, &sc->nge_ifmedia, 
+			error = ifmedia_ioctl(ifp, ifr, &sc->nge_ifmedia,
 					      command);
 		} else {
 			mii = &sc->nge_mii;

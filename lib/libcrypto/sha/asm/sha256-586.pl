@@ -13,7 +13,7 @@
 #
 #		Pentium	PIII	P4	AMD K8	Core2
 # gcc		46	36	41	27	26
-# icc		57	33	38	25	23	
+# icc		57	33	38	25	23
 # x86 asm	40	30	33	20	18
 # x86_64 asm(*)	-	-	21	16	16
 #
@@ -145,7 +145,7 @@ sub BODY_00_15() {
 	&mov	($Boff,"ebx");
 	&mov	($Coff,"ecx");
 	&mov	($Doff,"edi");
-	&mov	($E,&DWP(16,"esi"));	
+	&mov	($E,&DWP(16,"esi"));
 	&mov	("ebx",&DWP(20,"esi"));
 	&mov	("ecx",&DWP(24,"esi"));
 	&mov	("edi",&DWP(28,"esi"));

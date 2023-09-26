@@ -755,7 +755,7 @@ ChapGenChallenge(cstate)
        <= MAX_CHALLENGE_LENGTH */
     chal_len = MIN_CHALLENGE_LENGTH +
 	arc4random_uniform(MAX_CHALLENGE_LENGTH - MIN_CHALLENGE_LENGTH + 1);
-			    
+
     cstate->chal_len = chal_len;
     cstate->chal_id = ++cstate->id;
     cstate->chal_transmits = 0;

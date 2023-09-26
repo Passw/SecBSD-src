@@ -210,7 +210,7 @@ xfrd_init(int socket, struct nsd* nsd, int shortsoa, int reload_active,
 	xfrd_receive_soa(socket, shortsoa);
 	if(nsd->options->xfrdfile != NULL && nsd->options->xfrdfile[0]!=0)
 		xfrd_read_state(xfrd);
-	
+
 	/* did we get killed before startup was successful? */
 	if(nsd->signal_hint_shutdown) {
 		kill(nsd_pid, SIGTERM);
@@ -282,7 +282,7 @@ xfrd_sig_process(void)
 		if(!(xfrd->ipc_handler_flags&EV_WRITE)) {
 			ipc_xfrd_set_listening(xfrd, EV_PERSIST|EV_READ|EV_WRITE);
 		}
-	} 
+	}
 
 	/* collect children that exited. */
 	xfrd->nsd->signal_hint_child = 0;
@@ -522,7 +522,7 @@ xfrd_init_slave_zone(xfrd_state_type* xfrd, struct zone_options* zone_opt)
 	num = 0;
 	num_xot = 0;
 	for (; xzone->master != NULL; xzone->master = xzone->master->next, num++) {
-		if (xzone->master->tls_auth_options != NULL) num_xot++; 
+		if (xzone->master->tls_auth_options != NULL) num_xot++;
 	}
 	if (num_xot != 0 && num != num_xot)
 		log_msg(LOG_WARNING, "Some but not all request-xfrs for %s have XFR-over-TLS configured",
@@ -731,7 +731,7 @@ xfrd_receive_soa(int socket, int shortsoa)
 			}
 		}
 		udb_ptr_unlink(&last_task, xtask);
-	
+
 		/* send RELOAD to main to give it this tasklist */
 		task_process_sync(xtask);
 		cmd = NSD_RELOAD;
@@ -819,7 +819,7 @@ xfrd_del_slave_zone(xfrd_state_type* xfrd, const dname_type* dname)
 {
 	xfrd_zone_type* z = (xfrd_zone_type*)rbtree_delete(xfrd->zones, dname);
 	if(!z) return;
-	
+
 	/* io */
 	if(z->tcp_waiting) {
 		/* delete from tcp waiting list */

@@ -195,7 +195,7 @@ sensor_query(struct ntp_sensor *s)
 		return;
 
 	s->last = sensor.tv.tv_sec;
-	
+
 	if (!s->trusted && !TAILQ_EMPTY(&conf->constraints)) {
 		if (conf->constraint_median == 0) {
 			return;

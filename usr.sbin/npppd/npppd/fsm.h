@@ -88,7 +88,7 @@ typedef struct fsm_callbacks {
 		(fsm *, u_char *, int *, int);
     void (*up)(fsm *);		/* Called when fsm reaches OPENED state */
     void (*down)(fsm *);	/* Called when fsm leaves OPENED state */
-		
+
     void (*starting)(fsm *);	/* Called when we want the lower layer */
     void (*finished)(fsm *);	/* Called when we don't want the lower layer */
     void (*protreject)(int);	/* Called when Protocol-Reject received */

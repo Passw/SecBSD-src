@@ -2712,7 +2712,7 @@ fail:
 }
 
 
-int 
+int
 bnxt_hwrm_func_qcfg(struct bnxt_softc *softc)
 {
         struct hwrm_func_qcfg_input req = {0};
@@ -3214,7 +3214,7 @@ int
 bnxt_cfg_async_cr(struct bnxt_softc *softc, struct bnxt_cp_ring *cpr)
 {
 	int rc = 0;
-	
+
 	if (1 /* BNXT_PF(softc) */) {
 		struct hwrm_func_cfg_input req = {0};
 
@@ -3273,12 +3273,12 @@ bnxt_hwrm_vnic_tpa_cfg(struct bnxt_softc *softc)
 			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_ENCAP_TPA |
 			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_AGG_WITH_ECN |
 			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_AGG_WITH_SAME_GRE_SEQ;
-		
+
         	if (softc->hw_lro.is_mode_gro)
 			flags |= HWRM_VNIC_TPA_CFG_INPUT_FLAGS_GRO;
 		else
 			flags |= HWRM_VNIC_TPA_CFG_INPUT_FLAGS_RSC_WND_UPDATE;
-			
+
 		req.flags = htole32(flags);
 
 		req.enables = htole32(HWRM_VNIC_TPA_CFG_INPUT_ENABLES_MAX_AGG_SEGS |
@@ -3494,7 +3494,7 @@ bnxt_get_sffpage(struct bnxt_softc *softc, struct if_sffpage *sff)
 		req.page_offset = htole16(offset);
 		req.data_length = sizeof(out->data);
 		req.enables = htole32(HWRM_PORT_PHY_I2C_READ_REQ_ENABLES_PAGE_OFFSET);
-		
+
 		if (hwrm_send_message(softc, &req, sizeof(req))) {
 			printf("%s: failed to read i2c data\n", DEVNAME(softc));
 			return 1;

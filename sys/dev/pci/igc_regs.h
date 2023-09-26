@@ -47,7 +47,7 @@
 #define IGC_EIAC		0x0152C	/* Ext. Interrupt Auto Clear - RW */
 #define IGC_EIAM		0x01530	/* Ext. Interrupt Ack Auto Clear
 					 * Mask */
-#define IGC_GPIE		0x01514	/* General Purpose Interrupt Enable 
+#define IGC_GPIE		0x01514	/* General Purpose Interrupt Enable
 					 * - RW */
 #define IGC_IVAR0		0x01700	/* Interrupt Vector Allocation (array)
 					 * - RW */

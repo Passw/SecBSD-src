@@ -6,7 +6,7 @@
  * and TV Tuner cards using the Brooktree Bt848, Bt848A, Bt849A, Bt878, Bt879
  * chipset.
  * Copyright Roger Hardiman and Amancio Hasty.
- * 
+ *
  * bktr_tuner : This deals with controlling the tuner fitted to TV cards.
  *
  */
@@ -63,7 +63,7 @@
 #define TIVISION_TVF5533        14
 #define Bt848_MAX_TUNER         15
 
-/* experimental code for Automatic Frequency Control */ 
+/* experimental code for Automatic Frequency Control */
 #define TUNER_AFC
 
 /*
@@ -95,7 +95,7 @@ int	do_afc( bktr_ptr_t bktr, int addr, int frequency );
 #endif /* TUNER_AFC */
 
 
-/* 
+/*
  * This is for start-up convenience only, NOT mandatory.
  */
 #if !defined( DEFAULT_CHNLSET )

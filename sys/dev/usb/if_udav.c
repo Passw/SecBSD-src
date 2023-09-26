@@ -273,7 +273,7 @@ udav_attach(struct device *parent, struct device *self, void *aux)
 		ifmedia_add(&mii->mii_media, IFM_ETHER | IFM_NONE, 0, NULL);
 		ifmedia_set(&mii->mii_media, IFM_ETHER | IFM_NONE);
 	} else {
-		mii_attach(self, mii, 0xffffffff, 
+		mii_attach(self, mii, 0xffffffff,
 			   MII_PHY_ANY, MII_OFFSET_ANY, 0);
 		if (LIST_FIRST(&mii->mii_phys) == NULL) {
 			ifmedia_add(&mii->mii_media, IFM_ETHER | IFM_NONE,
@@ -538,7 +538,7 @@ int
 udav_csr_read1(struct udav_softc *sc, int offset)
 {
 	u_int8_t val = 0;
-	
+
 	if (sc == NULL)
 		return (0);
 
@@ -1076,10 +1076,10 @@ udav_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 		ifp->if_ierrors++;
 		goto done;
 	}
-	
+
 	h = (struct udav_rx_hdr *)c->udav_buf;
 	total_len = UGETW(h->length) - ETHER_CRC_LEN;
-	
+
 	DPRINTF(("%s: RX Status: 0x%02x\n", sc->sc_dev.dv_xname, h->pktstat));
 
 	if (h->pktstat & UDAV_RSR_LCS) {

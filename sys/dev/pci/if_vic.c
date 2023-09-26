@@ -409,7 +409,7 @@ vic_attach(struct device *parent, struct device *self, void *aux)
 		break;
 
 	case PCI_ID_CODE(PCI_VENDOR_AMD, PCI_PRODUCT_AMD_PCNET_PCI):
-		if (bus_space_subregion(sc->sc_iot, ioh, 
+		if (bus_space_subregion(sc->sc_iot, ioh,
 		    VIC_LANCE_SIZE + VIC_MORPH_SIZE, VIC_VMXNET_SIZE,
 		    &sc->sc_ioh) != 0) {
 			printf(": unable to map register window\n");

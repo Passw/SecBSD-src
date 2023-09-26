@@ -167,7 +167,7 @@ client_parse(struct session *s)
 		if (s->cmd == CMD_PORT || s->cmd == CMD_EPRT)
 			return (allow_data_connection(s));
 	}
-	
+
 	if (anonymous_only && (linebuf[0] == 'U' || linebuf[0] == 'u'))
 		return (client_parse_anon(s));
 
@@ -364,7 +364,7 @@ get_line(char *buf, size_t *valid)
 	linelen = i + 1;
 	linebuf[linelen] = '\0';
 	*valid -= linelen;
-	
+
 	/* Move leftovers to the start. */
 	if (*valid != 0)
 		bcopy(buf + linelen, buf, *valid);
@@ -551,7 +551,7 @@ handle_signal(int sig, short event, void *arg)
 
 	exit_daemon();
 }
-	
+
 
 struct session *
 init_session(void)
@@ -973,7 +973,7 @@ allow_data_connection(struct session *s)
 	 *     port collisions, to aid security (some systems pick weak
 	 *     ports) or to satisfy RFC requirements (source port 20).
 	 */
-	
+
 	/* Cast this once, to make code below it more readable. */
 	client_sa = sstosa(&s->client_ss);
 	server_sa = sstosa(&s->server_ss);
@@ -1070,7 +1070,7 @@ allow_data_connection(struct session *s)
 		do_rollback();
 	return (0);
 }
-	
+
 void
 server_read(struct bufferevent *bufev, void *arg)
 {

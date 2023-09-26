@@ -82,7 +82,7 @@ DispPkt(RMPCONN *rconn, int direct)
 	fputs((direct==DIR_RCVD)?"<<< ":(direct==DIR_SENT)?">>> ":"", DbgFp);
 
 	/* display packet timestamp */
-	
+
 	tim = rconn->tstamp.tv_sec;
 	tmp = localtime(&tim);
 	fprintf(DbgFp, "%02d:%02d:%02d.%06ld   ", tmp->tm_hour, tmp->tm_min,

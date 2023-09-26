@@ -498,7 +498,7 @@ npppd_auth_get_user(npppd_auth_base *base, const char *username)
 		buf[lusername - lsuffix] = '\0';
 		un = buf;
 	}
-	
+
 	if (priv_get_user_info(base->users_file_path, un, &u) == 0)
 		return u;
 
@@ -542,7 +542,7 @@ npppd_auth_radius_reload(npppd_auth_base *base, struct authconf *auth)
 		    ? DEFAULT_RADIUS_MAX_FAILOVERS
 		    : auth->data.radius.acct.max_failovers;
 
-	_this->rad_acct_setting->curr_server = 
+	_this->rad_acct_setting->curr_server =
 	_this->rad_auth_setting->curr_server = 0;
 
 	/* load configs for authentication server */

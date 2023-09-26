@@ -148,7 +148,7 @@ uberry_pearlmode(struct uberry_softc *sc)
 	(void) usbd_do_request(sc->sc_udev, &req, &buffer);
 }
 
-void 
+void
 uberry_charge(struct uberry_softc *sc)
 {
 	usb_device_request_t req;

@@ -445,7 +445,7 @@ cgtwelve_mmap(void *v, off_t offset, int prot)
  * Simple Bt462 programming routines.
  */
 
-static __inline__ void 
+static __inline__ void
 cgtwelve_ramdac_wraddr(struct cgtwelve_softc *sc, u_int32_t addr)
 {
 	sc->sc_ramdac->addr_lo = (addr & 0xff);

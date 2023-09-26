@@ -490,7 +490,7 @@ sdmmc_io_read_1(struct sdmmc_function *sf, int reg)
 	u_int8_t data = 0;
 
 	rw_assert_wrlock(&sf->sc->sc_lock);
-	
+
 	(void)sdmmc_io_rw_direct(sf->sc, sf, reg, (u_char *)&data,
 	    SD_ARG_CMD52_READ);
 	return data;
@@ -509,7 +509,7 @@ u_int16_t
 sdmmc_io_read_2(struct sdmmc_function *sf, int reg)
 {
 	u_int16_t data = 0;
-	
+
 	rw_assert_wrlock(&sf->sc->sc_lock);
 
 	(void)sdmmc_io_rw_extended_subr(sf->sc, sf, NULL, reg,
@@ -530,7 +530,7 @@ u_int32_t
 sdmmc_io_read_4(struct sdmmc_function *sf, int reg)
 {
 	u_int32_t data = 0;
-	
+
 	rw_assert_wrlock(&sf->sc->sc_lock);
 
 	(void)sdmmc_io_rw_extended_subr(sf->sc, sf, NULL, reg,

@@ -260,7 +260,7 @@ dt_handle_input(int fd, short event, void* arg)
 			dt_submit_content(dt_input->dt_collector->dt_env,
 				dt_input->buffer);
 		}
-		
+
 		/* clear buffer for next message */
 		buffer_clear(dt_input->buffer);
 	}
@@ -339,7 +339,7 @@ static void dt_attach_events(struct dt_collector* dt_col, struct nsd* nsd)
 		log_msg(LOG_ERR, "dnstap collector: event_base_set failed");
 	if(event_add(dt_col->cmd_event, NULL) != 0)
 		log_msg(LOG_ERR, "dnstap collector: event_add failed");
-	
+
 	/* add worker input handlers */
 	dt_col->inputs = xalloc_array_zero(dt_col->count,
 		sizeof(*dt_col->inputs));
@@ -355,7 +355,7 @@ static void dt_attach_events(struct dt_collector* dt_col, struct nsd* nsd)
 			log_msg(LOG_ERR, "dnstap collector: event_base_set failed");
 		if(event_add(dt_col->inputs[i].event, NULL) != 0)
 			log_msg(LOG_ERR, "dnstap collector: event_add failed");
-		
+
 		dt_col->inputs[i].buffer = buffer_create(dt_col->region,
 			/* msglen + is_response + addrlen + is_tcp + packetlen + packet + zonelen + zone + spare + local_addr + addr */
 			4+1+4+1+4+TCP_MAX_MESSAGE_LEN+4+MAXHOSTNAMELEN + 32 +

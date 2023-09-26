@@ -69,7 +69,7 @@
 
 #include <dev/usb/if_wi_usb.h>
 
-int wi_usb_do_transmit_sync(struct wi_usb_softc *wsc, struct wi_usb_chain *c, 
+int wi_usb_do_transmit_sync(struct wi_usb_softc *wsc, struct wi_usb_chain *c,
     void *ident);
 void wi_usb_txeof(struct usbd_xfer *xfer, void *priv,
     usbd_status status);
@@ -565,7 +565,7 @@ wi_cmd_usb(struct wi_softc *wsc, int cmd, int val0, int val1, int val2)
 	total_len = sizeof (struct wi_cmdreq);
 	rnd_len = ROUNDUP64(total_len);
 	if (rnd_len > WI_USB_BUFSZ) {
-		printf("read_record buf size err %x %x\n", 
+		printf("read_record buf size err %x %x\n",
 		    rnd_len, WI_USB_BUFSZ);
 		err = EIO;
 		goto err_ret;
@@ -648,7 +648,7 @@ wi_read_record_usb(struct wi_softc *wsc, struct wi_ltv_gen *ltv)
 	rnd_len = ROUNDUP64(total_len);
 
 	if (rnd_len > WI_USB_BUFSZ) {
-		printf("read_record buf size err %x %x\n", 
+		printf("read_record buf size err %x %x\n",
 		    rnd_len, WI_USB_BUFSZ);
 		wi_usb_tx_unlock(sc);
 		return EIO;
@@ -862,7 +862,7 @@ wi_write_record_usb(struct wi_softc *wsc, struct wi_ltv_gen *ltv)
 	    sizeof(prid->rid) + (ltv->wi_len-1)*2;
 	rnd_len = ROUNDUP64(total_len);
 	if (rnd_len > WI_USB_BUFSZ) {
-		printf("write_record buf size err %x %x\n", 
+		printf("write_record buf size err %x %x\n",
 		    rnd_len, WI_USB_BUFSZ);
 		wi_usb_tx_unlock(sc);
 		return EIO;
@@ -1654,7 +1654,7 @@ wi_start_usb(struct ifnet *ifp)
 	splx(s);
 }
 
-/* 
+/*
  * inquire is called from interrupt context (timeout)
  * It is not possible to sleep in interrupt context so it is necessary
  * to signal the kernel thread to perform the action.
@@ -1670,7 +1670,7 @@ wi_init_usb(struct wi_softc *wsc)
 }
 
 
-/* 
+/*
  * inquire is called from interrupt context (timeout)
  * It is not possible to sleep in interrupt context so it is necessary
  * to signal the kernel thread to perform the action.
@@ -1695,7 +1695,7 @@ wi_inquire_usb(void *xsc)
 	splx(s);
 }
 
-/* 
+/*
  * Watchdog is normally called from interrupt context (timeout)
  * It is not possible to sleep in interrupt context so it is necessary
  * to signal the kernel thread to perform the action.
@@ -1723,9 +1723,9 @@ wi_watchdog_usb(struct ifnet *ifp)
 }
 
 /*
- * ioctl will always be called from a user context, 
+ * ioctl will always be called from a user context,
  * therefore it is possible to sleep in the calling context
- * acquire the lock and call the real ioctl function directly 
+ * acquire the lock and call the real ioctl function directly
  */
 int
 wi_ioctl_usb(struct ifnet *ifp, u_long command, caddr_t data)
@@ -1768,7 +1768,7 @@ wi_usb_thread(void *arg)
 	wi_usb_ctl_unlock(sc);
 
 	for(;;) {
-		if (wi_thread_info->dying) { 
+		if (wi_thread_info->dying) {
 			if (--sc->wi_usb_refcnt < 0)
 				usb_detach_wakeup(&sc->wi_usb_dev);
 			kthread_exit(0);

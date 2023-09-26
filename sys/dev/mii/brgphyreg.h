@@ -206,7 +206,7 @@
 #define BRGPHY_AUXCTL_MISC_RGMII_SKEW_EN 0x0200
 #define BRGPHY_AUXCTL_MISC_WIRESPEED_EN	0x0010
 
-/* 
+/*
  * Shadow register 0x1C, bit 15 is write enable,
  * bits 14-10 select function (0x00 to 0x1F).
  */

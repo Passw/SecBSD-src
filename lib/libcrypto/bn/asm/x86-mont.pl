@@ -102,7 +102,7 @@ $frame=32;				# size of above frame rounded up to 16n
 	&lea	($num,&DWP(-3,"edi"));	# num=num-1 to assist modulo-scheduling
 	#&mov	($_num,$num);		# redundant as $num is not reused
 	&mov	($_sp,"ebp");		# saved stack pointer!
-
+
 if($sse2) {
 $acc0="mm0";	# mmx register bank layout
 $acc1="mm1";
@@ -183,7 +183,7 @@ $mask="mm7";
 
 	&paddq	($car1,$car0);
 	&movq	(&QWP($frame,"esp",$num,4),$car1);	# tp[num].tp[num-1]
-
+
 	&inc	($i);				# i++
 &set_label("outer");
 	&xor	($j,$j);			# j=0
@@ -262,7 +262,7 @@ $mask="mm7";
 
 &set_label("non_sse2",16);
 }
-
+
 if (0) {
 	&mov	("esp",$_sp);
 	&xor	("eax","eax");	# signal "not fast enough [yet]"
@@ -325,7 +325,7 @@ $carry="ebp";
 	&inc	($j);
 
 	&jmp	(&label("2ndmadd"));
-
+
 &set_label("1stmadd",16);
 	&mov	($carry,"edx");
 	&mul	($word);				# ap[j]*bp[i]
@@ -362,7 +362,7 @@ $carry="ebp";
 	&mov	("eax",&DWP(4,$inp));			# np[1]
 	&adc	("edx",0);
 	&mov	($j,1);
-
+
 &set_label("2ndmadd",16);
 	&mov	($carry,"edx");
 	&mul	($word);				# np[j]*m
@@ -401,7 +401,7 @@ $carry="ebp";
 	&xor	("edx","edx");
 	&mov	("eax",&DWP(0,$inp));
 	&jmp	(&label("1stmadd"));
-
+
 &set_label("bn_sqr_mont",16);
 $sbit=$num;
 	&mov	($_num,$num);
@@ -452,7 +452,7 @@ $sbit=$num;
 	&adc	("edx",0);
 	&mov	("eax",&DWP(4,$inp));			# np[1]
 	&mov	($j,1);
-
+
 &set_label("3rdmadd",16);
 	&mov	($carry,"edx");
 	&mul	($word);				# np[j]*m
@@ -492,7 +492,7 @@ $sbit=$num;
 	&cmp	($j,$num);
 	&mov	(&DWP($frame+4,"esp",$num,4),"eax");	# tp[num]=
 	&je	(&label("common_tail"));
-
+
 	&mov	($word,&DWP(4,$inp,$j,4));		# ap[i]
 	&lea	($j,&DWP(1,$j));
 	&mov	("eax",$word);
@@ -552,7 +552,7 @@ $sbit=$num;
 
 	&jmp	(&label("3rdmadd"));
 }
-
+
 &set_label("common_tail",16);
 	&mov	($np,$_np);			# load modulus pointer
 	&mov	($rp,$_rp);			# load result pointer

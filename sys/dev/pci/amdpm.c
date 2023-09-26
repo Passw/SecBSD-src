@@ -115,7 +115,7 @@ static struct timecounter amdpm_timecounter = {
 #define	AMDPM_RNGDONE	0x00000001	/* Random number generation complete */
 
 #define AMDPM_SMB_REGS  0xe0		/* offset of SMB register space */
-#define AMDPM_SMB_SIZE  0xf		/* size of SMB register space */ 
+#define AMDPM_SMB_SIZE  0xf		/* size of SMB register space */
 #define AMDPM_SMBSTAT	0x0		/* SMBus status */
 #define AMDPM_SMBSTAT_ABRT	(1 << 0)	/* transfer abort */
 #define AMDPM_SMBSTAT_COL	(1 << 1)	/* collision */
@@ -222,7 +222,7 @@ amdpm_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_iot = pa->pa_iot;
 	sc->sc_poll = 1; /* XXX */
 
-	
+
 	if (PCI_VENDOR(pa->pa_id) == PCI_VENDOR_AMD)  {
 		cfg_reg = pci_conf_read(pa->pa_pc, pa->pa_tag, AMDPM_CONFREG);
 		if ((cfg_reg & AMDPM_PMIOEN) == 0) {
@@ -240,7 +240,7 @@ amdpm_attach(struct device *parent, struct device *self, void *aux)
 		if (bus_space_subregion(sc->sc_iot, sc->sc_ioh, AMDPM_SMB_REGS,
 		    AMDPM_SMB_SIZE, &sc->sc_i2c_ioh)) {
 			printf(": failed to map I2C subregion\n");
-			return;	
+			return;
 		}
 
 		if ((cfg_reg & AMDPM_TMRRST) == 0 &&
@@ -255,11 +255,11 @@ amdpm_attach(struct device *parent, struct device *self, void *aux)
 			if (cfg_reg & AMDPM_TMR32)
 				amdpm_timecounter.tc_counter_mask = 0xffffffffu;
 			tc_init(&amdpm_timecounter);
-		}	
+		}
 		if (PCI_PRODUCT(pa->pa_id) == PCI_PRODUCT_AMD_PBC768_PMC ||
 		    PCI_PRODUCT(pa->pa_id) == PCI_PRODUCT_AMD_8111_PMC) {
 			if ((cfg_reg & AMDPM_RNGEN) ==0) {
-				pci_conf_write(pa->pa_pc, pa->pa_tag, 
+				pci_conf_write(pa->pa_pc, pa->pa_tag,
 				    AMDPM_CONFREG, cfg_reg | AMDPM_RNGEN);
 				cfg_reg = pci_conf_read(pa->pa_pc, pa->pa_tag,
 				    AMDPM_CONFREG);
@@ -269,8 +269,8 @@ amdpm_attach(struct device *parent, struct device *self, void *aux)
 				(void) bus_space_read_4(sc->sc_iot, sc->sc_ioh,
 				    AMDPM_RNGDATA);
 				for (i = 1000; i--; ) {
-					if (bus_space_read_1(sc->sc_iot, 
-					    sc->sc_ioh, AMDPM_RNGSTAT) & 
+					if (bus_space_read_1(sc->sc_iot,
+					    sc->sc_ioh, AMDPM_RNGSTAT) &
 					    AMDPM_RNGDONE)
 						break;
 					DELAY(10);
@@ -278,7 +278,7 @@ amdpm_attach(struct device *parent, struct device *self, void *aux)
 				if (bus_space_read_1(sc->sc_iot, sc->sc_ioh,
 				    AMDPM_RNGSTAT) & AMDPM_RNGDONE) {
 					printf(": rng active");
-					timeout_set(&sc->sc_rnd_ch, 
+					timeout_set(&sc->sc_rnd_ch,
 					    amdpm_rnd_callout, sc);
 					amdpm_rnd_callout(sc);
 				}
@@ -322,9 +322,9 @@ amdpm_activate(struct device *self, int act)
 			/* Restart the AMD PBC768_PMC/8111_PMC RNG */
 			cfg_reg = pci_conf_read(sc->sc_pc, sc->sc_tag,
 			    AMDPM_CONFREG);
-			pci_conf_write(sc->sc_pc, sc->sc_tag, 
+			pci_conf_write(sc->sc_pc, sc->sc_tag,
 			    AMDPM_CONFREG, cfg_reg | AMDPM_RNGEN);
-		
+
 		}
 		rv = config_activate_children(self, act);
 		break;

@@ -145,7 +145,7 @@ piixpm_attach(struct device *parent, struct device *self, void *aux)
 	    (PCI_VENDOR(pa->pa_id) == PCI_VENDOR_ATI &&
 	    PCI_PRODUCT(pa->pa_id) == PCI_PRODUCT_ATI_SBX00_SMB &&
 	    PCI_REVISION(pa->pa_class) >= 0x40)) {
-		/* 
+		/*
 		 * On the AMD SB800+, the SMBus I/O registers are well
 		 * hidden.  We need to look at the "SMBus0En" Power
 		 * Management register to find out where they live.

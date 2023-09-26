@@ -41,7 +41,7 @@
 #define	DSSBM_CMD_RECALL_MEMORY		0xb8
 
 #define	DSSBM_CMD_CONVERT_T		0x44
-#define	DSSBM_CMD_CONVERT_V		0xb4	
+#define	DSSBM_CMD_CONVERT_V		0xb4
 
 /* Scratchpad layout */
 #define DS2438_SP_STATUS		0
@@ -180,7 +180,7 @@ owsbm_update(void *arg)
 	onewire_write_byte(sc->sc_onewire, DSSBM_CMD_CONVERT_T);
 	if (onewire_reset(sc->sc_onewire) != 0)
 		goto done;
-	
+
 	onewire_matchrom(sc->sc_onewire, sc->sc_rom);
 	onewire_write_byte(sc->sc_onewire, DSSBM_CMD_CONVERT_V);
 	if (onewire_reset(sc->sc_onewire) != 0)

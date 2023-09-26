@@ -1097,7 +1097,7 @@ usbd_new_device(struct device *parent, struct usbd_bus *bus, int depth,
 	dd = &dev->ddesc;
 
 	/* Try to get device descriptor */
-	/* 
+	/*
 	 * some device will need small size query at first (XXX: out of spec)
 	 * we will get full size descriptor later, just determine the maximum
 	 * packet size of the control pipe at this moment.
@@ -1120,7 +1120,7 @@ usbd_new_device(struct device *parent, struct usbd_bus *bus, int depth,
 			USB_DEVICE_DESCRIPTOR_SIZE);
 		usbd_reset_port(up->parent, port);
 		for (i = 0; i < 3; i++) {
-			err = usbd_get_desc(dev, UDESC_DEVICE, 0, 
+			err = usbd_get_desc(dev, UDESC_DEVICE, 0,
 				USB_DEVICE_DESCRIPTOR_SIZE, dd);
 			if (!err)
 				break;
@@ -1135,7 +1135,7 @@ usbd_new_device(struct device *parent, struct usbd_bus *bus, int depth,
 		USETW(dev->def_ep_desc.wMaxPacketSize, USB_MAX_IPACKET);
 		usbd_reset_port(up->parent, port);
 		usbd_delay_ms(dev, 500);
-		err = usbd_get_desc(dev, UDESC_DEVICE, 0, 
+		err = usbd_get_desc(dev, UDESC_DEVICE, 0,
 			USB_MAX_IPACKET, dd);
 	}
 

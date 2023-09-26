@@ -140,7 +140,7 @@ struct cgtwelve_dpu {
 };
 
 /* APU */
-struct cgtwelve_apu {   
+struct cgtwelve_apu {
 	u_int32_t	imsg0;
 	u_int32_t	msg0;
 	u_int32_t	imsg1;

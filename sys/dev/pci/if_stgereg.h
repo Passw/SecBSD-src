@@ -473,7 +473,7 @@ struct stge_rfd {
 #define STGE_NTXDESC		256
 #define STGE_NTXDESC_MASK	(STGE_NTXDESC - 1)
 #define STGE_NEXTTX(x)		(((x) + 1) & STGE_NTXDESC_MASK)
- 
+
 /*
  * Receive descriptor list size.
  */
@@ -483,7 +483,7 @@ struct stge_rfd {
 
 /*
  * Only interrupt every N frames.  Must be a power-of-two.
- */   
+ */
 #define STGE_TXINTR_SPACING	16
 #define STGE_TXINTR_SPACING_MASK (STGE_TXINTR_SPACING - 1)
 
@@ -526,16 +526,16 @@ struct stge_descsoft {
 struct stge_softc {
 	struct device sc_dev;		/* generic device information */
 	bus_space_tag_t sc_st;		/* bus space tag */
-	bus_space_handle_t sc_sh;	/* bus space handle */ 
-	bus_dma_tag_t sc_dmat;		/* bus DMA tag */ 
+	bus_space_handle_t sc_sh;	/* bus space handle */
+	bus_dma_tag_t sc_dmat;		/* bus DMA tag */
 	struct arpcom sc_arpcom;	/* ethernet common data */
-	int sc_rev;			/* silicon revision */ 
+	int sc_rev;			/* silicon revision */
 	void *sc_ih;			/* interrupt cookie */
 
 	struct mii_data sc_mii;		/* MII/media information */
 
 	struct timeout sc_timeout;	/* tick timeout */
-        
+
 	bus_dmamap_t sc_cddmamap;	/* control data DMA map */
 #define sc_cddma	sc_cddmamap->dm_segs[0].ds_addr
 
@@ -579,7 +579,7 @@ do {									\
 	*(sc)->sc_rxtailp = NULL;					\
 	(sc)->sc_rxlen = 0;						\
 } while (/*CONSTCOND*/0)
- 
+
 #define STGE_RXCHAIN_LINK(sc, m)					\
 do {									\
 	*(sc)->sc_rxtailp = (sc)->sc_rxtail = (m);			\

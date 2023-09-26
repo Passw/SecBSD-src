@@ -48,7 +48,7 @@ rtsx_pci_match(struct device *parent, void *match, void *aux)
 {
 	struct pci_attach_args *pa = aux;
 
-	/* 
+	/*
 	 * Explicitly match the UNDEFINED device class only. Some RTS5209
 	 * devices advertise a SYSTEM/SDHC class in addition to the UNDEFINED
 	 * device class. Let sdhc(4) handle the SYSTEM/SDHC ones.

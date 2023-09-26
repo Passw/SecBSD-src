@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* 
+/*
  * Yamaha YMF724[B-F]/740[B-C]/744/754
  *
  * Documentation links:
@@ -234,7 +234,7 @@ static const struct {
 	  YDS_CAP_MCODE_1E|YDS_CAP_LEGACY_SELECTABLE },
 	{ PCI_PRODUCT_YAMAHA_YMF724F,
 	  YDS_CAP_MCODE_1E|YDS_CAP_LEGACY_SELECTABLE },
-	{ PCI_PRODUCT_YAMAHA_YMF744, 
+	{ PCI_PRODUCT_YAMAHA_YMF744,
 	  YDS_CAP_MCODE_1E|YDS_CAP_LEGACY_FLEXIBLE },
 	{ PCI_PRODUCT_YAMAHA_YMF754,
 	  YDS_CAP_MCODE_1E|YDS_CAP_LEGACY_FLEXIBLE|YDS_CAP_HAS_P44 },
@@ -288,7 +288,7 @@ yds_dump_play_slot(struct yds_softc *sc, int bank)
 			printf("    0x%02x: 0x%08x\n",
 				j * sizeof(u_int32_t), *p++);
 				delay(1);
-		}	
+		}
 		*/
 	}
 }
@@ -572,7 +572,7 @@ yds_configure_legacy(struct yds_softc *sc)
 				       YDS_PCI_FM_BA, opl_addrs[i]);
 		if (bus_space_map(sc->sc_opl_iot,
 				  opl_addrs[i], 4, 0, &sc->sc_opl_ioh) == 0) {
-			struct audio_attach_args aa; 
+			struct audio_attach_args aa;
 
 			aa.type = AUDIODEV_TYPE_OPL;
 			aa.hwif = aa.hdl = NULL;
@@ -585,7 +585,7 @@ yds_configure_legacy(struct yds_softc *sc)
 					reg |= (i << (0+16));
 				break;
 			}
-		} 
+		}
 	}
 	if (dev == 0) {
 		reg &= ~YDS_PCI_LEGACY_FMEN;
@@ -608,7 +608,7 @@ yds_configure_legacy(struct yds_softc *sc)
 				       YDS_PCI_MPU_BA, mpu_addrs[i]);
 		if (bus_space_map(sc->sc_mpu_iot,
 				  mpu_addrs[i], 2, 0, &sc->sc_mpu_ioh) == 0) {
-			struct audio_attach_args aa; 
+			struct audio_attach_args aa;
 
 			aa.type = AUDIODEV_TYPE_MPU;
 			aa.hwif = aa.hdl = NULL;
@@ -629,7 +629,7 @@ yds_configure_legacy(struct yds_softc *sc)
 			       YDS_PCI_LEGACY, reg);
 	}
 	sc->sc_mpu = dev;
-} 
+}
 #undef FLEXIBLE
 #undef SELECTABLE
 
@@ -759,7 +759,7 @@ yds_attachhook(struct device *self)
 	ctl.dev = yds_get_portnum_by_name(sc, AudioCrecord,
 	       AudioNvolume, AudioNmute);
 	yds_mixer_set_port(sc, &ctl);
-	
+
 	ctl.dev = yds_get_portnum_by_name(sc, AudioCrecord,
 	       AudioNsource, NULL);
 	ctl.type = AUDIO_MIXER_ENUM;
@@ -1002,7 +1002,7 @@ yds_allocmem(struct yds_softc *sc, size_t size, size_t align, struct yds_dma *p)
 	if (error)
 		return (error);
 
-	error = bus_dmamem_map(sc->sc_dmatag, p->segs, p->nsegs, p->size, 
+	error = bus_dmamem_map(sc->sc_dmatag, p->segs, p->nsegs, p->size,
 			       &p->addr, BUS_DMA_NOWAIT|BUS_DMA_COHERENT);
 	if (error)
 		goto free;
@@ -1012,7 +1012,7 @@ yds_allocmem(struct yds_softc *sc, size_t size, size_t align, struct yds_dma *p)
 	if (error)
 		goto unmap;
 
-	error = bus_dmamap_load(sc->sc_dmatag, p->map, p->addr, p->size, NULL, 
+	error = bus_dmamap_load(sc->sc_dmatag, p->map, p->addr, p->size, NULL,
 				BUS_DMA_NOWAIT);
 	if (error)
 		goto destroy;
@@ -1075,7 +1075,7 @@ yds_set_params(void *addr, int setmode, int usemode,
 	struct audio_params *p;
 	int mode;
 
-	for (mode = AUMODE_RECORD; mode != -1; 
+	for (mode = AUMODE_RECORD; mode != -1;
 	     mode = mode == AUMODE_RECORD ? AUMODE_PLAY : -1) {
 		if ((setmode & mode) == 0)
 			continue;
@@ -1330,7 +1330,7 @@ yds_trigger_input(void *addr, void *start, void *end, int blksize,
 	sc->sc_rec.blksize = blksize;
 
 	DPRINTFN(1, ("yds_trigger_input: "
-	    "sc=%p start=%p end=%p blksize=%d intr=%p(%p)\n", 
+	    "sc=%p start=%p end=%p blksize=%d intr=%p(%p)\n",
 	    addr, start, end, blksize, intr, arg));
 	DPRINTFN(1, (" parameters: rate=%lu, precision=%u, channels=%u\n",
 	    param->sample_rate, param->precision, param->channels));

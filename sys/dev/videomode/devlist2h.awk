@@ -108,7 +108,7 @@ NF > 0 && $1 == "product" {
 	    products[nproducts, 2], products[nproducts, 3]) > hfile
 
 	i = 4; f = 5;
-	
+
 	ocomment = oparen = 0
 	if (f <= NF) {
 		printf("\t\t/* ") > hfile

@@ -1075,7 +1075,7 @@ urtw_8225_write_s16(struct urtw_softc *sc, uint8_t addr, int index,
 	USETW(req.wIndex, index);
 	USETW(req.wLength, sizeof(uint16_t));
 
-	data = htole16(data);	
+	data = htole16(data);
 	return (usbd_do_request(sc->sc_udev, &req, &data));
 }
 
@@ -1645,7 +1645,7 @@ urtw_write16_c(struct urtw_softc *sc, int val, uint16_t data, uint8_t idx)
 	USETW(req.wIndex, idx & 0x03);
 	USETW(req.wLength, sizeof(uint16_t));
 
-	data = htole16(data);	
+	data = htole16(data);
 	return (usbd_do_request(sc->sc_udev, &req, &data));
 }
 
@@ -1660,7 +1660,7 @@ urtw_write32_c(struct urtw_softc *sc, int val, uint32_t data, uint8_t idx)
 	USETW(req.wIndex, idx & 0x03);
 	USETW(req.wLength, sizeof(uint32_t));
 
-	data = htole32(data);	
+	data = htole32(data);
 	return (usbd_do_request(sc->sc_udev, &req, &data));
 }
 

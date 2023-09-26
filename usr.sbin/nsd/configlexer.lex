@@ -400,7 +400,7 @@ include{COLON}		{ LEXOUT(("v(%s) ", yytext)); BEGIN(include); }
 	}
 }
 
-{UNQUOTEDLETTER}*	{ LEXOUT(("unquotedstr(%s) ", yytext)); 
+{UNQUOTEDLETTER}*	{ LEXOUT(("unquotedstr(%s) ", yytext));
 			c_lval.str = region_strdup(cfg_parser->opt->region, yytext); return STRING; }
 
 %%

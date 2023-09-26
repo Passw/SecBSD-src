@@ -470,7 +470,7 @@ sili_port_intr(struct sili_port *sp, int timeout_slot)
 
 			/* Extract real NCQ error slot & RFIS from
 			 * log page.
-			 */ 
+			 */
 			if (!sili_read_ncq_error(sp, &err_slot, err_port)) {
 				/* got real err_slot */
 				DPRINTF(SILI_D_VERBOSE, "%s.%d: error slot "

@@ -470,7 +470,7 @@
  * After this, we include some additional structure members for
  * use by the driver. Note that for this structure will be a different
  * size on the alpha, but that's okay as long as it's a multiple of 4
- * bytes in size. 
+ * bytes in size.
  *
  */
 struct nge_desc_64 {

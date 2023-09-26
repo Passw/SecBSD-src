@@ -9,7 +9,7 @@ machine="UNKNOWN"
 if [ -f /usr/bin/uname ]; then
 
     os=`/usr/bin/uname`
-	
+
     if [ $os = "AIX" ]; then
 	if [ "`/usr/bin/uname -v`" = "3" ]; then
 	    machine="rs6000"
@@ -18,13 +18,13 @@ if [ -f /usr/bin/uname ]; then
 	    hw="`/usr/sbin/lsattr -l proc0 -E -a type | /usr/bin/cut -d\   -f2`"
 	    if [ $hw = "PowerPC_601" ]; then
 		machine="rs6000"
-	    fi 
+	    fi
 	    if [ $hw = "POWER" ]; then
 		machine="rs6000"
-	    fi 
+	    fi
 	    if [ $hw = "POWER2" ]; then
 		machine="rs6000"
-	    fi 
+	    fi
 	fi
     fi
 
@@ -45,9 +45,9 @@ fi
 if [ -f /bin/uname ]; then
 
     os=`/bin/uname`
-	
+
     if [ $os = "Linux" ]; then
-        
+
 	machine="`/bin/uname -m`"
 
 	if [ $machine = "i686" ]; then
@@ -61,7 +61,7 @@ if [ -f /bin/uname ]; then
 	if [ $machine = "i486" ]; then
 	    machine="i386"
 	fi
-	
+
     fi
 
 fi

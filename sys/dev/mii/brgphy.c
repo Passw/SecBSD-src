@@ -94,8 +94,8 @@ void	brgphy_jumbo_settings(struct mii_softc *);
 void	brgphy_eth_wirespeed(struct mii_softc *);
 void	brgphy_bcm54xx_clock_delay(struct mii_softc *);
 
-const struct mii_phy_funcs brgphy_copper_funcs = {            
-	brgphy_service, brgphy_copper_status, brgphy_reset,          
+const struct mii_phy_funcs brgphy_copper_funcs = {
+	brgphy_service, brgphy_copper_status, brgphy_reset,
 };
 
 const struct mii_phy_funcs brgphy_fiber_funcs = {
@@ -439,7 +439,7 @@ setit:
 	 * Callback if something changed. Note that we need to poke the DSP on
 	 * the Broadcom PHYs if the media changes.
 	 */
-	if (sc->mii_media_active != mii->mii_media_active || 
+	if (sc->mii_media_active != mii->mii_media_active ||
 	    sc->mii_media_status != mii->mii_media_status ||
 	    cmd == MII_MEDIACHG) {
 		switch (sc->mii_oui) {
@@ -982,10 +982,10 @@ brgphy_reset_bnx(struct mii_softc *sc)
 			brgphy_disable_early_dac(sc);
 
 		/* Set Jumbo frame settings in the PHY. */
-		brgphy_jumbo_settings(sc);  
+		brgphy_jumbo_settings(sc);
 
 		/* Enable Ethernet@Wirespeed */
-		brgphy_eth_wirespeed(sc);   
+		brgphy_eth_wirespeed(sc);
 	} else if ((sc->mii_flags & MIIF_HAVEFIBER) == 0) {
 		brgphy_ber_bug(sc);
 

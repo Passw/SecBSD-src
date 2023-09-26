@@ -468,7 +468,7 @@ dwc2_abort_xfer(struct usbd_xfer *xfer, usbd_status status)
 		return;
 	}
 
-	/* Prevent any timeout to kick in. */	
+	/* Prevent any timeout to kick in. */
 	timeout_del(&xfer->timeout_handle);
 	usb_rem_task(xfer->device, &xfer->abort_task);
 

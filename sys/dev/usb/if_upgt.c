@@ -635,7 +635,7 @@ upgt_fw_verify(struct upgt_softc *sc)
 		if (*uc != 0)
 			break;
 	}
-	if (offset == sc->sc_fw_size) { 
+	if (offset == sc->sc_fw_size) {
 		printf("%s: firmware Boot Record Area not found!\n",
 		    sc->sc_dev.dv_xname);
 		return (EIO);

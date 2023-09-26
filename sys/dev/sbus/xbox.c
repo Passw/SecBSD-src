@@ -71,7 +71,7 @@ xboxmatch(struct device *parent, void *cf, void *aux)
 	return (1);
 }
 
-void    
+void
 xboxattach(struct device *parent, struct device *self, void *aux)
 {
 	struct xbox_softc *sc = (struct xbox_softc *)self;

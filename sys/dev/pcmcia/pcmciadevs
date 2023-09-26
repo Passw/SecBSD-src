@@ -145,7 +145,7 @@ product AIRONET PC4800		0x0007 Aironet PC4800
 product AIRONET 350		0x000a Aironet 350
 
 /* AirVast */
-product AIRVAST WN_100		0x7300 AirVast WN-100 
+product AIRVAST WN_100		0x7300 AirVast WN-100
 
 /* Allied Telesis K.K. */
 product ALLIEDTELESIS LA_PCM	0x0002 Allied Telesis LA-PCM
@@ -333,7 +333,7 @@ product PANASONIC KME		0x2604 Panasonic CD-R/RW Interface
 /* Proxim */
 product PROXIM ROAMABOUT_2400FH	0x1058 Digital RoamAbout 2400FH
 product PROXIM RANGELAN2_7401	0x1158 Proxim RangeLAN2 7401
-product PROXIM RANGELANDS_8430	0x8000 Proxim RangeLAN-DS 8430 
+product PROXIM RANGELANDS_8430	0x8000 Proxim RangeLAN-DS 8430
 product PROXIM HARMONY_80211B	0x0002 Proxim Harmony 802.11B
 
 /* Ericsson */
@@ -495,7 +495,7 @@ product AMD AM79C930		{ "AMD", "Am79C930", NULL, NULL }
 product ICOM SL200		{ "Icom", "SL-200", NULL, NULL }
 product XIRCOM CFE_10		{ "Xircom", "CompactCard&spEthernet", "CFE-10", "1.00" }
 product BILLIONTON LNT10TN	{ "PCMCIA", "LNT-10TN", NULL, NULL }
-product NDC ND5100_E		{ "NDC", "Ethernet", "A", NULL } 
+product NDC ND5100_E		{ "NDC", "Ethernet", "A", NULL }
 product PROXIM RL2_7200		{ "PROXIM", "LAN&spCARD", "RANGELAN2", NULL }
 product PROXIM RL2_7400		{ "PROXIM", "LAN&spPC&spCARD", "RANGELAN2", NULL }
 product PROXIM SYMPHONY		{ "PROXIM", "LAN&spPC&spCARD", "SYMPHONY", NULL }

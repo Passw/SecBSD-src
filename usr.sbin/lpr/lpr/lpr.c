@@ -79,7 +79,7 @@ static int	 nact;		/* number of jobs to act on */
 static int	 ncopies = 1;	/* # of copies to make */
 static const char *person;	/* user name */
 static int	 qflag;		/* q job, but don't exec daemon */
-static int	 rflag;		/* remove files upon completion */	
+static int	 rflag;		/* remove files upon completion */
 static int	 sflag;		/* symbolic link flag */
 static int	 tfd;		/* control file descriptor */
 static char	*tfname;	/* tmp copy of cf before linking */
@@ -250,7 +250,7 @@ main(int argc, char **argv)
 		errx(1, "only %ld copies are allowed", MC);
 	/*
 	 * Get the identity of the person doing the lpr using the same
-	 * algorithm as lprm. 
+	 * algorithm as lprm.
 	 */
 	if (real_uid != DU || person == NULL) {
 		if ((pw = getpwuid(real_uid)) == NULL)
@@ -424,7 +424,7 @@ copy(int f, char *n)
 		}
 	}
 	(void)close(fd);
-	if (nc == 0 && nr == 0) 
+	if (nc == 0 && nr == 0)
 		warnx("%s: empty input file", f ? n : "stdin");
 	else
 		nact++;

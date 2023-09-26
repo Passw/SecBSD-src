@@ -355,7 +355,7 @@ vte_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_miibus.mii_readreg = vte_miibus_readreg;
 	sc->sc_miibus.mii_writereg = vte_miibus_writereg;
 	sc->sc_miibus.mii_statchg = vte_miibus_statchg;
-	
+
 	ifmedia_init(&sc->sc_miibus.mii_media, 0, vte_mediachange,
 	    vte_mediastatus);
 	mii_attach(self, &sc->sc_miibus, 0xffffffff, MII_PHY_ANY,
@@ -393,7 +393,7 @@ vte_detach(struct device *self, int flags)
 
 	/* Delete all remaining media. */
 	ifmedia_delete_instance(&sc->sc_miibus.mii_media, IFM_INST_ANY);
-	
+
 	ether_ifdetach(ifp);
 	if_detach(ifp);
 	vte_dma_free(sc);
@@ -421,7 +421,7 @@ vte_dma_alloc(struct vte_softc *sc)
 
 	/* Allocate DMA'able memory for TX ring */
 	error = bus_dmamem_alloc(sc->sc_dmat, VTE_TX_RING_SZ, ETHER_ALIGN,
-	    0, &sc->vte_cdata.vte_tx_ring_seg, 1, &nsegs, 
+	    0, &sc->vte_cdata.vte_tx_ring_seg, 1, &nsegs,
 	    BUS_DMA_WAITOK | BUS_DMA_ZERO);
 	if (error) {
 		printf("%s: could not allocate DMA'able memory for Tx ring.\n",
@@ -446,7 +446,7 @@ vte_dma_alloc(struct vte_softc *sc)
 		return (error);
 	}
 
-	sc->vte_cdata.vte_tx_ring_paddr = 
+	sc->vte_cdata.vte_tx_ring_paddr =
 	    sc->vte_cdata.vte_tx_ring_map->dm_segs[0].ds_addr;
 
 	/* Create DMA stuffs for RX ring */
@@ -622,7 +622,7 @@ vte_encap(struct vte_softc *sc, struct mbuf **m_head)
 		m->m_len = m->m_pkthdr.len;
 	}
 
-	error = bus_dmamap_load_mbuf(sc->sc_dmat, txd->tx_dmamap, m, 
+	error = bus_dmamap_load_mbuf(sc->sc_dmat, txd->tx_dmamap, m,
 	    BUS_DMA_NOWAIT);
 
 	if (error != 0) {
@@ -630,10 +630,10 @@ vte_encap(struct vte_softc *sc, struct mbuf **m_head)
 		return (NULL);
 	}
 
-	bus_dmamap_sync(sc->sc_dmat, txd->tx_dmamap, 0, 
+	bus_dmamap_sync(sc->sc_dmat, txd->tx_dmamap, 0,
 	    txd->tx_dmamap->dm_mapsize, BUS_DMASYNC_PREWRITE);
 
-	txd->tx_desc->dtlen = 
+	txd->tx_desc->dtlen =
 	    htole16(VTE_TX_LEN(txd->tx_dmamap->dm_segs[0].ds_len));
 	txd->tx_desc->dtbp = htole32(txd->tx_dmamap->dm_segs[0].ds_addr);
 	sc->vte_cdata.vte_tx_cnt++;
@@ -955,7 +955,7 @@ vte_newbuf(struct vte_softc *sc, struct vte_rxdesc *rxd, int init)
 			bus_dmamap_unload(sc->sc_dmat,
 			    sc->vte_cdata.vte_rx_sparemap);
 			error = EFBIG;
-			printf("%s: too many segments?!\n", 
+			printf("%s: too many segments?!\n",
 			    sc->sc_dev.dv_xname);
 		}
 		m_freem(m);
@@ -976,7 +976,7 @@ vte_newbuf(struct vte_softc *sc, struct vte_rxdesc *rxd, int init)
 
 	rxd->rx_m = m;
 	rxd->rx_desc->drbp = htole32(rxd->rx_dmamap->dm_segs[0].ds_addr);
-	rxd->rx_desc->drlen = 
+	rxd->rx_desc->drlen =
 	    htole16(VTE_RX_LEN(rxd->rx_dmamap->dm_segs[0].ds_len));
 	rxd->rx_desc->drst = htole16(VTE_DRST_RX_OWN);
 
@@ -1354,7 +1354,7 @@ vte_init_tx_ring(struct vte_softc *sc)
 
 	/* Pre-allocate TX mbufs for deep copy. */
 	for (i = 0; i < VTE_TX_RING_CNT; i++) {
-		MGETHDR(sc->vte_cdata.vte_txmbufs[i], 
+		MGETHDR(sc->vte_cdata.vte_txmbufs[i],
 		    M_DONTWAIT, MT_DATA);
 		if (sc->vte_cdata.vte_txmbufs[i] == NULL)
 			return (ENOBUFS);
@@ -1463,11 +1463,11 @@ vte_iff(struct vte_softc *sc)
 			 */
 			if (nperf < VTE_RXFILT_PERFECT_CNT) {
 				eaddr = enm->enm_addrlo;
-				rxfilt_perf[nperf][0] = 
+				rxfilt_perf[nperf][0] =
 				    eaddr[1] << 8 | eaddr[0];
-				rxfilt_perf[nperf][1] = 
+				rxfilt_perf[nperf][1] =
 				    eaddr[3] << 8 | eaddr[2];
-				rxfilt_perf[nperf][2] = 
+				rxfilt_perf[nperf][2] =
 				    eaddr[5] << 8 | eaddr[4];
 				nperf++;
 				continue;

@@ -504,7 +504,7 @@ wpi_mem_read(struct wpi_softc *sc, uint32_t addr)
 	return WPI_READ(sc, WPI_MEM_RDATA);
 }
 
-static __inline void  
+static __inline void
 wpi_mem_write(struct wpi_softc *sc, uint32_t addr, uint32_t data)
 {
 	WPI_WRITE(sc, WPI_MEM_WADDR, addr);

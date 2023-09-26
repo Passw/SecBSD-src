@@ -270,7 +270,7 @@ tcpcib_activate(struct device *self, int act)
 {
 	struct tcpcib_softc *sc = (struct tcpcib_softc *)self;
 	int rv = 0;
-	
+
 	switch (act) {
 	case DVACT_SUSPEND:
 		rv = config_activate_children(self, act);

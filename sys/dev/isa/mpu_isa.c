@@ -96,8 +96,8 @@ mpu_test(bus_space_tag_t iot, int iobase)	/* base port number to try */
 		}
 		delay (10);
 	}
-	
-	if (rc == 1) {	
+
+	if (rc == 1) {
 		bus_space_write_1(iot, ioh, MPU_COMMAND, MPU_RESET);
 		rc = 0;
 		for (i = 0; i < 2 * MPU_MAXWAIT; i++)

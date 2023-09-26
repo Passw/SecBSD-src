@@ -28,7 +28,7 @@
 
 /*
  * ESS Allegro-1 / Maestro3 Audio Driver
- * 
+ *
  * Based on the FreeBSD maestro3 driver
  *
  */
@@ -82,7 +82,7 @@ struct esa_channel {
 
 	/* mode settings */
 	struct audio_params	mode;
-	
+
 	void			(*intr)(void *);
 	void			*arg;
 };

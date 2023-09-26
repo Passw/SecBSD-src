@@ -42,7 +42,7 @@ struct regmap {
 	bus_space_tag_t		rm_tag;
 	bus_space_handle_t	rm_handle;
 	bus_size_t		rm_size;
-	
+
 	LIST_ENTRY(regmap)	rm_list;
 };
 
@@ -580,7 +580,7 @@ nvmem_register_child(int node, struct nvmem_device *nd)
 		return;
 
 	OF_getpropintarray(node, "bits", bits, sizeof(bits));
-	
+
 	nc = malloc(sizeof(struct nvmem_cell), M_DEVBUF, M_WAITOK);
 	nc->nc_phandle = phandle;
 	nc->nc_nd = nd;
@@ -825,7 +825,7 @@ device_ports_register(struct device_ports *ports,
 		node = OF_getnodebyname(ports->dp_node, "port");
 		if (node == 0)
 			return;
-		
+
 		device_port_register(node, ports, type);
 		return;
 	}

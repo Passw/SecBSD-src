@@ -41,7 +41,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define usec_delay(x)	DELAY(x)
 #define msec_delay(x)	DELAY(1000*(x))
 
-#define DBG 0 
+#define DBG 0
 #define MSGOUT(S, A, B)	printf(S "\n", A, B)
 #define DEBUGFUNC(F)	DEBUGOUT(F);
 #if DBG

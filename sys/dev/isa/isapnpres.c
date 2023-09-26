@@ -100,7 +100,7 @@ isapnp_newdev(struct isa_attach_args *card)
 	if (card->ipa_child == NULL)
 		card->ipa_child = dev;
 	else {
-		for (ipa = card->ipa_child; ipa->ipa_sibling != NULL; 
+		for (ipa = card->ipa_child; ipa->ipa_sibling != NULL;
 		    ipa = ipa->ipa_sibling)
 			continue;
 		ipa->ipa_sibling = dev;
@@ -267,7 +267,7 @@ isapnp_process_tag(u_char tag, u_char len, u_char *buf,
 		    (*conf)->ipa_pref);
 #endif
 		return 0;
-		
+
 	case ISAPNP_TAG_DEP_END:
 		DPRINTF(("<<<End dependent functions\n"));
 		*conf = NULL;
@@ -388,7 +388,7 @@ isapnp_process_tag(u_char tag, u_char len, u_char *buf,
 		    (buf[2] << 8) | buf[1];
 		r->maxbase = (buf[8] << 24) | (buf[7] << 16) |
 		    (buf[6] << 8) | buf[5];
-		r->align = (buf[12] << 24) | (buf[11] << 16) | 
+		r->align = (buf[12] << 24) | (buf[11] << 16) |
 		    (buf[10] << 8) | buf[9];
 		r->length = (buf[16] << 24) | (buf[15] << 16) |
 		    (buf[14] << 8) | buf[13];

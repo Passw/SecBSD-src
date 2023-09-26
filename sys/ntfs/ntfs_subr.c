@@ -81,7 +81,7 @@ static signed int ntfs_toupper_usecount;
   !ntfs_uastrcmp(ntmp, aalp->al_name,aalp->al_namelen,name,namelen) )
 
 /*
- * 
+ *
  */
 int
 ntfs_ntvattrrele(struct ntvattr *vap)
@@ -715,7 +715,7 @@ ntfs_fget(struct ntfsmount *ntmp, struct ntnode *ip, int attrtype,
 		DPRINTF("ntfs_fget: fnode: attrtype: %u, attrname: %s\n",
 		    fp->f_attrtype, fp->f_attrname ? fp->f_attrname : "");
 
-		if ((attrtype == fp->f_attrtype) && 
+		if ((attrtype == fp->f_attrtype) &&
 		    ((!attrname && !fp->f_attrname) ||
 		     (attrname && fp->f_attrname &&
 		      !strcmp(attrname,fp->f_attrname)))){

@@ -216,7 +216,7 @@ fdt_node_property(void *node, char *name, char **out)
 	u_int32_t *ptr;
 	u_int32_t nameid;
 	char *tmp;
-	
+
 	if (!tree_inited)
 		return -1;
 
@@ -383,7 +383,7 @@ fdt_next_property(void *node, char *name, char **nextname)
 {
 	u_int32_t *ptr;
 	u_int32_t nameid;
-	
+
 	if (!tree_inited)
 		return 0;
 
@@ -805,7 +805,7 @@ fdt_print_node(void *node, int level)
 {
 	u_int32_t *ptr;
 	int cnt;
-	
+
 	ptr = (u_int32_t *)node;
 
 	if (betoh32(*ptr) != FDT_NODE_BEGIN)
@@ -984,7 +984,7 @@ OF_getpropbool(int handle, char *prop)
 {
 	void *node = (char *)tree.header + handle;
 	char *data;
-	
+
 	return (fdt_node_property(node, prop, &data) >= 0);
 }
 
@@ -993,7 +993,7 @@ OF_getpropint(int handle, char *prop, uint32_t defval)
 {
 	uint32_t val;
 	int len;
-	
+
 	len = OF_getprop(handle, prop, &val, sizeof(val));
 	if (len != sizeof(val))
 		return defval;
@@ -1022,7 +1022,7 @@ OF_getpropint64(int handle, char *prop, uint64_t defval)
 {
 	uint64_t val;
 	int len;
-	
+
 	len = OF_getprop(handle, prop, &val, sizeof(val));
 	if (len != sizeof(val))
 		return defval;

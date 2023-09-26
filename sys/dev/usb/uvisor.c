@@ -127,7 +127,7 @@ struct uvisor_softc {
 	struct device		sc_dev;		/* base device */
 	struct usbd_device	*sc_udev;	/* device */
 	struct usbd_interface	*sc_iface;	/* interface */
-/* 
+/*
  * added sc_vendor for later interrogation in failed initialisations
  */
 	int			sc_vendor;	/* USB device vendor */
@@ -158,7 +158,7 @@ const struct ucom_methods uvisor_methods = {
 
 struct uvisor_type {
 	struct usb_devno	uv_dev;
-	u_int16_t		uv_flags;	
+	u_int16_t		uv_flags;
 #define PALM4	0x0001
 #define VISOR	0x0002
 #define NOFRE	0x0004
@@ -244,9 +244,9 @@ uvisor_attach(struct device *parent, struct device *self, void *aux)
 
 	sc->sc_flags = uvisor_lookup(uaa->vendor, uaa->product)->uv_flags;
 	sc->sc_vendor = uaa->vendor;
-	
+
 	if ((sc->sc_flags & (VISOR | PALM4)) == 0) {
-		printf("%s: device is neither visor nor palm\n", 
+		printf("%s: device is neither visor nor palm\n",
 		    sc->sc_dev.dv_xname);
 		goto bad;
 	}
@@ -406,7 +406,7 @@ uvisor_init(struct uvisor_softc *sc, struct uvisor_connection_info *ci,
 		if (err)
 			return (err);
 	}
-	
+
 	if (sc->sc_flags & VISOR) {
 		DPRINTF(("uvisor_init: getting Visor connection info\n"));
 		req.bmRequestType = UT_READ_VENDOR_ENDPOINT;
@@ -419,10 +419,10 @@ uvisor_init(struct uvisor_softc *sc, struct uvisor_connection_info *ci,
 		if (err)
 			return (err);
 	}
-	
+
 	if (sc->sc_flags & NOFRE)
 		return (err);
-	
+
 	DPRINTF(("uvisor_init: getting available bytes\n"));
 	req.bmRequestType = UT_READ_VENDOR_ENDPOINT;
 	req.bRequest = UVISOR_REQUEST_BYTES_AVAILABLE;

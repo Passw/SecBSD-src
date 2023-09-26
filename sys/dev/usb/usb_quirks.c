@@ -196,7 +196,7 @@ usbd_find_quirk(usb_device_descriptor_t *d)
 					vendor, product, UGETW(d->bcdDevice),
 					t->quirks.uq_flags);
 #endif
-	
+
 			return (&t->quirks);
 		}
 	}
@@ -210,7 +210,7 @@ usbd_find_quirk(usb_device_descriptor_t *d)
 #ifdef USB_DEBUG
 			if (usbdebug && td->quirks.uq_flags)
 				printf("usbd_find_quirk for device class 0x%02x/0x%02x/%x: %d\n",
-					d->bDeviceClass, d->bDeviceSubClass, 
+					d->bDeviceClass, d->bDeviceSubClass,
 					UGETW(d->bcdDevice),
 					td->quirks.uq_flags);
 #endif

@@ -126,22 +126,22 @@ typedef int	boolean_t;
  */
 #define IXGB_TX_CLEANUP_THRESHOLD	(sc->num_tx_desc / 8)
 
-/* 
- * Flow Control Types. 
- * 1. ixgb_fc_none - Flow Control Disabled 
+/*
+ * Flow Control Types.
+ * 1. ixgb_fc_none - Flow Control Disabled
  * 2. ixgb_fc_rx_pause - Flow Control Receive Only
  * 3. ixgb_fc_tx_pause - Flow Control Transmit Only
  * 4. ixgb_fc_full - Flow Control Enabled
  */
-#define FLOW_CONTROL_NONE	ixgb_fc_none 
+#define FLOW_CONTROL_NONE	ixgb_fc_none
 #define FLOW_CONTROL_RX_PAUSE	ixgb_fc_rx_pause
 #define FLOW_CONTROL_TX_PAUSE	ixgb_fc_tx_pause
 #define FLOW_CONTROL_FULL	ixgb_fc_full
 
 /*
  * Set the flow control type. Assign one of the above flow control types to be enabled.
- * Default Value: FLOW_CONTROL_FULL   
- */    
+ * Default Value: FLOW_CONTROL_FULL
+ */
 #define FLOW_CONTROL		FLOW_CONTROL_FULL
 
 /*
@@ -252,7 +252,7 @@ struct ixgb_softc {
 
 	/*
 	 * Transmit definitions
-	 * 
+	 *
 	 * We have an array of num_tx_desc descriptors (handled by the
 	 * controller) paired with an array of tx_buffers (at
 	 * tx_buffer_area). The index of the next available descriptor is
@@ -271,7 +271,7 @@ struct ixgb_softc {
 
 	/*
 	 * Receive definitions
-	 * 
+	 *
 	 * we have an array of num_rx_desc rx_desc (handled by the controller),
 	 * and paired with an array of rx_buffers (at rx_buffer_area). The
 	 * next pair to check on receive is at offset next_rx_desc_to_check

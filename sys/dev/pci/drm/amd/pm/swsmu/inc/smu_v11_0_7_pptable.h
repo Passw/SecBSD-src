@@ -42,23 +42,23 @@
 #define SMU_11_0_7_PP_POWERSAVINGCLOCK_VERSION            0x01           // Power Saving Clock Table Version 1.00
 
 enum SMU_11_0_7_ODFEATURE_CAP {
-    SMU_11_0_7_ODCAP_GFXCLK_LIMITS = 0, 
-    SMU_11_0_7_ODCAP_GFXCLK_CURVE,    
-    SMU_11_0_7_ODCAP_UCLK_LIMITS,           
-    SMU_11_0_7_ODCAP_POWER_LIMIT,        
-    SMU_11_0_7_ODCAP_FAN_ACOUSTIC_LIMIT,   
-    SMU_11_0_7_ODCAP_FAN_SPEED_MIN,       
-    SMU_11_0_7_ODCAP_TEMPERATURE_FAN,     
-    SMU_11_0_7_ODCAP_TEMPERATURE_SYSTEM,  
-    SMU_11_0_7_ODCAP_MEMORY_TIMING_TUNE,  
-    SMU_11_0_7_ODCAP_FAN_ZERO_RPM_CONTROL, 
-    SMU_11_0_7_ODCAP_AUTO_UV_ENGINE,   
-    SMU_11_0_7_ODCAP_AUTO_OC_ENGINE,     
-    SMU_11_0_7_ODCAP_AUTO_OC_MEMORY,     
+    SMU_11_0_7_ODCAP_GFXCLK_LIMITS = 0,
+    SMU_11_0_7_ODCAP_GFXCLK_CURVE,
+    SMU_11_0_7_ODCAP_UCLK_LIMITS,
+    SMU_11_0_7_ODCAP_POWER_LIMIT,
+    SMU_11_0_7_ODCAP_FAN_ACOUSTIC_LIMIT,
+    SMU_11_0_7_ODCAP_FAN_SPEED_MIN,
+    SMU_11_0_7_ODCAP_TEMPERATURE_FAN,
+    SMU_11_0_7_ODCAP_TEMPERATURE_SYSTEM,
+    SMU_11_0_7_ODCAP_MEMORY_TIMING_TUNE,
+    SMU_11_0_7_ODCAP_FAN_ZERO_RPM_CONTROL,
+    SMU_11_0_7_ODCAP_AUTO_UV_ENGINE,
+    SMU_11_0_7_ODCAP_AUTO_OC_ENGINE,
+    SMU_11_0_7_ODCAP_AUTO_OC_MEMORY,
     SMU_11_0_7_ODCAP_FAN_CURVE,
     SMU_11_0_ODCAP_AUTO_FAN_ACOUSTIC_LIMIT,
-    SMU_11_0_7_ODCAP_POWER_MODE,          
-    SMU_11_0_7_ODCAP_COUNT,             
+    SMU_11_0_7_ODCAP_POWER_MODE,
+    SMU_11_0_7_ODCAP_COUNT,
 };
 
 enum SMU_11_0_7_ODFEATURE_ID {
@@ -178,7 +178,7 @@ struct smu_11_0_7_powerplay_table
       uint32_t golden_revision;                     //PPGen use only: PP Table Revision on the Golden Data Base
       uint16_t format_id;                           //PPGen use only: PPTable for different ASICs. For sienna_cichlid this should be 0x80
       uint32_t platform_caps;                       //POWERPLAYABLE::ulPlatformCaps
-                                                    
+
       uint8_t  thermal_controller_type;             //one of SMU_11_0_7_PP_THERMALCONTROLLER
 
       uint16_t small_power_limit1;

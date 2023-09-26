@@ -67,7 +67,7 @@ if (ul != 0)								\
 	r-=((r)>>16);							\
 	}								\
 else									\
-	r=(-(int)a-b+1); /* assuming a or b is 0 and in range */ 
+	r=(-(int)a-b+1); /* assuming a or b is 0 and in range */
 
 /*  7/12/95 - Many thanks to Rhys Weatherley <rweather@us.oracle.com>
  * for pointing out that I was assuming little endian

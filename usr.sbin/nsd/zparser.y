@@ -966,7 +966,7 @@ rdata_rrsig:	str sp str sp str sp str sp str sp str sp str sp wire_dname sp str_
 	    zadd_rdata_wireformat(zparser_conv_time(parser->region, $9.str)); /* sig exp */
 	    zadd_rdata_wireformat(zparser_conv_time(parser->region, $11.str)); /* sig inc */
 	    zadd_rdata_wireformat(zparser_conv_short(parser->region, $13.str)); /* key id */
-	    zadd_rdata_wireformat(zparser_conv_dns_name(parser->region, 
+	    zadd_rdata_wireformat(zparser_conv_dns_name(parser->region,
 				(const uint8_t*) $15.str,$15.len)); /* sig name */
 	    zadd_rdata_wireformat(zparser_conv_b64(parser->region, $17.str)); /* sig data */
     }
@@ -974,7 +974,7 @@ rdata_rrsig:	str sp str sp str sp str sp str sp str sp str sp wire_dname sp str_
 
 rdata_nsec:	wire_dname nsec_seq
     {
-	    zadd_rdata_wireformat(zparser_conv_dns_name(parser->region, 
+	    zadd_rdata_wireformat(zparser_conv_dns_name(parser->region,
 				(const uint8_t*) $1.str, $1.len)); /* nsec name */
 	    zadd_rdata_wireformat(zparser_conv_nsec(parser->region, nsecbits)); /* nsec bitlist */
 	    memset(nsecbits, 0, sizeof(nsecbits));
@@ -1041,7 +1041,7 @@ rdata_ipsec_base: str sp str sp str sp dotted_str
 	    zadd_rdata_wireformat(zparser_conv_byte(parser->region, $3.str)); /* gateway type */
 	    zadd_rdata_wireformat(zparser_conv_byte(parser->region, $5.str)); /* algorithm */
 	    switch(atoi($3.str)) {
-		case IPSECKEY_NOGATEWAY: 
+		case IPSECKEY_NOGATEWAY:
 			zadd_rdata_wireformat(alloc_rdata_init(parser->region, "", 0));
 			break;
 		case IPSECKEY_IP4:
@@ -1067,7 +1067,7 @@ rdata_ipsec_base: str sp str sp str sp dotted_str
 						MAXDOMAINLEN);
 					break;
 				}
-				name = dname_concatenate(parser->rr_region, name, 
+				name = dname_concatenate(parser->rr_region, name,
 					domain_dname(parser->origin));
 			}
 			zadd_rdata_wireformat(alloc_rdata_init(parser->region,
@@ -1086,7 +1086,7 @@ rdata_ipseckey:	rdata_ipsec_base sp str_sp_seq trail
     | rdata_ipsec_base trail
     ;
 
-/* RFC 6742 */ 
+/* RFC 6742 */
 rdata_nid:	str sp dotted_str trail
     {
 	    zadd_rdata_wireformat(zparser_conv_short(parser->region, $1.str));  /* preference */
@@ -1354,10 +1354,10 @@ nsec3_add_params(const char* hashalgo_str, const char* flag_str,
 	zadd_rdata_wireformat(zparser_conv_short(parser->region, iter_str));
 
 	/* salt */
-	if(strcmp(salt_str, "-") != 0) 
-		zadd_rdata_wireformat(zparser_conv_hex_length(parser->region, 
-			salt_str, salt_len)); 
-	else 
+	if(strcmp(salt_str, "-") != 0)
+		zadd_rdata_wireformat(zparser_conv_hex_length(parser->region,
+			salt_str, salt_len));
+	else
 		zadd_rdata_wireformat(alloc_rdata_init(parser->region, "", 1));
 }
 #endif /* NSEC3 */

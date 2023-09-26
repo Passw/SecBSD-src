@@ -171,7 +171,7 @@ void		uvideo_vs_start_isoc_ixfer(struct uvideo_softc *,
 void		uvideo_vs_cb(struct usbd_xfer *, void *,
 		    usbd_status);
 usbd_status	uvideo_vs_decode_stream_header(struct uvideo_softc *,
-		    uint8_t *, int); 
+		    uint8_t *, int);
 usbd_status	uvideo_vs_decode_stream_header_isight(struct uvideo_softc *,
 		    uint8_t *, int);
 int		uvideo_mmap_queue(struct uvideo_softc *, uint8_t *, int);
@@ -709,7 +709,7 @@ uvideo_vc_parse_desc_header(struct uvideo_softc *sc,
 		    DEVNAME(sc));
 		return (USBD_INVAL);
 	}
-	
+
 	sc->sc_desc_vc_header.fix = d;
 	sc->sc_desc_vc_header.baInterfaceNr = (uByte *)(d + 1);
 	if (UGETW(d->bcdUVC) < 0x0110)
@@ -818,7 +818,7 @@ uvideo_find_ctrl(struct uvideo_softc *sc, int id)
 		if (uvideo_has_ctrl(sc->sc_desc_vc_pu[j],
 		    uvideo_ctrls[i].ctrl_bit) != 0) {
 			found = 1;
-			break; 
+			break;
 		}
 	}
 	if (found == 0) {
@@ -1146,7 +1146,7 @@ usbd_status
 uvideo_vs_parse_desc_frame_sub(struct uvideo_softc *sc,
     const usb_descriptor_t *desc)
 {
-	struct usb_video_frame_desc *fd = 
+	struct usb_video_frame_desc *fd =
 	    (struct usb_video_frame_desc *)(uint8_t *)desc;
 	int fmtidx, frame_num;
 	uint32_t fbuf_size;
@@ -1368,7 +1368,7 @@ next:
  * off_num_elements:	offset which tells the number of following elements
  * size_element:	size of a single element
  * off_size_element:	if size_element is 0 the element size is taken from
- *			this offset in the descriptor 
+ *			this offset in the descriptor
  */
 int
 uvideo_desc_len(const usb_descriptor_t *desc,
@@ -1583,7 +1583,7 @@ uvideo_vs_negotiation(struct uvideo_softc *sc, int commit)
 		    UGETW(hd->bcdUVC) < 0x0110 ) {
 			DPRINTF(1, "%s: dwMaxVideoFrameSize == 0, fixed\n",
 			    DEVNAME(sc));
-			USETDW(pc->dwMaxVideoFrameSize, 
+			USETDW(pc->dwMaxVideoFrameSize,
 			    UGETDW(frame->dwMaxVideoFrameBufferSize));
 		}
 	}
@@ -1785,11 +1785,11 @@ uvideo_vs_alloc_isoc(struct uvideo_softc *sc)
 	for (i = 0; i < UVIDEO_IXFERS; i++) {
 		sc->sc_vs_cur->ixfer[i].sc = sc;
 
-		sc->sc_vs_cur->ixfer[i].xfer = usbd_alloc_xfer(sc->sc_udev);	
+		sc->sc_vs_cur->ixfer[i].xfer = usbd_alloc_xfer(sc->sc_udev);
 		if (sc->sc_vs_cur->ixfer[i].xfer == NULL) {
 			printf("%s: could not allocate isoc VS xfer!\n",
 			    DEVNAME(sc));
-			return (USBD_NOMEM);	
+			return (USBD_NOMEM);
 		}
 
 		size = sc->sc_vs_cur->psize * sc->sc_nframes;
@@ -2498,7 +2498,7 @@ uvideo_dump_desc_all(struct uvideo_softc *sc)
 		printf("\n");
 
 		desc = usbd_desc_iter_next(&iter);
-	}	
+	}
 
 }
 
@@ -3262,7 +3262,7 @@ uvideo_reqbufs(void *v, struct v4l2_requestbuffers *rb)
 	else
 		sc->sc_mmap_count = rb->count;
 
-	/* allocate the total mmap buffer */	
+	/* allocate the total mmap buffer */
 	buf_size = UGETDW(sc->sc_desc_probe.dwMaxVideoFrameSize);
 	if (buf_size >= SIZE_MAX / UVIDEO_MAX_BUFFERS) {
 		printf("%s: video frame size too large!\n", DEVNAME(sc));

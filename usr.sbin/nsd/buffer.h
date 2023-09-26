@@ -26,7 +26,7 @@ struct buffer
 {
 	/*
 	 * The current position used for reading/writing.
-	 */ 
+	 */
 	size_t   _position;
 
 	/*

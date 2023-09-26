@@ -306,7 +306,7 @@ auixp_set_params(void *hdl, int setmode, int usemode,
 
 	}
 
-	if (setmode & AUMODE_RECORD) {		
+	if (setmode & AUMODE_RECORD) {
 		rec->channels = 2;
 		rec->precision = 16;
 		switch(rec->encoding) {

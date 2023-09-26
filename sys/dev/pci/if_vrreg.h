@@ -315,7 +315,7 @@
 #define VR_BCR0_DMA_512BYTES    0x04
 #define VR_BCR0_DMA_1024BYTES   0x05
 #define VR_BCR0_DMA_STORENFWD   0x07
- 
+
 #define VR_BCR0_RX_THRESH       0x38
 
 #define VR_BCR0_RXTHRESHCFG     0x00
@@ -500,7 +500,7 @@ struct vr_mii_frame {
 
 #define VR_FLAG_FORCEDELAY	1
 #define VR_FLAG_SCHEDDELAY	2
-#define VR_FLAG_DELAYTIMEO	3	
+#define VR_FLAG_DELAYTIMEO	3
 
 struct vr_dmamem {
 	bus_dmamap_t		vrm_map;

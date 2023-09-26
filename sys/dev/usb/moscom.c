@@ -60,11 +60,11 @@
 
 #define MOSCOM_INT_RXEN		0x01
 #define MOSCOM_INT_TXEN		0x02
-#define MOSCOM_INT_RSEN		0x04	
+#define MOSCOM_INT_RSEN		0x04
 #define MOSCOM_INT_MDMEM	0x08
 #define MOSCOM_INT_SLEEP	0x10
 #define MOSCOM_INT_XOFF		0x20
-#define MOSCOM_INT_RTS		0x40	
+#define MOSCOM_INT_RTS		0x40
 
 #define MOSCOM_FIFO_EN		0x01
 #define MOSCOM_FIFO_RXCLR	0x02
@@ -143,7 +143,7 @@ struct moscom_softc {
 void	moscom_set(void *, int, int, int);
 int	moscom_param(void *, int, struct termios *);
 int	moscom_open(void *, int);
-int	moscom_cmd(struct moscom_softc *, int, int);	
+int	moscom_cmd(struct moscom_softc *, int, int);
 
 const struct ucom_methods moscom_methods = {
 	NULL,
@@ -243,7 +243,7 @@ moscom_attach(struct device *parent, struct device *self, void *aux)
 	uca.methods = &moscom_methods;
 	uca.arg = sc;
 	uca.info = NULL;
-	
+
 	sc->sc_subdev = config_found_sm(self, &uca, ucomprint, ucomsubmatch);
 }
 
@@ -273,10 +273,10 @@ moscom_open(void *vsc, int portno)
 	/* Purge FIFOs or odd things happen */
 	if (moscom_cmd(sc, MOSCOM_FIFO, 0x00) != 0)
 		return (EIO);
-	
+
 	if (moscom_cmd(sc, MOSCOM_FIFO, MOSCOM_FIFO_EN |
 	    MOSCOM_FIFO_RXCLR | MOSCOM_FIFO_TXCLR |
-	    MOSCOM_FIFO_DMA_BLK | MOSCOM_FIFO_RXLVL_MASK) != 0) 
+	    MOSCOM_FIFO_DMA_BLK | MOSCOM_FIFO_RXLVL_MASK) != 0)
 		return (EIO);
 
 	/* Magic tell device we're ready for data command */
@@ -383,7 +383,7 @@ moscom_cmd(struct moscom_softc *sc, int reg, int val)
 {
 	usb_device_request_t req;
 	usbd_status err;
-	
+
 	req.bmRequestType = UT_WRITE_VENDOR_DEVICE;
 	req.bRequest = MOSCOM_WRITE;
 	USETW(req.wValue, val + MOSCOM_UART_REG);

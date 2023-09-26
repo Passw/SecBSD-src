@@ -115,7 +115,7 @@ main(int argc, char *argv[])
 		for (i = 0; functions[i].cmd != NULL; i++)
 			if (!strcmp(argv[1], functions[i].cmd))
 				break;
-		
+
 		if ((functions[i].func != helpfunc) &&
 		    (memfd = open("/dev/mem", O_RDONLY)) == -1)
 			err(1, "can't open /dev/mem");

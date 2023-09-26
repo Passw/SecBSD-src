@@ -753,7 +753,7 @@ txp_rxbuf_reclaim(struct txp_softc *sc)
 		bus_dmamap_sync(sc->sc_dmat, sc->sc_rxbufring_dma.dma_map,
 		    i * sizeof(struct txp_rxbuf_desc),
 		    sizeof(struct txp_rxbuf_desc), BUS_DMASYNC_POSTWRITE);
-		    
+
 		/* stash away pointer */
 		bcopy(&sd, (u_long *)&rbd->rb_vaddrlo, sizeof(sd));
 
@@ -1572,7 +1572,7 @@ txp_rsp_fixup(struct txp_softc *sc, struct txp_rsp_desc *rsp,
 		sc->sc_rspring.lastwrite = ridx;
 		hv->hv_resp_read_idx = htole32(ridx);
 	}
-	
+
 	hv->hv_resp_read_idx = htole32(ridx);
 }
 

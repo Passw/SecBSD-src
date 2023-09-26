@@ -20,7 +20,7 @@ struct nsdst;
 struct event;
 
 /*
- * Data for the server_main IPC handler 
+ * Data for the server_main IPC handler
  * Used by parent side to listen to children, and write to children.
  */
 struct main_ipc_handler_data
@@ -41,7 +41,7 @@ struct main_ipc_handler_data
 
 /*
  * Data for ipc handler, nsd and a conn for reading ipc msgs.
- * Used by children to listen to parent. 
+ * Used by children to listen to parent.
  * Used by parent to listen to xfrd.
  */
 struct ipc_handler_conn_data

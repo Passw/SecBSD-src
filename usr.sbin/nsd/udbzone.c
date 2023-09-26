@@ -494,12 +494,12 @@ rrset_create(udb_base* udb, udb_ptr* domain, uint16_t t, udb_ptr* res)
 	udb_rel_ptr_init(&RRSET(res)->next);
 	udb_rel_ptr_init(&RRSET(res)->rrs);
 	RRSET(res)->type = t;
-	
+
 #if 0
 	/* link it in, at the front */
 	udb_rptr_set_rptr(&RRSET(res)->next, udb, &DOMAIN(domain)->rrsets);
 	udb_rptr_set_ptr(&DOMAIN(domain)->rrsets, udb, res);
-#else 
+#else
 	/* preserve RRset order, link at end */
 	if(DOMAIN(domain)->rrsets.data == 0) {
 		udb_rptr_set_ptr(&DOMAIN(domain)->rrsets, udb, res);

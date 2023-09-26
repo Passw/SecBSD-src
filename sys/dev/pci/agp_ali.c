@@ -96,7 +96,7 @@ agp_ali_probe(struct device *parent, void *match, void *aux)
 	return (0);
 }
 
-void 
+void
 agp_ali_attach(struct device *parent, struct device *self, void *aux)
 {
 	struct agp_ali_softc	*asc = (struct agp_ali_softc *)self;
@@ -135,7 +135,7 @@ agp_ali_attach(struct device *parent, struct device *self, void *aux)
 	reg = pci_conf_read(asc->asc_pc, asc->asc_tag, AGP_ALI_ATTBASE);
 	reg = (reg & 0xff) | gatt->ag_physical;
 	pci_conf_write(asc->asc_pc, asc->asc_tag, AGP_ALI_ATTBASE, reg);
-	
+
 	/* Enable the TLB. */
 	reg = pci_conf_read(asc->asc_pc, asc->asc_tag, AGP_ALI_TLBCTRL);
 	reg = (reg & ~0xff) | 0x10;
@@ -179,7 +179,7 @@ agp_ali_restore(struct agp_ali_softc *asc)
 	/* Install the gatt and aperture size. */
 	pci_conf_write(asc->asc_pc, asc->asc_tag, AGP_ALI_ATTBASE,
 	    asc->asc_attbase);
-	
+
 	/* Enable the TLB. */
 	pci_conf_write(asc->asc_pc, asc->asc_tag, AGP_ALI_TLBCTRL,
 	    asc->asc_tlbctrl);

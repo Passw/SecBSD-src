@@ -7483,7 +7483,7 @@ struct iwx_add_sta_cmd {
  * ( REPLY_ADD_STA_KEY = 0x17 )
  * @sta_id: index of station in uCode's station table
  * @key_offset: key offset in key storage
- * @key_flags: IWX_STA_KEY_FLG_* 
+ * @key_flags: IWX_STA_KEY_FLG_*
  * @key: key material data
  * @rx_secur_seq_cnt: RX security sequence counter for the key
  */
@@ -7585,7 +7585,7 @@ struct iwx_wep_key_cmd {
 	struct iwx_wep_key wep_key[0];
 } __packed; /* SEC_CURR_WEP_KEY_CMD_API_S_VER_2 */
 
-/* 
+/*
  * BT coex
  */
 

@@ -32,7 +32,7 @@
 .NH 1
 Setting up
 .PP
-OpenBSD comes with the necessary programs 
+OpenBSD comes with the necessary programs
 installed and with the default line printer queue
 created.  If the system must be modified, the
 Makefile in the directory /usr/src/usr.sbin/lpr
@@ -46,7 +46,7 @@ in the distribution system.
 .NH 2
 Creating a printcap file
 .PP
-The 
+The
 .I printcap
 database contains one or more entries per printer.
 A printer should have a separate spooling directory;

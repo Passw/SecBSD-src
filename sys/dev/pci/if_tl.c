@@ -46,7 +46,7 @@
  * National Semiconductor DP83840A data sheet (www.national.com)
  * Microchip Technology 24C02C data sheet (www.microchip.com)
  * Micro Linear ML6692 100BaseTX only PHY data sheet (www.microlinear.com)
- * 
+ *
  * Written by Bill Paul <wpaul@ctr.columbia.edu>
  * Electrical Engineering Department
  * Columbia University, New York City
@@ -82,7 +82,7 @@
  * depending on how the card is configured during the PCI probing
  * phase. It is even possible to have both PIO and memory mapped
  * access turned on at the same time.
- * 
+ *
  * Frame reception and transmission with the ThunderLAN chip is done
  * using frame 'lists.' A list structure looks more or less like this:
  *
@@ -549,7 +549,7 @@ tl_mii_readreg(struct tl_softc *sc, struct tl_mii_frame *frame)
 	frame->mii_opcode = TL_MII_READOP;
 	frame->mii_turnaround = 0;
 	frame->mii_data = 0;
-	
+
 	/*
 	 * Turn off MII interrupt by forcing MINTEN low.
 	 */
@@ -639,7 +639,7 @@ tl_mii_writereg(struct tl_softc *sc, struct tl_mii_frame *frame)
 	frame->mii_stdelim = TL_MII_STARTDELIM;
 	frame->mii_opcode = TL_MII_WRITEOP;
 	frame->mii_turnaround = TL_MII_TURNAROUND;
-	
+
 	/*
 	 * Turn off MII interrupt by forcing MINTEN low.
 	 */
@@ -1405,7 +1405,7 @@ tl_encap(struct tl_softc *sc, struct tl_chain *c, struct mbuf *m_head)
 				return(1);
 			}
 		}
-		m_copydata(m_head, 0, m_head->m_pkthdr.len,	
+		m_copydata(m_head, 0, m_head->m_pkthdr.len,
 					mtod(m_new, caddr_t));
 		m_new->m_pkthdr.len = m_new->m_len = m_head->m_pkthdr.len;
 		m_freem(m_head);
@@ -1919,7 +1919,7 @@ tl_attach(struct device *parent, struct device *self, void *aux)
 		    sc->tl_product->tp_prod == PCI_PRODUCT(pa->pa_id))
 			break;
 	}
-		
+
 	if (PCI_VENDOR(pa->pa_id) == PCI_VENDOR_COMPAQ ||
 	    PCI_VENDOR(pa->pa_id) == PCI_VENDOR_TI)
 		sc->tl_eeaddr = TL_EEPROM_EADDR;

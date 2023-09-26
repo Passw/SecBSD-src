@@ -69,7 +69,7 @@ while(<IN>) {
 	}
 	next if($inside_block != 1);
 	$new_stackfile .= "/* This block of defines is updated by util/mkstack.pl, please do not touch! */";
-		
+
 	foreach $type_thing (sort @stacklst) {
 		$new_stackfile .= <<EOF;
 

@@ -62,7 +62,7 @@
 /*
  * The 'stc' is a Cirrus Logic CL-CD180 (either revision B or revision C)
  */
-#define	STC_CCR			0x01		/* channel command */		
+#define	STC_CCR			0x01		/* channel command */
 #define	STC_SRER		0x02		/* service request enable */
 #define	STC_COR1		0x03		/* channel option 1 */
 #define	STC_COR2		0x04		/* channel option 2 */

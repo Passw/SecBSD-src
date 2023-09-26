@@ -125,8 +125,8 @@ xor_blocks(unsigned char *result, const unsigned char *a,
 		result[i] = a[i] ^ b[i];
 }
 
-/* 
- * 	Calculate H(i+1) = Hash(Hi,Mi) 
+/*
+ * 	Calculate H(i+1) = Hash(Hi,Mi)
  * 	Where H and M are 32 bytes long
  */
 static int

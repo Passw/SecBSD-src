@@ -94,7 +94,7 @@ ehci_pci_match(struct device *parent, void *match, void *aux)
 	    PCI_SUBCLASS(pa->pa_class) == PCI_SUBCLASS_SERIALBUS_USB &&
 	    PCI_INTERFACE(pa->pa_class) == PCI_INTERFACE_EHCI)
 		return (1);
- 
+
 	return (0);
 }
 

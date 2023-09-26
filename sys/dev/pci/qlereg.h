@@ -162,7 +162,7 @@ struct qle_nvram {
 
 	u_int64_t	port_name;
 	u_int64_t	node_name;
-	
+
 	u_int16_t	login_retry;
 	u_int16_t	link_down_on_nos;
 	u_int16_t	int_delay_timer;
@@ -574,7 +574,7 @@ struct qle_fcp_cmnd {
 	u_int8_t	fcp_task_attr;
 	u_int8_t	fcp_task_mgmt;
 	u_int8_t	fcp_add_cdb_len;
-	
+
 	u_int8_t	fcp_cdb[52];
 	/* 64 bytes total */
 } __packed __aligned(64);
