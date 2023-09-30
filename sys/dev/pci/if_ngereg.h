@@ -528,7 +528,7 @@ struct nge_desc_32 {
 
 #define NGE_LASTDESC(x)		(!((x)->nge_ctl & NGE_CMDSTS_MORE))
 #define NGE_OWNDESC(x)		((x)->nge_ctl & NGE_CMDSTS_OWN)
-#define NGE_INC(x, y)		(x) = (x + 1) % y
+#define NGE_INC(x, y)		((x) = ((x) + 1) % (y))
 #define NGE_RXBYTES(x)		((x)->nge_ctl & NGE_CMDSTS_BUFLEN)
 
 #define NGE_RXSTAT_RANGELENERR	0x00010000
