@@ -332,7 +332,7 @@ static ManagedStatic<std::mutex> TermColorMutex;
 #endif
 
 static bool terminalHasColors(int fd) {
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(__SecBSD__)
   return false;
 #endif
 

@@ -96,7 +96,7 @@
 # define GTEST_OS_NACL 1
 #elif defined __NetBSD__
 # define GTEST_OS_NETBSD 1
-#elif defined __OpenBSD__
+#elif defined __OpenBSD_ || defined(__SecBSD__)
 # define GTEST_OS_OPENBSD 1
 #elif defined __QNX__
 # define GTEST_OS_QNX 1

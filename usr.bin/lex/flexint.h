@@ -1,4 +1,4 @@
-/* $OpenBSD: flexint.h,v 1.1 2015/11/19 19:43:40 tedu Exp $ */
+/* $OpenBSD: flexint.h,v 1.2 2023/10/21 14:09:16 deraadt Exp $ */
 
 /* flex integer type definitions */
 

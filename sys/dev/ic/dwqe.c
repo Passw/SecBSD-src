@@ -802,7 +802,7 @@ dwqe_up(struct dwqe_softc *sc)
 	mode |= (rqs << GMAC_MTL_CHAN_RX_OP_MODE_RQS_SHIFT) &
 	   GMAC_MTL_CHAN_RX_OP_MODE_RQS_MASK;
 	if (fifosz >= 4096) {
-		mode |= GMAC_MTL_CHAN_RX_OP_MODE_EHFC; 
+		mode |= GMAC_MTL_CHAN_RX_OP_MODE_EHFC;
 		mode &= ~GMAC_MTL_CHAN_RX_OP_MODE_RFD_MASK;
 		mode |= 0x3 << GMAC_MTL_CHAN_RX_OP_MODE_RFD_SHIFT;
 		mode &= ~GMAC_MTL_CHAN_RX_OP_MODE_RFA_MASK;

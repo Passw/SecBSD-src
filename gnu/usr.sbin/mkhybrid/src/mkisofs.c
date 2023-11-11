@@ -54,7 +54,7 @@
 #endif
 #include <fctldefs.h>
 
-#if defined(__NetBSD__) || defined(__OpenBSD__) 
+#if defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SecBSD__)
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
@@ -680,8 +680,8 @@ void usage(){
 }
 
 
-/* 
- * Fill in date in the iso9660 format 
+/*
+ * Fill in date in the iso9660 format
  *
  * The standards  state that the timezone offset is in multiples of 15
  * minutes, and is what you add to GMT to get the localtime.  The U.S.
@@ -699,9 +699,9 @@ int FDECL2(iso9660_date,char *, result, time_t, crtime){
   result[4] = local->tm_min;
   result[5] = local->tm_sec;
 
-  /* 
+  /*
    * Must recalculate proper timezone offset each time,
-   * as some files use daylight savings time and some don't... 
+   * as some files use daylight savings time and some don't...
    */
   result[6] = local->tm_yday;	/* save yday 'cause gmtime zaps it */
   local = gmtime(&crtime);
@@ -709,11 +709,11 @@ int FDECL2(iso9660_date,char *, result, time_t, crtime){
   local->tm_yday -= result[6];
   local->tm_hour -= result[3];
   local->tm_min -= result[4];
-  if (local->tm_year < 0) 
+  if (local->tm_year < 0)
     {
       local->tm_yday = -1;
     }
-  else 
+  else
     {
       if (local->tm_year > 0) local->tm_yday = 1;
     }
@@ -1113,7 +1113,7 @@ int FDECL2(main, int, argc, char **, argv){
       case OPTION_H_LIST:
 	hfs_add_list(optarg);
 	break;
-/* NON-HFS change 
+/* NON-HFS change
    The next options will probably appear in mkisofs in the future */
       case OPTION_P_LIST:
 	pathnames = optarg;
@@ -1135,10 +1135,10 @@ int FDECL2(main, int, argc, char **, argv){
 
 parse_input_files:
 
-#if defined(__NetBSD__) || defined(__OpenBSD__) 
+#if defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SecBSD__)
     {
     struct rlimit rlp;
-	if (getrlimit(RLIMIT_DATA,&rlp) == -1) 
+	if (getrlimit(RLIMIT_DATA,&rlp) == -1)
 		perror("Warning: getrlimit");
 	else {
 		rlp.rlim_cur=33554432;
@@ -1302,7 +1302,7 @@ parse_input_files:
 	  exit(1);
 	}
 
-      memcpy(&de.isorec.extent, mrootp->extent, 8);      
+      memcpy(&de.isorec.extent, mrootp->extent, 8);
     }
 
   /*
@@ -1415,8 +1415,8 @@ parse_input_files:
 		  break;
 		}
 	      *pnt = '\0';
-	      graft_dir = find_or_create_directory(graft_dir, 
-						   graft_point, 
+	      graft_dir = find_or_create_directory(graft_dir,
+						   graft_point,
 						   NULL, TRUE);
 	      *pnt = PATH_SEPARATOR;
 	      xpnt = pnt + 1;
@@ -1493,7 +1493,7 @@ parse_input_files:
   if (pfp && pfp != stdin)
     fclose(pfp);
 
-  /* exit if we don't have any pathnames to process - not going to happen 
+  /* exit if we don't have any pathnames to process - not going to happen
      at the moment as we have to have at least one path on the command line */
   if(no_path_names){
           usage();
@@ -1536,12 +1536,12 @@ parse_input_files:
       fprintf(stderr, "Joliet tree sort failed.\n");
       exit(1);
     }
-  
+
   /*
    * Fix a couple of things in the root directory so that everything
    * is self consistent.
    */
-  root->self = root->contents;  /* Fix this up so that the path 
+  root->self = root->contents;  /* Fix this up so that the path
 				   tables get done right */
 
   /*
@@ -1623,8 +1623,8 @@ parse_input_files:
 
   outputlist_insert(&dirtree_clean);
 
-  if(extension_record) 
-    { 
+  if(extension_record)
+    {
       outputlist_insert(&extension_desc);
     }
 
@@ -1635,7 +1635,7 @@ parse_input_files:
    * will always be a primary and an end volume descriptor.
    */
   last_extent = session_start;
-  
+
   /*
    * Calculate the size of all of the components of the disc, and assign
    * extent numbers.
@@ -1681,7 +1681,7 @@ parse_input_files:
   if( verbose > 0 )
     {
 #ifdef HAVE_SBRK
-      fprintf(stderr,"Max brk space used %x\n", 
+      fprintf(stderr,"Max brk space used %x\n",
 	      (unsigned int)(((unsigned long)sbrk(0)) - mem_start));
 #endif
       fprintf(stderr,"%d extents written (%d Mb)\n", last_extent, last_extent >> 9);

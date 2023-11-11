@@ -140,7 +140,7 @@ install:	maninstall target_path
 	   ${DESTDIR}/usr/bin/gcc
 	ln -f ${DESTDIR}/usr/bin/gcc ${DESTDIR}/usr/bin/cc
 
-clean cleandir: 
+clean cleandir:
 	-@if [ -e Makefile ]; then ${MAKE} distclean; fi
 	-rm -f ${CLEANFILES}
 

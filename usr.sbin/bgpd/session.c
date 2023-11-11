@@ -1,4 +1,4 @@
-/*	$OpenBSD: session.c,v 1.448 2023/10/09 07:11:20 claudio Exp $ */
+/*	$OpenBSD: session.c,v 1.455 2023/11/07 11:18:35 claudio Exp $ */
 
 /*
  * Copyright (c) 2003, 2004, 2005 Henning Brauer <henning@openbsd.org>
@@ -1202,37 +1202,63 @@ session_setup_socket(struct peer *p)
 	return (0);
 }
 
-/* compare two sockaddrs by converting them into bgpd_addr */
+/*
+ * compare the bgpd_addr with the sockaddr by converting the latter into
+ * a bgpd_addr. Return true if the two are equal, including any scope
+ */
 static int
-sa_equal(struct sockaddr *a, struct sockaddr *b)
+sa_equal(struct bgpd_addr *ba, struct sockaddr *b)
 {
-	struct bgpd_addr ba, bb;
+	struct bgpd_addr bb;
 
-	sa2addr(a, &ba, NULL);
 	sa2addr(b, &bb, NULL);
-
-	return (memcmp(&ba, &bb, sizeof(ba)) == 0);
+	return (memcmp(ba, &bb, sizeof(*ba)) == 0);
 }
 
 static void
-get_alternate_addr(struct sockaddr *sa, struct bgpd_addr *alt)
+get_alternate_addr(struct bgpd_addr *local, struct bgpd_addr *remote,
+    struct bgpd_addr *alt, unsigned int *scope)
 {
 	struct ifaddrs	*ifap, *ifa, *match;
+	int connected = 0;
+	u_int8_t plen;
 
 	if (getifaddrs(&ifap) == -1)
 		fatal("getifaddrs");
 
-	for (match = ifap; match != NULL; match = match->ifa_next)
-		if (match->ifa_addr != NULL && sa_equal(sa, match->ifa_addr))
+	for (match = ifap; match != NULL; match = match->ifa_next) {
+		if (match->ifa_addr == NULL)
+			continue;
+		if (match->ifa_addr->sa_family != AF_INET &&
+		    match->ifa_addr->sa_family != AF_INET6)
+			continue;
+		if (sa_equal(local, match->ifa_addr)) {
+			if (match->ifa_flags & IFF_POINTOPOINT &&
+			    match->ifa_dstaddr) {
+				if (sa_equal(remote, match->ifa_dstaddr))
+					connected = 1;
+			} else if (match->ifa_netmask) {
+				plen = mask2prefixlen(
+				    match->ifa_addr->sa_family,
+				    match->ifa_netmask);
+				if (prefix_compare(local, remote, plen) == 0)
+					connected = 1;
+			}
 			break;
+		}
+	}
 
 	if (match == NULL) {
 		log_warnx("%s: local address not found", __func__);
 		return;
 	}
+	if (connected)
+		*scope = if_nametoindex(match->ifa_name);
+	else
+		*scope = 0;
 
-	switch (sa->sa_family) {
-	case AF_INET6:
+	switch (local->aid) {
+	case AID_INET6:
 		for (ifa = ifap; ifa != NULL; ifa = ifa->ifa_next) {
 			if (ifa->ifa_addr != NULL &&
 			    ifa->ifa_addr->sa_family == AF_INET &&
@@ -1242,7 +1268,7 @@ get_alternate_addr(struct sockaddr *sa, struct bgpd_addr *alt)
 			}
 		}
 		break;
-	case AF_INET:
+	case AID_INET:
 		for (ifa = ifap; ifa != NULL; ifa = ifa->ifa_next) {
 			if (ifa->ifa_addr != NULL &&
 			    ifa->ifa_addr->sa_family == AF_INET6 &&
@@ -1260,8 +1286,8 @@ get_alternate_addr(struct sockaddr *sa, struct bgpd_addr *alt)
 		}
 		break;
 	default:
-		log_warnx("%s: unsupported address family %d", __func__,
-		    sa->sa_family);
+		log_warnx("%s: unsupported address family %s", __func__,
+		    aid2str(local->aid));
 		break;
 	}
 
@@ -1278,11 +1304,13 @@ session_tcp_established(struct peer *peer)
 	if (getsockname(peer->fd, (struct sockaddr *)&ss, &len) == -1)
 		log_warn("getsockname");
 	sa2addr((struct sockaddr *)&ss, &peer->local, &peer->local_port);
-	get_alternate_addr((struct sockaddr *)&ss, &peer->local_alt);
 	len = sizeof(ss);
 	if (getpeername(peer->fd, (struct sockaddr *)&ss, &len) == -1)
 		log_warn("getpeername");
 	sa2addr((struct sockaddr *)&ss, &peer->remote, &peer->remote_port);
+
+	get_alternate_addr(&peer->local, &peer->remote, &peer->local_alt,
+	    &peer->if_scope);
 }
 
 void
@@ -1296,24 +1324,26 @@ session_capa_add(struct ibuf *opb, uint8_t capa_code, uint8_t capa_len)
 {
 	int errs = 0;
 
-	errs += ibuf_add(opb, &capa_code, sizeof(capa_code));
-	errs += ibuf_add(opb, &capa_len, sizeof(capa_len));
+	errs += ibuf_add_n8(opb, capa_code);
+	errs += ibuf_add_n8(opb, capa_len);
 	return (errs);
 }
 
 int
 session_capa_add_mp(struct ibuf *buf, uint8_t aid)
 {
-	uint8_t			 safi, pad = 0;
 	uint16_t		 afi;
+	uint8_t			 safi;
 	int			 errs = 0;
 
-	if (aid2afi(aid, &afi, &safi) == -1)
-		fatalx("session_capa_add_mp: bad afi/safi pair");
-	afi = htons(afi);
-	errs += ibuf_add(buf, &afi, sizeof(afi));
-	errs += ibuf_add(buf, &pad, sizeof(pad));
-	errs += ibuf_add(buf, &safi, sizeof(safi));
+	if (aid2afi(aid, &afi, &safi) == -1) {
+		log_warn("%s: bad AID", __func__);
+		return (-1);
+	}
+
+	errs += ibuf_add_n16(buf, afi);
+	errs += ibuf_add_zero(buf, 1);
+	errs += ibuf_add_n8(buf, safi);
 
 	return (errs);
 }
@@ -1327,14 +1357,13 @@ session_capa_add_afi(struct peer *p, struct ibuf *b, uint8_t aid,
 	uint8_t		safi;
 
 	if (aid2afi(aid, &afi, &safi)) {
-		log_warn("session_capa_add_afi: bad AID");
-		return (1);
+		log_warn("%s: bad AID", __func__);
+		return (-1);
 	}
 
-	afi = htons(afi);
-	errs += ibuf_add(b, &afi, sizeof(afi));
-	errs += ibuf_add(b, &safi, sizeof(safi));
-	errs += ibuf_add(b, &flags, sizeof(flags));
+	errs += ibuf_add_n16(b, afi);
+	errs += ibuf_add_n8(b, safi);
+	errs += ibuf_add_n8(b, flags);
 
 	return (errs);
 }
@@ -1342,21 +1371,19 @@ session_capa_add_afi(struct peer *p, struct ibuf *b, uint8_t aid,
 struct bgp_msg *
 session_newmsg(enum msg_type msgtype, uint16_t len)
 {
+	u_char			 marker[MSGSIZE_HEADER_MARKER];
 	struct bgp_msg		*msg;
-	struct msg_header	 hdr;
 	struct ibuf		*buf;
 	int			 errs = 0;
 
-	memset(&hdr.marker, 0xff, sizeof(hdr.marker));
-	hdr.len = htons(len);
-	hdr.type = msgtype;
+	memset(marker, 0xff, sizeof(marker));
 
 	if ((buf = ibuf_open(len)) == NULL)
 		return (NULL);
 
-	errs += ibuf_add(buf, &hdr.marker, sizeof(hdr.marker));
-	errs += ibuf_add(buf, &hdr.len, sizeof(hdr.len));
-	errs += ibuf_add(buf, &hdr.type, sizeof(hdr.type));
+	errs += ibuf_add(buf, marker, sizeof(marker));
+	errs += ibuf_add_n16(buf, len);
+	errs += ibuf_add_n8(buf, msgtype);
 
 	if (errs || (msg = calloc(1, sizeof(*msg))) == NULL) {
 		ibuf_free(buf);
@@ -1444,9 +1471,9 @@ session_open(struct peer *p)
 {
 	struct bgp_msg		*buf;
 	struct ibuf		*opb;
-	struct msg_open		 msg;
-	uint16_t		 len, optparamlen = 0;
-	uint8_t			 i, op_type;
+	size_t			 len, optparamlen;
+	uint16_t		 holdtime;
+	uint8_t			 i;
 	int			 errs = 0, extlen = 0;
 	int			 mpcapa = 0;
 
@@ -1473,10 +1500,8 @@ session_open(struct peer *p)
 	    p->conf.role != ROLE_NONE &&
 	    (p->capa.ann.mp[AID_INET] || p->capa.ann.mp[AID_INET6] ||
 	    mpcapa == 0)) {
-		uint8_t val;
-		val = role2capa(p->conf.role);
 		errs += session_capa_add(opb, CAPA_ROLE, 1);
-		errs += ibuf_add(opb, &val, 1);
+		errs += ibuf_add_n8(opb, role2capa(p->conf.role));
 	}
 
 	/* graceful restart and End-of-RIB marker, RFC 4724 */
@@ -1492,19 +1517,14 @@ session_open(struct peer *p)
 		/* Only set the R-flag if no graceful restart is ongoing */
 		if (!rst)
 			hdr |= CAPA_GR_R_FLAG;
-		hdr = htons(hdr);
-
 		errs += session_capa_add(opb, CAPA_RESTART, sizeof(hdr));
-		errs += ibuf_add(opb, &hdr, sizeof(hdr));
+		errs += ibuf_add_n16(opb, hdr);
 	}
 
 	/* 4-bytes AS numbers, RFC6793 */
 	if (p->capa.ann.as4byte) {	/* 4 bytes data */
-		uint32_t	nas;
-
-		nas = htonl(p->conf.local_as);
-		errs += session_capa_add(opb, CAPA_AS4BYTE, sizeof(nas));
-		errs += ibuf_add(opb, &nas, sizeof(nas));
+		errs += session_capa_add(opb, CAPA_AS4BYTE, sizeof(uint32_t));
+		errs += ibuf_add_n32(opb, p->conf.local_as);
 	}
 
 	/* advertisement of multiple paths, RFC7911 */
@@ -1533,60 +1553,60 @@ session_open(struct peer *p)
 	if (p->capa.ann.enhanced_rr)	/* no data */
 		errs += session_capa_add(opb, CAPA_ENHANCED_RR, 0);
 
-	optparamlen = ibuf_size(opb);
-	if (optparamlen == 0) {
-		/* nothing */
-	} else if (optparamlen + 2 >= 255) {
-		/* RFC9072: 2 byte length instead of 1 + 3 byte extra header */
-		optparamlen += sizeof(op_type) + 2 + 3;
-		msg.optparamlen = 255;
-		extlen = 1;
-	} else {
-		optparamlen += sizeof(op_type) + 1;
-		msg.optparamlen = optparamlen;
-	}
-
-	len = MSGSIZE_OPEN_MIN + optparamlen;
-	if (errs || (buf = session_newmsg(OPEN, len)) == NULL) {
+	if (errs) {
 		ibuf_free(opb);
 		bgp_fsm(p, EVNT_CON_FATAL);
 		return;
 	}
 
-	msg.version = 4;
-	msg.myas = htons(p->conf.local_short_as);
-	if (p->conf.holdtime)
-		msg.holdtime = htons(p->conf.holdtime);
-	else
-		msg.holdtime = htons(conf->holdtime);
-	msg.bgpid = conf->bgpid;	/* is already in network byte order */
+	optparamlen = ibuf_size(opb);
+	len = MSGSIZE_OPEN_MIN + optparamlen;
+	if (optparamlen == 0) {
+		/* nothing */
+	} else if (optparamlen + 2 >= 255) {
+		/* RFC9072: use 255 as magic size and request extra header */
+		optparamlen = 255;
+		extlen = 1;
+		/* 3 byte OPT_PARAM_EXT_LEN and OPT_PARAM_CAPABILITIES */
+		len += 2 * 3;
+	} else {
+		/* regular capabilities header */
+		optparamlen += 2;
+		len += 2;
+	}
 
-	errs += ibuf_add(buf->buf, &msg.version, sizeof(msg.version));
-	errs += ibuf_add(buf->buf, &msg.myas, sizeof(msg.myas));
-	errs += ibuf_add(buf->buf, &msg.holdtime, sizeof(msg.holdtime));
-	errs += ibuf_add(buf->buf, &msg.bgpid, sizeof(msg.bgpid));
-	errs += ibuf_add(buf->buf, &msg.optparamlen, 1);
+	if ((buf = session_newmsg(OPEN, len)) == NULL) {
+		ibuf_free(opb);
+		bgp_fsm(p, EVNT_CON_FATAL);
+		return;
+	}
+
+	if (p->conf.holdtime)
+		holdtime = p->conf.holdtime;
+	else
+		holdtime = conf->holdtime;
+
+	errs += ibuf_add_n8(buf->buf, 4);
+	errs += ibuf_add_n16(buf->buf, p->conf.local_short_as);
+	errs += ibuf_add_n16(buf->buf, holdtime);
+	/* is already in network byte order */
+	errs += ibuf_add(buf->buf, &conf->bgpid, sizeof(conf->bgpid));
+	errs += ibuf_add_n8(buf->buf, optparamlen);
 
 	if (extlen) {
-		/* write RFC9072 extra header */
-		uint16_t op_extlen = htons(optparamlen - 3);
-		op_type = OPT_PARAM_EXT_LEN;
-		errs += ibuf_add(buf->buf, &op_type, 1);
-		errs += ibuf_add(buf->buf, &op_extlen, 2);
+		/* RFC9072 extra header which spans over the capabilities hdr */
+		errs += ibuf_add_n8(buf->buf, OPT_PARAM_EXT_LEN);
+		errs += ibuf_add_n16(buf->buf, ibuf_size(opb) + 1 + 2);
 	}
 
 	if (optparamlen) {
-		op_type = OPT_PARAM_CAPABILITIES;
-		errs += ibuf_add(buf->buf, &op_type, sizeof(op_type));
+		errs += ibuf_add_n8(buf->buf, OPT_PARAM_CAPABILITIES);
 
-		optparamlen = ibuf_size(opb);
 		if (extlen) {
 			/* RFC9072: 2-byte extended length */
-			uint16_t op_extlen = htons(optparamlen);
-			errs += ibuf_add(buf->buf, &op_extlen, 2);
+			errs += ibuf_add_n16(buf->buf, ibuf_size(opb));
 		} else {
-			uint8_t op_len = optparamlen;
-			errs += ibuf_add(buf->buf, &op_len, 1);
+			errs += ibuf_add_n8(buf->buf, ibuf_size(opb));
 		}
 		errs += ibuf_add_buf(buf->buf, opb);
 	}
@@ -1683,8 +1703,8 @@ session_notification(struct peer *p, uint8_t errcode, uint8_t subcode,
 		return;
 	}
 
-	errs += ibuf_add(buf->buf, &errcode, sizeof(errcode));
-	errs += ibuf_add(buf->buf, &subcode, sizeof(subcode));
+	errs += ibuf_add_n8(buf->buf, errcode);
+	errs += ibuf_add_n8(buf->buf, subcode);
 
 	if (datalen > 0)
 		errs += ibuf_add(buf->buf, data, datalen);
@@ -1756,10 +1776,9 @@ session_rrefresh(struct peer *p, uint8_t aid, uint8_t subtype)
 		return;
 	}
 
-	afi = htons(afi);
-	errs += ibuf_add(buf->buf, &afi, sizeof(afi));
-	errs += ibuf_add(buf->buf, &subtype, sizeof(subtype));
-	errs += ibuf_add(buf->buf, &safi, sizeof(safi));
+	errs += ibuf_add_n16(buf->buf, afi);
+	errs += ibuf_add_n8(buf->buf, subtype);
+	errs += ibuf_add_n8(buf->buf, safi);
 
 	if (errs) {
 		ibuf_free(buf->buf);
@@ -2931,7 +2950,7 @@ capa_neg_calc(struct peer *p, uint8_t *suberr)
 }
 
 void
-session_dispatch_imsg(struct imsgbuf *ibuf, int idx, u_int *listener_cnt)
+session_dispatch_imsg(struct imsgbuf *imsgbuf, int idx, u_int *listener_cnt)
 {
 	struct imsg		 imsg;
 	struct mrt		 xmrt;
@@ -2946,8 +2965,8 @@ session_dispatch_imsg(struct imsgbuf *ibuf, int idx, u_int *listener_cnt)
 	uint16_t		 t;
 	uint8_t			 aid, errcode, subcode;
 
-	while (ibuf) {
-		if ((n = imsg_get(ibuf, &imsg)) == -1)
+	while (imsgbuf) {
+		if ((n = imsg_get(imsgbuf, &imsg)) == -1)
 			fatal("session_dispatch_imsg: imsg_get error");
 
 		if (n == 0)
@@ -3546,6 +3565,7 @@ session_up(struct peer *p)
 		sup.local_v4_addr = p->local_alt;
 	}
 	sup.remote_addr = p->remote;
+	sup.if_scope = p->if_scope;
 
 	sup.remote_bgpid = p->remote_bgpid;
 	sup.short_as = p->short_as;

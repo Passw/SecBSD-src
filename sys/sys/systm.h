@@ -1,4 +1,4 @@
-/*	$OpenBSD: systm.h,v 1.168 2023/10/11 15:42:44 cheloha Exp $	*/
+/*	$OpenBSD: systm.h,v 1.170 2023/10/30 07:04:36 claudio Exp $	*/
 /*	$NetBSD: systm.h,v 1.50 1996/06/09 04:55:09 briggs Exp $	*/
 
 /*-
@@ -240,8 +240,8 @@ extern int statclock_is_randomized;
 struct clockframe;
 void	hardclock(struct clockframe *);
 
-struct clockintr;
-void	statclock(struct clockintr *, void *, void *);
+struct clockrequest;
+void	statclock(struct clockrequest *, void *, void *);
 
 void	initclocks(void);
 void	inittodr(time_t);
@@ -420,7 +420,7 @@ int	_kernel_lock_held(void);
 #define	KERNEL_LOCK()			_kernel_lock()
 #define	KERNEL_UNLOCK()			_kernel_unlock()
 #define	KERNEL_ASSERT_LOCKED()		KASSERT(_kernel_lock_held())
-#define	KERNEL_ASSERT_UNLOCKED()	KASSERT(!_kernel_lock_held())
+#define	KERNEL_ASSERT_UNLOCKED()	KASSERT(panicstr || db_active || !_kernel_lock_held())
 
 #else /* ! MULTIPROCESSOR */
 

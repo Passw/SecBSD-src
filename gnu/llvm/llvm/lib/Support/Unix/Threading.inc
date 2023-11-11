@@ -22,7 +22,7 @@
 
 #include <pthread.h>
 
-#if defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__SecBSD__)
 #include <pthread_np.h> // For pthread_getthreadid_np() / pthread_set_name_np()
 #endif
 
@@ -38,7 +38,7 @@
 #include <lwp.h> // For _lwp_self()
 #endif
 
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(__SecBSD__)
 #include <unistd.h> // For getthrid()
 #endif
 
@@ -119,7 +119,7 @@ uint64_t llvm::get_threadid() {
   return uint64_t(pthread_getthreadid_np());
 #elif defined(__NetBSD__)
   return uint64_t(_lwp_self());
-#elif defined(__OpenBSD__)
+#elif defined(__OpenBSD__) || defined(__SecBSD__)
   return uint64_t(getthrid());
 #elif defined(__ANDROID__)
   return uint64_t(gettid());
@@ -144,7 +144,7 @@ static constexpr uint32_t get_max_thread_name_length_impl() {
 #endif
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
   return 16;
-#elif defined(__OpenBSD__)
+#elif defined(__OpenBSD__) || defined(__SecBSD__)
   return 32;
 #else
   return 0;
@@ -175,7 +175,7 @@ void llvm::set_thread_name(const Twine &Name) {
   ::pthread_setname_np(::pthread_self(), NameStr.data());
 #endif
 #endif
-#elif defined(__FreeBSD__) || defined(__OpenBSD__)
+#elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__SecBSD__)
   ::pthread_set_name_np(::pthread_self(), NameStr.data());
 #elif defined(__NetBSD__)
   ::pthread_setname_np(::pthread_self(), "%s",
@@ -230,7 +230,7 @@ void llvm::get_thread_name(SmallVectorImpl<char> &Name) {
   ::pthread_getname_np(::pthread_self(), buf, len);
 
   Name.append(buf, buf + strlen(buf));
-#elif defined(__OpenBSD__)
+#elif defined(__OpenBSD__) || defined(__SecBSD__)
   constexpr uint32_t len = get_max_thread_name_length_impl();
   char buf[len];
   ::pthread_get_name_np(::pthread_self(), buf, len);

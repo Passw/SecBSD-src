@@ -1,5 +1,5 @@
 /* makeinfo -- convert Texinfo source into other formats.
-   $Id: makeinfo.c,v 1.9 2015/11/14 23:06:06 deraadt Exp $
+   $Id: makeinfo.c,v 1.10 2023/11/05 07:39:16 op Exp $
 
    Copyright (C) 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
    2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
@@ -60,7 +60,7 @@
    line between paragraphs.  Paragraphs are defined by 2 or more consecutive
    newlines in the input file (i.e., one or more blank lines). */
 #define DEFAULT_PARAGRAPH_SPACING 1
-
+
 /* Global variables.  */
 
 /* The output file name. */
@@ -167,7 +167,7 @@ static void remember_brace (COMMAND_FUNCTION (*proc));
 static int end_of_sentence_p (void);
 
 void maybe_update_execution_strings (char **text, unsigned int new_len);
-
+
 /* Error handling.  */
 
 /* Number of errors encountered. */
@@ -320,7 +320,7 @@ misplaced_brace (void)
 {
   line_error (_("Misplaced %c"), '}');
 }
-
+
 /* Main.  */
 
 /* Display the version info of this invocation of Makeinfo. */
@@ -859,7 +859,7 @@ For more information about these matters, see the files named COPYING.\n"));
   xexit (errors_printed ? 2 : 0);
   return 0; /* Avoid bogus warnings.  */
 }
-
+
 /* Hacking tokens and strings.  */
 
 /* Return the next token as a string pointer.  We cons the string.  This
@@ -999,7 +999,7 @@ discard_until (char *string)
           char *end_block = xmalloc (8);
           sprintf (end_block, "\n%cend ", COMMAND_PREFIX);
           if (executing_string && strstr (string, end_block))
-            line_error (_("Multiline command %c%s used improperly"), 
+            line_error (_("Multiline command %c%s used improperly"),
                 COMMAND_PREFIX, command);
           else
             line_error (_("Expected `%s'"), string);
@@ -1242,7 +1242,7 @@ get_until_in_braces (char *match, char **string)
 }
 
 
-
+
 /* Converting a file.  */
 
 /* Convert the file named by NAME.  The output is saved on the file
@@ -1783,7 +1783,7 @@ _("%s: Removing macro output file `%s' due to errors; use --force to preserve.\n
     }
   free (real_output_filename);
 }
-
+
 /* If enable_encoding is set and @documentencoding is used, return a
    Local Variables section (as a malloc-ed string) so that Emacs'
    locale features can work.  Else return NULL.  */
@@ -1809,7 +1809,7 @@ info_trailer (void)
   free (encoding);
   return NULL;
 }
-
+
 void
 free_and_clear (char **pointer)
 {
@@ -1853,7 +1853,7 @@ init_paragraph (void)
   current_indent = 0;
   meta_char_pos = 0;
 }
-
+
 /* This is called from `reader_loop' when we are at the * beginning a
    menu line.  */
 
@@ -1956,7 +1956,7 @@ handle_menu_entry (void)
   if (tem)
     free (tem);
 }
-
+
 /* Find the command corresponding to STRING.  If the command is found,
    return a pointer to the data structure.  Otherwise return -1.  */
 static COMMAND *
@@ -1978,7 +1978,7 @@ get_command_entry (char *string)
   /* We never heard of this command. */
   return (COMMAND *) -1;
 }
-
+
 /* input_text_offset is right at the command prefix character.
    Read the next token to determine what to do.  Return zero
    if there's no known command or macro after the prefix character.  */
@@ -2290,7 +2290,7 @@ reader_loop (void)
   if (macro_expansion_output_stream && !only_macro_expansion)
     maybe_write_itext (input_text, input_text_offset);
 }
-
+
 static void
 init_brace_stack (void)
 {
@@ -2444,7 +2444,7 @@ get_char_len (int character)
     }
   return len;
 }
-
+
 void
 #if defined (VA_FPRINTF) && __STDC__
 add_word_args (const char *format, ...)
@@ -2523,7 +2523,7 @@ add_html_block_elt_args (format, va_alist)
   va_end (ap);
   add_html_block_elt (buffer);
 }
-
+
 /* Here is another awful kludge, used in add_char.  Ordinarily, macro
    expansions take place in the body of the document, and therefore we
    should html_output_head when we see one.  But there's an exception: a
@@ -3245,7 +3245,7 @@ next_nonwhitespace_character (void)
 
   return -1;
 }
-
+
 /* An external image is a reference, kind of.  The parsing is (not
    coincidentally) similar, anyway.  */
 void
@@ -3363,11 +3363,13 @@ cm_image (int arg)
         { /* Try to open foo.EXT or foo.txt.  */
           FILE *image_file;
           char *txtpath = NULL;
-          char *txtname = xmalloc (strlen (name_arg)
-                                   + (ext_arg && *ext_arg
-                                      ? strlen (ext_arg) : 4) + 1);
-          strcpy (txtname, name_arg);
-          strcat (txtname, ".txt");
+          char *txtname;
+
+          if (asprintf (&txtname, "%s.txt", name_arg) == -1) {
+            perror ("asprintf");
+            exit (1);
+          }
+
           image_file = fopen (txtname, "r");
           if (image_file == NULL)
             {
@@ -3431,7 +3433,7 @@ cm_image (int arg)
 
                   if (image_in_brackets)
                     add_char (']');
-                  
+
                   if (use_magic_cookie)
                     add_char ('"');
 
@@ -3451,6 +3453,9 @@ cm_image (int arg)
           else
             warning (_("@image file `%s' (for text) unreadable: %s"),
                         txtname, strerror (errno));
+
+          free (txtname);
+          free (txtpath);
         }
 
       free (fullname);
@@ -3471,7 +3476,7 @@ cm_image (int arg)
   if (ext_arg)
     free (ext_arg);
 }
-
+
 /* Conditionals.  */
 
 /* A structure which contains `defined' variables. */
@@ -3671,7 +3676,7 @@ cm_value (int arg, int start_pos, int end_pos)
 	  /* We need to get past the closing brace since the value may
 	     expand to a context-sensitive macro (e.g. @xref) and produce
 	     spurious warnings */
-	  input_text_offset++; 
+	  input_text_offset++;
 	  execute_string ("%s", value);
 	  input_text_offset--;
 	}
@@ -3856,7 +3861,7 @@ handle_variable_internal (int action, char *name)
         }
     }
 }
-
+
 /* Execution of random text not in file. */
 typedef struct {
   char *string;                 /* The string buffer. */
@@ -4133,7 +4138,7 @@ text_expansion (char *str)
   return ret;
 }
 
-
+
 /* Set the paragraph indentation variable to the value specified in STRING.
    Values can be:
      `asis': Don't change existing indentation.

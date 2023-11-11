@@ -59,7 +59,7 @@
 
 #endif // *BSD
 
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(__SecBSD__) ||
 #include <machine/endian.h>
 
 #if _BYTE_ORDER == _BIG_ENDIAN

@@ -291,7 +291,7 @@ protected:
     Builder.defineMacro("__HAIKU__");
     Builder.defineMacro("__ELF__");
     DefineStd(Builder, "unix", Opts);
-    if (this->HasFloat128) 
+    if (this->HasFloat128)
       Builder.defineMacro("__FLOAT128__");
   }
 
@@ -454,6 +454,7 @@ protected:
     // OpenBSD defines; list based off of gcc output
 
     Builder.defineMacro("__OpenBSD__");
+    Builder.defineMacro("__SecBSD__");
     DefineStd(Builder, "unix", Opts);
     Builder.defineMacro("__ELF__");
     if (Opts.POSIXThreads)

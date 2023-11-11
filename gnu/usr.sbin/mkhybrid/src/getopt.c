@@ -26,7 +26,7 @@ compiled with a GNU compiler to produce an executable, this does not cause
 the resulting executable to be covered by the GNU General Public License.
 This exception does not however invalidate any other reasons why
 the executable file might be covered by the GNU General Public License. */
-
+
 /* This tells Alpha OSF/1 not to define a getopt prototype in <stdio.h>.
    Ditto for AIX 3.2 and <stdlib.h>.  */
 #ifndef _NO_PROTO
@@ -70,7 +70,7 @@ the executable file might be covered by the GNU General Public License. */
 
 /* This needs to come after some library #include
    to get __GNU_LIBRARY__ defined.  */
-#if defined(__GNU_LIBRARY__) || defined(__OpenBSD__)
+#if defined(__GNU_LIBRARY__) || defined(__OpenBSD__) || defined(__SecBSD__)
 /* Don't include stdlib.h for non-GNU C libraries because some of them
    contain conflicting prototypes for getopt.  */
 #include <stdlib.h>
@@ -168,8 +168,8 @@ static enum
 {
   REQUIRE_ORDER, PERMUTE, RETURN_IN_ORDER
 } ordering;
-
-#if defined(__GNU_LIBRARY__) || defined(__OpenBSD__)
+
+#if defined(__GNU_LIBRARY__) || defined(__OpenBSD__) || defined(__SecBSD__)
 /* We want to avoid inclusion of string.h with non-GNU libraries
    because there are many ways it can cause trouble.
    On some systems, it contains special magic macros that don't work
@@ -210,7 +210,7 @@ extern int strlen (const char *);
 #endif /* __GNUC__ */
 
 #endif /* not __GNU_LIBRARY__ */
-
+
 /* Handle permutation of arguments.  */
 
 /* Describe the part of ARGV that contains non-options that have
@@ -318,7 +318,7 @@ _getopt_initialize (optstring)
 
   return optstring;
 }
-
+
 /* Scan elements of ARGV (whose length is ARGC) for option characters
    given in OPTSTRING.
 
@@ -686,7 +686,7 @@ getopt (argc, argv, optstring)
 }
 
 #endif	/* _LIBC or not __GNU_LIBRARY__.  */
-
+
 #ifdef TEST
 
 /* Compile with -DTEST to make an executable for use in testing

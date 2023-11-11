@@ -103,7 +103,7 @@ shift $(( OPTIND -1 ))
 
 case $# in
 0)	MIRROR=$(sed 's/#.*//;/^$/d' /etc/installurl) 2>/dev/null ||
-		MIRROR=https://mirror.secbsd.org/pub/SecBSD
+		MIRROR=https://mirror.laylo.io/pub/SecBSD
 	;;
 1)	MIRROR=$1
 	;;

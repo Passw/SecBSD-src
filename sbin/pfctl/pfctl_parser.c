@@ -1,4 +1,4 @@
-/*	$OpenBSD: pfctl_parser.c,v 1.348 2023/04/18 13:31:14 tb Exp $ */
+/*	$OpenBSD: pfctl_parser.c,v 1.349 2023/10/26 16:26:01 deraadt Exp $ */
 
 /*
  * Copyright (c) 2001 Daniel Hartmeier
@@ -1802,7 +1802,7 @@ error:
 int
 append_addr(struct pfr_buffer *b, char *s, int test, int opts)
 {
-	static int 		 previous = 0;
+	static int		 previous = 0;
 	static int		 expect = 0;
 	struct pfr_addr		*a;
 	struct node_host	*h, *n;
@@ -1833,7 +1833,6 @@ append_addr(struct pfr_buffer *b, char *s, int test, int opts)
 				}
 			}
 		}
-
 		expect = 0;
 		return (0);
 	}
@@ -1873,7 +1872,7 @@ append_addr_host(struct pfr_buffer *b, struct node_host *n, int test, int not)
 		addr.pfra_net = unmask(&n->addr.v.a.mask);
 		if (n->ifname) {
 			if (strlcpy(addr.pfra_ifname, n->ifname,
-		 	   sizeof(addr.pfra_ifname)) >= sizeof(addr.pfra_ifname))
+			   sizeof(addr.pfra_ifname)) >= sizeof(addr.pfra_ifname))
 				errx(1, "append_addr_host: strlcpy");
 			addr.pfra_type = PFRKE_ROUTE;
 		}

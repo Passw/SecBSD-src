@@ -1,4 +1,4 @@
-/*	$OpenBSD: pax.c,v 1.54 2023/07/05 18:45:14 guenther Exp $	*/
+/*	$OpenBSD: pax.c,v 1.56 2023/11/09 18:54:15 kn Exp $	*/
 /*	$NetBSD: pax.c,v 1.5 1996/03/26 23:54:20 mrg Exp $	*/
 
 /*-
@@ -271,15 +271,34 @@ main(int argc, char **argv)
 	 * so can't pledge at all then.
 	 */
 	if (pmode == 0 || (act != EXTRACT && act != COPY)) {
-		if (pledge("stdio rpath wpath cpath fattr dpath getpw proc exec tape",
-		    NULL) == -1)
-			err(1, "pledge");
-
 		/* Copy mode, or no gzip -- don't need to fork/exec. */
 		if (gzip_program == NULL || act == COPY) {
-			if (pledge("stdio rpath wpath cpath fattr dpath getpw tape",
-			    NULL) == -1)
-				err(1, "pledge");
+			/* List mode -- don't need to write/create/modify files. */
+			if (act == LIST) {
+				if (pledge("stdio rpath getpw tape",
+				    NULL) == -1)
+					err(1, "pledge");
+			/* Append mode -- don't need to create/modify files. */
+			} else if (act == APPND) {
+				if (pledge("stdio rpath wpath getpw tape",
+				    NULL) == -1)
+					err(1, "pledge");
+			} else {
+				if (pledge("stdio rpath wpath cpath fattr dpath getpw tape",
+				    NULL) == -1)
+					err(1, "pledge");
+			}
+		} else {
+			if (act == LIST) {
+				if (pledge("stdio rpath getpw proc exec tape",
+				    NULL) == -1)
+					err(1, "pledge");
+			/* can not gzip while appending */
+			} else {
+				if (pledge("stdio rpath wpath cpath fattr dpath getpw proc exec tape",
+				    NULL) == -1)
+					err(1, "pledge");
+			}
 		}
 	}
 

@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
- * 
- * The functions in this file provide an interface for performing 
- * operations directly on RCS files. 
+ *
+ * The functions in this file provide an interface for performing
+ * operations directly on RCS files.
  */
 
 #include "cvs.h"
@@ -83,7 +83,7 @@ static void call_diff_write_stdout PROTO((const char *));
 static void call_diff_error PROTO((const char *, const char *, const char *));
 
 /* VARARGS */
-static void 
+static void
 call_diff_setup (prog)
     const char *prog;
 {
@@ -406,9 +406,6 @@ RCS file: ", 0);
        what the best behavior is.  Passing NULL for the `nametag' argument
        preserves the existing behavior. */
 
-    cvs_output ("retrieving revision ", 0);
-    cvs_output (rev1, 0);
-    cvs_output ("\n", 1);
     status = RCS_checkout (rcsfile, NULL, rev1, NULL, options, tmpfile1,
 			   (RCSCHECKOUTPROC)0, NULL);
     if (status > 0)
@@ -432,9 +429,6 @@ RCS file: ", 0);
     else
     {
 	tmpfile2 = cvs_temp_name ();
-	cvs_output ("retrieving revision ", 0);
-	cvs_output (rev2, 0);
-	cvs_output ("\n", 1);
 	status = RCS_checkout (rcsfile, NULL, rev2, NULL, options,
 			       tmpfile2, (RCSCHECKOUTPROC)0, NULL);
 	if (status > 0)

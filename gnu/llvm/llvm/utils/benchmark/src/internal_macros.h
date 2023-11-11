@@ -51,7 +51,7 @@
   #define BENCHMARK_OS_FREEBSD 1
 #elif defined(__NetBSD__)
   #define BENCHMARK_OS_NETBSD 1
-#elif defined(__OpenBSD__)
+#elif defined(__OpenBSD__) || defined(__SecBSD__)
   #define BENCHMARK_OS_OPENBSD 1
 #elif defined(__linux__)
   #define BENCHMARK_OS_LINUX 1

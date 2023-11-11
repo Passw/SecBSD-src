@@ -29,14 +29,12 @@
 #define LLVM_THREADING_USE_STD_CALL_ONCE 1
 #elif defined(LLVM_ON_UNIX) &&                                                 \
     (defined(_LIBCPP_VERSION) ||                                               \
-     !(defined(__NetBSD__) || defined(__OpenBSD__) ||                          \
-       (defined(__ppc__) || defined(__PPC__))))
+     !(defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SecBSD__)))
 // std::call_once from libc++ is used on all Unix platforms. Other
 // implementations like libstdc++ are known to have problems on NetBSD,
 // OpenBSD and PowerPC.
 #define LLVM_THREADING_USE_STD_CALL_ONCE 1
-#elif defined(LLVM_ON_UNIX) &&                                                 \
-    ((defined(__ppc__) || defined(__PPC__)) && defined(__LITTLE_ENDIAN__))
+#elif defined(LLVM_ON_UNIX) && defined(__LITTLE_ENDIAN__)
 #define LLVM_THREADING_USE_STD_CALL_ONCE 1
 #else
 #define LLVM_THREADING_USE_STD_CALL_ONCE 0

@@ -71,13 +71,14 @@ extern char **environ;
 
 #include <sys/types.h>
 #if !defined(__APPLE__) && !defined(__OpenBSD__) && !defined(__FreeBSD__) &&   \
-    !defined(__linux__) && !defined(__FreeBSD_kernel__) && !defined(_AIX)
+    !defined(__linux__) && !defined(__FreeBSD_kernel__) && !defined(_AIX) && \
+    !defined(__SecBSD__)
 #include <sys/statvfs.h>
 #define STATVFS statvfs
 #define FSTATVFS fstatvfs
 #define STATVFS_F_FRSIZE(vfs) vfs.f_frsize
 #else
-#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__SecBSD__) || defined(__FreeBSD__)
 #include <sys/mount.h>
 #include <sys/param.h>
 #elif defined(__linux__)
@@ -125,7 +126,8 @@ const file_t kInvalidFile = -1;
 
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) ||     \
     defined(__minix) || defined(__FreeBSD_kernel__) || defined(__linux__) ||   \
-    defined(__CYGWIN__) || defined(__DragonFly__) || defined(_AIX) || defined(__GNU__)
+    defined(__CYGWIN__) || defined(__DragonFly__) || defined(_AIX) || \
+    defined(__GNU__) || defined(__SecBSD__)
 static int
 test_dir(char ret[PATH_MAX], const char *dir, const char *bin)
 {
@@ -234,7 +236,8 @@ std::string getMainExecutable(const char *argv0, void *MainAddr) {
   if (getprogpath(exe_path, argv0) != NULL)
     return exe_path;
 #elif defined(__NetBSD__) || defined(__OpenBSD__) || defined(__minix) ||       \
-    defined(__DragonFly__) || defined(__FreeBSD_kernel__) || defined(_AIX)
+    defined(__DragonFly__) || defined(__FreeBSD_kernel__) || defined(_AIX) || \
+    defined(__SecBSD__)
   const char *curproc = "/proc/curproc/file";
   char exe_path[PATH_MAX];
   if (sys::fs::exists(curproc)) {

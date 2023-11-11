@@ -1,4 +1,4 @@
-dnl	$OpenBSD: packages,v 1.51 2019/08/01 19:42:51 jmc Exp $
+dnl	$OpenBSD: packages,v 1.52 2023/10/19 02:43:58 kn Exp $
 As complete as your SecBSD system is, you may want to add any of several
 excellent third party software applications.  There are several ways to do
 this.  You can:
@@ -39,8 +39,7 @@ Installing applications from the mirror.SecBSD.org package collection:
 
     $ su
     Password: <enter your root password>
-    # pkg_add \
-      https://mirror.SecBSD.org/pub/SecBSD/{:--:}OSREV/packages/MACHINE_ARCH/package-0.1.tgz
+    # pkg_add metasploit
 
 Installing applications from the SecBSD ports collection:
 
@@ -61,4 +60,4 @@ Installing other applications:
 	feed it back to SecBSD.  That's how our ports collection grows.
 	Some details can be found in the OpenBSD Porter's Handbook at
 	https://www.openbsd.org/faq/ports/
-	More info about work in progress SecBSD Ports, <purplerain@SecBSD.org>.
+	More info about work in progress SecBSD Ports, <purplerain@secbsd.org>.

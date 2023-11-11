@@ -1,4 +1,4 @@
-/*	$OpenBSD: pfctl_table.c,v 1.85 2022/11/21 07:27:10 sashan Exp $ */
+/*	$OpenBSD: pfctl_table.c,v 1.86 2023/10/26 16:26:01 deraadt Exp $ */
 
 /*
  * Copyright (c) 2002 Cedric Berger
