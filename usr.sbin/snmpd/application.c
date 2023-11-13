@@ -1,4 +1,4 @@
-/*	$OpenBSD: application.c,v 1.35 2023/11/08 20:07:14 martijn Exp $	*/
+/*	$OpenBSD: application.c,v 1.37 2023/11/13 10:14:29 martijn Exp $	*/
 
 /*
  * Copyright (c) 2021 Martijn van Duren <martijn@openbsd.org>
@@ -177,7 +177,6 @@ appl_init(void)
 {
 	appl_blocklist_init();
 	appl_internal_init();
-	appl_legacy_init();
 	appl_agentx_init();
 }
 
@@ -188,7 +187,6 @@ appl_shutdown(void)
 
 	appl_blocklist_shutdown();
 	appl_internal_shutdown();
-	appl_legacy_shutdown();
 	appl_agentx_shutdown();
 
 	TAILQ_FOREACH_SAFE(ctx, &contexts, ac_entries, tctx) {
@@ -913,6 +911,8 @@ appl_processpdu(struct snmp_message *statereference, const char *ctxname,
 			ureq->aru_vblist[i - repeaterlen].avi_sub =
 			    &(ureq->aru_vblist[i]);
 			ureq->aru_vblist[i].avi_state = APPL_VBSTATE_MUSTFILL;
+			ureq->aru_vblist[i].avi_index =
+			    ureq->aru_vblist[i - repeaterlen].avi_index;
 			continue;
 		}
 		ober_get_oid(varbind->be_sub,
