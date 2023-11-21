@@ -1,4 +1,4 @@
-/*	$OpenBSD: output_json.c,v 1.35 2023/06/05 16:24:05 claudio Exp $ */
+/*	$OpenBSD: output_json.c,v 1.36 2023/11/20 14:18:21 claudio Exp $ */
 
 /*
  * Copyright (c) 2020 Claudio Jeker <claudio@openbsd.org>

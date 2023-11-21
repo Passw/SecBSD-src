@@ -1,4 +1,4 @@
-/*	$OpenBSD: output_ometric.c,v 1.11 2023/03/28 12:07:09 claudio Exp $ */
+/*	$OpenBSD: output_ometric.c,v 1.12 2023/11/20 14:18:21 claudio Exp $ */
 
 /*
  * Copyright (c) 2022 Claudio Jeker <claudio@openbsd.org>
