@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -29,7 +29,7 @@
 #define HASHTABLESIZE                   37
 #define SESSIONTABLESIZE                37
 
-struct keynote_session   
+struct keynote_session
 {
     int                     ks_id;
     int                     ks_assertioncounter;
@@ -53,14 +53,14 @@ struct keylist
     struct keylist *key_next;
 };
 
-struct assertion 
+struct assertion
 {
     void               *as_authorizer;
     char               *as_buf;
     char               *as_signature;
     char	       *as_authorizer_string_s;
     char               *as_authorizer_string_e;
-    char               *as_keypred_s; 
+    char               *as_keypred_s;
     char               *as_keypred_e;
     char               *as_conditions_s;
     char               *as_conditions_e;

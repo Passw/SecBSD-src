@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -28,8 +28,8 @@
 %type <intval> NUM KOF numex afterhint notemptyprog
 %type <intval> notemptykeypredicate prog key keyexp keylist
 %type <doubval> FLOAT floatex
-%type <string> STRING VARIABLE str strnotconcat 
-%token TRUE FALSE NUM FLOAT STRING VARIABLE 
+%type <string> STRING VARIABLE str strnotconcat
+%token TRUE FALSE NUM FLOAT STRING VARIABLE
 %token OPENPAREN CLOSEPAREN EQQ COMMA ACTSTR LOCINI KOF KEYPRE KNVERSION
 %token DOTT SIGNERKEY HINT OPENBLOCK CLOSEBLOCK SIGNATUREENTRY PRIVATEKEY
 %token SEMICOLON TRUE FALSE
@@ -86,9 +86,9 @@ grammarswitch: LOCINI { keynote_exceptionflag = keynote_donteval = 0; }
                         STRING { keynote_lex_remove($3);
 			         keynote_privkey = $3;
 			       }
-    
+
 keypredicate: /* Nothing */   { keynote_returnvalue = 0;
-                                return 0; 
+                                return 0;
                               }
        | notemptykeypredicate { keynote_returnvalue = $1;
 				return 0;
@@ -99,7 +99,7 @@ notemptykeypredicate:  key     { $$ = $1; }
 
 keyexp: notemptykeypredicate AND { if (($1 == 0) && !keynote_justrecord)
                                      keynote_donteval = 1;
-                                 } notemptykeypredicate 
+                                 } notemptykeypredicate
                  { if ($1 > $4)
 		     $$ = $4;
 		   else
@@ -120,7 +120,7 @@ keyexp: notemptykeypredicate AND { if (($1 == 0) && !keynote_justrecord)
 			 if (!keynote_justrecord && !keynote_donteval)
  	                   if (keynote_init_kth() == -1)
 			     return -1;
-                       } keylist CLOSEPAREN 
+                       } keylist CLOSEPAREN
                           {
 			      if (keylistcount < $1)
 			      {
@@ -135,7 +135,7 @@ keyexp: notemptykeypredicate AND { if (($1 == 0) && !keynote_justrecord)
 			  }  /* K-th */
 
 keylist: key
-	    { /* Don't do anything if we're just recording */ 
+	    { /* Don't do anything if we're just recording */
               if (!keynote_justrecord && !keynote_donteval)
 		if (($1 < keynote_current_session->ks_values_num) && ($1 >= 0))
 		  keynote_kth_array[$1]++;
@@ -143,7 +143,7 @@ keylist: key
 	      keylistcount++;
             }
         | key COMMA keylist
-            { /* Don't do anything if we're just recording */ 
+            { /* Don't do anything if we're just recording */
 	      if (!keynote_justrecord && !keynote_donteval)
 		if (($1 < keynote_current_session->ks_values_num) && ($1 >= 0))
 		  keynote_kth_array[$1]++;
@@ -174,13 +174,13 @@ key: str        {
 			     case -1:
 				 free($1);
 				 return -1;
-				 
+
 			     case RESULT_TRUE:
 				 free($1);
 				 $$ = keynote_current_session->ks_values_num -
 				      1;
 				 break;
-				 
+
 			     default:
 				 $$ = resolve_assertion($1);
 				 free($1);
@@ -192,13 +192,13 @@ key: str        {
 localinit: /* Nothing */
          | localconstants
 
-localconstants: VARIABLE EQQ STRING 
+localconstants: VARIABLE EQQ STRING
 	  {
             int i;
 
             keynote_lex_remove($1);
 	    keynote_lex_remove($3);
- 
+
 	    /*
 	     * Variable names starting with underscores are illegal here.
 	     */
@@ -209,7 +209,7 @@ localconstants: VARIABLE EQQ STRING
 		keynote_errno = ERROR_SYNTAX;
 		return -1;
 	    }
-	    
+
 	    /* If the identifier already exists, report error. */
 	    if (keynote_env_lookup($1, &keynote_init_list, 1) != NULL)
 	    {
@@ -243,7 +243,7 @@ localconstants: VARIABLE EQQ STRING
 		keynote_errno = ERROR_SYNTAX;
 		return -1;
 	    }
-	 
+
 	    /* If the identifier already exists, report error. */
 	    if (keynote_env_lookup($1, &keynote_init_list, 1) != NULL)
 	    {
@@ -261,15 +261,15 @@ localconstants: VARIABLE EQQ STRING
 	      return -1;
 	  } localconstants
 
-program: prog { 
+program: prog {
 	        keynote_returnvalue = $1;
 		return 0;
 	      }
 
 prog:   /* Nada */ { $$ = 0; }
        | notemptyprog {
-			  /* 
-			   * Cleanup envlist of additions such as 
+			  /*
+			   * Cleanup envlist of additions such as
 			   * regexp results
 			   */
 			  keynote_env_cleanup(&keynote_temp_list, 1);
@@ -279,7 +279,7 @@ prog:   /* Nada */ { $$ = 0; }
 			$$ = $1;
 		      else
 			$$ = $4;
-                    } 
+                    }
 
 notemptyprog: expr HINT afterhint
               {
@@ -288,7 +288,7 @@ notemptyprog: expr HINT afterhint
 		else
 		  $$ = 0;
 	      }
-       |  expr 
+       |  expr
               {
 		if (checkexception($1))
 		  $$ = keynote_current_session->ks_values_num - 1;
@@ -319,7 +319,7 @@ expr:     OPENPAREN expr CLOSEPAREN 	{ $$ = $2; }
 		                          keynote_donteval = 0;
 		                        }
 	| expr OR { if ($1)
-	              keynote_donteval = 1; 
+	              keynote_donteval = 1;
 	          } expr 		{ $$ = ($1 || $4);
 		                          keynote_donteval = 0;
                                         }
@@ -405,7 +405,7 @@ floatex:  floatex PLUS floatex  	{ $$ = ($1 + $3); }
 					  else
 					  {
 					      keynote_lex_remove($2);
-					  
+
 					      if (!isfloatstring($2))
 						$$ = 0.0;
 					      else
@@ -486,7 +486,7 @@ stringexp: str EQ str {
 			    free($3);
 			}
 		      }
-	 | str REGEXP str 
+	 | str REGEXP str
             {
 	      regmatch_t pmatch[32];
 	      char grp[10], *gr;
@@ -681,8 +681,8 @@ resolve_assertion(char *s)
     return 0;
 }
 
-/* 
- * Environment variable lookup. 
+/*
+ * Environment variable lookup.
  */
 static char *
 my_lookup(char *s)
@@ -791,15 +791,15 @@ checkexception(int i)
 }
 
 
-/* 
- * Integer exponentiation -- copied from Schneier's AC2, page 244. 
+/*
+ * Integer exponentiation -- copied from Schneier's AC2, page 244.
  */
 static int
 intpow(int x, int y)
 {
     int s = 1;
-    
-    /* 
+
+    /*
      * x^y with y < 0 is equivalent to 1/(x^y), which for
      * integer arithmetic is 0.
      */
@@ -810,7 +810,7 @@ intpow(int x, int y)
     {
 	if (y & 1)
 	  s *= x;
-	
+
 	y >>= 1;
 	x *= x;
     }
@@ -818,14 +818,14 @@ intpow(int x, int y)
     return s;
 }
 
-/* 
- * Check whether the string is a floating point number. 
+/*
+ * Check whether the string is a floating point number.
  */
 static int
 isfloatstring(char *s)
 {
     int i, point = 0;
-    
+
     for (i = strlen(s) - 1; i >= 0; i--)
       if (!isdigit((unsigned char)s[i]))
       {
@@ -850,10 +850,10 @@ static int
 keynote_init_kth(void)
 {
     int i = keynote_current_session->ks_values_num;
-    
+
     if (i == -1)
       return -1;
-    
+
     keynote_kth_array = calloc(i, sizeof(int));
     if (keynote_kth_array == NULL)
     {
@@ -875,7 +875,7 @@ get_kth(int k)
     for (i = keynote_current_session->ks_values_num - 1; i >= 0; i--)
     {
 	k -= keynote_kth_array[i];
-	
+
 	if (k <= 0)
 	  return i;
     }

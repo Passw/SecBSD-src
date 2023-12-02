@@ -343,7 +343,7 @@ kvm_proclist(kvm_t *kd, int op, int arg, struct process *pr,
 			kp.p_pctcpu = 0;
 			kp.p_stat = (process.ps_flags & PS_ZOMBIE) ? SDEAD :
 			    SIDL;
-			for (p = TAILQ_FIRST(&process.ps_threads); p != NULL; 
+			for (p = TAILQ_FIRST(&process.ps_threads); p != NULL;
 			    p = TAILQ_NEXT(&proc, p_thr_link)) {
 				if (KREAD(kd, (u_long)p, &proc)) {
 					_kvm_err(kd, kd->program,
@@ -378,7 +378,7 @@ kvm_proclist(kvm_t *kd, int op, int arg, struct process *pr,
 		if (!dothreads)
 			continue;
 
-		for (p = TAILQ_FIRST(&process.ps_threads); p != NULL; 
+		for (p = TAILQ_FIRST(&process.ps_threads); p != NULL;
 		    p = TAILQ_NEXT(&proc, p_thr_link)) {
 			if (KREAD(kd, (u_long)p, &proc)) {
 				_kvm_err(kd, kd->program,

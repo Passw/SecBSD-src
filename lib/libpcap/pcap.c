@@ -126,7 +126,7 @@ pcap_fakecallback(u_char *userData, const struct pcap_pkthdr *h,
 	*sp->pkt = pkt;
 }
 
-int 
+int
 pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header,
     const u_char **pkt_data)
 {
@@ -293,7 +293,7 @@ pcap_list_datalinks(pcap_t *p, int **dlt_buffer)
  * the C runtime library, which means that the library might use one
  * version of malloc() and free() and the application might use another
  * version of malloc() and free().  If so, that means something
- * allocated by the library cannot be freed by the application, so we   
+ * allocated by the library cannot be freed by the application, so we
  * need to have a pcap_free_datalinks() routine to free up the list
  * allocated by pcap_list_datalinks(), even though it's just a wrapper
  * around free().

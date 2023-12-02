@@ -59,7 +59,7 @@ static const struct lc_time_T	C_time_locale = {
 		L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"
 	}, {
 		L"January", L"February", L"March", L"April", L"May", L"June",
-		L"July", L"August", L"September", L"October", L"November", 
+		L"July", L"August", L"September", L"October", L"November",
 		L"December"
 	}, {
 		L"Sun", L"Mon", L"Tue", L"Wed",
@@ -116,7 +116,7 @@ extern char *	tzname[];
 #define IN_ALL	3
 
 size_t
-wcsftime(wchar_t *__restrict s, size_t maxsize, 
+wcsftime(wchar_t *__restrict s, size_t maxsize,
     const wchar_t *__restrict format, const struct tm *__restrict t)
 {
 	wchar_t *p;
@@ -135,7 +135,7 @@ wcsftime(wchar_t *__restrict s, size_t maxsize,
 }
 
 static wchar_t *
-_fmt(const wchar_t *format, const struct tm *t, wchar_t *pt, 
+_fmt(const wchar_t *format, const struct tm *t, wchar_t *pt,
     const wchar_t *ptlim, int *warnp)
 {
 	for ( ; *format; ++format) {
@@ -292,7 +292,7 @@ label:
 
 				tm = *t;
 				mkt = mktime(&tm);
-				(void) swprintf(buf, 
+				(void) swprintf(buf,
 				    sizeof buf/sizeof buf[0],
 				    L"%ld", (long) mkt);
 				pt = _add(buf, pt, ptlim);
@@ -361,7 +361,7 @@ label:
 					DAYSPERLYEAR :
 					DAYSPERNYEAR;
 				/*
-				** What yday (-3 ... 3) does the ISO year 
+				** What yday (-3 ... 3) does the ISO year
 				** begin on?
 				*/
 				bot = ((yday + 11 - wday) % DAYSPERWEEK) - 3;
@@ -394,7 +394,7 @@ label:
 			else if (*format == 'g') {
 				*warnp = IN_ALL;
 				pt = _yconv(year, base, 0, 1, pt, ptlim);
-			} else	
+			} else
 				pt = _yconv(year, base, 1, 1, pt, ptlim);
 			}
 			continue;
@@ -442,7 +442,7 @@ label:
 				pt = _sadd(t->tm_zone, pt, ptlim);
 			else
 				if (t->tm_isdst >= 0)
-					pt = _sadd(tzname[t->tm_isdst != 0], 
+					pt = _sadd(tzname[t->tm_isdst != 0],
 					    pt, ptlim);
 			/*
 			** C99 says that %Z must be replaced by the
@@ -461,7 +461,7 @@ label:
 			if (diff < 0) {
 				sign = L"-";
 				diff = -diff;
-			} else	
+			} else
 				sign = L"+";
 			pt = _add(sign, pt, ptlim);
 			diff /= SECSPERMIN;
@@ -521,7 +521,7 @@ _sadd(const char *str, wchar_t *pt, const wchar_t *ptlim)
 */
 
 static wchar_t *
-_yconv(int a, int b, int convert_top, int convert_yy, wchar_t *pt, 
+_yconv(int a, int b, int convert_top, int convert_yy, wchar_t *pt,
     const wchar_t *ptlim)
 {
 	int	lead;

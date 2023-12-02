@@ -33,7 +33,7 @@ int
 __isnanf(float f)
 {
 	struct ieee_single *p = (struct ieee_single *)&f;
- 
+
 	return (p->sng_exp == SNG_EXP_INFNAN && p->sng_frac != 0);
 }
 

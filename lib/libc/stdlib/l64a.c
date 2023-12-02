@@ -23,7 +23,7 @@ l64a(long value)
 	for (i = 0; value != 0 && i < 6; i++) {
 		digit = value & 0x3f;
 
-		if (digit < 2) 
+		if (digit < 2)
 			*s = digit + '.';
 		else if (digit < 12)
 			*s = digit + '0' - 2;

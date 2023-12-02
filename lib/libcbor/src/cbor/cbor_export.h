@@ -9,15 +9,15 @@
 #  ifndef CBOR_EXPORT
 #    ifdef cbor_EXPORTS
         /* We are building this library */
-#      define CBOR_EXPORT 
+#      define CBOR_EXPORT
 #    else
         /* We are using this library */
-#      define CBOR_EXPORT 
+#      define CBOR_EXPORT
 #    endif
 #  endif
 
 #  ifndef CBOR_NO_EXPORT
-#    define CBOR_NO_EXPORT 
+#    define CBOR_NO_EXPORT
 #  endif
 #endif
 

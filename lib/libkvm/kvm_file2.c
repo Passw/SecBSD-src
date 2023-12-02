@@ -683,7 +683,7 @@ fill_file(kvm_t *kd, struct kinfo_file *kf, struct file *fp, u_long fpaddr,
 				memcpy(kf->unp_path, un.sun_path, un.sun_len
 				    - offsetof(struct sockaddr_un,sun_path));
 			}
- 
+
 			break;
 		    }
 		}

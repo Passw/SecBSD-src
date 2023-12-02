@@ -48,7 +48,7 @@ catgets(nl_catd catd, int set_id, int msg_id, const char *s)
 		return (char *) s;
 	}
 
-	cat_hdr = (struct _nls_cat_hdr *) catd->__data; 
+	cat_hdr = (struct _nls_cat_hdr *) catd->__data;
 	set_hdr = (struct _nls_set_hdr *) ((char *)catd->__data
 		+ sizeof(struct _nls_cat_hdr));
 
@@ -70,7 +70,7 @@ catgets(nl_catd catd, int set_id, int msg_id, const char *s)
 				i = (l + u) / 2;
 				r = msg_id - ntohl(msg_hdr[i].__msgno);
 				if (r == 0) {
-					return (char *) catd->__data 
+					return (char *) catd->__data
 					    + sizeof(struct _nls_cat_hdr)
 					    + ntohl(cat_hdr->__msg_txt_offset)
 					    + ntohl(msg_hdr[i].__offset);

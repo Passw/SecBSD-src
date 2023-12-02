@@ -25,7 +25,7 @@
  */
 
 #include "DEFS.h"
-	
+
 ENTRY(llrintf)
 	flds	4(%esp)
 	subl	$8,%esp

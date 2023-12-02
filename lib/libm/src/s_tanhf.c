@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -28,7 +28,7 @@ tanhf(float x)
 	ix = jx&0x7fffffff;
 
     /* x is INF or NaN */
-	if(ix>=0x7f800000) { 
+	if(ix>=0x7f800000) {
 	    if (jx>=0) return one/x+one;    /* tanh(+-inf)=+-1 */
 	    else       return one/x-one;    /* tanh(NaN) = NaN */
 	}

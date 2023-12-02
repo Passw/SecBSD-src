@@ -36,7 +36,7 @@
 #include <pcap-namedb.h>
 
 #ifdef INET6
-#include <netdb.h> 
+#include <netdb.h>
 #include <sys/socket.h>
 #endif /*INET6*/
 

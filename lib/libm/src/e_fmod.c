@@ -5,12 +5,12 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
-/* 
+/*
  * fmod(x,y)
  * Return x mod y in exact arithmetic
  * Method: shift and subtract
@@ -41,7 +41,7 @@ fmod(double x, double y)
 	    return (x*y)/(x*y);
 	if(hx<=hy) {
 	    if((hx<hy)||(lx<ly)) return x;	/* |x|<|y| return x */
-	    if(lx==ly) 
+	    if(lx==ly)
 		return Zero[(u_int32_t)sx>>31];	/* |x|=|y| return x*0*/
 	}
 
@@ -64,7 +64,7 @@ fmod(double x, double y)
 	} else iy = (hy>>20)-1023;
 
     /* set up {hx,lx}, {hy,ly} and align y to x */
-	if(ix >= -1022) 
+	if(ix >= -1022)
 	    hx = 0x00100000|(0x000fffff&hx);
 	else {		/* subnormal x, shift x to normal */
 	    n = -1022-ix;
@@ -76,7 +76,7 @@ fmod(double x, double y)
 		lx = 0;
 	    }
 	}
-	if(iy >= -1022) 
+	if(iy >= -1022)
 	    hy = 0x00100000|(0x000fffff&hy);
 	else {		/* subnormal y, shift y to normal */
 	    n = -1022-iy;
@@ -105,7 +105,7 @@ fmod(double x, double y)
 
     /* convert back to floating value and restore the sign */
 	if((hx|lx)==0) 			/* return sign(x)*0 */
-	    return Zero[(u_int32_t)sx>>31];	
+	    return Zero[(u_int32_t)sx>>31];
 	while(hx<0x00100000) {		/* normalize x */
 	    hx = hx+hx+(lx>>31); lx = lx+lx;
 	    iy -= 1;

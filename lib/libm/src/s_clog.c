@@ -38,7 +38,7 @@
  * If z = x + iy, r = sqrt( x**2 + y**2 ),
  * then
  *       w = log(r) + i arctan(y/x).
- * 
+ *
  * The arctangent ranges from -PI to +PI.
  *
  *

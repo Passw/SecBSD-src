@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* 
+/*
  * ethers(3) a la Sun.
  * Originally Written by Roland McGrath <roland@frob.com> 10/14/93.
  * Substantially modified by Todd C. Miller <millert@openbsd.org>
@@ -92,7 +92,7 @@ ether_aton(const char *s)
 int
 ether_ntohost(char *hostname, struct ether_addr *e)
 {
-	FILE *f; 
+	FILE *f;
 	char buf[BUFSIZ+1], *p;
 	size_t len;
 	struct ether_addr try;
@@ -115,7 +115,7 @@ ether_ntohost(char *hostname, struct ether_addr *e)
 		    memcmp(&try, e, sizeof(try)) == 0) {
 			(void)fclose(f);
 			return (0);
-		}     
+		}
 	}
 	(void)fclose(f);
 	errno = ENOENT;

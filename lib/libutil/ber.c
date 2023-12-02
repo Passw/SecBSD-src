@@ -594,7 +594,7 @@ ober_printf_elements(struct ber_element *ber, char *fmt, ...)
 	memset(parent, 0, sizeof(struct ber_element *) * _MAX_SEQ);
 
 	va_start(ap, fmt);
-	
+
 	while (*fmt) {
 		switch (*fmt++) {
 		case 'B':

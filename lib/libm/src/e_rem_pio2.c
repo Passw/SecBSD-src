@@ -5,14 +5,14 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
 /* __ieee754_rem_pio2(x,y)
- * 
- * return the remainder of x rem pi/2 in y[0]+y[1] 
+ *
+ * return the remainder of x rem pi/2 in y[0]+y[1]
  * use __kernel_rem_pio2()
  */
 
@@ -38,7 +38,7 @@ static const int32_t npio2_hw[] = {
  * pio2_3t:  pi/2 - (pio2_1+pio2_2+pio2_3)
  */
 
-static const double 
+static const double
 zero =  0.00000000000000000000e+00, /* 0x00000000, 0x00000000 */
 half =  5.00000000000000000000e-01, /* 0x3FE00000, 0x00000000 */
 two24 =  1.67772160000000000000e+07, /* 0x41700000, 0x00000000 */
@@ -63,7 +63,7 @@ __ieee754_rem_pio2(double x, double *y)
 	if(ix<=0x3fe921fb)   /* |x| ~<= pi/4 , no need for reduction */
 	    {y[0] = x; y[1] = 0; return 0;}
 	if(ix<0x4002d97c) {  /* |x| < 3pi/4, special case with n=+-1 */
-	    if(hx>0) { 
+	    if(hx>0) {
 		z = x - pio2_1;
 		if(ix!=0x3ff921fb) { 	/* 33+53 bit pi is good enough */
 		    y[0] = z - pio2_1t;
@@ -93,27 +93,27 @@ __ieee754_rem_pio2(double x, double *y)
 	    fn = (double)n;
 	    r  = t-fn*pio2_1;
 	    w  = fn*pio2_1t;	/* 1st round good to 85 bit */
-	    if(n<32&&ix!=npio2_hw[n-1]) {	
+	    if(n<32&&ix!=npio2_hw[n-1]) {
 		y[0] = r-w;	/* quick check no cancellation */
 	    } else {
 	        u_int32_t high;
 	        j  = ix>>20;
-	        y[0] = r-w; 
+	        y[0] = r-w;
 		GET_HIGH_WORD(high,y[0]);
 	        i = j-((high>>20)&0x7ff);
 	        if(i>16) {  /* 2nd iteration needed, good to 118 */
 		    t  = r;
-		    w  = fn*pio2_2;	
+		    w  = fn*pio2_2;
 		    r  = t-w;
-		    w  = fn*pio2_2t-((t-r)-w);	
+		    w  = fn*pio2_2t-((t-r)-w);
 		    y[0] = r-w;
 		    GET_HIGH_WORD(high,y[0]);
 		    i = j-((high>>20)&0x7ff);
 		    if(i>49)  {	/* 3rd iteration need, 151 bits acc */
 		    	t  = r;	/* will cover all possible cases */
-		    	w  = fn*pio2_3;	
+		    	w  = fn*pio2_3;
 		    	r  = t-w;
-		    	w  = fn*pio2_3t-((t-r)-w);	
+		    	w  = fn*pio2_3t-((t-r)-w);
 		    	y[0] = r-w;
 		    }
 		}
@@ -122,7 +122,7 @@ __ieee754_rem_pio2(double x, double *y)
 	    if(hx<0) 	{y[0] = -y[0]; y[1] = -y[1]; return -n;}
 	    else	 return n;
 	}
-    /* 
+    /*
      * all other (large) arguments
      */
 	if(ix>=0x7ff00000) {		/* x is inf or NaN */

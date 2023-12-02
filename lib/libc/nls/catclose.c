@@ -43,7 +43,7 @@ catclose(nl_catd catd)
 		errno = EBADF;
 		return -1;
 	}
-	
+
 	if (catd) {
 		munmap(catd->__data, catd->__size);
 		free (catd);

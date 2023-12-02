@@ -48,7 +48,7 @@ int	__sdidinit;
 #define	std(flags, file) \
 	{0,0,0,flags,file,{0},0,__sF+file,__sclose,__sread,__sseek,__swrite, \
 	 {(unsigned char *)(__sFext+file), 0}}
-/*	 p r w flags file _bf z  cookie      close    read    seek    write 
+/*	 p r w flags file _bf z  cookie      close    read    seek    write
 	 ext */
 
 				/* the usual - (stdin + stdout + stderr) */
@@ -173,6 +173,6 @@ __sinit(void)
 	/* make sure we clean up on exit */
 	__atexit_register_cleanup(_cleanup); /* conservative */
 	__sdidinit = 1;
-out: 
+out:
 	_MUTEX_UNLOCK(&sinit_mutex);
 }

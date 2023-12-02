@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -58,7 +58,7 @@ expf(float x)	/* default IEEE double exp */
 	}
 
     /* argument reduction */
-	if(hx > 0x3eb17218) {		/* if  |x| > 0.5 ln2 */ 
+	if(hx > 0x3eb17218) {		/* if  |x| > 0.5 ln2 */
 	    if(hx < 0x3F851592) {	/* and |x| < 1.5 ln2 */
 		hi = x-ln2HI[xsb]; lo=ln2LO[xsb]; k = 1-xsb-xsb;
 	    } else {
@@ -68,7 +68,7 @@ expf(float x)	/* default IEEE double exp */
 		lo = t*ln2LO[0];
 	    }
 	    x  = hi - lo;
-	} 
+	}
 	else if(hx < 0x31800000)  {	/* when |x|<2**-28 */
 	    if(huge+x>one) return one+x;/* trigger inexact */
 	}
@@ -76,7 +76,7 @@ expf(float x)	/* default IEEE double exp */
     /* x is now in primary range */
 	t  = x*x;
 	c  = x - t*(P1+t*(P2+t*(P3+t*(P4+t*P5))));
-	if(k==0) 	return one-((x*c)/(c-(float)2.0)-x); 
+	if(k==0) 	return one-((x*c)/(c-(float)2.0)-x);
 	else 		y = one-((lo-(x*c)/((float)2.0-c))-hi);
 	if(k >= -125) {
 	    u_int32_t hy;

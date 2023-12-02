@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -29,7 +29,7 @@ ceilf(float x)
 	if(jj0<23) {
 	    if(jj0<0) { 	/* raise inexact if x != 0 */
 		if(huge+x>(float)0.0) {/* return 0*sign(x) if |x|<1 */
-		    if(i0<0) {i0=0x80000000;} 
+		    if(i0<0) {i0=0x80000000;}
 		    else if(i0!=0) { i0=0x3f800000;}
 		}
 	    } else {

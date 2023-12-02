@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -186,7 +186,7 @@ keynote_env_lookup(char *name, struct environment **table,
 {
     struct environment *en;
 
-    for (en = table[keynote_stringhash(name, hashsize)]; 
+    for (en = table[keynote_stringhash(name, hashsize)];
 	 en != NULL;
 	 en = en->env_next)
       if (((en->env_flags & ENVIRONMENT_FLAG_REGEX) &&
@@ -213,9 +213,9 @@ keynote_env_delete(char *name, struct environment **table,
 {
     struct environment *en, *en2;
     unsigned int h;
-    
+
     h = keynote_stringhash(name, hashsize);
-    
+
     if (table[h] != NULL)
     {
 	if (!strcmp(table[h]->env_name, name))
@@ -226,7 +226,7 @@ keynote_env_delete(char *name, struct environment **table,
 	    return RESULT_TRUE;
 	}
 	else
-	  for (en = table[h]; 
+	  for (en = table[h];
 	       en->env_next != NULL;
 	       en = en->env_next)
 	    if (!strcmp(en->env_next->env_name, name))
@@ -241,7 +241,7 @@ keynote_env_delete(char *name, struct environment **table,
    return RESULT_FALSE;
 }
 
-/* 
+/*
  * Add a new variable in hash table. Return RESULT_TRUE on success,
  * ERROR_MEMORY on failure. If hashsize is 1, second argument is
  * actually a pointer to a list. The arguments are duplicated.
@@ -252,7 +252,7 @@ keynote_env_add(char *name, char *value, struct environment **table,
 {
     struct environment *en;
     unsigned int h, i;
-    
+
     en = calloc(1, sizeof(struct environment));
     if (en == NULL) {
 	keynote_errno = ERROR_MEMORY;
@@ -301,8 +301,8 @@ keynote_env_add(char *name, char *value, struct environment **table,
 	}
     }
 
-    /* 
-     * This means that new assignments of existing variable will override 
+    /*
+     * This means that new assignments of existing variable will override
      * the old ones.
      */
     h = keynote_stringhash(name, hashsize);
@@ -321,7 +321,7 @@ keynote_env_cleanup(struct environment **table, unsigned int hashsize)
 
     if ((hashsize == 0) || (table == NULL))
       return;
-    
+
     while (hashsize > 0)
     {
 	while (table[hashsize - 1] != NULL) {
@@ -367,7 +367,7 @@ int
 keynote_retindex(char *s)
 {
     int i;
-    
+
     for (i = 0; i < keynote_current_session->ks_values_num; i++)
       if (!strcmp(s, keynote_current_session->ks_values[i]))
 	return i;
@@ -383,7 +383,7 @@ keynote_find_session(int sessid)
 {
     unsigned int h = sessid % SESSIONTABLESIZE;
     struct keynote_session *ks;
-    
+
     for (ks = keynote_sessions[h];
 	 ks != NULL;
 	 ks = ks->ks_next)
@@ -506,7 +506,7 @@ kn_close(int sessid)
 	keynote_sessions[ks->ks_id % SESSIONTABLESIZE] = ks->ks_next;
 	if (ks->ks_next != NULL)
 	  ks->ks_next->ks_prev = NULL;
-	
+
     }
     else
     {
@@ -514,12 +514,12 @@ kn_close(int sessid)
 	if (ks->ks_next != NULL)
 	  ks->ks_next->ks_prev = ks->ks_prev;
     }
-    
+
     free(ks);
     keynote_current_session = NULL;
     return 0;
 }
-	
+
 /*
  * Add an action attribute.
  */
@@ -545,7 +545,7 @@ kn_add_action(int sessid, char *name, char *value, int flags)
     }
 
     if (flags & ENVIRONMENT_FLAG_REGEX)
-      i = keynote_env_add(name, value, 
+      i = keynote_env_add(name, value,
 			  &(keynote_current_session->ks_env_regex), 1, flags);
     else
       i = keynote_env_add(name, value, keynote_current_session->ks_env_table,
@@ -621,7 +621,7 @@ kn_do_query(int sessid, char **returnvalues, int numvalues)
 	return -1;
     }
 
-    /* 
+    /*
      * We may use already set returnvalues, or use new ones,
      * but we must have some before we can evaluate.
      */

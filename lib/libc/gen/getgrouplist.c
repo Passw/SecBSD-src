@@ -56,7 +56,7 @@ static int _read_netid(const char *, uid_t, gid_t*, int*, int);
 /*
  * Parse one string of the form "uid:gid[,gid[,...]]".
  * If the uid matches, add the groups to the group list.
- * If the groups fit, return 1, otherwise return -1. 
+ * If the groups fit, return 1, otherwise return -1.
  * If the uid does not match, return 0.
  */
 static int
@@ -116,7 +116,7 @@ _read_netid(const char *key, uid_t uid, gid_t *groups, int *ngroups,
 	int found = 0;
 
 	fp = fopen(_PATH_NETID, "re");
-	if (!fp) 
+	if (!fp)
 		return (0);
 	while (!found && fgets(line, sizeof(line), fp)) {
 		p = strchr(line, '\n');

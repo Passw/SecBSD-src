@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -18,7 +18,7 @@
 
 static float ponef(float), qonef(float);
 
-static const float 
+static const float
 huge    = 1e30,
 one	= 1.0,
 invsqrtpi=  5.6418961287e-01, /* 0x3f106ebb */
@@ -37,7 +37,7 @@ s05  =  1.2354227016e-11; /* 0x2d59567e */
 static const float zero    = 0.0;
 
 float
-j1f(float x) 
+j1f(float x)
 {
 	float z, s,c,ss,cc,r,u,v,y;
 	int32_t hx,ix;
@@ -95,7 +95,7 @@ static const float V0[5] = {
 };
 
 float
-y1f(float x) 
+y1f(float x)
 {
 	float z, s,c,ss,cc,u,v;
 	int32_t hx,ix;
@@ -103,7 +103,7 @@ y1f(float x)
 	GET_FLOAT_WORD(hx,x);
         ix = 0x7fffffff&hx;
     /* if Y1(NaN) is NaN, Y1(-inf) is NaN, Y1(inf) is 0 */
-	if(ix>=0x7f800000) return  one/(x+x*x); 
+	if(ix>=0x7f800000) return  one/(x+x*x);
         if(ix==0) return -one/zero;
         if(hx<0) return zero/zero;
         if(ix >= 0x40000000) {  /* |x| >= 2.0 */
@@ -133,10 +133,10 @@ y1f(float x)
                     z = invsqrtpi*(u*ss+v*cc)/sqrtf(x);
                 }
                 return z;
-        } 
+        }
         if(ix<=0x24800000) {    /* x < 2**-54 */
             return(-tpi/x);
-        } 
+        }
         z = x*x;
         u = U0[0]+z*(U0[1]+z*(U0[2]+z*(U0[3]+z*U0[4])));
         v = one+z*(V0[0]+z*(V0[1]+z*(V0[2]+z*(V0[3]+z*V0[4]))));
@@ -235,7 +235,7 @@ ponef(float x)
         s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
         return one+ r/s;
 }
-		
+
 
 /* For x >= 8, the asymptotic expansions of qone is
  *	3/8 s - 105/1024 s^3 - ..., where s = 1/x.

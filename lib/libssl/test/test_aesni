@@ -38,7 +38,7 @@ if $PROG engine aesni | grep -v no-aesni; then
 		nerr=`expr $nerr + 1`
 	    fi
 	done
-	for bufsize in $BUFSIZE; do 
+	for bufsize in $BUFSIZE; do
 	    TEST=`(	cat $PROG | \
 		$PROG enc -e -k "$HASH" -$alg | \
 		$PROG enc -d -k "$HASH" -$alg -bufsize $bufsize -engine aesni | \

@@ -159,7 +159,7 @@ __xfputwc(wchar_t wc, FILE *fp)
  * string representation. ``prec'' specifies the maximum number of bytes
  * to output. If ``prec'' is greater than or equal to zero, we can't assume
  * that the multibyte character string ends in a null character.
- * 
+ *
  * Returns NULL on failure.
  * To find out what happened check errno for ENOMEM, EILSEQ and EINVAL.
  */
@@ -1494,7 +1494,7 @@ __grow_type_table(unsigned char **typetable, int *tablesize)
 	return (0);
 }
 
- 
+
 #ifdef FLOATING_POINT
 static int
 exponent(wchar_t *p0, int exp, int fmtch)

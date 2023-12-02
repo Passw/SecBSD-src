@@ -7,11 +7,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -220,7 +220,7 @@ read_environment(char *filename)
 	perror(filename);
 	return -1;
     }
- 
+
     kvfoo = kv_create_buffer(fp, YY_BUF_SIZE);
     kv_switch_to_buffer(kvfoo);
     BEGIN(FIRSTPART);
@@ -231,7 +231,7 @@ read_environment(char *filename)
     {
 	case 0:
 	    return 0;
-	    
+
 	default:
 	    if (keynote_errno == ERROR_MEMORY)
 	      fprintf(stderr,

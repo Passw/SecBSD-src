@@ -153,5 +153,5 @@ DEF_WEAK(sys_errlist);
 DEF_WEAK(sys_nerr);
 #endif
 
-__strong_alias(_sys_errlist, sys_errlist);  
-__strong_alias(_sys_nerr, sys_nerr);  
+__strong_alias(_sys_errlist, sys_errlist);
+__strong_alias(_sys_nerr, sys_nerr);

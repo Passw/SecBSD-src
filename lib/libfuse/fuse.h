@@ -91,7 +91,7 @@ typedef int (*fuse_fill_dir_t)(void *, const char *, const struct stat *,
 typedef struct fuse_dirhandle *fuse_dirh_t;
 typedef int (*fuse_dirfil_t)(fuse_dirh_t, const char *, int, ino_t);
 
-/* 
+/*
  * Fuse operations work in the same way as their UNIX file system
  * counterparts. A major exception is that these routines return
  * a negated errno value (-errno) on failure.

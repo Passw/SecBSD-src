@@ -186,7 +186,7 @@ setmode(const char *p)
 	(void)sigprocmask(SIG_SETMASK, &sigoset, NULL);
 
 	setlen = SET_LEN + 2;
-	
+
 	if ((set = calloc((u_int)sizeof(BITCMD), setlen)) == NULL)
 		return (NULL);
 	saveset = set;
@@ -366,7 +366,7 @@ addcmd(BITCMD *set, int op, int who, int oparg, u_int mask)
 			set->cmd2 = CMD2_UBITS | CMD2_GBITS | CMD2_OBITS;
 			set->bits = mask;
 		}
-	
+
 		if (oparg == '+')
 			set->cmd2 |= CMD2_SET;
 		else if (oparg == '-')

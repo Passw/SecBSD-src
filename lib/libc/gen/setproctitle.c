@@ -46,7 +46,7 @@ setproctitle(const char *fmt, ...)
 {
 	static struct ps_strings *ps;
 	va_list ap;
-	
+
 	static char buf[MAX_PROCTITLE], *bufp = buf;
 	int used;
 

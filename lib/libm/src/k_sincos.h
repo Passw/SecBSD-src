@@ -4,10 +4,10 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- * 
+ *
  * k_sin.c and k_cos.c merged by Steven G. Kargl.
  */
 

@@ -115,7 +115,7 @@ confstr(int name, char *buf, size_t len)
 
 	case _CS_POSIX_V6_WIDTH_RESTRICTED_ENVS:
 		return (strlcpy(buf, v6_width_restricted_envs, len) + 1);
-	
+
 	case _CS_POSIX_V7_WIDTH_RESTRICTED_ENVS:
 		return (strlcpy(buf, v7_width_restricted_envs, len) + 1);
 

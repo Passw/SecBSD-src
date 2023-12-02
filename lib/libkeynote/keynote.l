@@ -7,11 +7,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -64,11 +64,11 @@ comment		"#"[^\n]*
      * in yacc.
      */
     extern int first_tok;
-    
+
     if (first_tok)
     {
 	int holdtok = first_tok;
-	
+
 	first_tok = 0;
 	return holdtok;
     }
@@ -170,7 +170,7 @@ comment		"#"[^\n]*
 				    knlval.string = NULL;
 				    return STRING;
 				}
-    
+
 				knlval.string = calloc(strlen(kntext) - 1,
 						       sizeof(char));
                                 if (knlval.string == NULL)
@@ -179,7 +179,7 @@ comment		"#"[^\n]*
 				    return -1;
 				}
 
-				mystrncpy(knlval.string, kntext + 1, 
+				mystrncpy(knlval.string, kntext + 1,
 					  strlen(kntext) - 2);
 
 				if (keynote_lex_add(knlval.string,
@@ -188,7 +188,7 @@ comment		"#"[^\n]*
 				return STRING;
                               }
 [ \t\n]
-.                             { keynote_errno = ERROR_SYNTAX; 
+.                             { keynote_errno = ERROR_SYNTAX;
                                 return -1;
 				REJECT; /* Avoid -Wall warning. Not reached */
                               }
@@ -201,7 +201,7 @@ static void
 keynote_lex_zap(void)
 {
     int i;
-    
+
     if (keynote_lex_counter == 0)
       return;
 
@@ -220,7 +220,7 @@ keynote_lex_zap(void)
 	  keynote_lex_list[i].lex_type = 0;
       }
 }
-	
+
 /*
  * Initialize.
  */
@@ -445,7 +445,7 @@ mystrncpy(char *s1, char *s2, int len)
      }
 }
 
-/* 
+/*
  * Evaluate an assertion, with as->as_result holding the result.
  * Return RESULT_TRUE if all ok. Also return the result.
  */
@@ -473,7 +473,7 @@ keynote_evaluate_assertion(struct assertion *as)
     first_tok = ACTSTR;
     as->as_result = 0;
     keynote_returnvalue = 0;
-    
+
     switch (knparse())
     {
 	case 1:  /* Fall through */
@@ -481,7 +481,7 @@ keynote_evaluate_assertion(struct assertion *as)
 	case -1:
 	    as->as_result = 0;
 	    break;
-	    
+
 	case 0:
 	    as->as_result = keynote_returnvalue;
 	    break;
@@ -502,8 +502,8 @@ keynote_evaluate_assertion(struct assertion *as)
       return RESULT_TRUE;
 }
 
-/* 
- * Parse/evaluate a key predicate field. 
+/*
+ * Parse/evaluate a key predicate field.
  * Store keys in key predicate as keylist in as->as_keylist, if second
  * argument is true.
  */
@@ -535,7 +535,7 @@ keynote_parse_keypred(struct assertion *as, int record)
 	keynote_errno = ERROR_SYNTAX;
 
     kn_delete_buffer(keypred_state);
-    keynote_lex_zap(); 
+    keynote_lex_zap();
     keynote_cleanup_kth();
 
     keynote_init_list = NULL;
@@ -637,7 +637,7 @@ keynote_evaluate_authorizer(struct assertion *as, int flag)
 
 	    as->as_signature = keynote_keypred_keylist->key_key;
 	}
-	
+
 	keynote_keypred_keylist->key_key = NULL;
 	keynote_keylist_free(keynote_keypred_keylist);
 	keynote_keypred_keylist = NULL;

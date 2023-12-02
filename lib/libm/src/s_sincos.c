@@ -7,7 +7,7 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- * 
+ *
  * s_sin.c and s_cos.c merged by Steven G. Kargl.  Descriptions of the
  * algorithms are contained in the original files.
  */

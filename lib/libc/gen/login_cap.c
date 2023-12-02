@@ -112,7 +112,7 @@ login_getclass(char *class)
 	if ((res = cgetent(&lc->lc_cap, classfiles, lc->lc_class)) != 0) {
 		lc->lc_cap = 0;
 		switch (res) {
-		case 1: 
+		case 1:
 			syslog(LOG_ERR, "%s: couldn't resolve 'tc'",
 				lc->lc_class);
 			break;
@@ -198,7 +198,7 @@ login_getstyle(login_cap_t *lc, char *style, char *atype)
 
 	if (!style)
 		style = authtypes[0];
-		
+
 	while (*authtypes && strcmp(style, *authtypes))
 		++authtypes;
 
@@ -272,7 +272,7 @@ login_getcaptime(login_cap_t *lc, char *cap, quad_t def, quad_t e)
 		errno = ERANGE;
 		return (e);
 	default:
-		if (stat >= 0) 
+		if (stat >= 0)
 			break;
 		free(res);
 		syslog(LOG_ERR, "%s: unexpected error with capability %s",
@@ -357,7 +357,7 @@ login_getcapnum(login_cap_t *lc, char *cap, quad_t def, quad_t e)
 		errno = ERANGE;
 		return (e);
 	default:
-		if (stat >= 0) 
+		if (stat >= 0)
 			break;
 		free(res);
 		syslog(LOG_ERR, "%s: unexpected error with capability %s",
@@ -411,7 +411,7 @@ login_getcapsize(login_cap_t *lc, char *cap, quad_t def, quad_t e)
 		errno = ERANGE;
 		return (e);
 	default:
-		if (stat >= 0) 
+		if (stat >= 0)
 			break;
 		free(res);
 		syslog(LOG_ERR, "%s: unexpected error with capability %s",
@@ -619,7 +619,7 @@ setusercontext(login_cap_t *lc, struct passwd *pwd, uid_t uid, u_int flags)
 	}
 
 	if (flags & LOGIN_SETRESOURCES)
-		for (i = 0; r_list[i].name; ++i) 
+		for (i = 0; r_list[i].name; ++i)
 			if (gsetrl(lc, r_list[i].what, r_list[i].name,
 			    r_list[i].type))
 				/* XXX - call syslog()? */;
@@ -744,7 +744,7 @@ setuserpath(login_cap_t *lc, const struct passwd *pwd)
 			*np++ = *op++;
 			break;
 		}
-		
+
 	}
 	*np = '\0';
 setit:
@@ -952,9 +952,9 @@ multiply(u_quad_t n1, u_quad_t n2)
 	 * is not done then the first multiply below may overflow.)
 	 */
 	for (b1 = bpw; (((u_quad_t)1 << (b1-1)) & n1) == 0; --b1)
-		; 
+		;
 	for (b2 = bpw; (((u_quad_t)1 << (b2-1)) & n2) == 0; --b2)
-		; 
+		;
 	if (b1 + b2 - 2 > bpw) {
 		errno = ERANGE;
 		return (UQUAD_MAX);

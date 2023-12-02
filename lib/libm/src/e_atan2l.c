@@ -7,7 +7,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  *
@@ -106,7 +106,7 @@ atan2l(long double y, long double x)
 #endif /* EXT_FRACLMBITS */
 		| uy.bits.ext_fracl)==0) {
 	    switch(m) {
-		case 0: 
+		case 0:
 		case 1: return y; 	/* atan(+-0,+anything)=+-0 */
 		case 2: return  pi+tiny;/* atan(+0,-anything) = pi */
 		case 3: return -pi-tiny;/* atan(-0,-anything) =-pi */

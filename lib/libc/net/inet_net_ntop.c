@@ -153,7 +153,7 @@ inet_net_ntop_ipv6(const u_char *src, int bits, char *dst, size_t size)
 	ret = snprintf(dst, size, "%s/%d", buf, bits);
 	if (ret < 0 || ret >= size) {
 		errno = EMSGSIZE;
-		return (NULL); 
+		return (NULL);
 	}
 
 	return (dst);

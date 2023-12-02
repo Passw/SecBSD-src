@@ -102,7 +102,7 @@ struct auth_session_t {
 	int	state;			/* authenticated state */
 
 	struct	rmfiles *rmlist;	/* list of files to remove on failure */
-	struct	authopts *optlist;	/* list of options to scripts */ 
+	struct	authopts *optlist;	/* list of options to scripts */
 	struct	authdata *data;		/* additional data to send to scripts */
 
 	char	spool[MAXSPOOLSIZE];	/* data returned from login script */

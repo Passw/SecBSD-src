@@ -44,7 +44,7 @@ __sread(void *cookie, char *buf, int n)
 {
 	FILE *fp = cookie;
 	int ret;
-	
+
 	ret = read(fp->_file, buf, n);
 	/* if the read succeeded, update the current offset */
 	if (ret >= 0)
@@ -70,7 +70,7 @@ __sseek(void *cookie, fpos_t offset, int whence)
 {
 	FILE *fp = cookie;
 	off_t ret;
-	
+
 	ret = lseek(fp->_file, offset, whence);
 	if (ret == -1)
 		fp->_flags &= ~__SOFF;

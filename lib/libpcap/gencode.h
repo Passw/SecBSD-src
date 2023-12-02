@@ -87,7 +87,7 @@ struct slist {
 	struct slist *next;
 };
 
-/* 
+/*
  * A bit vector to represent definition sets.  We assume TOT_REGISTERS
  * is smaller than 8*sizeof(atomset).
  */

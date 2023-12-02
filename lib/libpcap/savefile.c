@@ -452,7 +452,7 @@ pcap_dump_open(pcap_t *p, const char *fname)
  */
 pcap_dumper_t *
 pcap_dump_fopen(pcap_t *p, FILE *f)
-{	
+{
 	return (pcap_setup_dump(p, f, "stream"));
 }
 

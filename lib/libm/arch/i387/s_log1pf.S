@@ -9,7 +9,7 @@
 /*
  * Since the fyl2xp1 instruction has such a limited range:
  *	-(1 - (sqrt(2) / 2)) <= x <= sqrt(2) - 1
- * it's not worth trying to use it.  
+ * it's not worth trying to use it.
  */
 
 ENTRY(log1pf)

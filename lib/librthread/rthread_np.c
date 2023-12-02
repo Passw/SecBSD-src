@@ -74,7 +74,7 @@ pthread_main_np(void)
  * it's the bottom.  You'll have to ask Sun what they were thinking...
  *
  * This function taken from the uthread library, with the following
- * license: 
+ * license:
  * PUBLIC DOMAIN: No Rights Reserved. Marco S Hyman <marc@snafu.org> */
 int
 pthread_stackseg_np(pthread_t thread, stack_t *sinfo)

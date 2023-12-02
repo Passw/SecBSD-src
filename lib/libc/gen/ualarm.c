@@ -46,7 +46,7 @@ ualarm(useconds_t usecs, useconds_t reload)
 
 	new.it_interval.tv_usec = reload % USPS;
 	new.it_interval.tv_sec = reload / USPS;
-	
+
 	new.it_value.tv_usec = usecs % USPS;
 	new.it_value.tv_sec = usecs / USPS;
 

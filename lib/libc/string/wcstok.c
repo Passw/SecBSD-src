@@ -45,7 +45,7 @@
 #include <wchar.h>
 
 wchar_t *
-wcstok(wchar_t * __restrict s, const wchar_t * __restrict delim, 
+wcstok(wchar_t * __restrict s, const wchar_t * __restrict delim,
     wchar_t ** __restrict last)
 {
 	const wchar_t *spanp;

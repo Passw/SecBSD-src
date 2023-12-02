@@ -399,7 +399,7 @@ pthread_create(pthread_t *threadp, const pthread_attr_t *attr,
 		*threadp = thread;
 		return (0);
 	}
-		
+
 	rc = errno;
 
 	_spinlock(&_thread_lock);

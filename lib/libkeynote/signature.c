@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -46,17 +46,17 @@
 static const char hextab[] = {
      '0', '1', '2', '3', '4', '5', '6', '7',
      '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-}; 
+};
 
 /*
  * Actual conversion to hex.
- */   
+ */
 static void
 bin2hex(unsigned char *data, unsigned char *buffer, int len)
 {
     int off = 0;
-     
-    while(len > 0) 
+
+    while(len > 0)
     {
 	buffer[off++] = hextab[*data >> 4];
 	buffer[off++] = hextab[*data & 0xF];
@@ -257,7 +257,7 @@ keynote_get_sig_algorithm(char *sig, int *hash, int *enc, int *internal)
 
 /*
  * Map a key to an algorithm. Return algorithm number (defined in
- * keynote.h), or KEYNOTE_ALGORITHM_NONE if unknown. 
+ * keynote.h), or KEYNOTE_ALGORITHM_NONE if unknown.
  * This latter is also a valid algorithm (for logical tags). Also return
  * in the second and third arguments the ASCII and internal encodings.
  */
@@ -312,14 +312,14 @@ keynote_get_key_algorithm(char *key, int *encoding, int *internalencoding)
 	*encoding = ENCODING_HEX;
 	return KEYNOTE_ALGORITHM_BINARY;
     }
-    
+
     if (!strncasecmp(BINARY_BASE64, key, BINARY_BASE64_LEN))
     {
 	*internalencoding = INTERNAL_ENC_NONE;
 	*encoding = ENCODING_BASE64;
 	return KEYNOTE_ALGORITHM_BINARY;
     }
-    
+
     *internalencoding = INTERNAL_ENC_NONE;
     *encoding = ENCODING_NONE;
     return KEYNOTE_ALGORITHM_NONE;
@@ -333,7 +333,7 @@ static int
 keynote_get_private_key_algorithm(char *key, int *encoding,
 				  int *internalencoding)
 {
-    if (strncasecmp(KEYNOTE_PRIVATE_KEY_PREFIX, key, 
+    if (strncasecmp(KEYNOTE_PRIVATE_KEY_PREFIX, key,
 		    KEYNOTE_PRIVATE_KEY_PREFIX_LEN))
     {
 	*internalencoding = INTERNAL_ENC_NONE;
@@ -571,7 +571,7 @@ kn_keycompare(void *key1, void *key2, int algorithm)
 	      return RESULT_TRUE;
 	    else
 	      return RESULT_FALSE;
-	    
+
 	case KEYNOTE_ALGORITHM_DSA:
 	    p1 = (DSA *) key1;
 	    p2 = (DSA *) key2;
@@ -671,11 +671,11 @@ keynote_sigverify_assertion(struct assertion *as)
 	    SHA1_Init(&shscontext);
 	    SHA1_Update(&shscontext, as->as_startofsignature,
 			as->as_allbutsignature - as->as_startofsignature);
-	    SHA1_Update(&shscontext, as->as_signature, 
+	    SHA1_Update(&shscontext, as->as_signature,
 			(char *) sig - as->as_signature);
 	    SHA1_Final(res2, &shscontext);
 	    break;
-	    
+
 	case KEYNOTE_HASH_MD5:
 	    hashlen = 16;
 	    memset(res2, 0, hashlen);
@@ -727,7 +727,7 @@ keynote_sigverify_assertion(struct assertion *as)
 	    break;
 
 	case ENCODING_NATIVE:
-	    
+
 	    if ((decoded = strdup(sig)) == NULL) {
 		keynote_errno = ERROR_MEMORY;
 		return -1;
@@ -771,9 +771,9 @@ keynote_sigverify_assertion(struct assertion *as)
 		return SIGRESULT_TRUE;
 	    }
 	}
-    
+
     /* Handle more algorithms here */
-    
+
     free(ptr);
 
     return SIGRESULT_FALSE;
@@ -845,7 +845,7 @@ keynote_sign_assertion(struct assertion *as, char *sigalg, void *key,
 	    SHA1_Update(&shscontext, sigalg, (char *) sig - sigalg);
 	    SHA1_Final(res2, &shscontext);
 	    break;
-   
+
 	case KEYNOTE_HASH_MD5:
 	    hashlen = 16;
 	    memset(res2, 0, hashlen);
@@ -913,7 +913,7 @@ keynote_sign_assertion(struct assertion *as, char *sigalg, void *key,
 	      keynote_errno = ERROR_SYNTAX;
 	      return NULL;
 	  }
-	  
+
 	  if (BIO_write(biokey, key, strlen(key) + 1) <= 0)
 	  {
 	      BIO_free(biokey);

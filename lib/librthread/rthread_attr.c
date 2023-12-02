@@ -180,7 +180,7 @@ int
 pthread_attr_getstacksize(const pthread_attr_t *attrp, size_t *stacksize)
 {
 	*stacksize = (*attrp)->stack_size;
-	
+
 	return (0);
 }
 

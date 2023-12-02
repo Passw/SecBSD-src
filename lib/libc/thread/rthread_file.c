@@ -265,7 +265,7 @@ _thread_ftrylockfile(FILE * fp)
 	return (ret);
 }
 
-void 
+void
 _thread_funlockfile(FILE * fp)
 {
 	int	idx = file_idx(fp);

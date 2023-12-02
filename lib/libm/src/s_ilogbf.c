@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -24,7 +24,7 @@ ilogbf(float x)
 	GET_FLOAT_WORD(hx,x);
 	hx &= 0x7fffffff;
 	if(hx<0x00800000) {
-	    if(hx==0) 
+	    if(hx==0)
 		return FP_ILOGB0;	/* ilogb(0) = FP_ILOGB */
 	    else			/* subnormal x */
 	        for (ix = -126,hx<<=8; hx>0; hx<<=1) ix -=1;

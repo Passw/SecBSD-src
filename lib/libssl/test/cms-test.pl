@@ -383,11 +383,11 @@ sub run_smime_tests {
         my ( $tnam, $rscmd, $rvcmd ) = @$smtst;
 	if ($ossl8)
 		{
-		# Skip smime resign: 0.9.8 smime doesn't support -resign	
+		# Skip smime resign: 0.9.8 smime doesn't support -resign
 		next if ($scmd =~ /smime/ && $rscmd =~ /-resign/);
 		# Disable streaming: option not supported in 0.9.8
-		$tnam =~ s/streaming//;	
-		$rscmd =~ s/-stream//;	
+		$tnam =~ s/streaming//;
+		$rscmd =~ s/-stream//;
 		$rvcmd =~ s/-stream//;
 		}
         system("$scmd$rscmd$redir");

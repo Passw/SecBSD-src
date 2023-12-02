@@ -5,15 +5,15 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
-/* 
+/*
  * scalbn (double x, int n)
- * scalbn(x,n) returns x* 2**n  computed by  exponent  
- * manipulation rather than by actually performing an 
+ * scalbn(x,n) returns x* 2**n  computed by  exponent
+ * manipulation rather than by actually performing an
  * exponentiation or a multiplication.
  */
 

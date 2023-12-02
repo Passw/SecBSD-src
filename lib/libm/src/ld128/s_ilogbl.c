@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -34,7 +34,7 @@ ilogbl(long double x)
 	GET_LDOUBLE_WORDS64(hx,lx,x);
 	hx &= 0x7fffffffffffffffLL;
 	if(hx<0x0001000000000000LL) {
-	    if((hx|lx)==0) 
+	    if((hx|lx)==0)
 		return FP_ILOGB0;	/* ilogb(0) = FP_ILOGB0 */
 	    else			/* subnormal x */
 		if(hx==0) {

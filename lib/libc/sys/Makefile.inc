@@ -112,7 +112,7 @@ ASM_NOERR=__get_tcb.o __set_tcb.o __threxit.o __thrsleep.o __thrwakeup.o \
 	getthrname.o getuid.o \
 	issetugid.o \
 	sched_yield.o setthrname.o sync.o \
-	umask.o 
+	umask.o
 PASM_NOERR=	${ASM_NOERR:.o=.po}
 SASM_NOERR=	${ASM_NOERR:.o=.so}
 DASM_NOERR=	${ASM_NOERR:.o=.do}

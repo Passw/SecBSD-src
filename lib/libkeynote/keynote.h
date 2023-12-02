@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -81,10 +81,10 @@ struct keynote_keylist
 #define ENVIRONMENT_FLAG_FUNC   0x0001 /* This is a callback function */
 #define ENVIRONMENT_FLAG_REGEX  0x0002 /* Regular expression for name */
 
-#define ASSERT_FLAG_LOCAL       0x0001 /* 
+#define ASSERT_FLAG_LOCAL       0x0001 /*
 					* Trusted assertion -- means
 					* signature is not verified, and
-					* authorizer field can 
+					* authorizer field can
 					* include symbolic names.
 				        */
 #define ASSERT_FLAG_SIGGEN      0x0002 /*

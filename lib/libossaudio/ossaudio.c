@@ -123,7 +123,7 @@ mixer_ondesc(void *unused, struct sioctl_desc *d, int val)
 	 * hw/output.level that we map to OSS gain controls. This
 	 * ensures useful knobs are exposed no matter if sndiod
 	 * is running or not.
-	 */ 
+	 */
 	if (d->group[0] == 0) {
 		if (strcmp(d->node0.name, "output") == 0)
 			type = SOUND_MIXER_VOLUME;
@@ -143,7 +143,7 @@ mixer_ondesc(void *unused, struct sioctl_desc *d, int val)
 
 	i = malloc(sizeof(struct control));
 	if (i == NULL) {
-		DPRINTF("%s: cannot allocate control\n", __func__);		
+		DPRINTF("%s: cannot allocate control\n", __func__);
 		return;
 	}
 

@@ -112,7 +112,7 @@ sinl(long double x)
 	    hi = - __kernel_cosl(hi, lo);
 	    break;
 	}
-	
+
 	return (s ? -hi : hi);
 }
 DEF_STD(sinl);

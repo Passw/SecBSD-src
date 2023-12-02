@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -33,7 +33,7 @@ rintf(float x)
 	sx = (i0>>31)&1;
 	jj0 = ((i0>>23)&0xff)-0x7f;
 	if(jj0<23) {
-	    if(jj0<0) { 	
+	    if(jj0<0) {
 		if((i0&0x7fffffff)==0) return x;
 		i1 = (i0&0x07fffff);
 		i0 &= 0xfff00000;

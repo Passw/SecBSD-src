@@ -353,7 +353,7 @@ pcap_ether_hostton(const char *name)
 		return (NULL);
 	else
 		rewind(fp);
-	
+
 	while ((ep = pcap_next_etherent(fp)) != NULL) {
 		if (strcmp(ep->name, name) == 0) {
 			ap = malloc(6);

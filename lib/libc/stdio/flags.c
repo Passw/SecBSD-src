@@ -72,7 +72,7 @@ __sflags(const char *mode, int *optr)
 		return (0);
 	}
 
-	while (*mode != '\0') 
+	while (*mode != '\0')
 		switch (*mode++) {
 		case 'b':
 			break;

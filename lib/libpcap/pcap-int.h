@@ -103,7 +103,7 @@ struct pcap {
 	 */
 	u_char *pkt;
 
-	
+
 	/*
 	 * Placeholder for filter code if bpf not in kernel.
 	 */

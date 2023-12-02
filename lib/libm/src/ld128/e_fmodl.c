@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -104,7 +104,7 @@ fmodl(long double x, long double y)
 
     /* convert back to floating value and restore the sign */
 	if((hx|lx)==0)			/* return sign(x)*0 */
-	    return Zero[(u_int64_t)sx>>63];	
+	    return Zero[(u_int64_t)sx>>63];
 	while(hx<0x0001000000000000LL) {	/* normalize x */
 	    hx = hx+hx+(lx>>63); lx = lx+lx;
 	    iy -= 1;

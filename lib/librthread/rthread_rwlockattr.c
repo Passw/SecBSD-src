@@ -56,7 +56,7 @@ pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *attrp, int *pshared)
 {
 	*pshared = (*attrp)->pshared;
 
-	return (0);  
+	return (0);
 }
 
 int
@@ -64,7 +64,7 @@ pthread_rwlockattr_setpshared(pthread_rwlockattr_t *attrp, int pshared)
 {
 	/* only PTHREAD_PROCESS_PRIVATE is supported */
 	if (pshared != PTHREAD_PROCESS_PRIVATE)
-		return (EINVAL); 
+		return (EINVAL);
 
 	(*attrp)->pshared = pshared;
 

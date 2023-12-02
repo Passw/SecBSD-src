@@ -40,7 +40,7 @@ __isfinitef(float f)
 __strong_alias(__isfinitel, __isfinite);
 #endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */
 
-/* 
+/*
  * 3BSD compatibility aliases.
  */
 __strong_alias(finite, __isfinite);

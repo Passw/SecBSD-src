@@ -240,7 +240,7 @@ hid_get_item_raw(hid_data_t s, hid_item_t *h)
 			dval = s->usage_last;
 		}
 		s->icount ++;
-		/* 
+		/*
 		 * Only copy HID item, increment position and return
 		 * if correct kindset!
 		 */

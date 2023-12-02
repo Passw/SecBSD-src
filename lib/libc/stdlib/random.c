@@ -58,7 +58,7 @@
  * state information, which will allow a degree seven polynomial.  (Note:
  * the zeroeth word of state information also has some other information
  * stored in it -- see setstate() for details).
- * 
+ *
  * The random number generation technique is a linear feedback shift register
  * approach, employing trinomials (since there are fewer terms to sum up that
  * way).  In this approach, the least significant bit of all the numbers in
@@ -132,11 +132,11 @@ static int seps [MAX_TYPES] =	{ SEP_0, SEP_1, SEP_2, SEP_3, SEP_4 };
 
 static int32_t randtbl[DEG_3 + 1] = {
 	TYPE_3,
-	0x991539b1, 0x16a5bce3, 0x6774a4cd, 0x3e01511e, 0x4e508aaa, 0x61048c05, 
-	0xf5500617, 0x846b7115, 0x6a19892c, 0x896a97af, 0xdb48f936, 0x14898454, 
-	0x37ffd106, 0xb58bff9c, 0x59e17104, 0xcf918a49, 0x09378c83, 0x52c7a471, 
-	0x8d293ea9, 0x1f4fc301, 0xc3db71be, 0x39b44e1c, 0xf8a44ef9, 0x4c8b80b1, 
-	0x19edc328, 0x87bf4bdd, 0xc9b240e5, 0xe9ee4b1b, 0x4382aee7, 0x535b6b41, 
+	0x991539b1, 0x16a5bce3, 0x6774a4cd, 0x3e01511e, 0x4e508aaa, 0x61048c05,
+	0xf5500617, 0x846b7115, 0x6a19892c, 0x896a97af, 0xdb48f936, 0x14898454,
+	0x37ffd106, 0xb58bff9c, 0x59e17104, 0xcf918a49, 0x09378c83, 0x52c7a471,
+	0x8d293ea9, 0x1f4fc301, 0xc3db71be, 0x39b44e1c, 0xf8a44ef9, 0x4c8b80b1,
+	0x19edc328, 0x87bf4bdd, 0xc9b240e5, 0xe9ee4b1b, 0x4382aee7, 0x535b6b41,
 	0xf3bec5da,
 };
 
@@ -253,12 +253,12 @@ srandom_deterministic(unsigned int x)
  * the break values for the different R.N.G.'s, we choose the best (largest)
  * one we can and set things up for it.  srandom() is then called to
  * initialize the state information.
- * 
+ *
  * Note that on return from srandom(), we set state[-1] to be the type
  * multiplexed with the current value of the rear pointer; this is so
  * successive calls to initstate() won't lose this information and will be
  * able to restart with setstate().
- * 
+ *
  * Note: the first thing we do is save the current state, if any, just like
  * setstate() so that it doesn't matter when initstate is called.
  *

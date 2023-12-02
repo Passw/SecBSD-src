@@ -4,7 +4,7 @@
 /*
  * Copyright (C) 1995, 1996, 1997, and 1998 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -16,7 +16,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -134,7 +134,7 @@ inet6_rth_reverse(const void *in, void *out)
 			*addr1 = *addr2;
 			*addr2 = addr_tmp;
 		}
-		
+
 		break;
 	default:
 		return (-1);	/* type not supported */
@@ -178,7 +178,7 @@ inet6_rth_getaddr(const void *bp, int idx)
 	switch (rh->ip6r_type) {
 	case IPV6_RTHDR_TYPE_0:
 		 rh0 = (struct ip6_rthdr0 *)bp;
-		 
+
 		/*
 		 * Validation for a type-0 routing header.
 		 * Is this too strict?

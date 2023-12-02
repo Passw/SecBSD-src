@@ -2,7 +2,7 @@
 
 LIB=	keynote
 MAN=	keynote.3 keynote.4 keynote.5
-NOPIC=	
+NOPIC=
 CFLAGS+= -Wall -I. -I${.CURDIR}
 LEXFLAGS = -Cr -Pkn -s -i
 YACCFLAGS = -d -p kn -b k

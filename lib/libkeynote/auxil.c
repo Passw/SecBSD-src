@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -127,7 +127,7 @@ keynote_in_action_authorizers(void *key, int algorithm)
 
 /*
  * Add a key to the keylist. Return RESULT_TRUE on success, -1 (and set
- * keynote_errno) otherwise. We are not supposed to make a copy of the 
+ * keynote_errno) otherwise. We are not supposed to make a copy of the
  * argument.
  */
 int
@@ -135,13 +135,13 @@ keynote_keylist_add(struct keylist **keylist, char *key)
 {
     struct keynote_deckey dc;
     struct keylist *kl;
-    
+
     if (keylist == NULL)
     {
 	keynote_errno = ERROR_MEMORY;
 	return -1;
     }
-    
+
     kl = calloc(1, sizeof(struct keylist));
     if (kl == NULL)
     {
@@ -211,7 +211,7 @@ kn_remove_authorizer(int sessid, char *key)
 	  keynote_keylist_free(kl2);
 	  return 0;
       }
-    
+
     keynote_errno = ERROR_NOTFOUND;
     return -1;
 }
@@ -359,7 +359,7 @@ keynote_add_htable(struct assertion *as, int which)
 }
 
 /*
- * Parse and store an assertion in the internal hash table. 
+ * Parse and store an assertion in the internal hash table.
  * Return the result of the evaluation, if doing early evaluation.
  * If an error was encountered, set keynote_errno.
  */
@@ -398,7 +398,7 @@ kn_add_assertion(int sessid, char *asrt, int len, int assertion_flags)
 	keynote_errno = ERROR_SYNTAX;
 	return -1;
     }
-    
+
     if (keynote_add_htable(as, 0) != RESULT_TRUE)
     {
 	keynote_free_assertion(as);
@@ -478,7 +478,7 @@ keynote_sremove_assertion(int sessid, int assertid)
     return keynote_remove_assertion(sessid, assertid, 0);
 }
 
-/* 
+/*
  * Free an assertion structure.
  */
 void
@@ -503,7 +503,7 @@ keynote_free_assertion(struct assertion *as)
     free(as);
 }
 
-unsigned int 
+unsigned int
 keynote_stringhash(char *name, unsigned int size)
 {
     unsigned int hash_val = 0;
@@ -512,7 +512,7 @@ keynote_stringhash(char *name, unsigned int size)
     if ((size == 0) || (size == 1))
       return 0;
 
-    for (; *name; name++) 
+    for (; *name; name++)
     {
         hash_val = (hash_val << 2) + *name;
         if ((i = hash_val & 0x3fff) != 0)

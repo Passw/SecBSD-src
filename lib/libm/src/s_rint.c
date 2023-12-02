@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -42,7 +42,7 @@ rint(double x)
 	sx = (i0>>31)&1;
 	jj0 = ((i0>>20)&0x7ff)-0x3ff;
 	if(jj0<20) {
-	    if(jj0<0) { 	
+	    if(jj0<0) {
 		if(((i0&0x7fffffff)|i1)==0) return x;
 		i1 |= (i0&0x0fffff);
 		i0 &= 0xfffe0000;

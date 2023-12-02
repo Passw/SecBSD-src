@@ -1778,7 +1778,7 @@ ssl3_get_server_done(SSL *s)
 	int ret;
 
 	if ((ret = ssl3_get_message(s, SSL3_ST_CR_SRVR_DONE_A,
-	    SSL3_ST_CR_SRVR_DONE_B, SSL3_MT_SERVER_DONE, 
+	    SSL3_ST_CR_SRVR_DONE_B, SSL3_MT_SERVER_DONE,
 	    30 /* should be very small, like 0 :-) */)) <= 0)
 		return ret;
 

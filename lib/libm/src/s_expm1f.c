@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -59,7 +59,7 @@ expm1f(float x)
 	}
 
     /* argument reduction */
-	if(hx > 0x3eb17218) {		/* if  |x| > 0.5 ln2 */ 
+	if(hx > 0x3eb17218) {		/* if  |x| > 0.5 ln2 */
 	    if(hx < 0x3F851592) {	/* and |x| < 1.5 ln2 */
 		if(xsb==0)
 		    {hi = x - ln2_hi; lo =  ln2_lo;  k =  1;}
@@ -73,10 +73,10 @@ expm1f(float x)
 	    }
 	    x  = hi - lo;
 	    c  = (hi-x)-lo;
-	} 
+	}
 	else if(hx < 0x33000000) {  	/* when |x|<2**-25, return x */
 	    t = huge+x;	/* return x with inexact flags when x!=0 */
-	    return x - (t-(huge+x));	
+	    return x - (t-(huge+x));
 	}
 	else k = 0;
 

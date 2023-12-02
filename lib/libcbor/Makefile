@@ -17,7 +17,7 @@ CDIAGFLAGS+=	-Wno-missing-field-initializers
 
 # cbor/
 SRCS+= arrays.c bytestrings.c callbacks.c common.c encoding.c floats_ctrls.c
-SRCS+= ints.c maps.c serialization.c streaming.c tags.c strings.c 
+SRCS+= ints.c maps.c serialization.c streaming.c tags.c strings.c
 
 # cbor/internal
 SRCS+= builder_callbacks.c encoders.c loaders.c memory_utils.c

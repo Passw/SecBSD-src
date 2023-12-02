@@ -88,7 +88,7 @@ pthread_mutexattr_getprotocol(pthread_mutexattr_t *attrp, int *protocol)
 int
 pthread_mutexattr_setprioceiling(pthread_mutexattr_t *attrp, int prioceiling)
 {
-	if (prioceiling < PTHREAD_MIN_PRIORITY || 
+	if (prioceiling < PTHREAD_MIN_PRIORITY ||
 	    prioceiling > PTHREAD_MAX_PRIORITY)
 		return (EINVAL);
 	(*attrp)->ma_prioceiling = prioceiling;

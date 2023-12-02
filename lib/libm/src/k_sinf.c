@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -16,7 +16,7 @@
 #include "math.h"
 #include "math_private.h"
 
-static const float 
+static const float
 half =  5.0000000000e-01,/* 0x3f000000 */
 S1  = -1.6666667163e-01, /* 0xbe2aaaab */
 S2  =  8.3333337680e-03, /* 0x3c088889 */

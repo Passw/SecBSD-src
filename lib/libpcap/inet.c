@@ -211,7 +211,7 @@ pcap_lookupdev(errbuf)
 		}
 
 		/* Must be up and not the loopback */
-		if ((ifr.ifr_flags & IFF_UP) == 0 || 
+		if ((ifr.ifr_flags & IFF_UP) == 0 ||
 		    ISLOOPBACK(ifr.ifr_name, ifr.ifr_flags))
 			continue;
 

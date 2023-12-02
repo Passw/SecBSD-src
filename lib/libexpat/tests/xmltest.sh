@@ -75,7 +75,7 @@ RunXmlwfNotWF() {
       return 1
   else
       return 0
-  fi 
+  fi
 }
 
 # RunXmlwfWF file reldir
@@ -84,21 +84,21 @@ RunXmlwfWF() {
   file="$1"
   reldir="$2"
   $XMLWF -p -N -d "$OUTPUT$reldir" "$file" > outfile || return $?
-  read outdata < outfile 
-  if test "$outdata" = "" ; then 
-      if [ -f "out/$file" ] ; then 
-          $DIFF "$OUTPUT$reldir$file" "out/$file" > outfile 
-          if [ -s outfile ] ; then 
+  read outdata < outfile
+  if test "$outdata" = "" ; then
+      if [ -f "out/$file" ] ; then
+          $DIFF "$OUTPUT$reldir$file" "out/$file" > outfile
+          if [ -s outfile ] ; then
               cp outfile "$OUTPUT$reldir$file.diff"
               echo "Output differs: $reldir$file"
               return 1
-          fi 
-      fi 
+          fi
+      fi
       return 0
-  else 
+  else
       echo "In $reldir: $outdata"
       return 1
-  fi 
+  fi
 }
 
 SUCCESS=0

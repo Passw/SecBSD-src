@@ -39,7 +39,7 @@ dupgl(char **oldgl)
 	char **newgl;
 	int ic;
 
-	if ((newgl = calloc(_LC_LAST, sizeof(*newgl))) == NULL)	
+	if ((newgl = calloc(_LC_LAST, sizeof(*newgl))) == NULL)
 		return NULL;
 	for (ic = LC_ALL; ic < _LC_LAST; ic++) {
 		if ((newgl[ic] = strdup(ic == LC_ALL ? "" :

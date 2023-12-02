@@ -33,7 +33,7 @@
 
 #include "radius_local.h"
 
-int 
+int
 radius_get_eap_msk(const RADIUS_PACKET * packet, void *buf, size_t * len,
     const char *secret)
 {

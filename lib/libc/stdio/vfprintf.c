@@ -1496,7 +1496,7 @@ __grow_type_table(unsigned char **typetable, int *tablesize)
 	return (0);
 }
 
- 
+
 #ifdef FLOATING_POINT
 static int
 exponent(char *p0, int exp, int fmtch)

@@ -1627,7 +1627,7 @@ iphl_to_x(void)
 
 			/* A = A + X (add off_nl again to compensate) */
 			sappend(s, new_stmt(BPF_ALU|BPF_ADD|BPF_X));
-			
+
 			/* MEM[iphl_reg] = A */
 			iphl_reg = alloc_reg();
 			tmp = new_stmt(BPF_ST);
@@ -3403,7 +3403,7 @@ gen_mpls(label)
 
 	if (mpls_stack > 0) /* Bottom-Of-Label-Stack bit ? */
 		b0 = gen_mcmp(off_nl-2, BPF_B, (bpf_int32)0, 0x1);
-	else 
+	else
 		b0 = gen_linktype(ETHERTYPE_MPLS);
 
 	if (label >= 0) {

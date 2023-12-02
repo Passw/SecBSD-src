@@ -56,7 +56,7 @@ For an ASCII-encoding algorithm:
 - Add an ENCODING_* definition in keynote.h
 - Add additional key prefix string definitions in signature.h
 - In signature.c:
-  - In keynote_get_sig_algorithm(), add code for detecting signatures 
+  - In keynote_get_sig_algorithm(), add code for detecting signatures
     with this encoding.
   - Likewise for keys in keynote_get_key_algorithm()
   - In kn_decode_key(), add code in the switch statement for decoding

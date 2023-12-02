@@ -8,7 +8,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -18,7 +18,7 @@
 
 static float pzerof(float), qzerof(float);
 
-static const float 
+static const float
 huge 	= 1e30,
 one	= 1.0,
 invsqrtpi=  5.6418961287e-01, /* 0x3f106ebb */
@@ -36,7 +36,7 @@ S04  =  1.1661400734e-09; /* 0x30a045e8 */
 static const float zero = 0.0;
 
 float
-j0f(float x) 
+j0f(float x)
 {
 	float z, s,c,ss,cc,r,u,v;
 	int32_t hx,ix;
@@ -98,7 +98,7 @@ v03  =  2.5915085189e-07, /* 0x348b216c */
 v04  =  4.4111031494e-10; /* 0x2ff280c2 */
 
 float
-y0f(float x) 
+y0f(float x)
 {
 	float z, s,c,ss,cc,u,v;
 	int32_t hx,ix;
@@ -106,7 +106,7 @@ y0f(float x)
 	GET_FLOAT_WORD(hx,x);
         ix = 0x7fffffff&hx;
     /* Y0(NaN) is NaN, y0(-inf) is Nan, y0(inf) is 0  */
-	if(ix>=0x7f800000) return  one/(x+x*x); 
+	if(ix>=0x7f800000) return  one/(x+x*x);
         if(ix==0) return -one/zero;
         if(hx<0) return zero/zero;
         if(ix >= 0x40000000) {  /* |x| >= 2.0 */
@@ -240,7 +240,7 @@ pzerof(float x)
 	s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
 	return one+ r/s;
 }
-		
+
 
 /* For x >= 8, the asymptotic expansions of qzero is
  *	-1/8 s + 75/1024 s^3 - ..., where s = 1/x.

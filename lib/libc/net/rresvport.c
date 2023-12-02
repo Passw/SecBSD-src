@@ -80,7 +80,7 @@ rresvport_af(int *alport, int af)
 		return (-1);
 	}
 	sa->sa_family = af;
-	
+
 	s = socket(af, SOCK_STREAM, 0);
 	if (s == -1)
 		return (-1);

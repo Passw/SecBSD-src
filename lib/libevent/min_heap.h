@@ -50,13 +50,13 @@ static inline int min_heap_erase(min_heap_t * s, struct event * e);
 static inline void min_heap_shift_up_(min_heap_t * s, size_t hole_index, struct event * e);
 static inline void min_heap_shift_down_(min_heap_t * s, size_t hole_index, struct event * e);
 
-int 
+int
 min_heap_elem_greater(struct event * a, struct event * b)
 {
 	return timercmp(&a->ev_timeout, &b->ev_timeout, >);
 }
 
-void 
+void
 min_heap_ctor(min_heap_t * s)
 {
 	s->p = 0;
@@ -67,17 +67,17 @@ void min_heap_dtor(min_heap_t * s) {
 	if (s->p)
 		free(s->p);
 }
-void 
+void
 min_heap_elem_init(struct event * e)
 {
 	e->min_heap_idx = SIZE_MAX;
 }
-int 
+int
 min_heap_empty(min_heap_t * s)
 {
 	return 0 == s->n;
 }
-size_t 
+size_t
 min_heap_size(min_heap_t * s)
 {
 	return s->n;
@@ -88,7 +88,7 @@ min_heap_top(min_heap_t * s)
 	return s->n ? *s->p : 0;
 }
 
-int 
+int
 min_heap_push(min_heap_t * s, struct event * e)
 {
 	if (min_heap_reserve(s, s->n + 1))
@@ -109,7 +109,7 @@ min_heap_pop(min_heap_t * s)
 	return 0;
 }
 
-int 
+int
 min_heap_erase(min_heap_t * s, struct event * e)
 {
 	if (e->min_heap_idx != SIZE_MAX) {
@@ -132,7 +132,7 @@ min_heap_erase(min_heap_t * s, struct event * e)
 	return -1;
 }
 
-int 
+int
 min_heap_reserve(min_heap_t * s, size_t n)
 {
 	if (s->a < n) {
@@ -148,7 +148,7 @@ min_heap_reserve(min_heap_t * s, size_t n)
 	return 0;
 }
 
-void 
+void
 min_heap_shift_up_(min_heap_t * s, size_t hole_index, struct event * e)
 {
 	size_t parent = (hole_index - 1) / 2;
@@ -162,7 +162,7 @@ min_heap_shift_up_(min_heap_t * s, size_t hole_index, struct event * e)
 	s->p[hole_index] = e;
 }
 
-void 
+void
 min_heap_shift_down_(min_heap_t * s, size_t hole_index, struct event * e)
 {
 	size_t min_child = 2 * (hole_index + 1);

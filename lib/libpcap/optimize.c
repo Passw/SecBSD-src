@@ -1140,7 +1140,7 @@ opt_blk(b, do_stmts)
 	 * already there, or if this block is a return,
 	 * eliminate all the statements.
 	 */
-	if (do_stmts && 
+	if (do_stmts &&
 	    ((b->out_use == 0 && aval != 0 &&b->val[A_ATOM] == aval) ||
 	     BPF_CLASS(b->s.code) == BPF_RET)) {
 		if (b->stmts != 0) {
@@ -1865,7 +1865,7 @@ fail2:
 		free(space1);
 		bpf_error("malloc");
 	}
-	
+
 	p = space1;
 	all_dom_sets = p;
 	for (i = 0; i < n; ++i) {
@@ -2100,14 +2100,14 @@ icode_to_fcode(root, lenp)
 	while (1) {
 	    unMarkAll();
 	    n = *lenp = count_stmts(root);
-    
+
 	    fp = calloc(n, sizeof(*fp));
 	    if (fp == NULL)
 		    bpf_error("calloc");
 
 	    fstart = fp;
 	    ftail = fp + n;
-    
+
 	    unMarkAll();
 	    if (convert_code_r(root))
 		break;

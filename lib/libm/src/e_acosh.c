@@ -5,14 +5,14 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
 /* acosh(x)
  * Method :
- *	Based on 
+ *	Based on
  *		acosh(x) = log [ x + sqrt(x*x-1) ]
  *	we have
  *		acosh(x) := log(x)+ln2,	if x is large; else
@@ -29,13 +29,13 @@
 
 #include "math_private.h"
 
-static const double 
+static const double
 one	= 1.0,
 ln2	= 6.93147180559945286227e-01;  /* 0x3FE62E42, 0xFEFA39EF */
 
 double
 acosh(double x)
-{	
+{
 	double t;
 	int32_t hx;
 	u_int32_t lx;
@@ -45,7 +45,7 @@ acosh(double x)
 	} else if(hx >=0x41b00000) {	/* x > 2**28 */
 	    if(hx >=0x7ff00000) {	/* x is inf of NaN */
 	        return x+x;
-	    } else 
+	    } else
 		return log(x)+ln2;	/* acosh(huge)=log(2x) */
 	} else if(((hx-0x3ff00000)|lx)==0) {
 	    return 0.0;			/* acosh(1) = 0 */

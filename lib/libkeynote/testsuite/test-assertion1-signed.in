@@ -32,11 +32,11 @@ conditions: app_domain == "testing" ->
                    b63bdcda576e5eeecfb68930a5c3ca8df71d84fd0e" &&
 		@(foo) == @foo &&
         "this string contains a newline\n\
- \ followed by one space." == 
+ \ followed by one space." ==
         "this\ string\ contains\ a\ newline\n\ foll\
                 owed\ by\ one\ space\." &&
         "this string contains a newline\n\ \
- followed by one space." == 
+ followed by one space." ==
         "this string contains a newline\012\040followed by one space." &&
 	    request == "test" -> "true"; # this is another comment
 	    request == "whatever3" -> "true";

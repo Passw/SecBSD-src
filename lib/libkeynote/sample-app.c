@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -77,7 +77,7 @@ char credential_assertions[] =
 "            GiIX73T6p9eExpyHZbfjxPxXEIf6tbBre6x2Y26wBQCx/yCj5\\\n" \
 "            4IS3tuY2w==\"\n";
 
-char action_authorizer[] = 
+char action_authorizer[] =
 "dsa-hex:3081de02402121e160209f7ecef1b6866c907e8d" \
 "d65e9a67ef0fbd6ece7760b7c8bb0d9a0b71a0dd921b949f0" \
 "9a16092eb3f50e33892bc3e9f1c8409f5298de40461493ef1" \
@@ -93,7 +93,7 @@ char action_authorizer[] =
 
 char *returnvalues[NUM_RETURN_VALUES];
 
-/* 
+/*
  * Sample application. We do the following:
  * - create a session
  * - read a "file" with our KeyNote policy assertions
@@ -155,7 +155,7 @@ main(int argc, char **argv)
     }
 
     /*
-     * We no longer need a copy of policy_assertions, so we could 
+     * We no longer need a copy of policy_assertions, so we could
      * free it here.
      */
 
@@ -234,7 +234,7 @@ main(int argc, char **argv)
     }
 
     /*
-     * We no longer need a copy of credential_assertions, so we could 
+     * We no longer need a copy of credential_assertions, so we could
      * free it here.
      */
 

@@ -187,7 +187,7 @@ process_file_actions(const posix_spawn_file_actions_t fa)
 		if (error)
 			return (error);
 	}
-	return (0);	
+	return (0);
 }
 
 static int
@@ -197,7 +197,7 @@ do_posix_spawn(pid_t *pid, const char *path,
     char *const argv[], char *const envp[], int use_env_path)
 {
 	pid_t p;
-	
+
 	p = fork();
 	switch (p) {
 	case -1:

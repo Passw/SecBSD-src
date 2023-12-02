@@ -57,7 +57,7 @@ catopen(const char *name, int oflag)
 	char *s, *t, *sep, *dot;
 	const char *u;
 	nl_catd catd;
-		
+
 	if (name == NULL || *name == '\0')
 		return (nl_catd) -1;
 

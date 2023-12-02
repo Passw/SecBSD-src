@@ -10,5 +10,5 @@
 ENTRY(cosf)
 	flds	4(%esp)
 	fcos
-	ret	
+	ret
 END_STD(cosf)

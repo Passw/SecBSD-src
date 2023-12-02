@@ -37,7 +37,7 @@
  * in particular, macros and private variables.
  */
 
-#include <wchar.h> 
+#include <wchar.h>
 #include "wcio.h"
 #include "fileext.h"
 #include "thread_private.h"

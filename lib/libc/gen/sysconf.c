@@ -473,6 +473,6 @@ sysconf(int name)
 		errno = EINVAL;
 		return (-1);
 	}
-	return (sysctl(mib, namelen, &value, &len, NULL, 0) == -1 ? -1 : value); 
+	return (sysctl(mib, namelen, &value, &len, NULL, 0) == -1 ? -1 : value);
 }
 DEF_WEAK(sysconf);

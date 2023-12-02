@@ -6,11 +6,11 @@
  * in April-May 1998
  *
  * Copyright (C) 1998, 1999 by Angelos D. Keromytis.
- *	
+ *
  * Permission to use, copy, and modify this software with or without fee
  * is hereby granted, provided that this entire notice is included in
  * all copies of any software which is or includes a copy or
- * modification of this software. 
+ * modification of this software.
  *
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTY. IN PARTICULAR, THE AUTHORS MAKES NO
@@ -46,7 +46,7 @@ rec_evaluate_query(struct assertion *as)
 
     /*
      * If we get the minimum result or an error from evaluating this
-     * assertion, we don't need to recurse. 
+     * assertion, we don't need to recurse.
      */
     keynote_evaluate_assertion(as);
     if (keynote_errno != 0)
@@ -177,7 +177,7 @@ keynote_fix_fields(struct assertion *ast, int sigfield)
 {
     struct assertion *as;
     int i;
- 
+
     /* Signature generation/verification handling, no need to eval Licensees */
     if (ast != NULL)
     {
@@ -192,7 +192,7 @@ keynote_fix_fields(struct assertion *ast, int sigfield)
 
 	return RESULT_TRUE;
     }
-    
+
     for (i = 0; i < HASHTABLESIZE; i++)
       for (as = keynote_current_session->ks_assertion_table[i];
 	   as != NULL;
@@ -203,7 +203,7 @@ keynote_fix_fields(struct assertion *ast, int sigfield)
 	      !(as->as_internalflags & ASSERT_IFLAG_WEIRDAUTH) &&
 	      !(as->as_internalflags & ASSERT_IFLAG_WEIRDSIG))
 	    continue;
-	  
+
 	  /* Parse the Signature field */
 	  if (((as->as_internalflags & ASSERT_IFLAG_WEIRDSIG) ||
 	       (as->as_internalflags & ASSERT_IFLAG_NEEDPROC)) &&
@@ -217,7 +217,7 @@ keynote_fix_fields(struct assertion *ast, int sigfield)
 		else
 		  keynote_errno = 0;
 	    }
-	  
+
 	  /* Parse the Licensees field */
 	  if ((as->as_internalflags & ASSERT_IFLAG_WEIRDLICS) ||
 	      (as->as_internalflags & ASSERT_IFLAG_NEEDPROC))
@@ -315,7 +315,7 @@ keynote_evaluate_query(void)
 	      if (prev == (keynote_current_session->ks_values_num - 1))
 		return prev;
 	  }
-    
+
     return prev;
 }
 
@@ -358,7 +358,7 @@ whichkeyword(char *start, char *end)
     return -1;
 }
 
-/* 
+/*
  * Parse an assertion. Set keynote_errno to ERROR_SYNTAX if parsing
  * failed due to certificate badness, and ERROR_MEMORY if memory
  * problem. If more than one assertions have been passed in the
@@ -457,7 +457,7 @@ keynote_parse_assertion(char *buf, int len, int assertion_flags)
 	    }
 
 	    /* If two newlines, end of assertion */
-	    if ((as->as_buf[i] == '\n') && (i + 1 < j) && 
+	    if ((as->as_buf[i] == '\n') && (i + 1 < j) &&
 		(as->as_buf[i + 1] == '\n'))
 	    {
 		end_of_assertion = 1;
@@ -466,7 +466,7 @@ keynote_parse_assertion(char *buf, int len, int assertion_flags)
 	    }
 
 	    /* If newline followed by non-whitespace or comment character */
-	    if ((as->as_buf[i] == '\n') && 
+	    if ((as->as_buf[i] == '\n') &&
 		(!isspace((unsigned char)as->as_buf[i + 1])) &&
                 (as->as_buf[i + 1] != '#'))
 	    {
@@ -477,7 +477,7 @@ keynote_parse_assertion(char *buf, int len, int assertion_flags)
 
 	i++;
 
-	/* 
+	/*
 	 * On each of the cases (except the first), we check that:
 	 *  - we've already seen a keynote-version field (and that
 	 *    it's the first one that appears in the assertion)
@@ -597,7 +597,7 @@ keynote_parse_assertion(char *buf, int len, int assertion_flags)
 	      break;
 
 	    /* Check whether there's something else following */
-	    for (k = 1; te + k < as->as_buf + len && *(te + k) != '\n'; k++)   
+	    for (k = 1; te + k < as->as_buf + len && *(te + k) != '\n'; k++)
 	      if (!isspace((unsigned char)*(te + k)))
 	      {
 		  keynote_free_assertion(as);
