@@ -2714,6 +2714,8 @@ get_segment_type (unsigned long p_type)
 			return "OPENBSD_MUTABLE";
     case PT_OPENBSD_NOBTCFI:
 			return "OPENBSD_NOBTCFI";
+    case PT_OPENBSD_SYSCALLS:
+			return "OPENBSD_SYSCALLS";
 
     default:
       if ((p_type >= PT_LOPROC) && (p_type <= PT_HIPROC))
