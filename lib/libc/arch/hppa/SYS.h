@@ -1,4 +1,4 @@
-/*	$OpenBSD: SYS.h,v 1.24 2023/12/10 16:45:51 deraadt Exp $	*/
+/*	$OpenBSD: SYS.h,v 1.26 2023/12/11 22:24:15 kettenis Exp $	*/
 
 /*
  * Copyright (c) 1998-2002 Michael Shalayeff
@@ -69,6 +69,7 @@
  
 #define PINSYSCALL(sysno, label)			\
 	.pushsection .openbsd.syscalls,"",@progbits	!\
+	.p2align 2					!\
 	.long label					!\
 	.long sysno					!\
 	.popsection
@@ -120,8 +121,8 @@ SYSENTRY(x)					!\
 	stw	rp, HPPA_FRAME_ERP(sr0,sp)	!\
 	ldil	L%SYSCALLGATE, r1		!\
 97:	ble	4(sr7, r1)			!\
-	PINSYSCALL(__CONCAT(SYS_,x), 97b)	!\
-	 ldi	__CONCAT(SYS_,x), t1		!\
+	PINSYSCALL(__CONCAT(SYS_,y), 97b)	!\
+	 ldi	__CONCAT(SYS_,y), t1		!\
 	ldw	HPPA_FRAME_ERP(sr0,sp), rp	!\
 	bv	r0(rp)				!\
 	nop					!\

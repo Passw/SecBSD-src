@@ -1,4 +1,4 @@
-/*	$OpenBSD: parser.c,v 1.101 2023/12/09 00:44:18 job Exp $ */
+/*	$OpenBSD: parser.c,v 1.103 2023/12/11 19:05:20 job Exp $ */
 /*
  * Copyright (c) 2019 Claudio Jeker <claudio@openbsd.org>
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
@@ -280,6 +280,10 @@ proc_parser_mft_pre(struct entity *entp, enum location loc, char **file,
 		free(der);
 		return NULL;
 	}
+
+	if (!EVP_Digest(der, len, mft->mfthash, NULL, EVP_sha256(), NULL))
+		errx(1, "EVP_Digest failed");
+
 	free(der);
 
 	*crl = parse_load_crl_from_mft(entp, mft, DIR_TEMP, crlfile);
@@ -361,7 +365,7 @@ proc_parser_mft(struct entity *entp, struct mft **mp, char **crlfile,
 	struct crl	*crl, *crl1, *crl2;
 	char		*file, *file1, *file2, *crl1file, *crl2file;
 	const char	*err1, *err2;
-	int		 warned = 0;
+	int		 r, warned = 0;
 
 	*mp = NULL;
 	*crlmtime = 0;
@@ -376,7 +380,17 @@ proc_parser_mft(struct entity *entp, struct mft **mp, char **crlfile,
 		if (err2 != NULL)
 			err1 = err2;
 
-	if (mft_compare(mft1, mft2) == 1) {
+	r = mft_compare(mft1, mft2);
+	if (r == -1 && mft1 != NULL && mft2 != NULL)
+		warnx("%s: manifest replay detected (expected >= #%s, got #%s)",
+		    file1, mft2->seqnum, mft1->seqnum);
+
+	if (r == 0 && memcmp(mft1->mfthash, mft2->mfthash,
+	    SHA256_DIGEST_LENGTH) != 0)
+		warnx("%s: manifest misissuance, #%s was recycled",
+		    file1, mft1->seqnum);
+
+	if (r == 1) {
 		*mp = proc_parser_mft_post(file1, mft1, entp->path, err1,
 		    &warned);
 		if (*mp == NULL) {

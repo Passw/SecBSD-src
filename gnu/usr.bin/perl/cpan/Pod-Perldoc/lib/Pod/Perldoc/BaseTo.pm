@@ -34,8 +34,8 @@ BEGIN {
  *is_hpux    = $^O =~ m/hpux/    ? \&TRUE : \&FALSE unless defined &is_hpux;
  *is_openbsd = $^O =~ m/openbsd/ ? \&TRUE : \&FALSE unless defined &is_openbsd;
  *is_freebsd = $^O =~ m/freebsd/ ? \&TRUE : \&FALSE unless defined &is_freebsd;
+ *is_secbsd  = $^O =~ m/secbsd/  ? \&TRUE : \&FALSE unless defined &is_secbsd;
  *is_bitrig = $^O =~ m/bitrig/ ? \&TRUE : \&FALSE unless defined &is_bitrig;
- *is_secbsd = $^O =~ m/bitrig/ ? \&TRUE : \&FALSE unless defined &is_secbsd;
 }
 
 sub _perldoc_elem {
