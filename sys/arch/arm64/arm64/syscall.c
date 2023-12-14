@@ -1,4 +1,4 @@
-/* $OpenBSD: syscall.c,v 1.15 2023/12/12 15:30:55 deraadt Exp $ */
+/* $OpenBSD: syscall.c,v 1.17 2023/12/13 15:57:22 miod Exp $ */
 /*
  * Copyright (c) 2015 Dale Rahn <drahn@dalerahn.com>
  *
@@ -33,7 +33,7 @@ svc_handler(trapframe_t *frame)
 {
 	struct proc *p = curproc;
 	const struct sysent *callp;
-	int code, error = ENOSYS, indirect = -1;
+	int code, error = ENOSYS;
 	u_int nap = 8, nargs;
 	register_t *ap, *args, copyargs[MAXARGS], rval[2];
 
@@ -50,7 +50,7 @@ svc_handler(trapframe_t *frame)
 
 	ap = &frame->tf_x[0];
 
-	if (code < 0 || code >= SYS_MAXSYSCALL)
+	if (code <= 0 || code >= SYS_MAXSYSCALL)
 		goto bad;
 
 	callp = sysent + code;
