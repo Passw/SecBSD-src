@@ -1,4 +1,4 @@
-/* $OpenBSD: obj_dat.c,v 1.65 2023/12/13 23:34:45 tb Exp $ */
+/* $OpenBSD: obj_dat.c,v 1.82 2023/12/15 01:51:23 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -279,89 +279,58 @@ OBJ_add_object(const ASN1_OBJECT *obj)
 LCRYPTO_ALIAS(OBJ_add_object);
 
 ASN1_OBJECT *
-OBJ_nid2obj(int n)
+OBJ_nid2obj(int nid)
 {
-	ADDED_OBJ ad, *adp;
-	ASN1_OBJECT ob;
+	if (nid >= 0 && nid < NUM_NID) {
+		if (nid == NID_undef || nid_objs[nid].nid != NID_undef)
+			return (ASN1_OBJECT *)&nid_objs[nid];
 
-	if ((n >= 0) && (n < NUM_NID)) {
-		if ((n != NID_undef) && (nid_objs[n].nid == NID_undef)) {
-			OBJerror(OBJ_R_UNKNOWN_NID);
-			return (NULL);
-		}
-		return ((ASN1_OBJECT *)&(nid_objs[n]));
-	} else if (added == NULL)
-		return (NULL);
-	else {
-		ad.type = ADDED_NID;
-		ad.obj = &ob;
-		ob.nid = n;
-		adp = lh_ADDED_OBJ_retrieve(added, &ad);
-		if (adp != NULL)
-			return (adp->obj);
-		else {
-			OBJerror(OBJ_R_UNKNOWN_NID);
-			return (NULL);
-		}
+		goto unknown;
 	}
+
+	/* XXX - locking. */
+	if (added != NULL) {
+		ASN1_OBJECT aobj = {
+			.nid = nid,
+		};
+		ADDED_OBJ needle = {
+			.type = ADDED_NID,
+			.obj = &aobj,
+		};
+		ADDED_OBJ *found;
+
+		if ((found = lh_ADDED_OBJ_retrieve(added, &needle)) != NULL)
+			return found->obj;
+	}
+
+ unknown:
+	OBJerror(OBJ_R_UNKNOWN_NID);
+
+	return NULL;
 }
 LCRYPTO_ALIAS(OBJ_nid2obj);
 
 const char *
-OBJ_nid2sn(int n)
+OBJ_nid2sn(int nid)
 {
-	ADDED_OBJ ad, *adp;
-	ASN1_OBJECT ob;
+	ASN1_OBJECT *aobj;
 
-	if ((n >= 0) && (n < NUM_NID)) {
-		if ((n != NID_undef) && (nid_objs[n].nid == NID_undef)) {
-			OBJerror(OBJ_R_UNKNOWN_NID);
-			return (NULL);
-		}
-		return (nid_objs[n].sn);
-	} else if (added == NULL)
-		return (NULL);
-	else {
-		ad.type = ADDED_NID;
-		ad.obj = &ob;
-		ob.nid = n;
-		adp = lh_ADDED_OBJ_retrieve(added, &ad);
-		if (adp != NULL)
-			return (adp->obj->sn);
-		else {
-			OBJerror(OBJ_R_UNKNOWN_NID);
-			return (NULL);
-		}
-	}
+	if ((aobj = OBJ_nid2obj(nid)) == NULL)
+		return NULL;
+
+	return aobj->sn;
 }
 LCRYPTO_ALIAS(OBJ_nid2sn);
 
 const char *
-OBJ_nid2ln(int n)
+OBJ_nid2ln(int nid)
 {
-	ADDED_OBJ ad, *adp;
-	ASN1_OBJECT ob;
+	ASN1_OBJECT *aobj;
 
-	if ((n >= 0) && (n < NUM_NID)) {
-		if ((n != NID_undef) && (nid_objs[n].nid == NID_undef)) {
-			OBJerror(OBJ_R_UNKNOWN_NID);
-			return (NULL);
-		}
-		return (nid_objs[n].ln);
-	} else if (added == NULL)
-		return (NULL);
-	else {
-		ad.type = ADDED_NID;
-		ad.obj = &ob;
-		ob.nid = n;
-		adp = lh_ADDED_OBJ_retrieve(added, &ad);
-		if (adp != NULL)
-			return (adp->obj->ln);
-		else {
-			OBJerror(OBJ_R_UNKNOWN_NID);
-			return (NULL);
-		}
-	}
+	if ((aobj = OBJ_nid2obj(nid)) == NULL)
+		return NULL;
+
+	return aobj->ln;
 }
 LCRYPTO_ALIAS(OBJ_nid2ln);
 
@@ -369,6 +338,8 @@ static int
 obj_objs_cmp(const void *aobj, const void *b)
 {
 	const unsigned int *nid = b;
+
+	OPENSSL_assert(*nid < NUM_NID);
 
 	return OBJ_cmp(aobj, &nid_objs[*nid]);
 }
@@ -405,88 +376,12 @@ OBJ_obj2nid(const ASN1_OBJECT *aobj)
 }
 LCRYPTO_ALIAS(OBJ_obj2nid);
 
-/* Convert an object name into an ASN1_OBJECT
- * if "noname" is not set then search for short and long names first.
- * This will convert the "dotted" form into an object: unlike OBJ_txt2nid
- * it can be used with any objects, not just registered ones.
- */
-
-ASN1_OBJECT *
-OBJ_txt2obj(const char *s, int no_name)
-{
-	int nid;
-
-	if (!no_name) {
-		if ((nid = OBJ_sn2nid(s)) != NID_undef ||
-		    (nid = OBJ_ln2nid(s)) != NID_undef)
-			return OBJ_nid2obj(nid);
-	}
-
-	return t2i_ASN1_OBJECT_internal(s);
-}
-LCRYPTO_ALIAS(OBJ_txt2obj);
-
-int
-OBJ_obj2txt(char *buf, int buf_len, const ASN1_OBJECT *aobj, int no_name)
-{
-	return i2t_ASN1_OBJECT_internal(aobj, buf, buf_len, no_name);
-}
-LCRYPTO_ALIAS(OBJ_obj2txt);
-
-int
-OBJ_txt2nid(const char *s)
-{
-	ASN1_OBJECT *obj;
-	int nid;
-
-	obj = OBJ_txt2obj(s, 0);
-	nid = OBJ_obj2nid(obj);
-	ASN1_OBJECT_free(obj);
-	return nid;
-}
-LCRYPTO_ALIAS(OBJ_txt2nid);
-
-static int
-ln_objs_cmp(const void *ln, const void *b)
-{
-	const unsigned int *nid = b;
-
-	return strcmp(ln, nid_objs[*nid].ln);
-}
-
-int
-OBJ_ln2nid(const char *ln)
-{
-	const unsigned int *nid;
-
-	/* XXX - locking. OpenSSL 3 moved this after built-in object lookup. */
-	if (added != NULL) {
-		ASN1_OBJECT aobj = {
-			.ln = ln,
-		};
-		ADDED_OBJ needle = {
-			.type = ADDED_LNAME,
-			.obj = &aobj,
-		};
-		ADDED_OBJ *found;
-
-		if ((found = lh_ADDED_OBJ_retrieve(added, &needle)) != NULL)
-			return found->obj->nid;
-	}
-
-	/* ln_objs holds NIDs in ascending alphabetical order of LN. */
-	nid = bsearch(ln, ln_objs, NUM_LN, sizeof(unsigned int), ln_objs_cmp);
-	if (nid != NULL)
-		return *nid;
-
-	return NID_undef;
-}
-LCRYPTO_ALIAS(OBJ_ln2nid);
-
 static int
 sn_objs_cmp(const void *sn, const void *b)
 {
 	const unsigned int *nid = b;
+
+	OPENSSL_assert(*nid < NUM_NID);
 
 	return strcmp(sn, nid_objs[*nid].sn);
 }
@@ -519,6 +414,45 @@ OBJ_sn2nid(const char *sn)
 	return NID_undef;
 }
 LCRYPTO_ALIAS(OBJ_sn2nid);
+
+static int
+ln_objs_cmp(const void *ln, const void *b)
+{
+	const unsigned int *nid = b;
+
+	OPENSSL_assert(*nid < NUM_NID);
+
+	return strcmp(ln, nid_objs[*nid].ln);
+}
+
+int
+OBJ_ln2nid(const char *ln)
+{
+	const unsigned int *nid;
+
+	/* XXX - locking. OpenSSL 3 moved this after built-in object lookup. */
+	if (added != NULL) {
+		ASN1_OBJECT aobj = {
+			.ln = ln,
+		};
+		ADDED_OBJ needle = {
+			.type = ADDED_LNAME,
+			.obj = &aobj,
+		};
+		ADDED_OBJ *found;
+
+		if ((found = lh_ADDED_OBJ_retrieve(added, &needle)) != NULL)
+			return found->obj->nid;
+	}
+
+	/* ln_objs holds NIDs in ascending alphabetical order of LN. */
+	nid = bsearch(ln, ln_objs, NUM_LN, sizeof(unsigned int), ln_objs_cmp);
+	if (nid != NULL)
+		return *nid;
+
+	return NID_undef;
+}
+LCRYPTO_ALIAS(OBJ_ln2nid);
 
 const void *
 OBJ_bsearch_(const void *key, const void *base, int num, int size,
@@ -560,6 +494,47 @@ OBJ_bsearch_ex_(const void *key, const void *base_, int num, int size,
 	}
 	return (p);
 }
+
+/* Convert an object name into an ASN1_OBJECT
+ * if "noname" is not set then search for short and long names first.
+ * This will convert the "dotted" form into an object: unlike OBJ_txt2nid
+ * it can be used with any objects, not just registered ones.
+ */
+
+ASN1_OBJECT *
+OBJ_txt2obj(const char *s, int no_name)
+{
+	int nid;
+
+	if (!no_name) {
+		if ((nid = OBJ_sn2nid(s)) != NID_undef ||
+		    (nid = OBJ_ln2nid(s)) != NID_undef)
+			return OBJ_nid2obj(nid);
+	}
+
+	return t2i_ASN1_OBJECT_internal(s);
+}
+LCRYPTO_ALIAS(OBJ_txt2obj);
+
+int
+OBJ_obj2txt(char *buf, int buf_len, const ASN1_OBJECT *aobj, int no_name)
+{
+	return i2t_ASN1_OBJECT_internal(aobj, buf, buf_len, no_name);
+}
+LCRYPTO_ALIAS(OBJ_obj2txt);
+
+int
+OBJ_txt2nid(const char *s)
+{
+	ASN1_OBJECT *obj;
+	int nid;
+
+	obj = OBJ_txt2obj(s, 0);
+	nid = OBJ_obj2nid(obj);
+	ASN1_OBJECT_free(obj);
+	return nid;
+}
+LCRYPTO_ALIAS(OBJ_txt2nid);
 
 int
 OBJ_create_objects(BIO *in)
@@ -614,31 +589,33 @@ LCRYPTO_ALIAS(OBJ_create_objects);
 int
 OBJ_create(const char *oid, const char *sn, const char *ln)
 {
-	int ok = 0;
-	ASN1_OBJECT *op = NULL;
-	unsigned char *buf;
-	int i;
+	ASN1_OBJECT *aobj = NULL;
+	unsigned char *buf = NULL;
+	int len, nid;
+	int ret = 0;
 
-	i = a2d_ASN1_OBJECT(NULL, 0, oid, -1);
-	if (i <= 0)
-		return (0);
+	if ((len = a2d_ASN1_OBJECT(NULL, 0, oid, -1)) <= 0)
+		goto err;
 
-	if ((buf = malloc(i)) == NULL) {
+	if ((buf = calloc(1, len)) == NULL) {
 		OBJerror(ERR_R_MALLOC_FAILURE);
-		return (0);
+		goto err;
 	}
-	i = a2d_ASN1_OBJECT(buf, i, oid, -1);
-	if (i == 0)
+
+	if ((len = a2d_ASN1_OBJECT(buf, len, oid, -1)) == 0)
 		goto err;
-	op = (ASN1_OBJECT *)ASN1_OBJECT_create(OBJ_new_nid(1), buf, i, sn, ln);
-	if (op == NULL)
+
+	nid = OBJ_new_nid(1);
+	if ((aobj = ASN1_OBJECT_create(nid, buf, len, sn, ln)) == NULL)
 		goto err;
-	ok = OBJ_add_object(op);
+
+	ret = OBJ_add_object(aobj);
 
  err:
-	ASN1_OBJECT_free(op);
+	ASN1_OBJECT_free(aobj);
 	free(buf);
-	return (ok);
+
+	return ret;
 }
 LCRYPTO_ALIAS(OBJ_create);
 
