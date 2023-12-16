@@ -1,4 +1,4 @@
-/* $OpenBSD: evp_enc.c,v 1.58 2023/12/03 11:18:30 tb Exp $ */
+/* $OpenBSD: evp_enc.c,v 1.63 2023/12/16 17:40:22 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -246,11 +246,60 @@ EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *impl,
 	return EVP_CipherInit_ex(ctx, cipher, NULL, key, iv, 0);
 }
 
+/*
+ * EVP_Cipher() is an implementation detail of EVP_Cipher{Update,Final}().
+ * Behavior depends on EVP_CIPH_FLAG_CUSTOM_CIPHER being set on ctx->cipher.
+ *
+ * If the flag is set, do_cipher() operates in update mode if in != NULL and
+ * in final mode if in == NULL. It returns the number of bytes written to out
+ * (which may be 0) or -1 on error.
+ *
+ * If the flag is not set, do_cipher() assumes properly aligned data and that
+ * padding is handled correctly by the caller. Most do_cipher() methods will
+ * silently produce garbage and succeed. Returns 1 on success, 0 on error.
+ */
+int
+EVP_Cipher(EVP_CIPHER_CTX *ctx, unsigned char *out, const unsigned char *in,
+    unsigned int inl)
+{
+	return ctx->cipher->do_cipher(ctx, out, in, inl);
+}
+
+static int
+evp_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len,
+    const unsigned char *in, int in_len)
+{
+	int len;
+
+	*out_len = 0;
+
+	if (in_len < 0)
+		return 0;
+
+	if ((ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) != 0) {
+		if ((len = ctx->cipher->do_cipher(ctx, out, in, in_len)) < 0)
+			return 0;
+
+		*out_len = len;
+		return 1;
+	}
+
+	if (!ctx->cipher->do_cipher(ctx, out, in, in_len))
+		return 0;
+
+	*out_len = in_len;
+
+	return 1;
+}
+
 int
 EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl,
     const unsigned char *in, int inl)
 {
-	int i, j, bl;
+	const int block_size = ctx->cipher->block_size;
+	const int block_mask = ctx->block_mask;
+	int buf_offset = ctx->buf_len;
+	int len = 0, total_len = 0;
 
 	*outl = 0;
 
@@ -260,71 +309,67 @@ EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl,
 	if (inl == 0 && EVP_CIPHER_mode(ctx->cipher) != EVP_CIPH_CCM_MODE)
 		return 1;
 
-	if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
-		i = ctx->cipher->do_cipher(ctx, out, in, inl);
-		if (i < 0)
-			return 0;
-		else
-			*outl = i;
-		return 1;
-	}
+	if ((ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) != 0)
+		return evp_cipher(ctx, out, outl, in, inl);
 
-	if (ctx->buf_len == 0 && (inl&(ctx->block_mask)) == 0) {
-		if (ctx->cipher->do_cipher(ctx, out, in, inl)) {
-			*outl = inl;
-			return 1;
-		} else {
-			*outl = 0;
-			return 0;
-		}
-	}
-	i = ctx->buf_len;
-	bl = ctx->cipher->block_size;
-	if ((size_t)bl > sizeof(ctx->buf)) {
+	if (buf_offset == 0 && (inl & block_mask) == 0)
+		return evp_cipher(ctx, out, outl, in, inl);
+
+	/* XXX - check that block_size > buf_offset. */
+	if (block_size > sizeof(ctx->buf)) {
 		EVPerror(EVP_R_BAD_BLOCK_LENGTH);
-		*outl = 0;
 		return 0;
 	}
-	if (i != 0) {
-		if (bl - i > inl) {
-			memcpy(&(ctx->buf[i]), in, inl);
-			ctx->buf_len += inl;
-			*outl = 0;
-			return 1;
-		} else {
-			j = bl - i;
 
-			/*
-			 * Once we've processed the first j bytes from in, the
-			 * amount of data left that is a multiple of the block
-			 * length is (inl - j) & ~(bl - 1).  Ensure this plus
-			 * the block processed from ctx-buf doesn't overflow.
-			 */
-			if (((inl - j) & ~(bl - 1)) > INT_MAX - bl) {
-				EVPerror(EVP_R_TOO_LARGE);
-				return 0;
-			}
-			memcpy(&(ctx->buf[i]), in, j);
-			if (!ctx->cipher->do_cipher(ctx, out, ctx->buf, bl))
-				return 0;
-			inl -= j;
-			in += j;
-			out += bl;
-			*outl = bl;
+	if (buf_offset != 0) {
+		int buf_avail;
+
+		if ((buf_avail = block_size - buf_offset) > inl) {
+			memcpy(&ctx->buf[buf_offset], in, inl);
+			ctx->buf_len += inl;
+			return 1;
 		}
-	} else
-		*outl = 0;
-	i = inl&(bl - 1);
-	inl -= i;
-	if (inl > 0) {
-		if (!ctx->cipher->do_cipher(ctx, out, in, inl))
+
+		/*
+		 * Once the first buf_avail bytes from in are processed, the
+		 * amount of data left that is a multiple of the block length is
+		 * (inl - buf_avail) & ~block_mask.  Ensure that this plus the
+		 * block processed from ctx->buf doesn't overflow.
+		 */
+		if (((inl - buf_avail) & ~block_mask) > INT_MAX - block_size) {
+			EVPerror(EVP_R_TOO_LARGE);
 			return 0;
-		*outl += inl;
+		}
+		memcpy(&ctx->buf[buf_offset], in, buf_avail);
+
+		len = 0;
+		if (!evp_cipher(ctx, out, &len, ctx->buf, block_size))
+			return 0;
+		total_len = len;
+
+		inl -= buf_avail;
+		in += buf_avail;
+		out += len;
 	}
 
-	if (i != 0)
-		memcpy(ctx->buf, &(in[inl]), i);
-	ctx->buf_len = i;
+	buf_offset = inl & block_mask;
+	if ((inl -= buf_offset) > 0) {
+		if (INT_MAX - inl < total_len)
+			return 0;
+		len = 0;
+		if (!evp_cipher(ctx, out, &len, in, inl))
+			return 0;
+		if (INT_MAX - len < total_len)
+			return 0;
+		total_len += len;
+	}
+
+	if (buf_offset != 0)
+		memcpy(ctx->buf, &in[inl], buf_offset);
+	ctx->buf_len = buf_offset;
+
+	*outl = total_len;
+
 	return 1;
 }
 
@@ -337,17 +382,13 @@ EVP_EncryptFinal(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)
 int
 EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)
 {
-	int n, ret;
+	int n;
 	unsigned int i, b, bl;
 
-	if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
-		ret = ctx->cipher->do_cipher(ctx, out, NULL, 0);
-		if (ret < 0)
-			return 0;
-		else
-			*outl = ret;
-		return 1;
-	}
+	*outl = 0;
+
+	if ((ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) != 0)
+		return evp_cipher(ctx, out, outl, NULL, 0);
 
 	b = ctx->cipher->block_size;
 	if (b > sizeof ctx->buf) {
@@ -371,13 +412,8 @@ EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)
 	n = b - bl;
 	for (i = bl; i < b; i++)
 		ctx->buf[i] = n;
-	ret = ctx->cipher->do_cipher(ctx, out, ctx->buf, b);
 
-
-	if (ret)
-		*outl = b;
-
-	return ret;
+	return evp_cipher(ctx, out, outl, ctx->buf, b);
 }
 
 int
@@ -395,15 +431,8 @@ EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl,
 	if (inl == 0 && EVP_CIPHER_mode(ctx->cipher) != EVP_CIPH_CCM_MODE)
 		return 1;
 
-	if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
-		fix_len = ctx->cipher->do_cipher(ctx, out, in, inl);
-		if (fix_len < 0) {
-			*outl = 0;
-			return 0;
-		} else
-			*outl = fix_len;
-		return 1;
-	}
+	if ((ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) != 0)
+		return evp_cipher(ctx, out, outl, in, inl);
 
 	if (ctx->flags & EVP_CIPH_NO_PADDING)
 		return EVP_EncryptUpdate(ctx, out, outl, in, inl);
@@ -461,16 +490,11 @@ EVP_DecryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)
 {
 	int i, n;
 	unsigned int b;
+
 	*outl = 0;
 
-	if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
-		i = ctx->cipher->do_cipher(ctx, out, NULL, 0);
-		if (i < 0)
-			return 0;
-		else
-			*outl = i;
-		return 1;
-	}
+	if ((ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) != 0)
+		return evp_cipher(ctx, out, outl, NULL, 0);
 
 	b = ctx->cipher->block_size;
 	if (ctx->flags & EVP_CIPH_NO_PADDING) {
