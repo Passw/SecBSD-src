@@ -1,4 +1,4 @@
-/* $OpenBSD: p_enc.c,v 1.15 2023/07/07 19:37:54 beck Exp $ */
+/*	$OpenBSD: p_legacy.c,v 1.2 2023/12/20 13:52:17 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -56,36 +56,137 @@
  * [including the GNU Public Licence.]
  */
 
-#include <stdio.h>
+#include <stdlib.h>
 
-#include <openssl/opensslconf.h>
-
-#include <openssl/err.h>
 #include <openssl/evp.h>
-#include <openssl/objects.h>
-#include <openssl/x509.h>
+#include <openssl/err.h>
 
-#ifndef OPENSSL_NO_RSA
 #include <openssl/rsa.h>
-#endif
 
 #include "evp_local.h"
 
 int
-EVP_PKEY_encrypt_old(unsigned char *ek, const unsigned char *key, int key_len,
-    EVP_PKEY *pubk)
+EVP_PKEY_decrypt_old(unsigned char *to, const unsigned char *from, int from_len,
+    EVP_PKEY *pkey)
 {
-	int ret = 0;
-
-#ifndef OPENSSL_NO_RSA
-	if (pubk->type != EVP_PKEY_RSA) {
-#endif
+	if (pkey->type != EVP_PKEY_RSA) {
 		EVPerror(EVP_R_PUBLIC_KEY_NOT_RSA);
-#ifndef OPENSSL_NO_RSA
+		return -1;
+	}
+
+	return RSA_private_decrypt(from_len, from, to, pkey->pkey.rsa,
+	    RSA_PKCS1_PADDING);
+}
+
+int
+EVP_PKEY_encrypt_old(unsigned char *to, const unsigned char *from, int from_len,
+    EVP_PKEY *pkey)
+{
+	if (pkey->type != EVP_PKEY_RSA) {
+		EVPerror(EVP_R_PUBLIC_KEY_NOT_RSA);
+		return 0;
+	}
+
+	return RSA_public_encrypt(from_len, from, to, pkey->pkey.rsa,
+	    RSA_PKCS1_PADDING);
+}
+
+int
+EVP_OpenInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *type,
+    const unsigned char *ek, int ekl, const unsigned char *iv, EVP_PKEY *priv)
+{
+	unsigned char *key = NULL;
+	int i, size = 0, ret = 0;
+
+	if (type) {
+		EVP_CIPHER_CTX_init(ctx);
+		if (!EVP_DecryptInit_ex(ctx, type, NULL, NULL, NULL))
+			return 0;
+	}
+
+	if (!priv)
+		return 1;
+
+	if (priv->type != EVP_PKEY_RSA) {
+		EVPerror(EVP_R_PUBLIC_KEY_NOT_RSA);
 		goto err;
 	}
-	ret = RSA_public_encrypt(key_len, key, ek, pubk->pkey.rsa, RSA_PKCS1_PADDING);
+
+	size = RSA_size(priv->pkey.rsa);
+	key = malloc(size + 2);
+	if (key == NULL) {
+		/* ERROR */
+		EVPerror(ERR_R_MALLOC_FAILURE);
+		goto err;
+	}
+
+	i = EVP_PKEY_decrypt_old(key, ek, ekl, priv);
+	if ((i <= 0) || !EVP_CIPHER_CTX_set_key_length(ctx, i)) {
+		/* ERROR */
+		goto err;
+	}
+	if (!EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv))
+		goto err;
+
+	ret = 1;
+
 err:
-#endif
+	freezero(key, size);
 	return (ret);
+}
+
+int
+EVP_OpenFinal(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)
+{
+	int i;
+
+	i = EVP_DecryptFinal_ex(ctx, out, outl);
+	if (i)
+		i = EVP_DecryptInit_ex(ctx, NULL, NULL, NULL, NULL);
+	return (i);
+}
+
+int
+EVP_SealInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *type, unsigned char **ek,
+    int *ekl, unsigned char *iv, EVP_PKEY **pubk, int npubk)
+{
+	unsigned char key[EVP_MAX_KEY_LENGTH];
+	int i, iv_len;
+
+	if (type) {
+		EVP_CIPHER_CTX_init(ctx);
+		if (!EVP_EncryptInit_ex(ctx, type, NULL, NULL, NULL))
+			return 0;
+	}
+	if ((npubk <= 0) || !pubk)
+		return 1;
+	if (EVP_CIPHER_CTX_rand_key(ctx, key) <= 0)
+		return 0;
+	/* XXX - upper bound? */
+	if ((iv_len = EVP_CIPHER_CTX_iv_length(ctx)) < 0)
+		return 0;
+	if (iv_len > 0)
+		arc4random_buf(iv, iv_len);
+
+	if (!EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv))
+		return 0;
+
+	for (i = 0; i < npubk; i++) {
+		ekl[i] = EVP_PKEY_encrypt_old(ek[i], key,
+		    EVP_CIPHER_CTX_key_length(ctx), pubk[i]);
+		if (ekl[i] <= 0)
+			return (-1);
+	}
+	return (npubk);
+}
+
+int
+EVP_SealFinal(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)
+{
+	int i;
+
+	i = EVP_EncryptFinal_ex(ctx, out, outl);
+	if (i)
+		i = EVP_EncryptInit_ex(ctx, NULL, NULL, NULL, NULL);
+	return i;
 }

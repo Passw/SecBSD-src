@@ -1,4 +1,4 @@
-/*	$OpenBSD: loader.c,v 1.216 2023/12/18 17:19:07 deraadt Exp $ */
+/*	$OpenBSD: loader.c,v 1.218 2023/12/19 16:13:22 deraadt Exp $ */
 
 /*
  * Copyright (c) 1998 Per Fogelstrom, Opsycon AB
@@ -170,7 +170,6 @@ _dl_run_all_dtors(void)
 					vec.vec[i]->status &= ~STAT_FINI_READY;
 			}
 		}
-
 
 		for (node = _dl_objects;
 		    node != NULL;
@@ -483,8 +482,8 @@ __asm__(".pushsection .openbsd.syscalls,\"\",%progbits;"
     ".popsection");
 #else
 __asm__(".pushsection .openbsd.syscalls,\"\",@progbits;"
-    ".long 0;"
     ".p2align 2;"
+    ".long 0;"
     ".long " STRINGIFY(SYS_kbind) ";"
     ".popsection");
 #endif
@@ -1139,5 +1138,4 @@ _dl_apply_immutable(elf_object_t *object)
 		}
 
 	}
-
 }
