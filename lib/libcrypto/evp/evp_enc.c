@@ -1,4 +1,4 @@
-/* $OpenBSD: evp_enc.c,v 1.74 2023/12/21 20:50:43 tb Exp $ */
+/* $OpenBSD: evp_enc.c,v 1.79 2023/12/23 13:05:06 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -83,44 +83,48 @@ EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine,
 {
 	if (enc == -1)
 		enc = ctx->encrypt;
-	else {
-		if (enc)
-			enc = 1;
-		ctx->encrypt = enc;
-	}
-	if (cipher) {
-		/* Ensure a context left lying around from last time is cleared
-		 * (the previous check attempted to avoid this if the same
-		 * EVP_CIPHER could be used). */
-		if (ctx->cipher) {
-			unsigned long flags = ctx->flags;
-			EVP_CIPHER_CTX_cleanup(ctx);
-			/* Restore encrypt and flags */
-			ctx->encrypt = enc;
-			ctx->flags = flags;
-		}
+	if (enc != 0)
+		enc = 1;
+	ctx->encrypt = enc;
 
+	if (cipher == NULL && ctx->cipher == NULL) {
+		EVPerror(EVP_R_NO_CIPHER_SET);
+		return 0;
+	}
+
+	/*
+	 * If the ctx is reused and a cipher is passed in, reset the ctx but
+	 * remember enc and whether key wrap was enabled.
+	 */
+	if (cipher != NULL && ctx->cipher != NULL) {
+		unsigned long flags = ctx->flags;
+
+		EVP_CIPHER_CTX_cleanup(ctx);
+
+		ctx->encrypt = enc;
+		ctx->flags = flags & EVP_CIPHER_CTX_FLAG_WRAP_ALLOW;
+	}
+
+	/* Set up cipher. Allocate cipher data and initialize if necessary. */
+	if (cipher != NULL) {
 		ctx->cipher = cipher;
-		if (ctx->cipher->ctx_size) {
+		ctx->key_len = cipher->key_len;
+		ctx->flags &= EVP_CIPHER_CTX_FLAG_WRAP_ALLOW;
+
+		if (ctx->cipher->ctx_size != 0) {
 			ctx->cipher_data = calloc(1, ctx->cipher->ctx_size);
 			if (ctx->cipher_data == NULL) {
 				EVPerror(ERR_R_MALLOC_FAILURE);
 				return 0;
 			}
-		} else {
-			ctx->cipher_data = NULL;
 		}
-		ctx->key_len = cipher->key_len;
-		ctx->flags &= EVP_CIPHER_CTX_FLAG_WRAP_ALLOW;
-		if (ctx->cipher->flags & EVP_CIPH_CTRL_INIT) {
+
+		if ((ctx->cipher->flags & EVP_CIPH_CTRL_INIT) != 0) {
 			if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_INIT, 0, NULL)) {
 				EVPerror(EVP_R_INITIALIZATION_ERROR);
 				return 0;
 			}
 		}
-	} else if (!ctx->cipher) {
-		EVPerror(EVP_R_NO_CIPHER_SET);
-		return 0;
 	}
 
 	/* Block sizes must be a power of 2 due to the use of block_mask. */
@@ -131,13 +135,13 @@ EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine,
 		return 0;
 	}
 
-	if (!(ctx->flags & EVP_CIPHER_CTX_FLAG_WRAP_ALLOW) &&
+	if ((ctx->flags & EVP_CIPHER_CTX_FLAG_WRAP_ALLOW) == 0 &&
 	    EVP_CIPHER_CTX_mode(ctx) == EVP_CIPH_WRAP_MODE) {
 		EVPerror(EVP_R_WRAP_MODE_NOT_ALLOWED);
 		return 0;
 	}
 
-	if (!(EVP_CIPHER_CTX_flags(ctx) & EVP_CIPH_CUSTOM_IV)) {
+	if ((EVP_CIPHER_CTX_flags(ctx) & EVP_CIPH_CUSTOM_IV) == 0) {
 		int iv_len;
 
 		switch (EVP_CIPHER_CTX_mode(ctx)) {
@@ -181,7 +185,7 @@ EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine,
 		}
 	}
 
-	if (key || (ctx->cipher->flags & EVP_CIPH_ALWAYS_CALL_INIT)) {
+	if (key != NULL || (ctx->cipher->flags & EVP_CIPH_ALWAYS_CALL_INIT) != 0) {
 		if (!ctx->cipher->init(ctx, key, iv, enc))
 			return 0;
 	}
@@ -203,7 +207,7 @@ EVP_CipherUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len,
 }
 
 int
-EVP_CipherFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
+EVP_CipherFinal(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
 {
 	if (ctx->encrypt)
 		return EVP_EncryptFinal_ex(ctx, out, out_len);
@@ -212,7 +216,7 @@ EVP_CipherFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
 }
 
 int
-EVP_CipherFinal(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
+EVP_CipherFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
 {
 	if (ctx->encrypt)
 		return EVP_EncryptFinal_ex(ctx, out, out_len);
@@ -232,20 +236,6 @@ EVP_EncryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine
     const unsigned char *key, const unsigned char *iv)
 {
 	return EVP_CipherInit_ex(ctx, cipher, NULL, key, iv, 1);
-}
-
-int
-EVP_DecryptInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
-    const unsigned char *key, const unsigned char *iv)
-{
-	return EVP_CipherInit(ctx, cipher, key, iv, 0);
-}
-
-int
-EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine,
-    const unsigned char *key, const unsigned char *iv)
-{
-	return EVP_CipherInit_ex(ctx, cipher, NULL, key, iv, 0);
 }
 
 /*
@@ -320,13 +310,13 @@ EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len,
 	if (partial_len == 0 && (in_len & block_mask) == 0)
 		return evp_cipher(ctx, out, out_len, in, in_len);
 
-	/* XXX - check that block_size > partial_len. */
-	if (block_size > sizeof(ctx->buf)) {
+	if (partial_len < 0 || partial_len >= block_size ||
+	    block_size > sizeof(ctx->buf)) {
 		EVPerror(EVP_R_BAD_BLOCK_LENGTH);
 		return 0;
 	}
 
-	if (partial_len != 0) {
+	if (partial_len > 0) {
 		int partial_needed;
 
 		if ((partial_needed = block_size - partial_len) > in_len) {
@@ -369,9 +359,8 @@ EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len,
 		total_len += len;
 	}
 
-	if (partial_len != 0)
+	if ((ctx->partial_len = partial_len) > 0)
 		memcpy(ctx->buf, &in[in_len], partial_len);
-	ctx->partial_len = partial_len;
 
 	*out_len = total_len;
 
@@ -396,8 +385,8 @@ EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
 	if ((ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) != 0)
 		return evp_cipher(ctx, out, out_len, NULL, 0);
 
-	/* XXX - check that block_size > partial_len. */
-	if (block_size > sizeof(ctx->buf)) {
+	if (partial_len < 0 || partial_len >= block_size ||
+	    block_size > sizeof(ctx->buf)) {
 		EVPerror(EVP_R_BAD_BLOCK_LENGTH);
 		return 0;
 	}
@@ -416,6 +405,20 @@ EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len)
 	memset(&ctx->buf[partial_len], pad, pad);
 
 	return evp_cipher(ctx, out, out_len, ctx->buf, block_size);
+}
+
+int
+EVP_DecryptInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
+    const unsigned char *key, const unsigned char *iv)
+{
+	return EVP_CipherInit(ctx, cipher, key, iv, 0);
+}
+
+int
+EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine,
+    const unsigned char *key, const unsigned char *iv)
+{
+	return EVP_CipherInit_ex(ctx, cipher, NULL, key, iv, 0);
 }
 
 int

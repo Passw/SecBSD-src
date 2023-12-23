@@ -395,7 +395,7 @@ private:
 //                         Futex Implementation
 //===----------------------------------------------------------------------===//
 
-#ifdef __SecBSD__
+#ifdef __OpenBSD__
 #include <sys/futex.h>
 
 void PlatformFutexWait(int* addr, int expect) {
