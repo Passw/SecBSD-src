@@ -1,4 +1,4 @@
-/* $OpenBSD: p_lib.c,v 1.39 2023/11/29 21:35:57 tb Exp $ */
+/* $OpenBSD: p_lib.c,v 1.50 2023/12/25 22:41:50 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -79,8 +79,6 @@
 
 #include "asn1_local.h"
 #include "evp_local.h"
-
-static void EVP_PKEY_free_it(EVP_PKEY *x);
 
 int
 EVP_PKEY_bits(const EVP_PKEY *pkey)
@@ -195,96 +193,125 @@ EVP_PKEY_cmp(const EVP_PKEY *a, const EVP_PKEY *b)
 EVP_PKEY *
 EVP_PKEY_new(void)
 {
-	EVP_PKEY *ret;
+	EVP_PKEY *pkey;
 
-	ret = malloc(sizeof(EVP_PKEY));
-	if (ret == NULL) {
+	if ((pkey = calloc(1, sizeof(*pkey))) == NULL) {
 		EVPerror(ERR_R_MALLOC_FAILURE);
-		return (NULL);
+		return NULL;
 	}
-	ret->type = EVP_PKEY_NONE;
-	ret->save_type = EVP_PKEY_NONE;
-	ret->references = 1;
-	ret->ameth = NULL;
-	ret->pkey.ptr = NULL;
-	ret->attributes = NULL;
-	ret->save_parameters = 1;
-	return (ret);
+
+	pkey->type = EVP_PKEY_NONE;
+	pkey->save_type = EVP_PKEY_NONE;
+	pkey->references = 1;
+	pkey->save_parameters = 1;
+
+	return pkey;
 }
 
 int
 EVP_PKEY_up_ref(EVP_PKEY *pkey)
 {
-	int refs = CRYPTO_add(&pkey->references, 1, CRYPTO_LOCK_EVP_PKEY);
-	return ((refs > 1) ? 1 : 0);
+	return CRYPTO_add(&pkey->references, 1, CRYPTO_LOCK_EVP_PKEY) > 1;
 }
 
-/* Setup a public key ASN1 method from a NID or a string.
- * If pkey is NULL just return 1 or 0 if the algorithm exists.
- */
-
-static int
-pkey_set_type(EVP_PKEY *pkey, int type, const char *str, int len)
+static void
+evp_pkey_free_pkey_ptr(EVP_PKEY *pkey)
 {
-	const EVP_PKEY_ASN1_METHOD *ameth;
+	if (pkey == NULL || pkey->ameth == NULL || pkey->ameth->pkey_free == NULL)
+		return;
 
-	if (pkey) {
-		if (pkey->pkey.ptr)
-			EVP_PKEY_free_it(pkey);
-		/* If key type matches and a method exists then this
-		 * lookup has succeeded once so just indicate success.
-		 */
-		if ((type == pkey->save_type) && pkey->ameth)
-			return 1;
-	}
-	if (str != NULL)
-		ameth = EVP_PKEY_asn1_find_str(NULL, str, len);
-	else
-		ameth = EVP_PKEY_asn1_find(NULL, type);
-	if (!ameth) {
-		EVPerror(EVP_R_UNSUPPORTED_ALGORITHM);
-		return 0;
-	}
-	if (pkey) {
-		pkey->ameth = ameth;
+	pkey->ameth->pkey_free(pkey);
+	pkey->pkey.ptr = NULL;
+}
 
-		pkey->type = pkey->ameth->pkey_id;
-		pkey->save_type = type;
-	}
-	return 1;
+void
+EVP_PKEY_free(EVP_PKEY *pkey)
+{
+	if (pkey == NULL)
+		return;
+
+	if (CRYPTO_add(&pkey->references, -1, CRYPTO_LOCK_EVP_PKEY) > 0)
+		return;
+
+	evp_pkey_free_pkey_ptr(pkey);
+	sk_X509_ATTRIBUTE_pop_free(pkey->attributes, X509_ATTRIBUTE_free);
+	freezero(pkey, sizeof(*pkey));
 }
 
 int
 EVP_PKEY_set_type(EVP_PKEY *pkey, int type)
 {
-	return pkey_set_type(pkey, type, NULL, -1);
+	const EVP_PKEY_ASN1_METHOD *ameth;
+
+	evp_pkey_free_pkey_ptr(pkey);
+
+	if ((ameth = EVP_PKEY_asn1_find(NULL, type)) == NULL) {
+		EVPerror(EVP_R_UNSUPPORTED_ALGORITHM);
+		return 0;
+	}
+	if (pkey != NULL) {
+		pkey->ameth = ameth;
+		pkey->type = pkey->ameth->pkey_id;
+		pkey->save_type = type;
+	}
+
+	return 1;
+}
+
+int
+EVP_PKEY_set_type_str(EVP_PKEY *pkey, const char *str, int len)
+{
+	const EVP_PKEY_ASN1_METHOD *ameth;
+
+	evp_pkey_free_pkey_ptr(pkey);
+
+	if ((ameth = EVP_PKEY_asn1_find_str(NULL, str, len)) == NULL) {
+		EVPerror(EVP_R_UNSUPPORTED_ALGORITHM);
+		return 0;
+	}
+	if (pkey != NULL) {
+		pkey->ameth = ameth;
+		pkey->type = pkey->ameth->pkey_id;
+		pkey->save_type = EVP_PKEY_NONE;
+	}
+
+	return 1;
+}
+
+int
+EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key)
+{
+	if (!EVP_PKEY_set_type(pkey, type))
+		return 0;
+
+	return (pkey->pkey.ptr = key) != NULL;
 }
 
 EVP_PKEY *
 EVP_PKEY_new_raw_private_key(int type, ENGINE *engine,
     const unsigned char *private_key, size_t len)
 {
-	EVP_PKEY *ret;
+	EVP_PKEY *pkey;
 
-	if ((ret = EVP_PKEY_new()) == NULL)
+	if ((pkey = EVP_PKEY_new()) == NULL)
 		goto err;
 
-	if (!pkey_set_type(ret, type, NULL, -1))
+	if (!EVP_PKEY_set_type(pkey, type))
 		goto err;
 
-	if (ret->ameth->set_priv_key == NULL) {
+	if (pkey->ameth->set_priv_key == NULL) {
 		EVPerror(EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
 		goto err;
 	}
-	if (!ret->ameth->set_priv_key(ret, private_key, len)) {
+	if (!pkey->ameth->set_priv_key(pkey, private_key, len)) {
 		EVPerror(EVP_R_KEY_SETUP_FAILED);
 		goto err;
 	}
 
-	return ret;
+	return pkey;
 
  err:
-	EVP_PKEY_free(ret);
+	EVP_PKEY_free(pkey);
 
 	return NULL;
 }
@@ -293,27 +320,27 @@ EVP_PKEY *
 EVP_PKEY_new_raw_public_key(int type, ENGINE *engine,
     const unsigned char *public_key, size_t len)
 {
-	EVP_PKEY *ret;
+	EVP_PKEY *pkey;
 
-	if ((ret = EVP_PKEY_new()) == NULL)
+	if ((pkey = EVP_PKEY_new()) == NULL)
 		goto err;
 
-	if (!pkey_set_type(ret, type, NULL, -1))
+	if (!EVP_PKEY_set_type(pkey, type))
 		goto err;
 
-	if (ret->ameth->set_pub_key == NULL) {
+	if (pkey->ameth->set_pub_key == NULL) {
 		EVPerror(EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
 		goto err;
 	}
-	if (!ret->ameth->set_pub_key(ret, public_key, len)) {
+	if (!pkey->ameth->set_pub_key(pkey, public_key, len)) {
 		EVPerror(EVP_R_KEY_SETUP_FAILED);
 		goto err;
 	}
 
-	return ret;
+	return pkey;
 
  err:
-	EVP_PKEY_free(ret);
+	EVP_PKEY_free(pkey);
 
 	return NULL;
 }
@@ -354,15 +381,15 @@ EVP_PKEY *
 EVP_PKEY_new_CMAC_key(ENGINE *e, const unsigned char *priv, size_t len,
     const EVP_CIPHER *cipher)
 {
-	EVP_PKEY *ret = NULL;
+	EVP_PKEY *pkey = NULL;
 	CMAC_CTX *cmctx = NULL;
 
-	if ((ret = EVP_PKEY_new()) == NULL)
+	if ((pkey = EVP_PKEY_new()) == NULL)
 		goto err;
 	if ((cmctx = CMAC_CTX_new()) == NULL)
 		goto err;
 
-	if (!pkey_set_type(ret, EVP_PKEY_CMAC, NULL, -1))
+	if (!EVP_PKEY_set_type(pkey, EVP_PKEY_CMAC))
 		goto err;
 
 	if (!CMAC_Init(cmctx, priv, len, cipher, NULL)) {
@@ -370,29 +397,15 @@ EVP_PKEY_new_CMAC_key(ENGINE *e, const unsigned char *priv, size_t len,
 		goto err;
 	}
 
-	ret->pkey.ptr = cmctx;
+	pkey->pkey.ptr = cmctx;
 
-	return ret;
+	return pkey;
 
  err:
-	EVP_PKEY_free(ret);
+	EVP_PKEY_free(pkey);
 	CMAC_CTX_free(cmctx);
+
 	return NULL;
-}
-
-int
-EVP_PKEY_set_type_str(EVP_PKEY *pkey, const char *str, int len)
-{
-	return pkey_set_type(pkey, EVP_PKEY_NONE, str, len);
-}
-
-int
-EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key)
-{
-	if (!EVP_PKEY_set_type(pkey, type))
-		return 0;
-	pkey->pkey.ptr = key;
-	return (key != NULL);
 }
 
 void *
@@ -575,33 +588,6 @@ int
 EVP_PKEY_base_id(const EVP_PKEY *pkey)
 {
 	return EVP_PKEY_type(pkey->type);
-}
-
-void
-EVP_PKEY_free(EVP_PKEY *x)
-{
-	int i;
-
-	if (x == NULL)
-		return;
-
-	i = CRYPTO_add(&x->references, -1, CRYPTO_LOCK_EVP_PKEY);
-	if (i > 0)
-		return;
-
-	EVP_PKEY_free_it(x);
-	if (x->attributes)
-		sk_X509_ATTRIBUTE_pop_free(x->attributes, X509_ATTRIBUTE_free);
-	free(x);
-}
-
-static void
-EVP_PKEY_free_it(EVP_PKEY *x)
-{
-	if (x->ameth && x->ameth->pkey_free) {
-		x->ameth->pkey_free(x);
-		x->pkey.ptr = NULL;
-	}
 }
 
 static int
