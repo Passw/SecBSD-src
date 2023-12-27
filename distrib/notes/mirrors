@@ -6,7 +6,7 @@ of the OSREV release.  For a more recent list, please refer to
 
 Netherlands:
     https://mirror.secbsd.org/pub/SecBSD (Amsterdam)
-    https://mirror.laylo.io/pub/SecBSD (Amsterdam)
+    https://mirror.laylo.nl/pub/SecBSD (Amsterdam)
 
 Information for prospective mirrors
 
@@ -17,7 +17,7 @@ Mirrors must carry the following:
 
     OS and packages for all architectures supported by SecBSD
 
-As of April 2023, the minimum space required is approximately 200GB.
+As of December 2023, the minimum space required is approximately 200GB.
 
 However, to reduce problems for users when snapshot packages are updated,
 it is strongly recommended to use the rsync options

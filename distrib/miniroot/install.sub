@@ -2935,7 +2935,7 @@ finish_up() {
 
 	# Create /etc/installurl if it does not yet exist.
 	if [[ ! -f /mnt/etc/installurl ]]; then
-		echo "${INSTALL_URL:-https://mirror.laylo.io/pub/SecBSD}" \
+		echo "${INSTALL_URL:-https://mirror.laylo.nl/pub/SecBSD}" \
 			>/mnt/etc/installurl
 	fi
 
