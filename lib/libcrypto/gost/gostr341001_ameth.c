@@ -1,4 +1,4 @@
-/* $OpenBSD: gostr341001_ameth.c,v 1.20 2022/11/26 16:08:53 tb Exp $ */
+/* $OpenBSD: gostr341001_ameth.c,v 1.22 2023/12/28 21:53:09 tb Exp $ */
 /*
  * Copyright (c) 2014 Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
  * Copyright (c) 2005-2006 Cryptocom LTD
@@ -101,8 +101,10 @@ decode_gost01_algor_params(EVP_PKEY *pkey, const unsigned char **p, int len)
 			GOSTerror(ERR_R_MALLOC_FAILURE);
 			return 0;
 		}
-		if (EVP_PKEY_assign_GOST(pkey, ec) == 0)
+		if (EVP_PKEY_assign_GOST(pkey, ec) == 0) {
+			GOST_KEY_free(ec);
 			return 0;
+		}
 	}
 
 	group = EC_GROUP_new_by_curve_name(param_nid);
@@ -205,7 +207,9 @@ pub_decode_gost01(EVP_PKEY *pk, X509_PUBKEY *pub)
 	if (X509_PUBKEY_get0_param(&palgobj, &pubkey_buf, &pub_len, &palg, pub)
 	    == 0)
 		return 0;
-	(void)EVP_PKEY_assign_GOST(pk, NULL);
+	/* Called for the side effect of freeing pk->pkey. */
+	if (!EVP_PKEY_set_type(pk, EVP_PKEY_GOSTR01))
+		return 0;
 	X509_ALGOR_get0(NULL, &ptype, (const void **)&pval, palg);
 	if (ptype != V_ASN1_SEQUENCE) {
 		GOSTerror(GOST_R_BAD_KEY_PARAMETERS_FORMAT);
@@ -418,7 +422,9 @@ priv_decode_gost01(EVP_PKEY *pk, const PKCS8_PRIV_KEY_INFO *p8inf)
 		GOSTerror(GOST_R_BAD_KEY_PARAMETERS_FORMAT);
 		return 0;
 	}
-	(void)EVP_PKEY_assign_GOST(pk, NULL);
+	/* Called for the side effect of freeing pk->pkey. */
+	if (!EVP_PKEY_set_type(pk, EVP_PKEY_GOSTR01))
+		return 0;
 	X509_ALGOR_get0(NULL, &ptype, (const void **)&pval, palg);
 	if (ptype != V_ASN1_SEQUENCE) {
 		GOSTerror(GOST_R_BAD_KEY_PARAMETERS_FORMAT);

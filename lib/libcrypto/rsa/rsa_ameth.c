@@ -1,4 +1,4 @@
-/* $OpenBSD: rsa_ameth.c,v 1.51 2023/11/09 08:29:53 tb Exp $ */
+/* $OpenBSD: rsa_ameth.c,v 1.53 2023/12/28 21:58:12 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 2006.
  */
@@ -204,13 +204,22 @@ static int
 old_rsa_priv_decode(EVP_PKEY *pkey, const unsigned char **pder, int derlen)
 {
 	RSA *rsa;
+	int ret = 0;
 
 	if ((rsa = d2i_RSAPrivateKey(NULL, pder, derlen)) == NULL) {
 		RSAerror(ERR_R_RSA_LIB);
-		return 0;
+		goto err;
 	}
-	EVP_PKEY_assign(pkey, pkey->ameth->pkey_id, rsa);
-	return 1;
+	if (!EVP_PKEY_assign(pkey, pkey->ameth->pkey_id, rsa))
+		goto err;
+	rsa = NULL;
+
+	ret = 1;
+
+ err:
+	RSA_free(rsa);
+
+	return ret;
 }
 
 static int
@@ -255,24 +264,27 @@ static int
 rsa_priv_decode(EVP_PKEY *pkey, const PKCS8_PRIV_KEY_INFO *p8)
 {
 	const unsigned char *p;
-	RSA *rsa;
+	RSA *rsa = NULL;
 	int pklen;
 	const X509_ALGOR *alg;
+	int ret = 0;
 
 	if (!PKCS8_pkey_get0(NULL, &p, &pklen, &alg, p8))
-		return 0;
-	rsa = d2i_RSAPrivateKey(NULL, &p, pklen);
-	if (rsa == NULL) {
-		RSAerror(ERR_R_RSA_LIB);
-		return 0;
-	}
-	if (!rsa_param_decode(rsa, alg)) {
-		RSA_free(rsa);
-		return 0;
-	}
-	EVP_PKEY_assign(pkey, pkey->ameth->pkey_id, rsa);
+		goto err;
+	if ((rsa = d2i_RSAPrivateKey(NULL, &p, pklen)) == NULL)
+		goto err;
+	if (!rsa_param_decode(rsa, alg))
+		goto err;
+	if (!EVP_PKEY_assign(pkey, pkey->ameth->pkey_id, rsa))
+		goto err;
+	rsa = NULL;
 
-	return 1;
+	ret = 1;
+
+ err:
+	RSA_free(rsa);
+
+	return ret;
 }
 
 static int
