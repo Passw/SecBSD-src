@@ -1,4 +1,4 @@
-/* $OpenBSD: ameth_lib.c,v 1.37 2023/12/15 21:55:47 tb Exp $ */
+/* $OpenBSD: ameth_lib.c,v 1.41 2023/12/29 19:00:31 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 2006.
  */
@@ -62,159 +62,11 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 
-#include "asn1_local.h"
 #include "evp_local.h"
 
-extern const EVP_PKEY_ASN1_METHOD cmac_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD dh_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meths[];
-extern const EVP_PKEY_ASN1_METHOD eckey_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD gostimit_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD gostr01_asn1_meths[];
-extern const EVP_PKEY_ASN1_METHOD hmac_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meths[];
-extern const EVP_PKEY_ASN1_METHOD rsa_pss_asn1_meth;
-extern const EVP_PKEY_ASN1_METHOD x25519_asn1_meth;
-
-static const EVP_PKEY_ASN1_METHOD *asn1_methods[] = {
-	&cmac_asn1_meth,
-	&dh_asn1_meth,
-	&dsa_asn1_meths[0],
-	&dsa_asn1_meths[1],
-	&dsa_asn1_meths[2],
-	&dsa_asn1_meths[3],
-	&dsa_asn1_meths[4],
-	&eckey_asn1_meth,
-	&ed25519_asn1_meth,
-	&gostimit_asn1_meth,
-	&gostr01_asn1_meths[0],
-	&gostr01_asn1_meths[1],
-	&gostr01_asn1_meths[2],
-	&hmac_asn1_meth,
-	&rsa_asn1_meths[0],
-	&rsa_asn1_meths[1],
-	&rsa_pss_asn1_meth,
-	&x25519_asn1_meth,
-};
-
-#define N_ASN1_METHODS (sizeof(asn1_methods) / sizeof(asn1_methods[0]))
-
-int
-EVP_PKEY_asn1_get_count(void)
-{
-	return N_ASN1_METHODS;
-}
-
-const EVP_PKEY_ASN1_METHOD *
-EVP_PKEY_asn1_get0(int idx)
-{
-	if (idx < 0 || idx >= N_ASN1_METHODS)
-		return NULL;
-
-	return asn1_methods[idx];
-}
-
-static const EVP_PKEY_ASN1_METHOD *
-pkey_asn1_find(int pkey_id)
-{
-	const EVP_PKEY_ASN1_METHOD *ameth;
-	int i;
-
-	for (i = EVP_PKEY_asn1_get_count() - 1; i >= 0; i--) {
-		ameth = EVP_PKEY_asn1_get0(i);
-		if (ameth->pkey_id == pkey_id)
-			return ameth;
-	}
-
-	return NULL;
-}
-
 /*
- * Find an implementation of an ASN1 algorithm. If 'pe' is not NULL
- * also search through engines and set *pe to a functional reference
- * to the engine implementing 'type' or NULL if no engine implements
- * it.
+ * XXX - remove all the API below here in the next major bump.
  */
-const EVP_PKEY_ASN1_METHOD *
-EVP_PKEY_asn1_find(ENGINE **pe, int type)
-{
-	const EVP_PKEY_ASN1_METHOD *mp;
-
-	if (pe != NULL)
-		*pe = NULL;
-
-	for (;;) {
-		if ((mp = pkey_asn1_find(type)) == NULL)
-			break;
-		if ((mp->pkey_flags & ASN1_PKEY_ALIAS) == 0)
-			break;
-		type = mp->pkey_base_id;
-	}
-
-	return mp;
-}
-
-const EVP_PKEY_ASN1_METHOD *
-EVP_PKEY_asn1_find_str(ENGINE **pe, const char *str, int len)
-{
-	const EVP_PKEY_ASN1_METHOD *ameth;
-	int i;
-
-	if (len == -1)
-		len = strlen(str);
-	if (pe != NULL)
-		*pe = NULL;
-	for (i = EVP_PKEY_asn1_get_count() - 1; i >= 0; i--) {
-		ameth = EVP_PKEY_asn1_get0(i);
-		if (ameth->pkey_flags & ASN1_PKEY_ALIAS)
-			continue;
-		if (((int)strlen(ameth->pem_str) == len) &&
-		    !strncasecmp(ameth->pem_str, str, len))
-			return ameth;
-	}
-	return NULL;
-}
-
-int
-EVP_PKEY_asn1_add0(const EVP_PKEY_ASN1_METHOD *ameth)
-{
-	EVPerror(ERR_R_DISABLED);
-	return 0;
-}
-
-int
-EVP_PKEY_asn1_add_alias(int to, int from)
-{
-	EVPerror(ERR_R_DISABLED);
-	return 0;
-}
-
-int
-EVP_PKEY_asn1_get0_info(int *ppkey_id, int *ppkey_base_id, int *ppkey_flags,
-    const char **pinfo, const char **ppem_str,
-    const EVP_PKEY_ASN1_METHOD *ameth)
-{
-	if (!ameth)
-		return 0;
-	if (ppkey_id)
-		*ppkey_id = ameth->pkey_id;
-	if (ppkey_base_id)
-		*ppkey_base_id = ameth->pkey_base_id;
-	if (ppkey_flags)
-		*ppkey_flags = ameth->pkey_flags;
-	if (pinfo)
-		*pinfo = ameth->info;
-	if (ppem_str)
-		*ppem_str = ameth->pem_str;
-	return 1;
-}
-
-const EVP_PKEY_ASN1_METHOD*
-EVP_PKEY_get0_asn1(const EVP_PKEY *pkey)
-{
-	return pkey->ameth;
-}
 
 EVP_PKEY_ASN1_METHOD*
 EVP_PKEY_asn1_new(int id, int flags, const char *pem_str, const char *info)
@@ -363,4 +215,18 @@ EVP_PKEY_asn1_set_param_check(EVP_PKEY_ASN1_METHOD *ameth,
     int (*pkey_param_check)(const EVP_PKEY *pk))
 {
 	ameth->pkey_param_check = pkey_param_check;
+}
+
+int
+EVP_PKEY_asn1_add0(const EVP_PKEY_ASN1_METHOD *ameth)
+{
+	EVPerror(ERR_R_DISABLED);
+	return 0;
+}
+
+int
+EVP_PKEY_asn1_add_alias(int to, int from)
+{
+	EVPerror(ERR_R_DISABLED);
+	return 0;
 }
