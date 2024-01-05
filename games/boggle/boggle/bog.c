@@ -734,7 +734,7 @@ init_adjacencies(void)
 
 		row = cube / grid;
 		col = cube % grid;
-	     
+
 		/* this row */
 		SET_ADJ(cube);
 		if (!selfuse)

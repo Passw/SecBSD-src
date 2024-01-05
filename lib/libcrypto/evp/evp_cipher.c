@@ -1,4 +1,4 @@
-/* $OpenBSD: evp_cipher.c,v 1.13 2024/01/02 21:27:39 tb Exp $ */
+/* $OpenBSD: evp_cipher.c,v 1.15 2024/01/04 09:47:54 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -204,7 +204,8 @@ EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher, ENGINE *engine,
 
 		case EVP_CIPH_CBC_MODE:
 			iv_len = EVP_CIPHER_CTX_iv_length(ctx);
-			if (iv_len < 0 || iv_len > sizeof(ctx->oiv)) {
+			if (iv_len < 0 || iv_len > sizeof(ctx->oiv) ||
+			    iv_len > sizeof(ctx->iv)) {
 				EVPerror(EVP_R_IV_TOO_LARGE);
 				return 0;
 			}
@@ -899,15 +900,24 @@ EVP_CIPHER_CTX_flags(const EVP_CIPHER_CTX *ctx)
  */
 
 int
-EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
+EVP_CIPHER_get_asn1_iv(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
 {
-	if (ctx->cipher->set_asn1_parameters != NULL)
-		return ctx->cipher->set_asn1_parameters(ctx, type);
+	int i = 0;
+	int l;
 
-	if ((ctx->cipher->flags & EVP_CIPH_FLAG_DEFAULT_ASN1) != 0)
-		return EVP_CIPHER_set_asn1_iv(ctx, type);
-
-	return -1;
+	if (type != NULL) {
+		l = EVP_CIPHER_CTX_iv_length(ctx);
+		if (l < 0 || l > sizeof(ctx->oiv) || l > sizeof(ctx->iv)) {
+			EVPerror(EVP_R_IV_TOO_LARGE);
+			return 0;
+		}
+		i = ASN1_TYPE_get_octetstring(type, ctx->oiv, l);
+		if (i != l)
+			return (-1);
+		else if (i > 0)
+			memcpy(ctx->iv, ctx->oiv, l);
+	}
+	return (i);
 }
 
 int
@@ -923,27 +933,6 @@ EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
 }
 
 int
-EVP_CIPHER_get_asn1_iv(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
-{
-	int i = 0;
-	int l;
-
-	if (type != NULL) {
-		l = EVP_CIPHER_CTX_iv_length(ctx);
-		if (l < 0 || l > sizeof(ctx->iv)) {
-			EVPerror(EVP_R_IV_TOO_LARGE);
-			return 0;
-		}
-		i = ASN1_TYPE_get_octetstring(type, ctx->oiv, l);
-		if (i != l)
-			return (-1);
-		else if (i > 0)
-			memcpy(ctx->iv, ctx->oiv, l);
-	}
-	return (i);
-}
-
-int
 EVP_CIPHER_set_asn1_iv(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
 {
 	int i = 0;
@@ -951,13 +940,25 @@ EVP_CIPHER_set_asn1_iv(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
 
 	if (type != NULL) {
 		j = EVP_CIPHER_CTX_iv_length(ctx);
-		if (j < 0 || j > sizeof(ctx->iv)) {
+		if (j < 0 || j > sizeof(ctx->oiv)) {
 			EVPerror(EVP_R_IV_TOO_LARGE);
 			return 0;
 		}
 		i = ASN1_TYPE_set_octetstring(type, ctx->oiv, j);
 	}
 	return (i);
+}
+
+int
+EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *ctx, ASN1_TYPE *type)
+{
+	if (ctx->cipher->set_asn1_parameters != NULL)
+		return ctx->cipher->set_asn1_parameters(ctx, type);
+
+	if ((ctx->cipher->flags & EVP_CIPH_FLAG_DEFAULT_ASN1) != 0)
+		return EVP_CIPHER_set_asn1_iv(ctx, type);
+
+	return -1;
 }
 
 /* Convert the various cipher NIDs and dummies to a proper OID NID */

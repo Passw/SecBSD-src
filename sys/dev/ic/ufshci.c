@@ -1,4 +1,4 @@
-/*	$OpenBSD: ufshci.c,v 1.3 2023/04/05 17:23:30 mglocker Exp $ */
+/*	$OpenBSD: ufshci.c,v 1.6 2024/01/04 21:35:56 mglocker Exp $ */
 
 /*
  * Copyright (c) 2022 Marcus Glocker <mglocker@openbsd.org>
@@ -76,13 +76,14 @@ int			 ufshci_utr_cmd_capacity16(struct ufshci_softc *,
 int			 ufshci_utr_cmd_capacity(struct ufshci_softc *,
 			     struct ufshci_ccb *, int, int);
 int			 ufshci_utr_cmd_read(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int, uint32_t, uint16_t);
+			     struct ufshci_ccb *, int, int,
+			     struct scsi_generic *);
 int			 ufshci_utr_cmd_write(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int, uint32_t, uint16_t);
+			     struct ufshci_ccb *, int, int,
+			     struct scsi_generic *);
 int			 ufshci_utr_cmd_sync(struct ufshci_softc *,
 			     struct ufshci_ccb *, int, uint32_t, uint16_t);
 int			 ufshci_xfer_complete(struct ufshci_softc *);
-void			 ufshci_hexdump(void *, int, char *, int);
 
 /* SCSI */
 int			 ufshci_ccb_alloc(struct ufshci_softc *, int);
@@ -105,12 +106,6 @@ void			 ufshci_scsi_io_done(struct ufshci_softc *,
 void			 ufshci_scsi_done(struct ufshci_softc *,
 			     struct ufshci_ccb *);
 
-#if 0
-const struct scsi_adapter ufshci_switch = {
-	ufshci_scsi_cmd, ufshci_minphys, ufshci_scsi_probe, ufshci_scsi_free,
-	NULL
-};
-#endif
 const struct scsi_adapter ufshci_switch = {
 	ufshci_scsi_cmd, NULL, NULL, NULL, NULL
 };
@@ -1067,7 +1062,7 @@ ufshci_utr_cmd_capacity(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 int
 ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags, uint32_t lba, uint16_t blocks)
+    int rsp_size, int flags, struct scsi_generic *scsi_cmd)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -1112,14 +1107,8 @@ ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
 
-	ucd->cmd.cdb[0] = READ_10; /* 0x28 */
+	memcpy(ucd->cmd.cdb, scsi_cmd, sizeof(ucd->cmd.cdb));
 	//ucd->cmd.cdb[1] = (1 << 3); /* FUA: Force Unit Access */
-	ucd->cmd.cdb[2] = (lba >> 24) & 0xff;
-	ucd->cmd.cdb[3] = (lba >> 16) & 0xff;
-	ucd->cmd.cdb[4] = (lba >>  8) & 0xff;
-	ucd->cmd.cdb[5] = (lba >>  0) & 0xff;
-	ucd->cmd.cdb[7] = (blocks >> 8) & 0xff;
-	ucd->cmd.cdb[8] = (blocks >> 0) & 0xff;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
 	/* Already done with above memset */
@@ -1181,7 +1170,7 @@ ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 int
 ufshci_utr_cmd_write(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags, uint32_t lba, uint16_t blocks)
+    int rsp_size, int flags, struct scsi_generic *scsi_cmd)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -1226,14 +1215,8 @@ ufshci_utr_cmd_write(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
 
-	ucd->cmd.cdb[0] = WRITE_10; /* 0x2a */
+	memcpy(ucd->cmd.cdb, scsi_cmd, sizeof(ucd->cmd.cdb));
 	ucd->cmd.cdb[1] = (1 << 3); /* FUA: Force Unit Access */
-	ucd->cmd.cdb[2] = (lba >> 24) & 0xff;
-	ucd->cmd.cdb[3] = (lba >> 16) & 0xff;
-	ucd->cmd.cdb[4] = (lba >>  8) & 0xff;
-	ucd->cmd.cdb[5] = (lba >>  0) & 0xff;
-	ucd->cmd.cdb[7] = (blocks >> 8) & 0xff;
-	ucd->cmd.cdb[8] = (blocks >> 0) & 0xff;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
 	/* Already done with above memset */
@@ -1284,7 +1267,7 @@ ufshci_utr_cmd_write(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 		    UFSHCI_REG_UTRIACR_IAEN |
 		    UFSHCI_REG_UTRIACR_IAPWEN |
 		    UFSHCI_REG_UTRIACR_IACTH(UFSHCI_INTR_AGGR_COUNT) |
-		    UFSHCI_REG_UTRIACR_IATOVAL(UFSHCI_INTR_AGGR_COUNT));
+		    UFSHCI_REG_UTRIACR_IATOVAL(UFSHCI_INTR_AGGR_TIMEOUT));
 	}
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 14) */
@@ -1424,51 +1407,6 @@ ufshci_xfer_complete(struct ufshci_softc *sc)
 
 	return 0;
 }
-
-#ifdef UFSHCI_DEBUG
-void
-ufshci_hexdump(void *buf, int len, char *title, int dbglvl)
-{
-	u_char b[16];
-	int i, j, l;
-
-	if (dbglvl > ufshci_dbglvl)
-		return;
-
-	printf("hexdump for %s (size=%d bytes)\n", title, len);
-
-	for (i = 0; i < len; i += l) {
-		printf("%4i:", i);
-		l = min(sizeof(b), len - i);
-		bcopy(buf + i, b, l);
-
-		for (j = 0; j < sizeof(b); j++) {
-			if (j % 2 == 0)
-				printf(" ");
-			if (j % 8 == 0)
-				printf(" ");
-			if (j < l)
-				printf("%02x", (int)b[j]);
-			else
-				printf("  ");
-		}
-		printf("  |");
-		for (j = 0; j < l; j++) {
-			if (b[j] >= 0x20 && b[j] <= 0x7e)
-				printf("%c", b[j]);
-			else
-				printf(".");
-		}
-		printf("|\n");
-	}
-}
-#else
-void
-ufshci_hexdump(void *buf, int len, char *title, int dbglvl)
-{
-
-}
-#endif
 
 /* SCSI */
 
@@ -1859,14 +1797,10 @@ ufshci_scsi_io(struct scsi_xfer *xs, int dir)
 	struct ufshci_softc *sc = link->bus->sb_adapter_softc;
 	struct ufshci_ccb *ccb = xs->io;
 	bus_dmamap_t dmap = ccb->ccb_dmamap;
-	uint64_t lba;
-	uint32_t blocks;
 	int error;
 
 	if ((xs->flags & (SCSI_DATA_IN | SCSI_DATA_OUT)) != dir)
 		goto error1;
-
-	scsi_cmd_rw_decode(&xs->cmd, &lba, &blocks);
 
 	DPRINTF("%s: %s, lba=%llu, blocks=%u, datalen=%d (%s)\n",
 	    __func__,
@@ -1890,10 +1824,10 @@ ufshci_scsi_io(struct scsi_xfer *xs, int dir)
 
 	if (dir == SCSI_DATA_IN) {
 		ccb->ccb_slot = ufshci_utr_cmd_read(sc, ccb, xs->datalen,
-		    xs->flags, (uint32_t)lba, (uint16_t)blocks);
+		    xs->flags, &xs->cmd);
 	} else {
 		ccb->ccb_slot = ufshci_utr_cmd_write(sc, ccb, xs->datalen,
-		    xs->flags, (uint32_t)lba, (uint16_t)blocks);
+		    xs->flags, &xs->cmd);
 	}
 
 	if (ccb->ccb_slot == -1)
@@ -1924,33 +1858,11 @@ ufshci_scsi_io_done(struct ufshci_softc *sc, struct ufshci_ccb *ccb)
 {
 	struct scsi_xfer *xs = ccb->ccb_cookie;
 	bus_dmamap_t dmap = ccb->ccb_dmamap;
-#if 0
-	struct ufshci_utrd *utrd;
-	struct ufshci_ucd *ucd;
-	int slot = ccb->ccb_slot;
-#endif
+
 	bus_dmamap_sync(sc->sc_dmat, dmap, 0, dmap->dm_mapsize,
 	    ISSET(xs->flags, SCSI_DATA_IN) ? BUS_DMASYNC_POSTREAD :
 	    BUS_DMASYNC_POSTWRITE);
-#if 0
-	ufshci_hexdump(xs->data, xs->datalen, "xs->data", 1);
 
-	utrd = UFSHCI_DMA_KVA(sc->sc_dmamem_utrd) + (sizeof(*utrd) * slot);
-	ucd = UFSHCI_DMA_KVA(sc->sc_dmamem_ucd) + (sizeof(*ucd) * slot);
-
-	printf("ucd rsp tc=0x%02x\n", ucd->rsp.hdr.tc);
-	printf("ucd rsp flags=0x%02x\n", ucd->rsp.hdr.flags);
-	printf("ucd rsp lun=%d\n", ucd->rsp.hdr.lun);
-	printf("ucd rsp taskid=%d\n", ucd->rsp.hdr.taskid);
-	printf("ucd rsp cmd_set_type=0x%02x\n", ucd->rsp.hdr.cmd_set_type);
-	printf("ucd rsp query=0x%02x\n", ucd->rsp.hdr.query);
-	printf("ucd rsp response=0x%02x\n", ucd->rsp.hdr.response);
-	printf("ucd rsp status=0x%02x\n", ucd->rsp.hdr.status);
-	printf("ucd rsp ehs_len=%d\n", ucd->rsp.hdr.ehs_len);
-	printf("ucd rsp device_info=0x%02x\n", ucd->rsp.hdr.device_info);
-	printf("ucd rsp ds_len=%d\n", ucd->rsp.hdr.ds_len);
-	printf("ucd rsp rxl=%d\n", be32toh(ucd->rsp.residual_xfer_len));
-#endif
 	bus_dmamap_unload(sc->sc_dmat, dmap);
 
 	ccb->ccb_cookie = NULL;
@@ -1967,29 +1879,7 @@ void
 ufshci_scsi_done(struct ufshci_softc *sc, struct ufshci_ccb *ccb)
 {
 	struct scsi_xfer *xs = ccb->ccb_cookie;
-#if 0
-	struct ufshci_utrd *utrd;
-	struct ufshci_ucd *ucd;
-	int slot = ccb->ccb_slot;
 
-	ufshci_hexdump(xs->data, xs->datalen, "xs->data", 1);
-
-	utrd = UFSHCI_DMA_KVA(sc->sc_dmamem_utrd) + (sizeof(*utrd) * slot);
-	ucd = UFSHCI_DMA_KVA(sc->sc_dmamem_ucd) + (sizeof(*ucd) * slot);
-
-	printf("ucd rsp tc=0x%02x\n", ucd->rsp.hdr.tc);
-	printf("ucd rsp flags=0x%02x\n", ucd->rsp.hdr.flags);
-	printf("ucd rsp lun=%d\n", ucd->rsp.hdr.lun);
-	printf("ucd rsp taskid=%d\n", ucd->rsp.hdr.taskid);
-	printf("ucd rsp cmd_set_type=0x%02x\n", ucd->rsp.hdr.cmd_set_type);
-	printf("ucd rsp query=0x%02x\n", ucd->rsp.hdr.query);
-	printf("ucd rsp response=0x%02x\n", ucd->rsp.hdr.response);
-	printf("ucd rsp status=0x%02x\n", ucd->rsp.hdr.status);
-	printf("ucd rsp ehs_len=%d\n", ucd->rsp.hdr.ehs_len);
-	printf("ucd rsp device_info=0x%02x\n", ucd->rsp.hdr.device_info);
-	printf("ucd rsp ds_len=%d\n", ucd->rsp.hdr.ds_len);
-	printf("ucd rsp rxl=%d\n", be32toh(ucd->rsp.residual_xfer_len));
-#endif
 	ccb->ccb_cookie = NULL;
 	ccb->ccb_slot = -1;
 	ccb->ccb_done = NULL;
