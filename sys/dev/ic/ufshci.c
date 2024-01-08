@@ -1,4 +1,4 @@
-/*	$OpenBSD: ufshci.c,v 1.6 2024/01/04 21:35:56 mglocker Exp $ */
+/*	$OpenBSD: ufshci.c,v 1.9 2024/01/06 17:47:43 mglocker Exp $ */
 
 /*
  * Copyright (c) 2022 Marcus Glocker <mglocker@openbsd.org>
@@ -68,21 +68,18 @@ void			 ufshci_doorbell_set(struct ufshci_softc *, int);
 uint8_t			 ufshci_get_taskid(struct ufshci_softc *);
 int			 ufshci_utr_cmd_nop(struct ufshci_softc *);
 int			 ufshci_utr_cmd_lun(struct ufshci_softc *,
-			     struct ufshci_ccb *, int);
+			     struct ufshci_ccb *, struct scsi_xfer *);
 int			 ufshci_utr_cmd_inquiry(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int);
+			     struct ufshci_ccb *, struct scsi_xfer *);
 int			 ufshci_utr_cmd_capacity16(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int);
+			     struct ufshci_ccb *, struct scsi_xfer *);
 int			 ufshci_utr_cmd_capacity(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int);
-int			 ufshci_utr_cmd_read(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int,
-			     struct scsi_generic *);
-int			 ufshci_utr_cmd_write(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, int,
-			     struct scsi_generic *);
+			     struct ufshci_ccb *, struct scsi_xfer *);
+int			 ufshci_utr_cmd_io(struct ufshci_softc *,
+			     struct ufshci_ccb *, struct scsi_xfer *, int);
 int			 ufshci_utr_cmd_sync(struct ufshci_softc *,
-			     struct ufshci_ccb *, int, uint32_t, uint16_t);
+			     struct ufshci_ccb *, struct scsi_xfer *,
+			     uint32_t, uint16_t);
 int			 ufshci_xfer_complete(struct ufshci_softc *);
 
 /* SCSI */
@@ -148,15 +145,6 @@ ufshci_intr(void *arg)
 	UFSHCI_WRITE_4(sc, UFSHCI_REG_IS, status);
 
 	return 1;
-}
-
-/* XXX: Only for testing */
-void
-ufshci_attach_hook(struct device *self)
-{
-	struct ufshci_softc *sc = (struct ufshci_softc *)self;
-
-	ufshci_attach(sc);
 }
 
 int
@@ -619,7 +607,7 @@ ufshci_utr_cmd_nop(struct ufshci_softc *sc)
 
 int
 ufshci_utr_cmd_lun(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size)
+    struct scsi_xfer *xs)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -662,13 +650,13 @@ ufshci_utr_cmd_lun(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.device_info = 0;
 	ucd->cmd.hdr.ds_len = 0;
 
-	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
+	ucd->cmd.expected_xfer_len = htobe32(xs->datalen);
 
 	ucd->cmd.cdb[0] = REPORT_LUNS;
 	ucd->cmd.cdb[6] = 0;
 	ucd->cmd.cdb[7] = 0;
 	ucd->cmd.cdb[8] = 0;
-	ucd->cmd.cdb[9] = rsp_size;
+	ucd->cmd.cdb[9] = xs->datalen;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
 	/* Already done with above memset */
@@ -728,7 +716,7 @@ ufshci_utr_cmd_lun(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 int
 ufshci_utr_cmd_inquiry(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags)
+    struct scsi_xfer *xs)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -771,11 +759,11 @@ ufshci_utr_cmd_inquiry(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.device_info = 0;
 	ucd->cmd.hdr.ds_len = 0;
 
-	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
+	ucd->cmd.expected_xfer_len = htobe32(xs->datalen);
 
 	ucd->cmd.cdb[0] = INQUIRY; /* 0x12 */
 	ucd->cmd.cdb[3] = 0;
-	ucd->cmd.cdb[4] = rsp_size;
+	ucd->cmd.cdb[4] = xs->datalen;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
 	/* Already done with above memset */
@@ -821,7 +809,7 @@ ufshci_utr_cmd_inquiry(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 11) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 12) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 13) */
-	if (!ISSET(flags, SCSI_POLL)) {
+	if (!ISSET(xs->flags, SCSI_POLL)) {
 		UFSHCI_WRITE_4(sc, UFSHCI_REG_UTRIACR,
 		    UFSHCI_REG_UTRIACR_IAEN |
 		    UFSHCI_REG_UTRIACR_IAPWEN |
@@ -837,7 +825,7 @@ ufshci_utr_cmd_inquiry(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 int
 ufshci_utr_cmd_capacity16(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags)
+    struct scsi_xfer *xs)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -880,7 +868,7 @@ ufshci_utr_cmd_capacity16(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.device_info = 0;
 	ucd->cmd.hdr.ds_len = 0;
 
-	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
+	ucd->cmd.expected_xfer_len = htobe32(xs->datalen);
 
 	ucd->cmd.cdb[0] = READ_CAPACITY_16; /* 0x9e */
 	ucd->cmd.cdb[1] = 0x10; /* Service Action */
@@ -888,7 +876,7 @@ ufshci_utr_cmd_capacity16(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.cdb[10] = 0;
 	ucd->cmd.cdb[11] = 0;
 	ucd->cmd.cdb[12] = 0;
-	ucd->cmd.cdb[13] = rsp_size;
+	ucd->cmd.cdb[13] = xs->datalen;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
 	/* Already done with above memset */
@@ -934,7 +922,7 @@ ufshci_utr_cmd_capacity16(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 11) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 12) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 13) */
-	if (!ISSET(flags, SCSI_POLL)) {
+	if (!ISSET(xs->flags, SCSI_POLL)) {
 		UFSHCI_WRITE_4(sc, UFSHCI_REG_UTRIACR,
 		    UFSHCI_REG_UTRIACR_IAEN |
 		    UFSHCI_REG_UTRIACR_IAPWEN |
@@ -950,7 +938,7 @@ ufshci_utr_cmd_capacity16(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 int
 ufshci_utr_cmd_capacity(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags)
+    struct scsi_xfer *xs)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -993,7 +981,7 @@ ufshci_utr_cmd_capacity(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.device_info = 0;
 	ucd->cmd.hdr.ds_len = 0;
 
-	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
+	ucd->cmd.expected_xfer_len = htobe32(xs->datalen);
 
 	ucd->cmd.cdb[0] = READ_CAPACITY; /* 0x25 */
 	/* Logical Block Address = 0 for UFS */
@@ -1046,7 +1034,7 @@ ufshci_utr_cmd_capacity(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 11) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 12) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 13) */
-	if (!ISSET(flags, SCSI_POLL)) {
+	if (!ISSET(xs->flags, SCSI_POLL)) {
 		UFSHCI_WRITE_4(sc, UFSHCI_REG_UTRIACR,
 		    UFSHCI_REG_UTRIACR_IAEN |
 		    UFSHCI_REG_UTRIACR_IAPWEN |
@@ -1061,8 +1049,8 @@ ufshci_utr_cmd_capacity(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 }
 
 int
-ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags, struct scsi_generic *scsi_cmd)
+ufshci_utr_cmd_io(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
+    struct scsi_xfer *xs, int dir)
 {
 	int slot, off, len, i;
 	uint64_t dva;
@@ -1080,7 +1068,10 @@ ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	utrd->dw0 = UFSHCI_UTRD_DW0_CT_UFS;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2b) */
-	utrd->dw0 |= UFSHCI_UTRD_DW0_DD_T2I;
+	if (dir == SCSI_DATA_IN)
+		utrd->dw0 |= UFSHCI_UTRD_DW0_DD_T2I;
+	else
+		utrd->dw0 |= UFSHCI_UTRD_DW0_DD_I2T;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2c) */
 	utrd->dw0 |= UFSHCI_UTRD_DW0_I_REG;
@@ -1094,7 +1085,10 @@ ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2f) */
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
-	ucd->cmd.hdr.flags = (1 << 6); /* Bit-5 = Write, Bit-6 = Read */
+	if (dir == SCSI_DATA_IN)
+		ucd->cmd.hdr.flags = (1 << 6); /* Bit-6 = Read */
+	else
+		ucd->cmd.hdr.flags = (1 << 5); /* Bit-5 = Write */
 	ucd->cmd.hdr.lun = 0;
 	ucd->cmd.hdr.taskid = ufshci_get_taskid(sc);
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
@@ -1105,10 +1099,11 @@ ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.device_info = 0;
 	ucd->cmd.hdr.ds_len = 0;
 
-	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
+	ucd->cmd.expected_xfer_len = htobe32(xs->datalen);
 
-	memcpy(ucd->cmd.cdb, scsi_cmd, sizeof(ucd->cmd.cdb));
-	//ucd->cmd.cdb[1] = (1 << 3); /* FUA: Force Unit Access */
+	memcpy(ucd->cmd.cdb, &xs->cmd, sizeof(ucd->cmd.cdb));
+	if (dir == SCSI_DATA_OUT)
+		ucd->cmd.cdb[1] = (1 << 3); /* FUA: Force Unit Access */
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
 	/* Already done with above memset */
@@ -1154,115 +1149,7 @@ ufshci_utr_cmd_read(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 11) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 12) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 13) */
-	if (!ISSET(flags, SCSI_POLL)) {
-		UFSHCI_WRITE_4(sc, UFSHCI_REG_UTRIACR,
-		    UFSHCI_REG_UTRIACR_IAEN |
-		    UFSHCI_REG_UTRIACR_IAPWEN |
-		    UFSHCI_REG_UTRIACR_IACTH(UFSHCI_INTR_AGGR_COUNT) |
-		    UFSHCI_REG_UTRIACR_IATOVAL(UFSHCI_INTR_AGGR_TIMEOUT));
-	}
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 14) */
-	ufshci_doorbell_set(sc, slot);
-
-	return slot;
-}
-
-int
-ufshci_utr_cmd_write(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int rsp_size, int flags, struct scsi_generic *scsi_cmd)
-{
-	int slot, off, len, i;
-	uint64_t dva;
-	struct ufshci_utrd *utrd;
-	struct ufshci_ucd *ucd;
-	bus_dmamap_t dmap = ccb->ccb_dmamap;
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 1) */
-	slot = ufshci_doorbell_get_free(sc);
-	utrd = UFSHCI_DMA_KVA(sc->sc_dmamem_utrd) + (sizeof(*utrd) * slot);
-	memset(utrd, 0, sizeof(*utrd));
-	DPRINTF("%s: slot=%d\n", __func__, slot);
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2a) */
-	utrd->dw0 = UFSHCI_UTRD_DW0_CT_UFS;
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2b) */
-	utrd->dw0 |= UFSHCI_UTRD_DW0_DD_I2T;
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2c) */
-	utrd->dw0 |= UFSHCI_UTRD_DW0_I_REG;
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2d) */
-	utrd->dw2 = UFSHCI_UTRD_DW2_OCS_IOV;
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2e) */
-	ucd = UFSHCI_DMA_KVA(sc->sc_dmamem_ucd) + (sizeof(*ucd) * slot);
-	memset(ucd, 0, sizeof(*ucd));
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2f) */
-	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
-	ucd->cmd.hdr.flags = (1 << 5); /* Bit-5 = Write, Bit-6 = Read */
-	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = ufshci_get_taskid(sc);
-	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
-	ucd->cmd.hdr.query = 0;
-	ucd->cmd.hdr.response = 0;
-	ucd->cmd.hdr.status = 0;
-	ucd->cmd.hdr.ehs_len = 0;
-	ucd->cmd.hdr.device_info = 0;
-	ucd->cmd.hdr.ds_len = 0;
-
-	ucd->cmd.expected_xfer_len = htobe32(rsp_size);
-
-	memcpy(ucd->cmd.cdb, scsi_cmd, sizeof(ucd->cmd.cdb));
-	ucd->cmd.cdb[1] = (1 << 3); /* FUA: Force Unit Access */
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 2g) */
-	/* Already done with above memset */
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 3) */
-	dva = UFSHCI_DMA_DVA(sc->sc_dmamem_ucd) + (sizeof(*ucd) * slot);
-	DPRINTF("%s: ucd dva=%llu\n", __func__, dva);
-	utrd->dw4 = (uint32_t)dva;
-	utrd->dw5 = (uint32_t)(dva >> 32);
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 4) */
-	off = sizeof(struct upiu_command) / 4; /* DWORD offset */
-	utrd->dw6 = UFSHCI_UTRD_DW6_RUO(off);
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 5) */
-	len = sizeof(struct upiu_response) / 4; /* DWORD length */
-	utrd->dw6 |= UFSHCI_UTRD_DW6_RUL(len);
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 6) */
-	off = (sizeof(struct upiu_command) + sizeof(struct upiu_response)) / 4;
-	utrd->dw7 = UFSHCI_UTRD_DW7_PRDTO(off);
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 7) */
-	utrd->dw7 |= UFSHCI_UTRD_DW7_PRDTL(dmap->dm_nsegs);
-
-	/* Build PRDT data segment. */
-	for (i = 0; i < dmap->dm_nsegs; i++) {
-		dva = dmap->dm_segs[i].ds_addr;
-		ucd->prdt[i].dw0 = (uint32_t)dva;
-		ucd->prdt[i].dw1 = (uint32_t)(dva >> 32);
-		ucd->prdt[i].dw2 = 0;
-		ucd->prdt[i].dw3 = dmap->dm_segs[i].ds_len - 1;
-	}
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 9) */
-	if (UFSHCI_READ_4(sc, UFSHCI_REG_UTRLRSR) != 1) {
-		printf("%s: %s: UTRLRSR not set\n",
-		    sc->sc_dev.dv_xname, __func__);
-		return -1;
-	}
-
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 10) */
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 11) */
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 12) */
-	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 13) */
-	if (!ISSET(flags, SCSI_POLL)) {
+	if (!ISSET(xs->flags, SCSI_POLL)) {
 		UFSHCI_WRITE_4(sc, UFSHCI_REG_UTRIACR,
 		    UFSHCI_REG_UTRIACR_IAEN |
 		    UFSHCI_REG_UTRIACR_IAPWEN |
@@ -1278,7 +1165,7 @@ ufshci_utr_cmd_write(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 
 int
 ufshci_utr_cmd_sync(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
-    int flags, uint32_t lba, uint16_t blocks)
+    struct scsi_xfer *xs, uint32_t lba, uint16_t blocks)
 {
 	int slot, off, len;
 	uint64_t dva;
@@ -1365,7 +1252,7 @@ ufshci_utr_cmd_sync(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 11) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 12) */
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 13) */
-	if (!ISSET(flags, SCSI_POLL)) {
+	if (!ISSET(xs->flags, SCSI_POLL)) {
 		UFSHCI_WRITE_4(sc, UFSHCI_REG_UTRIACR,
 		    UFSHCI_REG_UTRIACR_IAEN |
 		    UFSHCI_REG_UTRIACR_IAPWEN |
@@ -1611,7 +1498,7 @@ ufshci_scsi_inquiry(struct scsi_xfer *xs)
 	ccb->ccb_done = ufshci_scsi_io_done;
 
 	/* Response length should be UPIU_SCSI_RSP_INQUIRY_SIZE. */
-	ccb->ccb_slot = ufshci_utr_cmd_inquiry(sc, ccb, xs->datalen, xs->flags);
+	ccb->ccb_slot = ufshci_utr_cmd_inquiry(sc, ccb, xs);
 	if (ccb->ccb_slot == -1)
 		goto error2;
 
@@ -1666,8 +1553,7 @@ ufshci_scsi_capacity16(struct scsi_xfer *xs)
 	ccb->ccb_done = ufshci_scsi_io_done;
 
 	/* Response length should be UPIU_SCSI_RSP_CAPACITY16_SIZE. */
-	ccb->ccb_slot = ufshci_utr_cmd_capacity16(sc, ccb, xs->datalen,
-	    xs->flags);
+	ccb->ccb_slot = ufshci_utr_cmd_capacity16(sc, ccb, xs);
 	if (ccb->ccb_slot == -1)
 		goto error2;
 
@@ -1722,8 +1608,7 @@ ufshci_scsi_capacity(struct scsi_xfer *xs)
 	ccb->ccb_done = ufshci_scsi_io_done;
 
 	/* Response length should be UPIU_SCSI_RSP_CAPACITY_SIZE */
-	ccb->ccb_slot = ufshci_utr_cmd_capacity(sc, ccb, xs->datalen,
-	    xs->flags);
+	ccb->ccb_slot = ufshci_utr_cmd_capacity(sc, ccb, xs);
 	if (ccb->ccb_slot == -1)
 		goto error2;
 
@@ -1766,7 +1651,7 @@ ufshci_scsi_sync(struct scsi_xfer *xs)
 	ccb->ccb_cookie = xs;
 	ccb->ccb_done = ufshci_scsi_done;
 
-	ccb->ccb_slot = ufshci_utr_cmd_sync(sc, ccb, xs->flags, (uint32_t)lba,
+	ccb->ccb_slot = ufshci_utr_cmd_sync(sc, ccb, xs, (uint32_t)lba,
 	    (uint16_t)blocks);
 	if (ccb->ccb_slot == -1)
 		goto error;
@@ -1822,13 +1707,10 @@ ufshci_scsi_io(struct scsi_xfer *xs, int dir)
 	ccb->ccb_cookie = xs;
 	ccb->ccb_done = ufshci_scsi_io_done;
 
-	if (dir == SCSI_DATA_IN) {
-		ccb->ccb_slot = ufshci_utr_cmd_read(sc, ccb, xs->datalen,
-		    xs->flags, &xs->cmd);
-	} else {
-		ccb->ccb_slot = ufshci_utr_cmd_write(sc, ccb, xs->datalen,
-		    xs->flags, &xs->cmd);
-	}
+	if (dir == SCSI_DATA_IN)
+		ccb->ccb_slot = ufshci_utr_cmd_io(sc, ccb, xs, SCSI_DATA_IN);
+	else
+		ccb->ccb_slot = ufshci_utr_cmd_io(sc, ccb, xs, SCSI_DATA_OUT);
 
 	if (ccb->ccb_slot == -1)
 		goto error2;
