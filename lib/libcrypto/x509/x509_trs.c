@@ -1,4 +1,4 @@
-/* $OpenBSD: x509_trs.c,v 1.35 2024/01/08 03:32:01 tb Exp $ */
+/* $OpenBSD: x509_trs.c,v 1.39 2024/01/10 21:34:53 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 1999.
  */
@@ -57,19 +57,72 @@
  */
 
 #include <stdio.h>
-#include <string.h>
 
+#include <openssl/asn1.h>
 #include <openssl/err.h>
+#include <openssl/objects.h>
+#include <openssl/x509.h>
 #include <openssl/x509v3.h>
 
 #include "x509_local.h"
 
-static int trust_1oidany(X509_TRUST *trust, X509 *x, int flags);
-static int trust_1oid(X509_TRUST *trust, X509 *x, int flags);
-static int trust_compat(X509_TRUST *trust, X509 *x, int flags);
+static int
+obj_trust(int id, X509 *x, int flags)
+{
+	ASN1_OBJECT *obj;
+	int i, nid;
+	X509_CERT_AUX *ax;
 
-static int obj_trust(int id, X509 *x, int flags);
-static int (*default_trust)(int id, X509 *x, int flags) = obj_trust;
+	ax = x->aux;
+	if (!ax)
+		return X509_TRUST_UNTRUSTED;
+	if (ax->reject) {
+		for (i = 0; i < sk_ASN1_OBJECT_num(ax->reject); i++) {
+			obj = sk_ASN1_OBJECT_value(ax->reject, i);
+			nid = OBJ_obj2nid(obj);
+			if (nid == id || nid == NID_anyExtendedKeyUsage)
+				return X509_TRUST_REJECTED;
+		}
+	}
+	if (ax->trust) {
+		for (i = 0; i < sk_ASN1_OBJECT_num(ax->trust); i++) {
+			obj = sk_ASN1_OBJECT_value(ax->trust, i);
+			nid = OBJ_obj2nid(obj);
+			if (nid == id || nid == NID_anyExtendedKeyUsage)
+				return X509_TRUST_TRUSTED;
+		}
+	}
+	return X509_TRUST_UNTRUSTED;
+}
+
+static int
+trust_compat(X509_TRUST *trust, X509 *x, int flags)
+{
+	X509_check_purpose(x, -1, 0);
+	if (x->ex_flags & EXFLAG_SS)
+		return X509_TRUST_TRUSTED;
+	else
+		return X509_TRUST_UNTRUSTED;
+}
+
+static int
+trust_1oidany(X509_TRUST *trust, X509 *x, int flags)
+{
+	if (x->aux && (x->aux->trust || x->aux->reject))
+		return obj_trust(trust->arg1, x, flags);
+	/* we don't have any trust settings: for compatibility
+	 * we return trusted if it is self signed
+	 */
+	return trust_compat(trust, x, flags);
+}
+
+static int
+trust_1oid(X509_TRUST *trust, X509 *x, int flags)
+{
+	if (x->aux)
+		return obj_trust(trust->arg1, x, flags);
+	return X509_TRUST_UNTRUSTED;
+}
 
 /* WARNING: the following table should be kept in order of trust
  * and without any gaps so we can just subtract the minimum trust
@@ -127,6 +180,8 @@ static X509_TRUST trstandard[] = {
 };
 
 #define X509_TRUST_COUNT	(sizeof(trstandard) / sizeof(trstandard[0]))
+
+static int (*default_trust)(int id, X509 *x, int flags) = obj_trust;
 
 int
 (*X509_TRUST_set_default(int (*trust)(int , X509 *, int)))(int, X509 *, int)
@@ -249,61 +304,3 @@ X509_TRUST_get_trust(const X509_TRUST *xp)
 	return xp->trust;
 }
 LCRYPTO_ALIAS(X509_TRUST_get_trust);
-
-static int
-trust_1oidany(X509_TRUST *trust, X509 *x, int flags)
-{
-	if (x->aux && (x->aux->trust || x->aux->reject))
-		return obj_trust(trust->arg1, x, flags);
-	/* we don't have any trust settings: for compatibility
-	 * we return trusted if it is self signed
-	 */
-	return trust_compat(trust, x, flags);
-}
-
-static int
-trust_1oid(X509_TRUST *trust, X509 *x, int flags)
-{
-	if (x->aux)
-		return obj_trust(trust->arg1, x, flags);
-	return X509_TRUST_UNTRUSTED;
-}
-
-static int
-trust_compat(X509_TRUST *trust, X509 *x, int flags)
-{
-	X509_check_purpose(x, -1, 0);
-	if (x->ex_flags & EXFLAG_SS)
-		return X509_TRUST_TRUSTED;
-	else
-		return X509_TRUST_UNTRUSTED;
-}
-
-static int
-obj_trust(int id, X509 *x, int flags)
-{
-	ASN1_OBJECT *obj;
-	int i, nid;
-	X509_CERT_AUX *ax;
-
-	ax = x->aux;
-	if (!ax)
-		return X509_TRUST_UNTRUSTED;
-	if (ax->reject) {
-		for (i = 0; i < sk_ASN1_OBJECT_num(ax->reject); i++) {
-			obj = sk_ASN1_OBJECT_value(ax->reject, i);
-			nid = OBJ_obj2nid(obj);
-			if (nid == id || nid == NID_anyExtendedKeyUsage)
-				return X509_TRUST_REJECTED;
-		}
-	}
-	if (ax->trust) {
-		for (i = 0; i < sk_ASN1_OBJECT_num(ax->trust); i++) {
-			obj = sk_ASN1_OBJECT_value(ax->trust, i);
-			nid = OBJ_obj2nid(obj);
-			if (nid == id || nid == NID_anyExtendedKeyUsage)
-				return X509_TRUST_TRUSTED;
-		}
-	}
-	return X509_TRUST_UNTRUSTED;
-}
