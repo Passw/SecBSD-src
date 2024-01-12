@@ -1,4 +1,4 @@
-/*	$OpenBSD: tcp_subr.c,v 1.194 2023/11/29 18:30:48 bluhm Exp $	*/
+/*	$OpenBSD: tcp_subr.c,v 1.195 2024/01/11 13:49:49 bluhm Exp $	*/
 /*	$NetBSD: tcp_subr.c,v 1.22 1996/02/13 23:44:00 christos Exp $	*/
 
 /*
@@ -42,10 +42,10 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgements:
- * 	This product includes software developed by the University of
- * 	California, Berkeley and its contributors.
- * 	This product includes software developed at the Information
- * 	Technology Division, US Naval Research Laboratory.
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ *	This product includes software developed at the Information
+ *	Technology Division, US Naval Research Laboratory.
  * 4. Neither the name of the NRL nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -396,7 +396,7 @@ tcp_respond(struct tcpcb *tp, caddr_t template, struct tcphdr *th0,
 	case AF_INET6:
 		ip6->ip6_flow = htonl(0x60000000);
 		ip6->ip6_nxt  = IPPROTO_TCP;
-		ip6->ip6_hlim = in6_selecthlim(tp ? tp->t_inpcb : NULL);	/*XXX*/
+		ip6->ip6_hlim = in6_selecthlim(tp ? tp->t_inpcb : NULL); /*XXX*/
 		ip6->ip6_plen = tlen - sizeof(struct ip6_hdr);
 		ip6->ip6_plen = htons(ip6->ip6_plen);
 		ip6_output(m, tp ? tp->t_inpcb->inp_outputopts6 : NULL,
