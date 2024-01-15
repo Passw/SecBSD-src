@@ -62,7 +62,7 @@ nextword(FILE *fp)
 	if (fp == NULL) {
 		if (sp == dictend)
 			return (NULL);
-	
+
 		p = buf + (int) *sp++;
 
 		/*
@@ -80,7 +80,7 @@ nextword(FILE *fp)
 			return (NULL);
 
 		p = buf + pcount;
- 
+
 		while ((ch = getc(fp)) != EOF && ch >= 'a')
 			if ((*p++ = ch) == 'q')
 				*p++ = 'u';
@@ -90,7 +90,7 @@ nextword(FILE *fp)
 	*p = '\0';
 	return (buf);
 }
- 
+
 /*
  * Reset the state of nextword() and do the fseek()
  */
@@ -173,7 +173,7 @@ loadindex(char *indexfile)
 	char buf[BUFSIZ];
 	FILE *fp;
 	extern struct dictindex dictindex[];
- 
+
 	if ((fp = fopen(indexfile, "r")) == NULL) {
 		warnx("Can't open '%s'", indexfile);
 		return (-1);
@@ -202,4 +202,4 @@ loadindex(char *indexfile)
 	}
 	(void) fclose(fp);
 	return(0);
-} 
+}

@@ -319,7 +319,7 @@ void
 checksails(void)
 {
 	struct ship *sp;
-	int rig, full; 
+	int rig, full;
 	struct ship *close;
 
 	foreachship(sp) {
@@ -335,7 +335,7 @@ checksails(void)
 					full = 1;
 				else
 					full = 0;
-			} else 
+			} else
 				full = 0;
 		} else
 			full = 0;

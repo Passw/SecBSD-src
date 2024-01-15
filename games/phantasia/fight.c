@@ -29,12 +29,12 @@ static jmp_buf Fightenv;	/* used to jump into fight routine */
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: monsthits(), playerhits(), readmessage(), callmonster(), 
-/	writerecord(), pickmonster(), displaystats(), pow(), cancelmonster(), 
-/	awardtreasure(), more(), death(), wmove(), setjmp(), drandom(), printw(), 
+/ MODULES CALLED: monsthits(), playerhits(), readmessage(), callmonster(),
+/	writerecord(), pickmonster(), displaystats(), pow(), cancelmonster(),
+/	awardtreasure(), more(), death(), wmove(), setjmp(), drandom(), printw(),
 /	longjmp(), wrefresh(), mvprintw(), wclrtobot()
 /
-/ GLOBAL INPUTS: Curmonster, Whichmonster, LINES, Lines, Circle, Shield, 
+/ GLOBAL INPUTS: Curmonster, Whichmonster, LINES, Lines, Circle, Shield,
 /	Player, *stdscr, Fileloc, Fightenv[], *Enemyname
 /
 / GLOBAL OUTPUTS: Curmonster, Whichmonster, Lines, Shield, Player, Luckout
@@ -184,7 +184,7 @@ encounter(int particular)
 	move(4, 0);
 	clrtobot();
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: pickmonster()
@@ -244,7 +244,7 @@ pickmonster(void)
 		/* even chance of some of the tamest non-water monsters */
 		return ((int) ROLL(14.0, 25.0));
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: playerhits()
@@ -257,8 +257,8 @@ pickmonster(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: hitmonster(), throwspell(), inputoption(), cancelmonster(), 
-/	floor(), wmove(), drandom(), altercoordinates(), waddstr(), mvprintw(), 
+/ MODULES CALLED: hitmonster(), throwspell(), inputoption(), cancelmonster(),
+/	floor(), wmove(), drandom(), altercoordinates(), waddstr(), mvprintw(),
 /	wclrtoeol(), wclrtobot()
 /
 / GLOBAL INPUTS: Curmonster, Lines, Player, *stdscr, Luckout, *Enemyname
@@ -412,7 +412,7 @@ playerhits(void)
 	}
 
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: monsthits()
@@ -425,14 +425,14 @@ playerhits(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: cancelmonster(), scramblestats(), more(), floor(), wmove(), 
-/	drandom(), altercoordinates(), longjmp(), waddstr(), mvprintw(), 
+/ MODULES CALLED: cancelmonster(), scramblestats(), more(), floor(), wmove(),
+/	drandom(), altercoordinates(), longjmp(), waddstr(), mvprintw(),
 /	getanswer()
 /
-/ GLOBAL INPUTS: Curmonster, Lines, Circle, Shield, Player, *stdscr, 
+/ GLOBAL INPUTS: Curmonster, Lines, Circle, Shield, Player, *stdscr,
 /	Fightenv[], *Enemyname
 /
-/ GLOBAL OUTPUTS: Curmonster, Whichmonster, Lines, Shield, Player, 
+/ GLOBAL OUTPUTS: Curmonster, Whichmonster, Lines, Shield, Player,
 /	*Enemyname
 /
 / DESCRIPTION:
@@ -688,7 +688,7 @@ SPECIALHIT:
 		Shield = 0.0;
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: cancelmonster()
@@ -721,7 +721,7 @@ cancelmonster(void)
     Curmonster.m_treasuretype = 0;
     Curmonster.m_flock = 0.0;
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: hitmonster()
@@ -773,7 +773,7 @@ hitmonster(double inflict)
 		}
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: throwspell()
@@ -786,11 +786,11 @@ hitmonster(double inflict)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: hitmonster(), cancelmonster(), sqrt(), floor(), wmove(), 
-/	drandom(), altercoordinates(), longjmp(), infloat(), waddstr(), mvprintw(), 
+/ MODULES CALLED: hitmonster(), cancelmonster(), sqrt(), floor(), wmove(),
+/	drandom(), altercoordinates(), longjmp(), infloat(), waddstr(), mvprintw(),
 /	getanswer()
 /
-/ GLOBAL INPUTS: Curmonster, Whichmonster, Nomana[], Player, *stdscr, 
+/ GLOBAL INPUTS: Curmonster, Whichmonster, Nomana[], Player, *stdscr,
 /	Fightenv[], Illspell[], *Enemyname
 /
 / GLOBAL OUTPUTS: Curmonster, Whichmonster, Shield, Player
@@ -1000,7 +1000,7 @@ throwspell(void)
 			break;
 		}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: callmonster()
@@ -1014,7 +1014,7 @@ throwspell(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: truncstring(), fread(), fseek(), floor(), drandom(), 
+/ MODULES CALLED: truncstring(), fread(), fseek(), floor(), drandom(),
 /	strlcpy()
 /
 / GLOBAL INPUTS: Curmonster, Circle, Player, *Monstfp
@@ -1107,7 +1107,7 @@ callmonster(int which)
 	Curmonster.m_o_energy = Curmonster.m_energy;
 	Curmonster.m_melee = Curmonster.m_skirmish = 0.0;
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: awardtreasure()
@@ -1120,11 +1120,11 @@ callmonster(int which)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: pickmonster(), collecttaxes(), more(), cursedtreasure(), 
-/	floor(), wmove(), drandom(), sscanf(), printw(), altercoordinates(), 
+/ MODULES CALLED: pickmonster(), collecttaxes(), more(), cursedtreasure(),
+/	floor(), wmove(), drandom(), sscanf(), printw(), altercoordinates(),
 /	longjmp(), infloat(), waddstr(), getanswer(), getstring(), wclrtobot()
 /
-/ GLOBAL INPUTS: Somebetter[], Curmonster, Whichmonster, Circle, Player, 
+/ GLOBAL INPUTS: Somebetter[], Curmonster, Whichmonster, Circle, Player,
 /	*stdscr, Databuf[], *Statptr, Fightenv[]
 /
 / GLOBAL OUTPUTS: Whichmonster, Shield, Player
@@ -1188,7 +1188,7 @@ awardtreasure(void)
 
 	return;
 	}
-    else   
+    else
 	/* other treasures */
 	{
 	addstr("You have found some treasure.  Do you want to inspect it ? ");
@@ -1545,7 +1545,7 @@ awardtreasure(void)
 		    }
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: cursedtreasure()
@@ -1586,7 +1586,7 @@ cursedtreasure(void)
 			Player.p_poison += 0.25;
 		}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: scramblestats()

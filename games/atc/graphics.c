@@ -124,7 +124,7 @@ setup_screen(const C_SCREEN *scp)
 	}
 	setvbuf(stdout, buffer, _IOFBF, sizeof buffer);
 	input = newwin(INPUT_LINES, COLS - PLANE_COLS, LINES - INPUT_LINES, 0);
-	credit = newwin(INPUT_LINES, PLANE_COLS, LINES - INPUT_LINES, 
+	credit = newwin(INPUT_LINES, PLANE_COLS, LINES - INPUT_LINES,
 		COLS - PLANE_COLS);
 	planes = newwin(LINES - INPUT_LINES, PLANE_COLS, 0, COLS - PLANE_COLS);
 
@@ -206,7 +206,7 @@ setup_screen(const C_SCREEN *scp)
 		wmove(radar, scp->airport[i].y, scp->airport[i].x * 2);
 		waddstr(radar, str);
 	}
-	
+
 	overwrite(radar, cleanradar);
 	wrefresh(radar);
 	wrefresh(credit);

@@ -1113,7 +1113,7 @@ int	width = DWIDTH;	/* -w option: scrunch letters to 80 columns */
 
 int
 main(int argc, char *argv[])
-{ 
+{
 	int ch;
 	const char *errstr;
 
@@ -1179,7 +1179,7 @@ main(int argc, char *argv[])
 		printf("   */\n");
 		for (i = 0; i < NBYTES; i += 10) {
 			printf("/* %4d */  ",i);
-			for (j = i; j < i+10; j++) { 
+			for (j = i; j < i+10; j++) {
 				x = data_table[j] & 0377;
 				printf(" %3d, ",x);
 			}

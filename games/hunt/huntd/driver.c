@@ -172,7 +172,7 @@ again:
 
 				read_fds = Fds_mask;
 				errno = 0;
-				nready = select(Num_fds, &read_fds, NULL, NULL, 
+				nready = select(Num_fds, &read_fds, NULL, NULL,
 				    to);
 				if (nready < 0 && errno != EINTR) {
 					logit(LOG_ERR, "select");

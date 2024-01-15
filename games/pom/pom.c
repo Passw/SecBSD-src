@@ -201,7 +201,7 @@ parsetime(char *p)
 	int yearset = 0;
 	time_t tval;
 	char *t;
-	
+
 	for (t = p; *t; ++t) {
 		if (isdigit((unsigned char)*t))
 			continue;

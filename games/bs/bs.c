@@ -2,11 +2,11 @@
 /*
  * Copyright (c) 1986, Bruce Holloway
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright
  *  notice, this list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright
@@ -15,7 +15,7 @@
  * - Neither the name of the <ORGANIZATION> nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -184,8 +184,8 @@ ship_t cpuship[SHIPTYPES] =
 	{ ptboat,	0, 'P', 2, 0, 0, 0, FALSE }
 };
 
-/* The following variables (and associated defines), used for computer 
- * targetting, must be global so that they can be reset for each new game 
+/* The following variables (and associated defines), used for computer
+ * targetting, must be global so that they can be reset for each new game
  * played without restarting the program.
  */
 #define POSSIBLE(x, y)	(ONBOARD(x, y) && !hits[COMPUTER][x][y])
@@ -199,7 +199,7 @@ ship_t cpuship[SHIPTYPES] =
     static int turncount = 0;
     static int srchstep = BEGINSTEP;
 /* Computer needs to keep track of longest and shortest player ships still
- * not sunk, for better targetting. 
+ * not sunk, for better targetting.
  */
 static int cpushortest;
 static int cpulongest;
@@ -983,7 +983,7 @@ randomfire(int *px, int *py)
     }
 	else if (srchstep > cpulongest)
     {
-	     --srchstep; 
+	     --srchstep;
 	     randomfire(px, py);
     }
 	else
@@ -1188,7 +1188,7 @@ if (!closepack)  error("Assertion failed: not closepack 2");
 	ts.x = x; ts.y = y; ts.hits = 1;
 	for (d = 0; d < 8; d += 2)
 	{
-	    while ((ONBOARD(ts.x, ts.y)) && 
+	    while ((ONBOARD(ts.x, ts.y)) &&
 			(hits[COMPUTER][(int)ts.x][(int)ts.y] == MARK_HIT))
 	    {
 		    ts.x += xincr[d]; ts.y += yincr[d]; ts.hits++;
@@ -1203,7 +1203,7 @@ if (!closepack)  error("Assertion failed: not closepack 2");
 	    } else {
 	         ts.x = x; ts.y = y; ts.hits = 1;
 	    }
-	
+
 	}
 				}
 				if (ts.hits)

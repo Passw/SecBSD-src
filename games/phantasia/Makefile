@@ -16,11 +16,11 @@ setup.o: setup.c
 phantglobs.o.bld: phantglobs.c
 	${HOSTCC} -c ${CFLAGS} -o ${.TARGET} ${.CURDIR}/phantglobs.c
 
-setup: phantglobs.o.bld setup.o monsters.asc ${DPADD} 
+setup: phantglobs.o.bld setup.o monsters.asc ${DPADD}
 	${HOSTCC} ${CFLAGS} ${LDFLAGS} ${LDSTATIC} -o ${.TARGET} \
 		  phantglobs.o.bld setup.o ${LDADD}
 
-beforeinstall: 
+beforeinstall:
 	./setup -m ${.CURDIR}/monsters.asc
 	chown root:games ${DESTDIR}/var/games/phantasia/*
 

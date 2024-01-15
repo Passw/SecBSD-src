@@ -172,10 +172,10 @@ update(int dummy)
 				if (pp->xpos == sp->airport[i].x &&
 				    pp->ypos == sp->airport[i].y) {
 					if (pp->dest_type == T_AIRPORT)
-					    loser(pp, 
+					    loser(pp,
 						"landed at the wrong airport.");
 					else
-					    loser(pp, 
+					    loser(pp,
 						"landed instead of exited.");
 				}
 			loser(pp, "crashed on the ground.");
@@ -186,10 +186,10 @@ update(int dummy)
 				if (pp->xpos == sp->exit[i].x &&
 				    pp->ypos == sp->exit[i].y) {
 					if (pp->dest_type == T_EXIT)
-					    loser(pp, 
+					    loser(pp,
 						"exited via the wrong exit.");
 					else
-					    loser(pp, 
+					    loser(pp,
 						"exited instead of landed.");
 				}
 			loser(pp, "illegally left the flight arena.");
@@ -236,7 +236,7 @@ command(PLANE *pp)
 	buf[0] = '\0';
 	bp = buf;
 	(void)snprintf(bp, buf + sizeof buf - bp,
-		"%c%d%c%c%d: ", name(pp), pp->altitude, 
+		"%c%d%c%c%d: ", name(pp), pp->altitude,
 		(pp->fuel < LOWFUEL) ? '*' : ' ',
 		(pp->dest_type == T_AIRPORT) ? 'A' : 'E', pp->dest_no);
 

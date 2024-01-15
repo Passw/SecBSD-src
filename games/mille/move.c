@@ -131,7 +131,7 @@ acc:
 			if (pp->hand[i] == C_INIT) {
 				for (j = 0; (j < HAND_SZ) &&
 					 (pp->hand[j] == C_INIT); j++)
-					;	
+					;
 				if (j == HAND_SZ)
 					j = 0;
 				pp->hand[i] = pp->hand[j];

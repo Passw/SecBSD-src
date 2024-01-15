@@ -54,7 +54,7 @@ dig(void)
 		default:
 			puts("Nothing happens.");
 		}
-	} else	
+	} else
 		puts("You don't have a shovel.");
 }
 

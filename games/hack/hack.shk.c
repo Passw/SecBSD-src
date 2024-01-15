@@ -271,7 +271,7 @@ inshop(void)
 	    (u.uinshop != roomno + 1 || shlevel != dlevel || !shopkeeper)) {
 		if(shopkeeper) {
 		    if(ESHK(shopkeeper)->billct) {
- 			if(inroom(shopkeeper->mx, shopkeeper->my) 
+ 			if(inroom(shopkeeper->mx, shopkeeper->my)
  			    == u.uinshop - 1)	/* ab@unido */
  			    pline("Somehow you escaped the shop without paying!");
 			addupbill();
@@ -495,7 +495,7 @@ dopay(void)
 		}
 		return(1);
 	}
-		
+
 	if(!ESHK(shkp)->billct){
 		pline("You do not owe %s anything.", monnam(shkp));
 		if(!u.ugold){

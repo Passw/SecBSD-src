@@ -232,13 +232,13 @@ void
 decode(char *s)
 {
 	int i;
-	
+
 	for (i = 0; i < 10; i++)
 		if (strcmp(digit[i], s) == 0) {
 			putchar('0' + i);
 			return;
 		}
-	
+
 	for (i = 0; i < 26; i++)
 		if (strcmp(alph[i], s) == 0) {
 			putchar('A' + i);

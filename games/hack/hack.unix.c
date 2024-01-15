@@ -125,7 +125,7 @@ getdate(void)
  * year: 365.2422 days
  */
 int
-phase_of_the_moon(void)	
+phase_of_the_moon(void)
 {
 	struct tm *lt = getlt();
 	int epact, diy, golden;
@@ -409,7 +409,7 @@ mdrush(struct monst *md, boolean away)
 				md->my = fy;
 			    }
 			    break;
-			} 
+			}
 		}
 		tmp_at(-1,-1);			/* close call */
 	}

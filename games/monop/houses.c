@@ -182,7 +182,7 @@ err:		printf("That makes the spread too wide.  Try again\n");
 		goto blew_it;
 	}
 	if (tot || tot2) {
-		printf("You asked for %d %s%s for $%d\n", tot ? tot : tot2, 
+		printf("You asked for %d %s%s for $%d\n", tot ? tot : tot2,
 		    tot ? "house" : "hotel", (tot == 1 || tot2 == 1) ? "" : "s",
 		    (tot ? tot : tot2) * price);
 		if (getyn("Is that ok? ") == 0) {

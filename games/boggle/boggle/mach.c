@@ -57,7 +57,7 @@ static int colstarts[MAXCOLS], ncolstarts;
 static char *separator;
 int ncols, nlines, lastline;
 
-/* 
+/*
  * The following determine the screen layout
  */
 int PROMPT_COL	= 20;
@@ -157,7 +157,7 @@ results(void)
 
 	denom1 = npwords + nmwords;
 	denom2 = tnpwords + tnmwords;
- 
+
 	move(SCORE_LINE, SCORE_COL);
 	printw("Score: %d out of %d\n", npwords, denom1);
 	move(SCORE_LINE + 1, SCORE_COL);
@@ -638,7 +638,7 @@ stop_catcher(int signo)
 	sigprocmask(SIG_SETMASK, &osigset, (sigset_t *)0);
 	signal(SIGTSTP, stop_catcher);
 }
- 
+
 static void
 cont_catcher(int signo)
 {
@@ -649,7 +649,7 @@ cont_catcher(int signo)
 	refresh();
 	starttime();
 }
- 
+
 /*
  * The signal is caught but nothing is done about it...
  * It would mean reformatting the entire display

@@ -26,7 +26,7 @@ hack.onames.h: makedefs def.objects.h
 makedefs: makedefs.c
 	${HOSTCC} ${CFLAGS} ${LDFLAGS} ${LDSTATIC} -o ${.TARGET} ${.CURDIR}/${.PREFIX}.c ${LDADD}
 
-beforeinstall: 
+beforeinstall:
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m 444 ${.CURDIR}/help \
 	    ${.CURDIR}/hh ${.CURDIR}/data ${.CURDIR}/rumors ${DESTDIR}/usr/share/games/hack
 

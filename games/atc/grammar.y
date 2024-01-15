@@ -68,7 +68,7 @@ int	line = 1;
 %%
 file:
 	bunch_of_defs { if (checkdefs() < 0) return (errors); } bunch_of_lines
-		{ 
+		{
 		if (sp->num_exits + sp->num_airports < 2)
 			yyerror("Need at least 2 airports and/or exits.");
 		return (errors);
@@ -119,7 +119,7 @@ hdef:
 		else if ($3 < 3)
 			return (yyerror("'height' is too small."));
 		else
-			sp->height = $3; 
+			sp->height = $3;
 		}
 	;
 
@@ -131,7 +131,7 @@ wdef:
 		else if ($3 < 3)
 			return (yyerror("'width' is too small."));
 		else
-			sp->width = $3; 
+			sp->width = $3;
 		}
 	;
 
@@ -165,7 +165,7 @@ Bpoint:
 		{
 		if (sp->num_beacons % REALLOC == 0) {
 			sp->beacon = reallocarray(sp->beacon,
-				(sp->num_beacons + REALLOC) , 
+				(sp->num_beacons + REALLOC) ,
 				sizeof (BEACON));
 			if (sp->beacon == NULL)
 				return (yyerror("No memory available."));
@@ -191,7 +191,7 @@ Epoint:
 
 		if (sp->num_exits % REALLOC == 0) {
 			sp->exit = reallocarray(sp->exit,
-				(sp->num_exits + REALLOC) , 
+				(sp->num_exits + REALLOC) ,
 				sizeof (EXIT));
 			if (sp->exit == NULL)
 				return (yyerror("No memory available."));
@@ -220,7 +220,7 @@ Apoint:
 
 		if (sp->num_airports % REALLOC == 0) {
 			sp->airport = reallocarray(sp->airport,
-				(sp->num_airports + REALLOC) , 
+				(sp->num_airports + REALLOC) ,
 				sizeof(AIRPORT));
 			if (sp->airport == NULL)
 				return (yyerror("No memory available."));
@@ -265,7 +265,7 @@ Lline:
 void
 check_edge(int x, int y)
 {
-	if (!(x == 0) && !(x == sp->width - 1) && 
+	if (!(x == 0) && !(x == sp->width - 1) &&
 	    !(y == 0) && !(y == sp->height - 1))
 		yyerror("edge value not on edge.");
 }
@@ -325,7 +325,7 @@ check_edir(int x, int y, int dir)
 		y = 2;
 	else if (y != 0)
 		y = 1;
-	
+
 	switch (x * 10 + y) {
 	case 00: if (dir != 3) bad++; break;
 	case 01: if (dir < 1 || dir > 3) bad++; break;

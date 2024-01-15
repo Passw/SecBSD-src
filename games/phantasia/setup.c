@@ -21,7 +21,7 @@
 
 __dead void Error(char *, char *);
 
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: main()
@@ -34,7 +34,7 @@ __dead void Error(char *, char *);
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: exit(), stat(), Error(), open(), close(), fopen(), 
+/ MODULES CALLED: exit(), stat(), Error(), open(), close(), fopen(),
 /	fgets(), floor(), umask(), strlcpy(),
 /	unlink(), fwrite(), fclose(), sscanf(), printf(), strlen(), fprintf()
 /
@@ -42,7 +42,7 @@ __dead void Error(char *, char *);
 /
 / GLOBAL OUTPUTS: Curmonster, Databuf[], *Monstfp, Enrgyvoid
 /
-/ DESCRIPTION: 
+/ DESCRIPTION:
 /
 /	This program tries to verify the parameters specified in
 /	the Makefile.
@@ -180,7 +180,7 @@ main(int argc, char *argv[])
 
     return 0;
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: Error()
@@ -214,7 +214,7 @@ Error(char *str, char *file)
 	perror(file);
 	exit(1);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: drandom()
@@ -233,7 +233,7 @@ Error(char *str, char *file)
 /
 / GLOBAL OUTPUTS: none
 /
-/ DESCRIPTION: 
+/ DESCRIPTION:
 /
 *************************************************************************/
 

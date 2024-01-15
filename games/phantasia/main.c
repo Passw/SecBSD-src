@@ -82,16 +82,16 @@
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: monstlist(), checkenemy(), activelist(), 
-/	throneroom(), checkbattle(), readmessage(), changestats(), writerecord(), 
-/	tradingpost(), adjuststats(), recallplayer(), displaystats(), checktampered(), 
-/	fabs(), rollnewplayer(), time(), exit(), sqrt(), floor(), wmove(), 
-/	signal(), strlcat(), purgeoldplayers(), getuid(), isatty(), wclear(), 
-/	strlcpy(), system(), altercoordinates(), cleanup(), waddstr(), procmain(), 
-/	playinit(), leavegame(), localtime(), getanswer(), neatstuff(), initialstate(), 
+/ MODULES CALLED: monstlist(), checkenemy(), activelist(),
+/	throneroom(), checkbattle(), readmessage(), changestats(), writerecord(),
+/	tradingpost(), adjuststats(), recallplayer(), displaystats(), checktampered(),
+/	fabs(), rollnewplayer(), time(), exit(), sqrt(), floor(), wmove(),
+/	signal(), strlcat(), purgeoldplayers(), getuid(), isatty(), wclear(),
+/	strlcpy(), system(), altercoordinates(), cleanup(), waddstr(), procmain(),
+/	playinit(), leavegame(), localtime(), getanswer(), neatstuff(), initialstate(),
 /	scorelist(), titlelist()
 /
-/ GLOBAL INPUTS: *Login, Throne, Wizard, Player, *stdscr, Changed, Databuf[], 
+/ GLOBAL INPUTS: *Login, Throne, Wizard, Player, *stdscr, Changed, Databuf[],
 /	Fileloc, Stattable[]
 /
 / GLOBAL OUTPUTS: Wizard, Player, Changed, Fileloc, Timeout, *Statptr
@@ -284,7 +284,7 @@ main(int argc, char **argv)
 		procmain();	/* process input */
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: initialstate()
@@ -299,10 +299,10 @@ main(int argc, char **argv)
 /
 / MODULES CALLED: fopen(), error(), getuid(), getlogin(), getpwuid()
 /
-/ GLOBAL INPUTS: 
+/ GLOBAL INPUTS:
 /
-/ GLOBAL OUTPUTS: *Energyvoidfp, Echo, Marsh, *Login, Users, Beyond, 
-/	Throne, Wizard, Changed, Okcount, Timeout, Windows, *Monstfp, *Messagefp, 
+/ GLOBAL OUTPUTS: *Energyvoidfp, Echo, Marsh, *Login, Users, Beyond,
+/	Throne, Wizard, Changed, Okcount, Timeout, Windows, *Monstfp, *Messagefp,
 /	*Playersfp
 /
 / DESCRIPTION:
@@ -365,7 +365,7 @@ initialstate(void)
 	if ((Energyvoidfp = fopen(_PATH_VOID, "r+")) == NULL)
 		error(_PATH_VOID);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: rollnewplayer()
@@ -378,8 +378,8 @@ initialstate(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: initplayer(), allocrecord(), truncstring(), fabs(), wmove(), 
-/	wclear(), sscanf(), strcmp(), genchar(), waddstr(), findname(), mvprintw(), 
+/ MODULES CALLED: initplayer(), allocrecord(), truncstring(), fabs(), wmove(),
+/	wclear(), sscanf(), strcmp(), genchar(), waddstr(), findname(), mvprintw(),
 /	getanswer(), getstring()
 /
 / GLOBAL INPUTS: Other, Wizard, Player, *stdscr, Databuf[]
@@ -480,7 +480,7 @@ rollnewplayer(void)
 
 	return (allocrecord());
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: procmain()
@@ -493,12 +493,12 @@ rollnewplayer(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: dotampered(), changestats(), inputoption(), allstatslist(), 
-/	fopen(), wmove(), drandom(), sscanf(), fclose(), altercoordinates(), 
-/	waddstr(), fprintf(), distance(), userlist(), leavegame(), encounter(), 
+/ MODULES CALLED: dotampered(), changestats(), inputoption(), allstatslist(),
+/	fopen(), wmove(), drandom(), sscanf(), fclose(), altercoordinates(),
+/	waddstr(), fprintf(), distance(), userlist(), leavegame(), encounter(),
 /	getstring(), wclrtobot()
 /
-/ GLOBAL INPUTS: Circle, Illcmd[], Throne, Wizard, Player, *stdscr, 
+/ GLOBAL INPUTS: Circle, Illcmd[], Throne, Wizard, Player, *stdscr,
 /	Databuf[], Illmove[]
 /
 / GLOBAL OUTPUTS: Player, Changed
@@ -716,7 +716,7 @@ procmain(void)
 			encounter(-1);
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: titlelist()
@@ -729,7 +729,7 @@ procmain(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: fread(), fseek(), fopen(), fgets(), wmove(), strlcpy(), 
+/ MODULES CALLED: fread(), fseek(), fopen(), fgets(), wmove(), strlcpy(),
 /	fclose(), strlen(), waddstr(), snprintf(), wrefresh()
 /
 / GLOBAL INPUTS: Lines, Other, *stdscr, Databuf[], *Playersfp
@@ -849,7 +849,7 @@ titlelist(void)
 	}
 	refresh();
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: recallplayer()
@@ -862,8 +862,8 @@ titlelist(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: writerecord(), truncstring(), more(), death(), wmove(), 
-/	wclear(), strcmp(), printw(), cleanup(), waddstr(), findname(), mvprintw(), 
+/ MODULES CALLED: writerecord(), truncstring(), more(), death(), wmove(),
+/	wclear(), strcmp(), printw(), cleanup(), waddstr(), findname(), mvprintw(),
 /	getanswer(), getstring()
 /
 / GLOBAL INPUTS: Player, *stdscr, Databuf[]
@@ -931,7 +931,7 @@ recallplayer(void)
 	more(13);
 	return (-1L);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: neatstuff()
@@ -944,7 +944,7 @@ recallplayer(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: collecttaxes(), floor(), wmove(), drandom(), infloat(), 
+/ MODULES CALLED: collecttaxes(), floor(), wmove(), drandom(), infloat(),
 /	waddstr(), mvprintw(), getanswer()
 /
 / GLOBAL INPUTS: Player, *stdscr, *Statptr
@@ -1055,7 +1055,7 @@ neatstuff(void)
 		break;
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: genchar()
@@ -1115,7 +1115,7 @@ genchar(int type)
 		/* give halfling some experience */
 		Player.p_experience = ROLL(600.0, 200.0);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: playinit()
@@ -1128,7 +1128,7 @@ genchar(int type)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: signal(), wclear(), noecho(), cbreak(), initscr(), 
+/ MODULES CALLED: signal(), wclear(), noecho(), cbreak(), initscr(),
 /	wrefresh()
 /
 / GLOBAL INPUTS: *stdscr, ill_sig()
@@ -1150,7 +1150,7 @@ playinit(void)
 	refresh();
 	Windows = TRUE;		/* mark the state */
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: cleanup()
@@ -1166,7 +1166,7 @@ playinit(void)
 /
 / MODULES CALLED: exit(), wmove(), fclose(), endwin(), nocbreak(), wrefresh()
 /
-/ GLOBAL INPUTS: *Energyvoidfp, LINES, *stdscr, Windows, *Monstfp, 
+/ GLOBAL INPUTS: *Energyvoidfp, LINES, *stdscr, Windows, *Monstfp,
 /	*Messagefp, *Playersfp
 /
 / GLOBAL OUTPUTS: none

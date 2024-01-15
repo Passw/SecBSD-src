@@ -33,7 +33,7 @@ static jmp_buf Timeoenv;	/* used for timing out waiting for input */
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: wmove(), _filbuf(), clearok(), waddstr(), wrefresh(), 
+/ MODULES CALLED: wmove(), _filbuf(), clearok(), waddstr(), wrefresh(),
 /	wclrtoeol()
 /
 / GLOBAL INPUTS: Echo, _iob[], Wizard, *stdscr
@@ -103,7 +103,7 @@ getstring(char *cp, int mx)
 	}
 	while (ch != CH_NEWLINE && ch != CH_RETURN && inptr < cp + mx);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: more()
@@ -134,7 +134,7 @@ more(int where)
 	mvaddstr(where, 0, "-- more --");
 	getanswer(" ", FALSE);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: infloat()
@@ -172,7 +172,7 @@ infloat(void)
 
 	return (result);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: inputoption()
@@ -213,7 +213,7 @@ inputoption(void)
 		return ((int) ROLL(0.0, 5.0) + '0');
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: interrupt()
@@ -226,7 +226,7 @@ inputoption(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: fork(), exit(), wait(), death(), alarm(), execl(), wmove(), 
+/ MODULES CALLED: fork(), exit(), wait(), death(), alarm(), execl(), wmove(),
 /	signal(), getenv(), wclear(), crmode(), clearok(), waddstr(),
 /	cleanup(), wrefresh(), leavegame(), getanswer()
 /
@@ -280,7 +280,7 @@ interrupt(void)
 
 	alarm(savealarm);	/* restore alarm */
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: getanswer()
@@ -295,10 +295,10 @@ interrupt(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: alarm(), wmove(), waddch(), signal(), setjmp(), strchr(), 
+/ MODULES CALLED: alarm(), wmove(), waddch(), signal(), setjmp(), strchr(),
 /	_filbuf(), clearok(), toupper(), wrefresh(), mvprintw(), wclrtoeol()
 /
-/ GLOBAL INPUTS: catchalarm(), Echo, _iob[], _ctype[], *stdscr, Timeout, 
+/ GLOBAL INPUTS: catchalarm(), Echo, _iob[], _ctype[], *stdscr, Timeout,
 /	Timeoenv[]
 /
 / GLOBAL OUTPUTS: _iob[]
@@ -385,7 +385,7 @@ getanswer(char *choices, bool def)
 
 	return (*choices);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: catchalarm()

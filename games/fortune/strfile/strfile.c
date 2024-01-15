@@ -58,7 +58,7 @@
  *	s - Silent.  Give no summary of data processed at the end of
  *	    the run.
  *	o - order the strings in alphabetic order
- *	i - if ordering, ignore case 
+ *	i - if ordering, ignore case
  *	r - randomize the order of the strings
  *	x - set rotated bit
  *

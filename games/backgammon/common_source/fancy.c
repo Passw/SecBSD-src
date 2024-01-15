@@ -218,7 +218,7 @@ moveplayers(void)
 	move(r, c);		/* return to saved position */
 	refresh();
 }
-	
+
 
 void
 fixpos(int old, int new, int r, int c, int inc)

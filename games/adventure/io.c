@@ -46,7 +46,7 @@
 
 /* Get command from user. No prompt, usually.	*/
 void
-getin(char *wrd1, size_t siz1, char *wrd2, size_t siz2)	
+getin(char *wrd1, size_t siz1, char *wrd2, size_t siz2)
 {
 	char   *s, *slast;
 	int     ch, first;
@@ -512,7 +512,7 @@ mspeak(int msg)
  * msg is a pointer to seek address and length of mess
  */
 void
-speak(const struct text *msg)	
+speak(const struct text *msg)
 {
 	char   *s, nonfirst;
 
@@ -543,7 +543,7 @@ speak(const struct text *msg)
  * assumes object 1 doesn't have prop 1, obj 2 no prop 2 &c
  */
 void
-pspeak(int m, int skip) 
+pspeak(int m, int skip)
 {
 	char   *s, nonfirst;
 	char   *numst, save;

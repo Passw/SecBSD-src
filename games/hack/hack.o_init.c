@@ -86,7 +86,7 @@ init_objects(void)
 	int i, j, first, last, sum, end;
 	char let, *tmp;
 
-	/* init base; if probs given check that they add up to 100, 
+	/* init base; if probs given check that they add up to 100,
 	   otherwise compute probs; shuffle descriptions */
 	end = SIZE(objects);
 	first = 0;
@@ -169,7 +169,7 @@ oinit(void)			/* level dependent initialization */
 }
 
 void
-savenames(int fd) 
+savenames(int fd)
 {
 	int i;
 	unsigned len;
@@ -218,13 +218,13 @@ restnames(int fd)
 		if(len) {
 			objects[i].oc_descr = (char *) alloc(len);
 			mread(fd, objects[i].oc_descr, len);
-		} else 
+		} else
 			objects[i].oc_descr = 0;
 		mread(fd, (char *) &len, sizeof len);
 		if(len) {
 			objects[i].oc_uname = (char *) alloc(len);
 			mread(fd, objects[i].oc_uname, len);
-		} else 
+		} else
 			objects[i].oc_uname = 0;
 	}
 }

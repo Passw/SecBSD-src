@@ -98,7 +98,7 @@ movelevel(void)
 	if (Player.p_level > 9999.0 && Player.p_specialtype != SC_VALAR)
 		death("Old age");
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: descrlocation()
@@ -176,7 +176,7 @@ descrlocation(struct player *playerp, bool shortflag)
 
 	return (Databuf);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: tradingpost()
@@ -189,9 +189,9 @@ descrlocation(struct player *playerp, bool shortflag)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: writerecord(), adjuststats(), fabs(), more(), sqrt(), 
-/	sleep(), floor(), wmove(), drandom(), wclear(), printw(), 
-/	altercoordinates(), infloat(), waddstr(), wrefresh(), mvprintw(), getanswer(), 
+/ MODULES CALLED: writerecord(), adjuststats(), fabs(), more(), sqrt(),
+/	sleep(), floor(), wmove(), drandom(), wclear(), printw(),
+/	altercoordinates(), infloat(), waddstr(), wrefresh(), mvprintw(), getanswer(),
 /	wclrtoeol(), wclrtobot()
 /
 / GLOBAL INPUTS: Menu[], Circle, Player, *stdscr, Fileloc, Nobetter[]
@@ -469,7 +469,7 @@ tradingpost(void)
 		}
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: displaystats()
@@ -504,7 +504,7 @@ displaystats(void)
 	    Player.p_speed, Player.p_quickness + Player.p_quksilver, Player.p_might,
 	    Player.p_strength + Player.p_sword, Player.p_gold, descrstatus(&Player));
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: allstatslist()
@@ -560,7 +560,7 @@ allstatslist(void)
 	    flags[(int)Player.p_virgin],
 	    flags[(int)Player.p_palantir]);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: descrtype()
@@ -651,7 +651,7 @@ descrtype(struct player *playerp, bool shortflag)
 	} else
 		return (results[type]);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: findname()
@@ -695,7 +695,7 @@ findname(char *name, struct player *playerp)
 
 	return (-1);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: allocrecord()
@@ -741,7 +741,7 @@ allocrecord(void)
 
 	return (loc);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: freerecord()
@@ -774,7 +774,7 @@ freerecord(struct player *playerp, long loc)
 	playerp->p_status = S_NOTUSED;
 	writerecord(playerp, loc);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: leavegame()
@@ -813,7 +813,7 @@ leavegame(void)
 
 	cleanup(TRUE);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: death()
@@ -827,9 +827,9 @@ leavegame(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: freerecord(), enterscore(), more(), exit(), fread(), 
-/	fseek(), execl(), fopen(), floor(), wmove(), drandom(), wclear(), strcmp(), 
-/	fwrite(), fflush(), printw(), strlcpy(), fclose(), waddstr(), cleanup(), 
+/ MODULES CALLED: freerecord(), enterscore(), more(), exit(), fread(),
+/	fseek(), execl(), fopen(), floor(), wmove(), drandom(), wclear(), strcmp(),
+/	fwrite(), fflush(), printw(), strlcpy(), fclose(), waddstr(), cleanup(),
 /	fprintf(), wrefresh(), getanswer(), descrtype()
 /
 / GLOBAL INPUTS: Curmonster, Wizard, Player, *stdscr, Fileloc, *Monstfp
@@ -939,7 +939,7 @@ death(char *how)
 	}
 	cleanup(TRUE);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: writerecord()
@@ -972,7 +972,7 @@ writerecord(struct player *playerp, long place)
 	fwrite(playerp, SZ_PLAYERSTRUCT, 1, Playersfp);
 	fflush(Playersfp);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: explevel()
@@ -992,7 +992,7 @@ writerecord(struct player *playerp, long place)
 /
 / GLOBAL OUTPUTS: none
 /
-/ DESCRIPTION: 
+/ DESCRIPTION:
 /	Experience level is a geometric progression.  This has been finely
 /	tuned over the years, and probably should not be changed.
 /
@@ -1006,7 +1006,7 @@ explevel(double experience)
 	else
 		return (floor(pow((experience / 1250.0), 0.4865)));
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: truncstring()
@@ -1015,7 +1015,7 @@ explevel(double experience)
 /
 / AUTHOR: E. A. Estes, 12/4/85
 /
-/ ARGUMENTS: 
+/ ARGUMENTS:
 /	char *string - pointer to null terminated string
 /
 / RETURN VALUE: none
@@ -1026,7 +1026,7 @@ explevel(double experience)
 /
 / GLOBAL OUTPUTS: none
 /
-/ DESCRIPTION: 
+/ DESCRIPTION:
 /	Put nul characters in place of spaces at the end of the string.
 /
 *************************************************************************/
@@ -1040,7 +1040,7 @@ truncstring(char *string)
 	while (string[--length] == ' ')
 		string[length] = '\0';
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: altercoordinates()
@@ -1049,7 +1049,7 @@ truncstring(char *string)
 /
 / AUTHOR: E. A. Estes, 12/16/85
 /
-/ ARGUMENTS: 
+/ ARGUMENTS:
 /	double xnew, ynew - new x, y coordinates
 /	int operation - operation to perform with coordinates
 /
@@ -1061,7 +1061,7 @@ truncstring(char *string)
 /
 / GLOBAL OUTPUTS: Marsh, Circle, Beyond, Throne, Player, Changed
 /
-/ DESCRIPTION: 
+/ DESCRIPTION:
 /	This module is called whenever the player's coordinates are altered.
 /	If the player is beyond the point of no return, he/she is forced
 /	to stay there.
@@ -1115,7 +1115,7 @@ altercoordinates(double xnew, double ynew, int operation)
 
 	Changed = TRUE;
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: readrecord()
@@ -1147,7 +1147,7 @@ readrecord(struct player *playerp, long loc)
 	fseek(Playersfp, loc, SEEK_SET);
 	fread(playerp, SZ_PLAYERSTRUCT, 1, Playersfp);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: adjuststats()
@@ -1261,7 +1261,7 @@ adjuststats(void)
 		Player.p_shield *= 0.93;
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: initplayer()
@@ -1344,7 +1344,7 @@ initplayer(struct player *playerp)
 	    playerp->p_password[0] =
 	    playerp->p_login[0] = '\0';
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: readmessage()
@@ -1377,7 +1377,7 @@ readmessage(void)
 	if (fgets(Databuf, SZ_DATABUF, Messagefp) != NULL)
 		addstr(Databuf);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: error()
@@ -1414,7 +1414,7 @@ error(char *whichfile)
 	fprintf(stderr, "Please run 'setup' to determine the problem.\n");
 	exit(1);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: distance()
@@ -1423,7 +1423,7 @@ error(char *whichfile)
 /
 / AUTHOR: E. A. Estes, 12/4/85
 /
-/ ARGUMENTS: 
+/ ARGUMENTS:
 /	double x1, y1 - x, y coordinates of first point
 /	double x2, y2 - x, y coordinates of second point
 /
@@ -1509,7 +1509,7 @@ descrstatus(struct player *playerp)
 		return ("");
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: drandom()
@@ -1539,7 +1539,7 @@ drandom(void)
 {
 	return ((double) arc4random() / (UINT32_MAX + 1.0));
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: collecttaxes()

@@ -93,7 +93,7 @@ static int pairpoints, runpoints;		/* Globals from pairuns. */
  *	Score the given hand of n cards and the starter card.
  *	n must be <= 4
  * crb       : true if scoring crib
- * do_explain: true if must explain this hand 
+ * do_explain: true if must explain this hand
  */
 int
 scorehand(CARD hand[], CARD starter, int n, bool crb, bool do_explain)

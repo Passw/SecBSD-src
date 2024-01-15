@@ -67,8 +67,8 @@ moveplayer(int thataway, int token)
  * are added at dusk, and subtracted at dawn.
  */
 void
-convert(int tothis)			
-{				
+convert(int tothis)
+{
 	const struct objs *p;
 	unsigned int i, j;
 

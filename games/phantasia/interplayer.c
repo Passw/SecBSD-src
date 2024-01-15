@@ -77,7 +77,7 @@ checkbattle(void)
 		foeloc += SZ_PLAYERSTRUCT;
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: battleplayer()
@@ -91,12 +91,12 @@ checkbattle(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: readrecord(), readmessage(), writerecord(), collecttaxes(), 
-/	displaystats(), fabs(), more(), death(), sleep(), wmove(), waddch(), printw(), 
-/	myturn(), altercoordinates(), waddstr(), wrefresh(), mvprintw(), 
+/ MODULES CALLED: readrecord(), readmessage(), writerecord(), collecttaxes(),
+/	displaystats(), fabs(), more(), death(), sleep(), wmove(), waddch(), printw(),
+/	myturn(), altercoordinates(), waddstr(), wrefresh(), mvprintw(),
 /	getanswer(), wclrtoeol(), wclrtobot()
 /
-/ GLOBAL INPUTS: Foestrikes, LINES, Lines, Other, Shield, Player, *stdscr, 
+/ GLOBAL INPUTS: Foestrikes, LINES, Lines, Other, Shield, Player, *stdscr,
 /	Fileloc, *Enemyname
 /
 / GLOBAL OUTPUTS: Foestrikes, Lines, Shield, Player, Luckout, *Enemyname
@@ -337,7 +337,7 @@ LEAVE:
 		/* we are dead */
 		death("Interterminal battle");
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: myturn()
@@ -350,10 +350,10 @@ LEAVE:
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: writerecord(), inputoption(), floor(), wmove(), drandom(), 
+/ MODULES CALLED: writerecord(), inputoption(), floor(), wmove(), drandom(),
 /	waddstr(), wrefresh(), mvprintw(), wclrtoeol(), wclrtobot()
 /
-/ GLOBAL INPUTS: Lines, Other, Player, *stdscr, Fileloc, Luckout, 
+/ GLOBAL INPUTS: Lines, Other, Player, *stdscr, Fileloc, Luckout,
 /	*Enemyname
 /
 / GLOBAL OUTPUTS: Foestrikes, Lines, Player, Luckout
@@ -441,7 +441,7 @@ HIT:
 		}
 	writerecord(&Player, Fileloc);	/* let foe know what we did */
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: checktampered()
@@ -498,7 +498,7 @@ checktampered(void)
 	if (Other.p_tampered != T_OFF)
 		tampered(Other.p_tampered, Other.p_1scratch, Other.p_2scratch);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: tampered()
@@ -513,8 +513,8 @@ checktampered(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: writerecord(), more(), fread(), death(), fseek(), sleep(), 
-/	floor(), wmove(), waddch(), drandom(), printw(), altercoordinates(), 
+/ MODULES CALLED: writerecord(), more(), fread(), death(), fseek(), sleep(),
+/	floor(), wmove(), waddch(), drandom(), printw(), altercoordinates(),
 /	waddstr(), wrefresh(), encounter(), writevoid()
 /
 / GLOBAL INPUTS: Other, Player, *stdscr, Enrgyvoid, *Playersfp
@@ -675,7 +675,7 @@ tampered(int what, double arg1, double arg2)
 	refresh();
 	sleep(2);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: userlist()
@@ -689,8 +689,8 @@ tampered(int what, double arg1, double arg2)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: descrstatus(), descrlocation(), more(), fread(), fseek(), 
-/	floor(), wmove(), printw(), waddstr(), distance(), wrefresh(), 
+/ MODULES CALLED: descrstatus(), descrlocation(), more(), fread(), fseek(),
+/	floor(), wmove(), printw(), waddstr(), distance(), wrefresh(),
 /	descrtype(), wclrtobot()
 /
 / GLOBAL INPUTS: LINES, Other, Circle, Wizard, Player, *stdscr, *Playersfp
@@ -769,7 +769,7 @@ userlist(bool ingameflag)
 	printw("Total players on file = %d\n", numusers);
 	refresh();
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: throneroom()
@@ -782,7 +782,7 @@ userlist(bool ingameflag)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: writerecord(), fread(), fseek(), fopen(), wmove(), fclose(), 
+/ MODULES CALLED: writerecord(), fread(), fseek(), fopen(), wmove(), fclose(),
 /	fwrite(), altercoordinates(), waddstr(), fprintf()
 /
 / GLOBAL INPUTS: *Energyvoidfp, Other, Player, *stdscr,
@@ -851,7 +851,7 @@ throneroom(void)
 	}
 	mvaddstr(6, 0, "0:Decree  ");
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: dotampered()
@@ -864,12 +864,12 @@ throneroom(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: writerecord(), truncstring(), fread(), fseek(), fopen(), 
-/	floor(), wmove(), drandom(), fclose(), fwrite(), sscanf(), strcmp(), 
-/	infloat(), waddstr(), findname(), distance(), userlist(), mvprintw(), 
+/ MODULES CALLED: writerecord(), truncstring(), fread(), fseek(), fopen(),
+/	floor(), wmove(), drandom(), fclose(), fwrite(), sscanf(), strcmp(),
+/	infloat(), waddstr(), findname(), distance(), userlist(), mvprintw(),
 /	allocvoid(), getanswer(), getstring(), wclrtoeol(), writevoid()
 /
-/ GLOBAL INPUTS: *Energyvoidfp, Other, Illcmd[], Wizard, Player, *stdscr, 
+/ GLOBAL INPUTS: *Energyvoidfp, Other, Illcmd[], Wizard, Player, *stdscr,
 /	Databuf[], Enrgyvoid
 /
 / GLOBAL OUTPUTS: Other, Player, Enrgyvoid
@@ -1085,7 +1085,7 @@ dotampered(void)
 		/* self */
 		mvaddstr(5, 0, "You may not do it to yourself!\n");
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: writevoid()
@@ -1120,7 +1120,7 @@ writevoid(struct energyvoid *vp, long loc)
 	fflush(Energyvoidfp);
 	fseek(Energyvoidfp, 0L, SEEK_SET);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: allocvoid()

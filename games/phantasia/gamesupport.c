@@ -27,12 +27,12 @@
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: freerecord(), writerecord(), descrstatus(), truncstring(), 
-/	time(), more(), wmove(), wclear(), strcmp(), printw(), strlcpy(), 
-/	infloat(), waddstr(), cleanup(), findname(), userlist(), mvprintw(), 
+/ MODULES CALLED: freerecord(), writerecord(), descrstatus(), truncstring(),
+/	time(), more(), wmove(), wclear(), strcmp(), printw(), strlcpy(),
+/	infloat(), waddstr(), cleanup(), findname(), userlist(), mvprintw(),
 /	localtime(), getanswer(), descrtype(), getstring()
 /
-/ GLOBAL INPUTS: LINES, *Login, Other, Wizard, Player, *stdscr, Databuf[], 
+/ GLOBAL INPUTS: LINES, *Login, Other, Wizard, Player, *stdscr, Databuf[],
 /	Fileloc
 /
 / GLOBAL OUTPUTS: Echo
@@ -489,7 +489,7 @@ BALTER:
 		continue;
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: monstlist()
@@ -526,7 +526,7 @@ monstlist(void)
 		    Curmonster.m_speed, Curmonster.m_energy, Curmonster.m_experience,
 		    Curmonster.m_treasuretype, Curmonster.m_type, Curmonster.m_flock);
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: scorelist()
@@ -541,7 +541,7 @@ monstlist(void)
 /
 / MODULES CALLED: fread(), fopen(), printf(), fclose()
 /
-/ GLOBAL INPUTS: 
+/ GLOBAL INPUTS:
 /
 / GLOBAL OUTPUTS: none
 /
@@ -563,7 +563,7 @@ scorelist(void)
 		fclose(fp);
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: activelist()
@@ -600,7 +600,7 @@ activelist(void)
 			    descrtype(&Other, FALSE), descrstatus(&Other));
 
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: purgeoldplayers()
@@ -653,7 +653,7 @@ purgeoldplayers(void)
 		loc += SZ_PLAYERSTRUCT;
 	}
 }
-/**/
+/**/
 /************************************************************************
 /
 / FUNCTION NAME: enterscore()
@@ -666,7 +666,7 @@ purgeoldplayers(void)
 /
 / RETURN VALUE: none
 /
-/ MODULES CALLED: fread(), fseek(), fopen(), error(), strcmp(), fclose(), 
+/ MODULES CALLED: fread(), fseek(), fopen(), error(), strcmp(), fclose(),
 /	strlcpy(), fwrite(), descrtype()
 /
 / GLOBAL INPUTS: Player

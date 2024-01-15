@@ -198,14 +198,14 @@ acceptboard(void)
 void
 parties(int crew[3], struct ship *to, int isdefense, int buf)
 {
-	int k, j, men; 
+	int k, j, men;
 	struct BP *ptr;
 	int temp[3];
 
 	for (k = 0; k < 3; k++)
 		temp[k] = crew[k];
 	if (isdigit((unsigned char)buf)) {
-		ptr = isdefense ? to->file->DBP : to->file->OBP; 
+		ptr = isdefense ? to->file->DBP : to->file->OBP;
 		for (j = 0; j < NBP && ptr[j].turnsent; j++)
 			;
 		if (j < NBP && buf > '0') {

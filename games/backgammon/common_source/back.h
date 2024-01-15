@@ -47,7 +47,7 @@
 #define D0	dice[0]
 #define D1	dice[1]
 #define swap	{D0 ^= D1; D1 ^= D0; D0 ^= D1; d0 = 1-d0;}
- 
+
 #define CIN_SIZE 40
 
 #ifdef DEBUG

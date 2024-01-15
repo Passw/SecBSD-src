@@ -50,7 +50,7 @@ PLANE	*
 newplane(void)
 {
 	PLANE *p;
-	
+
 	if ((p = calloc(1, sizeof (PLANE))) == NULL)
 		loser(NULL, "Out of memory");
 	return (p);
@@ -98,7 +98,7 @@ delete(LIST *l, PLANE *p)
 {
 	if (l->head == NULL)
 		loser(p, "deleted a non-existent plane! Get help!");
-	
+
 	if (l->head == p && l->tail == p)
 		l->head = l->tail = NULL;
 	else if (l->head == p) {

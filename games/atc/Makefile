@@ -11,7 +11,7 @@ GAMES=	Game_List Killer crossover default easy game_2 \
 	Atlantis OHare Tic-Tac-Toe airports box crosshatch game_3 \
 	game_4 novice two-corners
 
-beforeinstall: 
+beforeinstall:
 	@if [ ! -d ${DESTDIR}/usr/share/games/atc ]; then \
                 /bin/rm -f ${DESTDIR}/usr/share/games/atc ; \
                 mkdir -p ${DESTDIR}/usr/share/games/atc ; \

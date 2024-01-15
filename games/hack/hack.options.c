@@ -109,7 +109,7 @@ parseoptions(char *opts, boolean from_env)
 		if(*opts == '!') opts++; else opts += 2;
 		negated = !negated;
 	}
-	
+
 	if(!strncmp(opts,"standout",8)) {
 		flags.standout = !negated;
 		return;

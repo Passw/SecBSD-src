@@ -165,7 +165,7 @@ int status = INSTRUCTIONBOX;
 #define	maxtimecharge		 3
 #define	valuepercardup	 	 5
 /*
- * Variables associated with betting 
+ * Variables associated with betting
  */
 struct betinfo {
 	long	hand;		/* cost of dealing hand */
@@ -606,7 +606,7 @@ printcard(int a, int b, const struct cardtype *cp)
 }
 
 /*
- * procedure to move the top card from one location to the top 
+ * procedure to move the top card from one location to the top
  * of another location. The pointers always point to the top
  * of the piles.
  */
@@ -614,7 +614,7 @@ void
 transit(struct cardtype **source, struct cardtype **dest)
 {
 	struct cardtype *temp;
-	
+
 	temp = *source;
 	*source = (*source)->next;
 	temp->next = *dest;
@@ -662,7 +662,7 @@ fndbase(struct cardtype **cp, int column, int row)
 					game.wins += valuepercardup;
 					total.wins += valuepercardup;
 				}
-			} else 
+			} else
 				nomore = TRUE;
 	} while (nomore == FALSE);
 }
@@ -804,7 +804,7 @@ notempty(const struct cardtype *cp)
 		move(msgrow, msgcol);
 		printw("Error: no cards to move");
 		return (FALSE);
-	} else 
+	} else
 		return (TRUE);
 }
 
@@ -814,14 +814,14 @@ notempty(const struct cardtype *cp)
 bool
 ranklower(const struct cardtype *cp1, const struct cardtype *cp2)
 {
-	if (cp2->rank == Ace) 
+	if (cp2->rank == Ace)
 		if (cp1->rank == King)
 			return (TRUE);
-		else 
+		else
 			return (FALSE);
 	else if (cp1->rank + 1 == cp2->rank)
 		return (TRUE);
-	else 
+	else
 		return (FALSE);
 }
 
@@ -833,7 +833,7 @@ diffcolor(const struct cardtype *cp1, const struct cardtype *cp2)
 {
 	if (cp1->color == cp2->color)
 		return (FALSE);
-	else 
+	else
 		return (TRUE);
 }
 
@@ -846,15 +846,15 @@ tabok(const struct cardtype *cp, int des)
 	if ((cp == stock) && (tableau[des] == NIL))
 		return (TRUE);
 	else if (tableau[des] == NIL)
-		if (stock == NIL && 
-		    cp != bottom[0] && cp != bottom[1] && 
+		if (stock == NIL &&
+		    cp != bottom[0] && cp != bottom[1] &&
 		    cp != bottom[2] && cp != bottom[3])
 			return (TRUE);
-		else 
+		else
 			return (FALSE);
 	else if (ranklower(cp, tableau[des]) && diffcolor(cp, tableau[des]))
 		return (TRUE);
-	else 
+	else
 		return (FALSE);
 }
 
@@ -1178,7 +1178,7 @@ simpletableau(struct cardtype **cp, int des)
 				usedtalon();
 				printcard(taloncol, talonrow, talon);
 			}
-		} else 
+		} else
 			destinerror();
 	}
 }
@@ -1198,7 +1198,7 @@ tabprint(int sour, int des)
 	slength = length[sour];
 	if (slength == tabrow)
 		printcard(pilemap[des], dlength, tableau[sour]);
-	else 
+	else
 		while (slength != tabrow - 1) {
 			tempcard = tableau[sour];
 			for (i=1; i<=slength-tabrow; i++)
@@ -1230,7 +1230,7 @@ tabtotab(int sour, int des)
 			length[des] = length[des] + (length[sour] - (tabrow - 1));
 			length[sour] = tabrow - 1;
 			timesthru = 0;
-		} else 
+		} else
 			destinerror();
 	}
 }
@@ -1244,11 +1244,11 @@ rankhigher(const struct cardtype *cp, int let)
 	if (found[let]->rank == King)
 		if (cp->rank == Ace)
 			return(TRUE);
-		else 
+		else
 			return(FALSE);
 	else if (cp->rank - 1 == found[let]->rank)
 		return(TRUE);
-	else 
+	else
 		return(FALSE);
 }
 
@@ -1260,7 +1260,7 @@ samesuit(const struct cardtype *cp, int let)
 {
 	if (cp->suit == found[let]->suit)
 		return (TRUE);
-	else 
+	else
 		return (FALSE);
 }
 
@@ -1306,7 +1306,7 @@ movetofound(struct cardtype **cp, int source)
 					mtfdone = TRUE;
 				} else
 					tempbase++;
-			else 
+			else
 				tempbase++;
 		} while ((tempbase != 4) && !mtfdone);
 		if (!mtfdone)

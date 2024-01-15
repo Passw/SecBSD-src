@@ -303,7 +303,7 @@ int getcoord(void)
 	refresh();
 	nx = curx; ny = cury;
 	for (;;) {
-		mvprintw(BSZ3, (BSZ -6)/2, "(%c %d)", 
+		mvprintw(BSZ3, (BSZ -6)/2, "(%c %d)",
 				'A'+ ((curx > 7) ? (curx+1) : curx), cury + 1);
 		BGOTO(cury, curx);
 

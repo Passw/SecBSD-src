@@ -108,7 +108,7 @@ main(int argc, char *argv[])
 		setseed(seed);
 
 	if (f_usage)
-		fprintf(stderr, 
+		fprintf(stderr,
 		    "usage: %s [-lpqst] [-f game] [-g game] [-r seed]\n",
 		    getprogname());
 	if (f_showscore)
@@ -125,7 +125,7 @@ main(int argc, char *argv[])
 			buf[len - 1] = '\0';
 		puts(buf);
 	}
-		
+
 	if (f_usage || f_showscore || f_list || f_printpath)
 		return 0;
 

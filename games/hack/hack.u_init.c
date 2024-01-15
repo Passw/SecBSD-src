@@ -428,7 +428,7 @@ plnamesuffix(void)
 /* so that rolesyms[] is defined */
 static int
 role_index(char pc)
-{		
+{
 	char *cp;
 
 	if ((cp = strchr(rolesyms, pc)))

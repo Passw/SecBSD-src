@@ -139,7 +139,7 @@ killb(int qx, int qy)
  **	kill an inhabited starsystem
  **/
 
-/* 
+/*
  * x, y: quad coords if f == 0, else sector coords
  * f != 0 -- this quad;  f < 0 -- Enterprise's fault
  */
@@ -185,7 +185,7 @@ kills(int x, int y, int f)
  **	"kill" a distress call
  **/
 
-/* 
+/*
  * x, y: quadrant coordinates
  * f: set if user is to be informed
  */

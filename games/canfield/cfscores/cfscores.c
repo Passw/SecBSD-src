@@ -63,7 +63,7 @@ main(int argc, char *argv[])
 
 	if (pledge("stdio rpath", NULL) == -1)
 		err(1, "pledge");
-	
+
 	home = getenv("HOME");
 	if (home == NULL || *home == '\0')
 		err(1, "getenv");

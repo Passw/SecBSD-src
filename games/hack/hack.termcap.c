@@ -98,7 +98,7 @@ startup(void)
 		error("Unknown terminal type: %s.", term);
 	if ((pc = tgetstr("pc", &tbufptr)))
 		PC = *pc;
-	if(!(BC = tgetstr("le", &tbufptr))) {	
+	if(!(BC = tgetstr("le", &tbufptr))) {
 		if(!tgetflag("bs"))
 			error("Terminal must backspace.");
 		BC = tbufptr;

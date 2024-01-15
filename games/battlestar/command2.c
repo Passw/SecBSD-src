@@ -370,4 +370,4 @@ undress(void)
 		wordnumber--;
 		ravage();
 	}
-}	
+}

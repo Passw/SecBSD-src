@@ -285,7 +285,7 @@ doengrave(void)
 		if(type == BURN) otmp->spe++;
 		return(0);
 	}
-	
+
 	switch(type) {
 	case DUST:
 	case BURN:

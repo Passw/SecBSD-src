@@ -248,7 +248,7 @@ save(void)
 	*sp = '\0';
 	printf("[%s]\n", buf);
 }
-/* 
+/*
  * If we are restoring during a game, try not to leak memory.
  */
 void

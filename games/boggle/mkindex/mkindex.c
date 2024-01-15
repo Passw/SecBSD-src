@@ -91,7 +91,7 @@ nextword(FILE *fp, char *buffer, int *clen, int *rlen)
 		return (NULL);
 
 	p = buf + (*clen = pcount);
- 
+
 	while ((ch = getc(fp)) != EOF && ch >= 'a')
 			*p++ = ch;
 		lastch = ch;

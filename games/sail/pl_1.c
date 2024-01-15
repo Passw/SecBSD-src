@@ -127,7 +127,7 @@ child(int n __attribute__((unused)))
 	int status;
 	int pid;
 	int save_errno = errno;
-	
+
 	(void) signal(SIGCHLD, SIG_DFL);
 	do {
 		pid = waitpid((pid_t)-1, &status, WNOHANG);

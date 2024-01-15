@@ -55,13 +55,13 @@ extern int	lastline, LIST_LINE, LIST_COL;
  *	width	- max line width if not zero
  *	prentry - address of the routine to call to print the string
  *	length  - address of the routine to call to determine the length
- *		  of string to be printed 
+ *		  of string to be printed
  *
  * prtable and length are called with the address of the base and
  * an index
  */
 void
-prtable(char **base, int num, int d_cols, int width, 
+prtable(char **base, int num, int d_cols, int width,
         void (*prentry)(char **, int), int (*length)(char **, int))
 {
 	int c, j;

@@ -56,7 +56,7 @@ static const char	*const name1[] = {
 	"trillion",	"quadrillion",	"quintillion",	"sextillion",
 	"septillion",	"octillion",	"nonillion",	"decillion",
 	"undecillion",	"duodecillion",	"tredecillion",	"quattuordecillion",
-	"quindecillion",		"sexdecillion",	
+	"quindecillion",		"sexdecillion",
 	"septendecillion",		"octodecillion",
 	"novemdecillion",		"vigintillion",
 };
@@ -202,7 +202,7 @@ convertexp(char *line)
 	part3 = locline;
 	part2 = strsep(&part3, "eE");	/* part3 is the exponent */
 	part4 = part3;
-	(void)strsep(&part4, ".");	/* no decimal allowed in the exponent */	
+	(void)strsep(&part4, ".");	/* no decimal allowed in the exponent */
 	if (part4)
 		errx(1, "illegal number: %s", line);
 	part1 = strsep(&part2, ".");	/* we can have one in the mantissa */

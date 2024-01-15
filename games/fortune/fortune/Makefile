@@ -3,7 +3,7 @@
 
 PROG=		fortune
 MAN=		fortune.6
-CFLAGS+=	-I${.CURDIR}/../strfile 
+CFLAGS+=	-I${.CURDIR}/../strfile
 
 .include "${.CURDIR}/../../Makefile.inc"
 .include <bsd.prog.mk>

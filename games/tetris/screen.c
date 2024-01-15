@@ -165,7 +165,7 @@ scr_init(void)
 		{"sg", &sgnum},
 		{ {0}, NULL}
 	};
-	
+
 	if ((term = getenv("TERM")) == NULL)
 		stop("you must set the TERM environment variable");
 	if (tgetent(tbuf, term) <= 0)
@@ -478,7 +478,7 @@ scr_update(void)
 void
 scr_msg(char *s, int set)
 {
-	
+
 	if (set || CEstr == NULL) {
 		int l = strlen(s);
 

@@ -96,7 +96,7 @@ main(int argc, char *argv[])
 	(void)signal(SIGSTOP, onsig);
 	(void)signal(SIGTSTP, onsig);
 	(void)signal(SIGTERM, onsig);
-	
+
 	curs_set(0);
 	for (j = 4; j >= 0; --j) {
 		xpos[j] = arc4random_uniform(tcols) + 2;
