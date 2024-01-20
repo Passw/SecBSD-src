@@ -1,7 +1,6 @@
-/*	$OpenBSD: revar.h,v 1.8 2024/01/19 03:46:15 dlg Exp $	*/
-
+/*	$OpenBSD: mktemp.c,v 1.2 2024/01/19 19:45:02 millert Exp $ */
 /*
- * Copyright (c) 2005 Peter Valchev <pvalchev@openbsd.org>
+ * Copyright (c) 2024 Todd C. Miller
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,9 +15,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-int	re_intr(void *);
-int	re_attach(struct rl_softc *, const char *);
-void	re_detach(struct rl_softc *);
-void	re_reset(struct rl_softc *);
-int	re_init(struct ifnet *);
-void	re_stop(struct ifnet *);
+#include <sys/stat.h>
+#include <errno.h>
+#include <stdlib.h>
+
+static int
+mktemp_cb(const char *path, int flags)
+{
+	struct stat sb;
+
+	if (lstat(path, &sb) == 0)
+		errno = EEXIST;
+	return (errno == ENOENT ? 0 : -1);
+}
+
+/* Also called via tmpnam(3) and tempnam(3). */
+char *
+_mktemp(char *path)
+{
+	if (__mktemp4(path, 0, 0, mktemp_cb) == 0)
+		return path;
+	return NULL;
+}
+
+__warn_references(mktemp,
+    "mktemp() possibly used unsafely; consider using mkstemp()");
+
+char *
+mktemp(char *path)
+{
+	return _mktemp(path);
+}
