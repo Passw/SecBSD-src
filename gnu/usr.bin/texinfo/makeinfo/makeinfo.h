@@ -31,14 +31,14 @@
 
 /* Hardcoded per GNU standards, not dependent on argv[0].  */
 DECLARE (char *, progname, "makeinfo");
-
+
 /* Nonzero means a string is in execution, as opposed to a file. */
 DECLARE (int, executing_string, 0);
 
 /* Nonzero means to inhibit writing macro expansions to the output
    stream, because it has already been written. */
 DECLARE (int, me_inhibit_expansion, 0);
-
+
 /* Current output stream. */
 DECLARE (FILE *, output_stream, NULL);
 
@@ -175,14 +175,14 @@ DECLARE (int, input_text_offset, 0);
 DECLARE (int, line_number, 0);
 DECLARE (char *, toplevel_output_filename, NULL);
 #define curchar() input_text[input_text_offset]
-
+
 /* A colon separated list of directories to search for files included
    with @include.  This can be controlled with the `-I' option to makeinfo. */
 DECLARE (char *, include_files_path, NULL);
 
 /* The filename of the current input file.  This is never freed. */
 DECLARE (char *, node_filename, NULL);
-
+
 /* Name of CSS file to include, if any.  (--css-include).  */
 DECLARE (char *, css_include, NULL);
 
@@ -235,7 +235,7 @@ DECLARE (int, split_size, 0);
    like @@ and @value inconsistently in node names, but will slow
    the program by about 80%.  You HAVE been warned.  */
 DECLARE (int, expensive_validation, 0);
-
+
 /* C's standard macros don't check to make sure that the characters being
    changed are within range.  So I have to check explicitly. */
 

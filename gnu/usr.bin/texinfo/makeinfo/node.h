@@ -56,7 +56,7 @@ typedef struct tentry
 #define TAG_FLAG_NO_WARN     8
 #define TAG_FLAG_IS_TOP     16
 #define TAG_FLAG_ANCHOR     32
-
+
 /* Menu reference, *note reference, and validation hacking. */
 
 /* A structure to remember references with.  A reference to a node is
@@ -97,7 +97,7 @@ extern int current_section;
 /* Nonzero when the next sectioning command should generate an anchor
    corresponding to the current node in HTML mode. */
 extern int outstanding_node;
-
+
 extern TAG_ENTRY *find_node (char *name);
 
 /* A search string which is used to find a line defining a node. */

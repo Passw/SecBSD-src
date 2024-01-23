@@ -28,10 +28,10 @@ struct spec_section;
 
 struct line_data *findlines (char *data, int size, int *nlinesp);
 void insert_entry_here (struct spec_entry *entry, int line_number,
-                        struct line_data *dir_lines, int n_entries); 
+                        struct line_data *dir_lines, int n_entries);
 int compare_section_names (const void *s1, const void *s2);
-int compare_entries_text (const void *e1, const void *e2); 
-
+int compare_entries_text (const void *e1, const void *e2);
+
 /* Data structures.  */
 
 
@@ -113,7 +113,7 @@ struct menu_section
   /* Line number of end of section.  */
   int end_line;
 };
-
+
 /* This table defines all the long-named options, says whether they
    use an argument, and maps them into equivalent single-letter options.  */
 
@@ -133,7 +133,7 @@ struct option longopts[] =
   { "version",   no_argument, NULL, 'V' },
   { 0 }
 };
-
+
 /* Error message functions.  */
 
 /* Print error message.  S1 is printf control string, S2 and S3 args for it. */
@@ -164,7 +164,7 @@ fatal (const char *s1, const char *s2, const char *s3)
   error (s1, s2, s3);
   xexit (1);
 }
-
+
 /* Return a newly-allocated string
    whose contents concatenate those of S1, S2, S3.  */
 char *
@@ -203,7 +203,7 @@ pfatal_with_name (const char *name)
   char *s = concat ("", strerror (errno), _(" for %s"));
   fatal (s, name, 0);
 }
-
+
 /* Compare the menu item names in LINE1 (line length LEN1)
    and LINE2 (line length LEN2).  Return 1 if the item name
    in LINE1 is less, 0 otherwise.  */
@@ -257,7 +257,7 @@ menu_line_equal (char *line1, int len1, char *line2, int len2)
   return 1;
 }
 
-
+
 /* Given the full text of a menu entry, null terminated,
    return just the menu item name (copied).  */
 
@@ -319,7 +319,7 @@ extract_menu_file_name (char *item_text)
 }
 
 
-
+
 /* Return FNAME with any [.info][.gz] suffix removed.  */
 
 static char *
@@ -376,7 +376,7 @@ menu_item_equal (const char *item, char term_char, const char *name)
   /* We must compare the basename in ITEM, since we are passed the
      basename of the original info file.  Otherwise, a new entry like
      "lilypond/lilypond" won't match "lilypond".
-     
+
      Actually, it seems to me that we should really compare the whole
      name, and not just the basename.  Couldn't there be dir1/foo.info
      and dir2/foo.info?  Also, it seems like we should be using the
@@ -390,7 +390,7 @@ menu_item_equal (const char *item, char term_char, const char *name)
     item_basename = item;  /* no /, use original */
   else
     item_basename++;       /* have /, move past it */
-    
+
   /* First, ITEM must actually match NAME (usually it won't).  */
   ret = strncasecmp (item_basename, name, name_len) == 0;
   if (ret)
@@ -419,7 +419,7 @@ menu_item_equal (const char *item, char term_char, const char *name)
 }
 
 
-
+
 void
 suggest_asking_for_help (void)
 {
@@ -469,7 +469,7 @@ general questions and discussion to help-texinfo@gnu.org.\n\
 Texinfo home page: http://www.gnu.org/software/texinfo/"));
 }
 
-
+
 /* If DIRFILE does not exist, create a minimal one (or abort).  If it
    already exists, do nothing.  */
 
@@ -518,7 +518,7 @@ The first time you invoke Info you start off looking at this node.\n\
   else
     close (desc); /* It already existed, so fine.  */
 }
-
+
 /* Open FILENAME and return the resulting stream pointer.  If it doesn't
    exist, try FILENAME.gz.  If that doesn't exist either, call
    CREATE_CALLBACK (with FILENAME as arg) to create it, if that is
@@ -652,7 +652,7 @@ open_possibly_compressed_file (char *filename,
 
   return f;
 }
-
+
 /* Read all of file FILENAME into memory and return the address of the
    data.  Store the size of the data into SIZEP.  If need be, uncompress
    (i.e., try FILENAME.gz et al. if FILENAME does not exist) and store
@@ -708,7 +708,7 @@ readfile (char *filename, int *sizep,
   *sizep = filled;
   return data;
 }
-
+
 /* Output the old dir file, interpolating the new sections
    and/or new entries where appropriate.  If COMPRESSION_PROGRAM is not
    null, pipe to it to create DIRFILE.  Thus if we read dir.gz on input,
@@ -842,12 +842,12 @@ output_dirfile (char *dirfile, int dir_nlines, struct line_data *dir_lines,
   else
     fclose (output);
 }
-
+
 /* Parse the input to find the section names and the entry names it
    specifies.  Return the number of entries to add from this file.  */
 int
 parse_input (const struct line_data *lines, int nlines,
-             struct spec_section **sections, struct spec_entry **entries) 
+             struct spec_section **sections, struct spec_entry **entries)
 {
   int n_entries = 0;
   int prefix_length = strlen ("INFO-DIR-SECTION ");
@@ -1457,7 +1457,7 @@ For more information about these matters, see the files named COPYING.\n"));
   xexit (0);
   return 0; /* Avoid bogus warnings.  */
 }
-
+
 /* Divide the text at DATA (of SIZE bytes) into lines.
    Return a vector of struct line_data describing the lines.
    Store the length of that vector into *NLINESP.  */
@@ -1507,7 +1507,7 @@ findlines (char *data, int size, int *nlinesp)
   *nlinesp = filled;
   return lines;
 }
-
+
 /* This is the comparison function for qsort for a vector of pointers to
    struct spec_section.  (Have to use const void * as the parameter type
    to avoid incompatible-with-qsort warnings.)

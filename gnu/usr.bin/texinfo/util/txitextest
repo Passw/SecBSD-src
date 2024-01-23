@@ -3,7 +3,7 @@
 # Test texinfo.tex changes by running various manuals through with an
 # old version, saving the .ps result from dvips, doing the same with a
 # new version, and comparing.  Idea from Stepan Kasal.
-# 
+#
 # Another option is to run the manuals all the way through using
 # texi2dvi, which tests in another way.
 
@@ -47,7 +47,7 @@ for manual in $manuals; do
   mandir=`dirname $manual`
   test $mandir = . && mandir=$initial_dir
   manual_base=`basename "$manual" | sed 's/\.[^.]*$//'`
-  
+
   rm -f $manual_base.* texinfo.tex
   ln -s $newdir/texinfo.tex texinfo.tex
 
@@ -58,7 +58,7 @@ for manual in $manuals; do
     echo "$0: testing $manual_base... (pdf)"
     texi2dvi --pdf $manual \
     || { echo "texi2dvi --pdf $manual failed." >&2; exit 1; }
-   
+
   else
     echo "$0: testing $manual_base... (new)"
     run_tex

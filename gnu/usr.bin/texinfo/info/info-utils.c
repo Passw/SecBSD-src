@@ -159,7 +159,7 @@ info_parse_label (char *label, NODE *node)
   nodeline += skip_whitespace (nodeline);
   info_parse_node (nodeline, DONT_SKIP_NEWLINES);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                  Finding and Building Menus                      */
@@ -383,7 +383,7 @@ info_concatenate_references (REFERENCE **ref1, REFERENCE **ref2)
 }
 
 
-
+
 /* Copy a reference structure.  Since we tend to free everything at
    every opportunity, we don't share any points, but copy everything into
    new memory.  */
@@ -396,12 +396,12 @@ info_copy_reference (REFERENCE *src)
   dest->nodename = src->nodename ? xstrdup (src->nodename) : NULL;
   dest->start = src->start;
   dest->end = src->end;
-  
+
   return dest;
 }
 
 
-
+
 /* Free the data associated with REFERENCES. */
 void
 info_free_references (REFERENCE **references)
@@ -533,7 +533,7 @@ printed_representation (unsigned char character, int hpos)
   return the_rep;
 }
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                  Functions Static To This File                   */

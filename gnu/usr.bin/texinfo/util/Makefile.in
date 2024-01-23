@@ -313,10 +313,10 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-ginstall-info$(EXEEXT): $(ginstall_info_OBJECTS) $(ginstall_info_DEPENDENCIES) 
+ginstall-info$(EXEEXT): $(ginstall_info_OBJECTS) $(ginstall_info_DEPENDENCIES)
 	@rm -f ginstall-info$(EXEEXT)
 	$(LINK) $(ginstall_info_LDFLAGS) $(ginstall_info_OBJECTS) $(ginstall_info_LDADD) $(LIBS)
-texindex$(EXEEXT): $(texindex_OBJECTS) $(texindex_DEPENDENCIES) 
+texindex$(EXEEXT): $(texindex_OBJECTS) $(texindex_DEPENDENCIES)
 	@rm -f texindex$(EXEEXT)
 	$(LINK) $(texindex_LDFLAGS) $(texindex_OBJECTS) $(texindex_LDADD) $(LIBS)
 install-binSCRIPTS: $(bin_SCRIPTS)

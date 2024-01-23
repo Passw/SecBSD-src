@@ -175,7 +175,7 @@ DECLARE_INFO_COMMAND (info_index_search,
 }
 
 /* Look up SEARCH_STRING in the index for this file.  If SEARCH_STRING
-   is NULL, prompt user for input.  */ 
+   is NULL, prompt user for input.  */
 void
 do_info_index_search (WINDOW *window, int count, char *search_string)
 {
@@ -454,7 +454,7 @@ DECLARE_INFO_COMMAND (info_next_index_match,
       }
   }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                 Info APROPOS: Search every known index.          */

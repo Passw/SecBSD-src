@@ -39,7 +39,7 @@ int node_number = -1;
 int node_order = 0;
 int current_section = 0;
 int outstanding_node = 0;
-
+
 /* Adding nodes, and making tags.  */
 
 /* Start a new tag table. */
@@ -57,7 +57,7 @@ init_tag_table (void)
       free (temp);
     }
 }
-
+
 /* Write out the contents of the existing tag table.
    INDIRECT_P says how to format the output (it depends on whether the
    table is direct or indirect).  */
@@ -132,7 +132,7 @@ write_tag_table_indirect (void)
 {
   write_tag_table_internal (1);
 }
-
+
 /* Convert "top" and friends into "Top". */
 static void
 normalize_node_name (char *string)
@@ -500,7 +500,7 @@ add_html_names (char *node)
   {
     char *optr = otem;
     int need_old = 0;
-    
+
     for (; *optr; optr++)
       {
         if (!cr_or_whitespace (*optr) && !URL_SAFE_CHAR (*optr))
@@ -509,7 +509,7 @@ add_html_names (char *node)
             break;
           }
       }
-    
+
     if (need_old)
       {
         add_word ("<a name=\"");
@@ -528,7 +528,7 @@ add_html_names (char *node)
   free (tem);
 }
 
-
+
 /* The order is: nodename, nextnode, prevnode, upnode.
    If all of the NEXT, PREV, and UP fields are empty, they are defaulted.
    You must follow a node command which has those fields defaulted
@@ -969,7 +969,7 @@ cm_node (void)
         }
 
       if (!splitting && no_headers)
-	{ /* cross refs need a name="#anchor" even if not writing headers */ 
+	{ /* cross refs need a name="#anchor" even if not writing headers */
           add_html_names (node);
 	}
 
@@ -979,7 +979,7 @@ cm_node (void)
           /* The <p> avoids the links area running on with old Lynxen. */
           add_word_args ("<p>%s\n", splitting ? "" : "<hr>");
 
-          /* In the split HTML case, the filename is wrong for the 
+          /* In the split HTML case, the filename is wrong for the
              old-style converted names, but we'll add them anyway, for
              consistency.  (And we need them in the normal (not
              no_headers) nonsplit case.)  */
@@ -990,12 +990,12 @@ cm_node (void)
               tem = expansion (next, 0);
 	      add_word ((char *) _("Next:"));
               add_word ("&nbsp;");
-              
+
 	      add_word ("<a rel=\"next\" accesskey=\"n\" href=\"");
 	      add_anchor_name (tem, 1);
               tem = escape_string (tem);
 	      add_word_args ("\">%s</a>", tem);
-	      
+
               free (tem);
 
 	      if (prev || up)
@@ -1229,7 +1229,7 @@ cm_anchor (int arg)
                  output_position + output_paragraph_offset,
                  line_number, fname_for_anchor, TAG_FLAG_ANCHOR);
 }
-
+
 /* Find NODE in REF_LIST. */
 static NODE_REF *
 find_node_reference (char *node, NODE_REF *ref_list)
@@ -1321,7 +1321,7 @@ number_of_node (char *node)
   else
     return 0;
 }
-
+
 /* validation */
 
 /* Return 1 if TAG (at LINE) correctly validated, or 0 if not.
@@ -1636,7 +1636,7 @@ validate_file (TAG_ENTRY *tag_table)
   input_filename = old_input_filename;
 }
 
-
+
 /* Splitting */
 
 /* Return true if the tag entry pointed to by TAGS is the last node.

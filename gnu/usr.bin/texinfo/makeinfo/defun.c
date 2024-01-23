@@ -263,9 +263,9 @@ process_defun_args (char **defun_args, int auto_var_p)
              sans serif and brackets bold.  We use roman instead.  */
           if (html)
             insert_html_tag (START, "");
-            
+
           add_char (defun_arg[0]);
-          
+
           if (html)
             insert_html_tag (END, "");
         }
@@ -324,7 +324,7 @@ get_base_type (int type)
 
   return base_type;
 }
-
+
 /* Make the defun type insertion.
    TYPE says which insertion this is.
    X_P, if nonzero, says not to start a new insertion. */
@@ -705,7 +705,7 @@ cm_defun (void)
       /* Skip over ifclear and ifset conditionals.  */
       while (i && (i->insertion == ifset || i->insertion == ifclear))
         i = i->next;
-        
+
       if (!i || i->insertion != type)
         {
           line_error (_("Must be in `@%s' environment to use `@%s'"),

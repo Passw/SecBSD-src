@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License along
    with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
-
+
 /* This tells Alpha OSF/1 not to define a getopt prototype in <stdio.h>.
    Ditto for AIX 3.2 and <stdlib.h>.  */
 #ifndef _NO_PROTO
@@ -117,7 +117,7 @@ int optopt = '?';
 
 static struct _getopt_data getopt_data;
 
-
+
 #ifndef __GNU_LIBRARY__
 
 /* Avoid depending on library functions or files
@@ -128,7 +128,7 @@ extern char *getenv ();
 #endif
 
 #endif /* not __GNU_LIBRARY__ */
-
+
 #ifdef _LIBC
 /* Stored original parameters.
    XXX This is no good solution.  We should rather copy the args so
@@ -312,7 +312,7 @@ _getopt_initialize (int argc, char *const *argv, const char *optstring,
 
   return optstring;
 }
-
+
 /* Scan elements of ARGV (whose length is ARGC) for option characters
    given in OPTSTRING.
 
@@ -1162,7 +1162,7 @@ getopt (int argc, char *const *argv, const char *optstring)
 			   0);
 }
 
-
+
 #ifdef TEST
 
 /* Compile with -DTEST to make an executable for use in testing

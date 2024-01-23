@@ -90,7 +90,7 @@ typedef char *CFunction ();
       } while (0)
 #endif /* !zero_mem */
 
-
+
 /* A structure associating the nodes visited in a particular window. */
 typedef struct {
   WINDOW *window;               /* The window that this list is attached to. */
@@ -148,7 +148,7 @@ extern const char *msg_one_window;
 extern const char *msg_win_too_small;
 extern const char *msg_cant_make_help;
 
-
+
 #if defined(INFOKEY)
 /* Found in variables.c. */
 extern void set_variable_to_value (char *name, char *value);

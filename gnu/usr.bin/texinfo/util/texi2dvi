@@ -153,7 +153,7 @@ done
 arg_sep="$$--$$"
 set dummy ${1+"$@"} "$arg_sep"; shift
 
-# 
+#
 # Parse command line arguments.
 while test x"$1" != x"$arg_sep"; do
 
@@ -363,7 +363,7 @@ else
   exec 6>/dev/null
 fi
 
-# 
+#
 # TeXify files.
 
 for command_line_filename in ${1+"$@"}; do

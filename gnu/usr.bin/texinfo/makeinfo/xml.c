@@ -557,7 +557,7 @@ static int in_table_title = 0;
 static int in_indexentry = 0;
 static int in_secondary = 0;
 static int in_indexterm = 0;
-
+
 char *
 xml_id (char *id)
 {
@@ -650,7 +650,7 @@ xml_begin_document (char *output_filename)
     }
 }
 
-/*  */
+/*  */
 static int element_stack[256];
 static int element_stack_index = 0;
 
@@ -1633,7 +1633,7 @@ try_docbook_image (const char *name, const char *ext, const char *fmt,
      xml_insert_element (IMAGEOBJECT, END);
      used = 1;
    }
- 
+
  free (fullname);
  return used;
 }
@@ -1673,7 +1673,7 @@ xml_insert_docbook_image (char *name_arg)
   /* If no luck so far, just assume we'll eventually have a jpg.  */
   if (!found)
     try_docbook_image (name_arg, "jpg", "JPG", 1);
- 
+
   xml_insert_text_file (name_arg);
   xml_insert_element (elt, END);
 

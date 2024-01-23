@@ -7429,7 +7429,7 @@ In @TeX{}, the acronym is printed in slightly smaller font.  In the
 Info output, the argument is printed as-is.  In either format, if the
 second argument is present, it is printed in parentheses after the
 acronym.  In HTML, Docbook, and XML, the @code{<acronym>} tag is
-used.  
+used.
 
 For instance (since GNU is a recursive acronym, we use
 @code{@@acronym} recursively):
@@ -9134,7 +9134,7 @@ labeled and numbered float.
 In Texinfo, all floats are numbered the same way: with the chapter
 number (or appendix letter), a period, and the float number, which
 simply counts 1, 2, 3, @dots{}, and is reset at each chapter.  Each
-float type is counted independently.  
+float type is counted independently.
 
 Floats within an @code{@@unnumbered} are numbered, or outside of any
 chapter, are simply numbered consecutively from 1.
@@ -9941,7 +9941,7 @@ the predefined indices.  For example:
 
 The @code{@@defcodeindex} is like the @code{@@defindex} command,
 except that, in the printed output, it prints entries in an
-@code{@@code} font by default instead of a roman font.  
+@code{@@code} font by default instead of a roman font.
 
 You should define new indices before the end-of-header line of a
 Texinfo file, and (of course) before any @code{@@synindex} or
@@ -15080,7 +15080,7 @@ MS-DOS/MS-Windows).
 For the specified format, process @samp{@@if@var{format}} and
 @samp{@@@var{format}} commands even if not generating the given output
 format.  For instance, if @option{--iftex} is specified, then
-@samp{@@iftex} and @samp{@@tex} blocks will be read.  
+@samp{@@iftex} and @samp{@@tex} blocks will be read.
 
 @item --macro-expand=@var{file}
 @itemx -E @var{file}
@@ -16113,7 +16113,7 @@ file.
 When splitting, the HTML output files are written into a subdirectory,
 with the name chosen as follows:
 @enumerate
-@item 
+@item
 @command{makeinfo} first tries the subdirectory with the base name
 from @code{@@setfilename} (that is, any extension is removed).  For
 example, HTML output for @code{@@setfilename gcc.info} would be
@@ -16150,7 +16150,7 @@ influencing the display of HTML documents: see
 @uref{http://www.w3.org/Style/CSS/}.
 
 By default, @command{makeinfo} includes a few simple CSS commands to
-better implement the appearance of some of the environments.  Here 
+better implement the appearance of some of the environments.  Here
 are two of them, as an example:
 
 @example
@@ -16425,7 +16425,7 @@ Notice in particular:
 @end itemize
 
 On case-folding computer systems, nodes differing only by case will be
-mapped to the same file.  
+mapped to the same file.
 
 In particular, as mentioned above, Top always maps to the file
 @file{index.html}.  Thus, on a case-folding system, Top and a node
@@ -16635,9 +16635,9 @@ with <keyword> being "mono" or "split". Thus
 texinfo split http://www.gnu.org/software/texinfo/manual/texinfo/html_node/
 texinfo mono http://www.gnu.org/software/texinfo/manual/texinfo/texinfo.html
 
-If the keyword is 'split', that is the target is split, the urlprefix gives 
+If the keyword is 'split', that is the target is split, the urlprefix gives
 the directory and host name.
-If the keyword is 'mono', that is the target is mono, the urlprefix gives 
+If the keyword is 'mono', that is the target is mono, the urlprefix gives
 directory, host and file name.
 
 '#' followed by a space begins comments. '#' followed by another character

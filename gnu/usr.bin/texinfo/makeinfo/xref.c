@@ -248,7 +248,7 @@ cm_xref (int arg)
                     if (p != NULL)
                       *p = 0;
                   }
-                  
+
                   if (! *file_arg)
                 warning (_("Empty file name for HTML cross reference in `%s'"),
                            arg4);

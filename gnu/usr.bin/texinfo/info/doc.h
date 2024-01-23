@@ -67,7 +67,7 @@ typedef struct
 extern FUNCTION_DOC function_doc_array[];
 
 /* Under the old key-binding system, an info command is specified by
-   the pointer to its function.  Under the new INFOKEY binding system, 
+   the pointer to its function.  Under the new INFOKEY binding system,
    it is specified by a pointer to the command's FUNCTION_DOC structure,
    defined in doc.c, from which the pointer to the function can be
    easily divined using the InfoFunction() extractor.  */

@@ -52,7 +52,7 @@ int (*index_compare_fn) (const char *a, const char *b) = strcasecmp;
 /* Function to compare index entries for sorting.  (Calls
    `index_compare_fn' above.)  */
 int index_element_compare (const void *element1, const void *element2);
-
+
 /* Find which element in the known list of indices has this name.
    Returns -1 if NAME isn't found. */
 static int
@@ -76,7 +76,7 @@ find_index (char *name)
   else
     return NULL;
 }
-
+
 /* User-defined commands, which happens only from user-defined indexes.
    Used to initialize the builtin indices, too.  */
 static void
@@ -96,7 +96,7 @@ define_user_command (char *name, COMMAND_FUNCTION (*proc), int needs_braces_p)
   user_command_array[slot]->proc = proc;
   user_command_array[slot]->argument_in_braces = needs_braces_p;
 }
-
+
 /* Please release me, let me go... */
 static void
 free_index (INDEX_ELT *index)
@@ -137,7 +137,7 @@ undefindex (char *name)
   free (name_index_alist[which]);
   name_index_alist[which] = NULL;
 }
-
+
 /* Add the arguments to the current index command to the index NAME.  */
 static void
 index_add_arg (char *name)
@@ -218,7 +218,7 @@ index_add_arg (char *name)
             new->output_file = xstrdup ("");
         }
       else
-        new->output_file = NULL;        
+        new->output_file = NULL;
 
       new->entry_number = index_counter;
       the_indices[which] = new;
@@ -271,7 +271,7 @@ gen_index (void)
   index_add_arg (name);
   free (name);
 }
-
+
 /* Define an index known as NAME.  We assign the slot number.
    If CODE is nonzero, make this a code index. */
 static void
@@ -325,7 +325,7 @@ top_defindex (char *name, int code)
   defindex (name, code);
   free (temp);
 }
-
+
 /* Set up predefined indices.  */
 void
 init_indices (void)

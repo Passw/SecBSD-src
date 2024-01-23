@@ -79,7 +79,7 @@ static void error_message (int error_code, const char *fmt,
     const void *a1, const void *a2, const void *a3, const void *a4);
 static void suggest_help (void);
 static void short_help (void);
-
+
 
 /* **************************************************************** */
 /*                                                                  */
@@ -100,7 +100,7 @@ main (int argc, char **argv)
   if (pledge ("stdio rpath wpath cpath tty", NULL) == -1) {
       perror("pledge");
       exit(1);
-  }    
+  }
 
 #ifdef ENABLE_NLS
   /* Set the text message domain.  */
@@ -263,7 +263,7 @@ mkpath (const char *dir, const char *file)
   strcat (p, file);
   return p;
 }
-
+
 
 /* Compilation - the real work.
 
@@ -865,7 +865,7 @@ write_infokey_file (FILE *fp, struct sect *sections)
     && fputc (INFOKEY_MAGIC_E2, fp) != EOF
     && fputc (INFOKEY_MAGIC_E3, fp) != EOF;
 }
-
+
 
 /* Error handling. */
 

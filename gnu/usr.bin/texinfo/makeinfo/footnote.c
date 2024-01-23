@@ -39,7 +39,7 @@ int number_footnotes = 1;
 /* Nonzero means we are currently outputting footnotes. */
 int already_outputting_pending_notes = 0;
 
-
+
 /* Footnotes can be handled in one of two ways:
 
    separate_node:
@@ -55,7 +55,7 @@ int already_outputting_pending_notes = 0;
 int footnote_style = end_node;
 int first_footnote_this_node = 1;
 int footnote_count = 0;
-
+
 /* Set the footnote style based on the style identifier in STRING. */
 int
 set_footnote_style (char *string)
@@ -228,7 +228,7 @@ cm_footnote (void)
 
   if (xml)
     xml_insert_footnote (note);
-  else 
+  else
     {
   remember_note (marker, note);
 

@@ -57,7 +57,7 @@ section_alist_type section_alist[] = {
   { "top",                 1, ENUM_SECT_NO,  TOC_YES },
   { NULL,                  0, 0, 0 }
 };
-
+
 /* The argument of @settitle, used for HTML. */
 char *title = NULL;
 
@@ -88,7 +88,7 @@ static int section_alist_offset = 0;
 static char *last_sectioning_number = "";
 /* Last title used by sectioning_underscore, etc.  */
 static char *last_sectioning_title = "";
-
+
 /* num == ENUM_SECT_NO  means unnumbered (should never call this)
    num == ENUM_SECT_YES means numbered
    num == ENUM_SECT_APP means numbered like A.1 and so on */
@@ -321,7 +321,7 @@ sectioning_underscore (char *cmd)
 {
   char *temp, *secname;
   int level;
-  
+
   /* If we're not indenting the first paragraph, we shall make it behave
      like @noindent is called directly after the section heading. */
   if (! do_first_par_indent)
@@ -599,7 +599,7 @@ sectioning_html (int level, char *cmd)
   no_indent = old_no_indent;
 }
 
-
+
 /* Shift the meaning of @section to @chapter. */
 void
 cm_raisesections (void)
@@ -625,7 +625,7 @@ cm_ideprecated (int arg, int start, int end)
   sectioning_underscore (command + 1);
 }
 
-
+
 /* Treat this just like @unnumbered.  The only difference is
    in node defaulting. */
 void

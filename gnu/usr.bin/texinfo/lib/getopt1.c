@@ -16,7 +16,7 @@
    You should have received a copy of the GNU General Public License along
    with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -77,7 +77,7 @@ _getopt_long_only_r (int argc, char *const *argv, const char *options,
 			     1, d);
 }
 
-
+
 #ifdef TEST
 
 #include <stdio.h>

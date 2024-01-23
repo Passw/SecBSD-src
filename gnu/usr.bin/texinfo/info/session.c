@@ -498,7 +498,7 @@ info_set_node_of_window (int remember, WINDOW *window, NODE *node)
     info_get_or_remove_footnotes (window);
 }
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                     Info Movement Commands                       */
@@ -1363,7 +1363,7 @@ DECLARE_INFO_COMMAND (info_scroll_half_screen_up,
       set_window_pagetop (window, desired_top);
     }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                 Commands for Manipulating Windows                */
@@ -1677,7 +1677,7 @@ DECLARE_INFO_COMMAND (info_toggle_wrap,
 {
   window_toggle_wrap (window);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                      Info Node Commands                          */
@@ -1982,14 +1982,14 @@ DECLARE_INFO_COMMAND (info_menu_digit, _("Select this menu item"))
 }
 
 
-
+
 /* Return a pointer to the xref in XREF_LIST that is nearest to POS, or
    NULL if XREF_LIST is empty.  That is, if POS is within any of the
    given xrefs, return that one.  Otherwise, return the one with the
    nearest beginning or end.  If there are two that are equidistant,
    prefer the one forward.  The return is in newly-allocated memory,
    since the caller frees it.
-   
+
    This is called from info_menu_or_ref_item with XREF_LIST being all
    the xrefs in the node, and POS being point.  The ui function that
    starts it all off is select-reference-this-line.
@@ -2004,7 +2004,7 @@ nearest_xref (REFERENCE **xref_list, long int pos)
   int this_xref;
   int nearest = -1;
   long best_delta = -1;
-  
+
   for (this_xref = 0; xref_list[this_xref]; this_xref++)
     {
       long delta;
@@ -2014,13 +2014,13 @@ nearest_xref (REFERENCE **xref_list, long int pos)
           nearest = this_xref;
           break;
         }
-      
+
       /* See how far POS is from this xref.  Take into account the
          `*Note' that begins the xref, since as far as the user is
          concerned, that's where it starts.  */
       delta = MIN (labs (pos - (xref->start - strlen (INFO_XREF_LABEL))),
                    labs (pos - xref->end));
-      
+
       /* It's the <= instead of < that makes us choose the forward xref
          of POS if two are equidistant.  Of course, because of all the
          punctuation surrounding xrefs, it's not necessarily obvious
@@ -2031,11 +2031,11 @@ nearest_xref (REFERENCE **xref_list, long int pos)
           best_delta = delta;
         }
     }
-  
+
   /* Maybe there was no list to search through.  */
   if (nearest < 0)
     return NULL;
-  
+
   /* Ok, we have a nearest xref, make a list of it.  */
   {
     REFERENCE **ret = xmalloc (sizeof (REFERENCE *) * 2);
@@ -2459,7 +2459,7 @@ DECLARE_INFO_COMMAND (info_goto_node, _("Read a node name and select it"))
   if (!info_error_was_printed)
     window_clear_echo_area ();
 }
-
+
 /* Follow the menu list in MENUS (list of strings terminated by a NULL
    entry) from INITIAL_NODE.  If can't continue at any point (no menu or
    no menu entry for the next item), return the node so far -- that
@@ -2863,7 +2863,7 @@ DECLARE_INFO_COMMAND (info_goto_invocation_node,
   free (line);
   free (default_program_name);
 }
-
+
 #if defined (HANDLE_MAN_PAGES)
 DECLARE_INFO_COMMAND (info_man, _("Read a manpage reference and select it"))
 {
@@ -2910,7 +2910,7 @@ DECLARE_INFO_COMMAND (info_dir_node, _("Select the node `(dir)'"))
   info_parse_and_select ("(dir)Top", window);
 }
 
-
+
 /* Read the name of a node to kill.  The list of available nodes comes
    from the nodes appearing in the current window configuration. */
 static char *
@@ -3084,7 +3084,7 @@ DECLARE_INFO_COMMAND (info_kill_node, _("Kill this node"))
   kill_node (window, nodename);
 }
 
-
+
 /* Read the name of a file and select the entire file. */
 DECLARE_INFO_COMMAND (info_view_file, _("Read the name of a file and select it"))
 {
@@ -3118,7 +3118,7 @@ DECLARE_INFO_COMMAND (info_view_file, _("Read the name of a file and select it")
   if (!info_error_was_printed)
     window_clear_echo_area ();
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                 Dumping and Printing Nodes                       */
@@ -3355,7 +3355,7 @@ write_node_to_stream (NODE *node, FILE *stream)
 {
   fwrite (node->contents, 1, node->nodelen, stream);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                    Info Searching Commands                       */
@@ -4105,7 +4105,7 @@ incremental_search (WINDOW *window, int count, unsigned char ignore)
             case_sensitive = 1;
             break;
           }
-      
+
 
       if (search_result == 0)
         {
@@ -4221,7 +4221,7 @@ info_gc_file_buffers (void)
         }
     }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                Traversing and Selecting References               */
@@ -4373,7 +4373,7 @@ DECLARE_INFO_COMMAND (info_select_reference_this_line,
   else
     info_menu_or_ref_item (window, count, key, info_xrefs_of_node, 0);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                  Miscellaneous Info Commands                     */
@@ -4469,7 +4469,7 @@ DECLARE_INFO_COMMAND (info_redraw_display, _("Redraw the display"))
 DECLARE_INFO_COMMAND (info_quit, _("Quit using Info"))
 {}
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*               Reading Keys and Dispatching on Them               */
@@ -4687,7 +4687,7 @@ info_dispatch_on_key (unsigned char key, Keymap map)
       break;
     }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                      Numeric Arguments                           */
@@ -4806,7 +4806,7 @@ DECLARE_INFO_COMMAND (info_numeric_arg_digit_loop,
       key = 0;
     }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                      Input Character Buffering                   */

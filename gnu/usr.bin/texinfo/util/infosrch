@@ -3,7 +3,7 @@
 # infosrch does a regex search on an info manual.
 # By Harry Putnam <reader@newsguy.com>.
 
-($myscript = $0) =~ s:^.*/::; 
+($myscript = $0) =~ s:^.*/::;
 $six = '';
 
 if($ARGV[0] eq "help"){
@@ -28,7 +28,7 @@ open(SHELL_PROC," $shell_proc|");
 while(<SHELL_PROC>){
   chomp;
   push @lines,$_;
-} 
+}
 close(SHELL_PROC);
 $cnt = 0;
 for(@lines){
@@ -79,7 +79,7 @@ for(@lines){
         print "-- \n";
      }
      $cnt++;
-}        
+}
 
 sub usage {
   print <<EOM;

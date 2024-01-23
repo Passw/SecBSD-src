@@ -343,7 +343,7 @@ pc_initialize_terminal (term_name)
   terminal_write_chars_hook         = pc_write_chars;
   terminal_scroll_terminal_hook     = pc_scroll_terminal;
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*            How to Read Characters From the PC Terminal           */
@@ -633,7 +633,7 @@ install_keyboard_handler (void)
 }
 
 #endif /* __DJGPP__ */
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                Emulation of SIGTSTP on Ctrl-Z                    */
@@ -715,7 +715,7 @@ kill (pid_t pid, int sig)
   else
     return -1;
 }
-
+
 /* These should never be called, but they make the linker happy.  */
 
 void       tputs (char *a, int b, int (*c)())

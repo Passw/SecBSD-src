@@ -27,10 +27,10 @@
 
 #ifdef MIKTEX
 #include <gnu-miktex.h>
-#define S_ISDIR(x) ((x)&_S_IFDIR) 
+#define S_ISDIR(x) ((x)&_S_IFDIR)
 #else
 /* MiKTeX defines substring() in a separate DLL, where it has its
-   own __declspec declaration.  We don't want to try to duplicate 
+   own __declspec declaration.  We don't want to try to duplicate
    this Microsoft-ism here.  */
 extern char *substring (const char *, const char *);
 #endif

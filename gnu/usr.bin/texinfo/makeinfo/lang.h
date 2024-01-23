@@ -72,7 +72,7 @@ typedef struct
 extern language_type language_table[];
 
 
-
+
 /* The document encoding. This is useful to produce true 8-bit
    characters according to the @documentencoding.  */
 
@@ -127,7 +127,7 @@ typedef struct
 /* Table with all the encoding codes that we recognize.  */
 extern encoding_type encoding_table[];
 
-
+
 /* The commands.  */
 extern void cm_documentlanguage (void),
      cm_documentencoding (void);

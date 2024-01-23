@@ -134,12 +134,12 @@ terminal_begin_using_terminal (void)
 
   if (term_keypad_on)
       send_to_terminal (term_keypad_on);
-  
+
   if (!term_begin_use || !*term_begin_use)
     return;
 
 #ifdef SIGWINCH
-  sigsave = signal (SIGWINCH, SIG_IGN); 
+  sigsave = signal (SIGWINCH, SIG_IGN);
 #endif
 
   send_to_terminal (term_begin_use);
@@ -165,7 +165,7 @@ terminal_end_using_terminal (void)
 
   if (term_keypad_off)
       send_to_terminal (term_keypad_off);
-  
+
   if (!term_end_use || !*term_end_use)
     return;
 
@@ -183,7 +183,7 @@ terminal_end_using_terminal (void)
   signal (SIGWINCH, sigsave);
 #endif
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                   Necessary Terminal Functions                   */
@@ -651,7 +651,7 @@ terminal_initialize_terminal (char *terminal_name)
   if (!term_goto)
     terminal_is_dumb_p = 1;
 }
-
+
 /* How to read characters from the terminal.  */
 
 #if defined (HAVE_TERMIOS_H)

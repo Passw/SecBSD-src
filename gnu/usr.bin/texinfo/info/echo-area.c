@@ -274,7 +274,7 @@ echo_area_prep_read (void)
   display_cursor_at_point (active_window);
 }
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                   Echo Area Movement Commands                    */
@@ -538,7 +538,7 @@ DECLARE_INFO_COMMAND (ea_transpose_chars, _("Transpose characters at point"))
         count--;
     }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                   Echo Area Killing and Yanking                  */
@@ -589,7 +589,7 @@ DECLARE_INFO_COMMAND (ea_yank_pop, _("Yank back a previous kill"))
     register int i, counter;
 
     counter = input_line_end - input_line_point;
-    
+
     for (i = input_line_point - len; counter; i++, counter--)
       input_line[i] = input_line[i + len];
 
@@ -755,7 +755,7 @@ ea_kill_text (int from, int to)
   /* Notice that the last command was a kill. */
   echo_area_last_command_was_kill++;
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                      Echo Area Completion                        */
@@ -890,7 +890,7 @@ info_read_completing_internal (WINDOW *window, char *prompt,
 
   return (line);
 }
-  
+
 /* Read a line in the echo area with completion over COMPLETIONS. */
 char *
 info_read_completing_in_echo_area (WINDOW *window,
@@ -1373,7 +1373,7 @@ echo_area_inform_of_deleted_window (WINDOW *window)
   if (window == echo_area_completions_window)
     echo_area_completions_window = (WINDOW *)NULL;
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                 Pushing and Popping the Echo Area                */
@@ -1467,7 +1467,7 @@ echo_area_stack_contains_completions_p (void)
 
   return (0);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*             Error Messages While Reading in Echo Area            */

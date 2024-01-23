@@ -37,7 +37,7 @@ static TOC_ENTRY_ELT **toc_entry_alist = NULL;
 
 /* toc_counter start from 0 ... n for every @chapter, @section ... */
 static int toc_counter = 0;
-
+
 /* Routine to add an entry to the table of contents */
 int
 toc_add_entry (char *tocname, int level, char *node_name, char *anchor)
@@ -179,7 +179,7 @@ toc_free (void)
       toc_counter = 0; /* to be absolutley sure ;-) */
     }
 }
-
+
 /* Print table of contents in HTML.  */
 
 static void

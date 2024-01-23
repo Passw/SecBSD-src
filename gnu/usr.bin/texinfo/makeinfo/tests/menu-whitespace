@@ -53,19 +53,19 @@ absence.
 +++ texinfo-3.12b/makeinfo/node.c	Sun Dec  6 00:23:59 1998
 @@ -523,9 +523,10 @@
                      orig_size = size_of_input_text;
- 
+
                    input_text_offset =
 -                    search_forward ("\n@menu ", orig_offset);
 +                    search_forward ("\n@menu", orig_offset);
- 
+
 -                  if (input_text_offset > -1)
 +                  if (input_text_offset > -1
 +		      && cr_or_whitespace (input_text[input_text_offset + 6]))
                      {
                        char *nodename_from_menu = NULL;
- 
 
--- 
+
+--
 Andreas Schwab                                      "And now for something
 schwab@issan.cs.uni-dortmund.de                      completely different"
 schwab@gnu.org

@@ -53,7 +53,7 @@ typedef struct {
 #define N_CannotGC     0x20     /* File buffer cannot be gc'ed. */
 #define N_IsManPage    0x40     /* This node is a manpage. */
 #define N_FromAnchor   0x80     /* Synthesized for an anchor reference. */
-
+
 /* Internal data structures.  */
 
 /* String constants. */
@@ -109,7 +109,7 @@ typedef struct {
   int tags_slots;               /* Number of slots allocated for TAGS. */
   int flags;                    /* Various flags.  Mimics of N_* flags. */
 } FILE_BUFFER;
-
+
 /* Externally visible functions.  */
 
 /* Array of FILE_BUFFER * which represents the currently loaded info files. */

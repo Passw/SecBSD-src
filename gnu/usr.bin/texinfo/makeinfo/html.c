@@ -27,7 +27,7 @@
 #include "node.h"
 #include "sectioning.h"
 
-
+
 /* Append CHAR to BUFFER, (re)allocating as necessary.  We don't handle
    null characters.  */
 
@@ -185,7 +185,7 @@ process_css_file (char *filename)
   /* We're wasting the buffer struct memory, but so what.  */
   return inline_text->buffer;
 }
-
+
 HSTACK *htmlstack = NULL;
 
 /* See html.h.  */
@@ -226,7 +226,7 @@ html_output_head (void)
   add_word ("<meta http-equiv=\"Content-Type\" content=\"text/html");
   if (encoding && *encoding)
     add_word_args ("; charset=%s", encoding);
-                   
+
   add_word ("\">\n");
 
   if (!document_description)
@@ -338,7 +338,7 @@ rel=\"generator-home\" title=\"Texinfo Homepage\">\n");
 
   free (encoding);
 }
-
+
 /* Escape HTML special characters in the string if necessary,
    returning a pointer to a possibly newly-allocated one. */
 char *
@@ -401,7 +401,7 @@ escape_string (char *string)
   free (string);
   return newstring - newlen;
 }
-
+
 /* Save current tag.  */
 static void
 push_tag (char *tag, char *attribs)
@@ -517,7 +517,7 @@ insert_html_tag_with_attribute (start_or_end, tag, format, va_alist)
       old_tag = htmlstack->tag;
       old_attribs = htmlstack->attribs;
     }
-  
+
   if (format)
     {
 #ifdef VA_SPRINTF
@@ -577,7 +577,7 @@ insert_html_tag (int start_or_end, char *tag)
 {
   insert_html_tag_with_attribute (start_or_end, tag, NULL);
 }
-
+
 /* Output an HTML <link> to the filename for NODE, including the
    other string as extra attributes. */
 void
@@ -596,7 +596,7 @@ add_link (char *nodename, char *attributes)
 /* Output NAME with characters escaped as appropriate for an anchor
    name, i.e., escape URL special characters with our _00hh convention
    if OLD is zero.  (See the manual for details on the new scheme.)
-   
+
    If OLD is nonzero, generate the node name with the 4.6-and-earlier
    convention of %hh (and more special characters output as-is, notably
    - and *).  This is only so that external references to old names can
@@ -637,7 +637,7 @@ add_escaped_anchor_name (char *name, int old)
 
 /* Insert the text for the name of a reference in an HTML anchor
    appropriate for NODENAME.
-   
+
    If HREF is zero, generate text for name= in the new node name
      conversion convention.
    If HREF is negative, generate text for name= in the old convention.

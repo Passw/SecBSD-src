@@ -146,7 +146,7 @@ void error (const char *format, const char *arg);
 void *xmalloc (), *xrealloc ();
 char *concat (char *s1, char *s2);
 void flush_tempfiles (int to_count);
-
+
 #define MAX_IN_CORE_SORT 500000
 
 int
@@ -239,7 +239,7 @@ main (int argc, char **argv)
   xexit (0);
   return 0; /* Avoid bogus warnings.  */
 }
-
+
 typedef struct
 {
   char *long_name;
@@ -386,7 +386,7 @@ For more information about these matters, see the files named COPYING.\n"));
   if (num_infiles == 0)
     usage (1);
 }
-
+
 /* Return a name for temporary file COUNT. */
 
 static char *
@@ -432,7 +432,7 @@ flush_tempfiles (int to_count)
     unlink (maketempname (++last_deleted_tempcount));
 }
 
-
+
 /* Compare LINE1 and LINE2 according to the specified set of keyfields. */
 
 int
@@ -814,7 +814,7 @@ compare_field (struct keyfield *keyfield, char *start1, long int length1,
       return 0;
     }
 }
-
+
 /* A `struct linebuffer' is a structure which holds a line of text.
    `readline' reads a line from a stream into a linebuffer
    and works regardless of the length of the line.  */
@@ -864,7 +864,7 @@ readline (struct linebuffer *linebuffer, FILE *stream)
 
   return p - buffer;
 }
-
+
 /* Sort an input file too big to sort in core.  */
 
 void
@@ -961,7 +961,7 @@ fail:
 
   merge_files (tempfiles, ntemps, outfile);
 }
-
+
 /* Sort INFILE, whose size is TOTAL,
    assuming that is small enough to be done in-core,
    then indexify it and send the output to OUTFILE (or to stdout).  */
@@ -1077,7 +1077,7 @@ sort_in_core (char *infile, int total, char *outfile)
   free (linearray);
   free (data);
 }
-
+
 /* Parse an input string in core into lines.
    DATA is the input string, and SIZE is its length.
    Data goes in LINEARRAY starting at NEXTLINE.
@@ -1133,7 +1133,7 @@ parsefile (char *filename, char **nextline, char *data, long int size)
 
   return line;
 }
-
+
 /* Indexification is a filter applied to the sorted lines
    as they are being written to the output file.
    Multiple entries for the same name, with different page numbers,
@@ -1349,7 +1349,7 @@ finish_index (FILE *ostream)
   free (lastprimary);
   free (lastsecondary);
 }
-
+
 /* Copy the lines in the sorted order.
    Each line is copied out of the input file it was found in. */
 
@@ -1385,7 +1385,7 @@ writelines (char **linearray, int nlines, FILE *ostream)
 
   finish_index (ostream);
 }
-
+
 /* Assume (and optionally verify) that each input file is sorted;
    merge them and output the result.
    Returns nonzero if any input file fails to be sorted.
@@ -1436,7 +1436,7 @@ merge_files (char **infiles, int nfiles, char *outfile)
 
   return value;
 }
-
+
 /* Assume (and optionally verify) that each input file is sorted;
    merge them and output the result.
    Returns nonzero if any input file fails to be sorted.
@@ -1596,7 +1596,7 @@ merge_direct (char **infiles, int nfiles, char *outfile)
 
   return lossage;
 }
-
+
 /* Print error message and exit.  */
 
 void
@@ -1630,7 +1630,7 @@ pfatal_with_name (const char *name)
   xexit (1);
 }
 
-
+
 /* Return a newly-allocated string concatenating S1 and S2.  */
 
 char *

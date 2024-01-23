@@ -56,7 +56,7 @@ looking at that node, which is (dir)Top.
 
 File: dir	Node: Top	This is the top of the INFO tree
 
-  This (the Directory node) gives a menu of major topics. 
+  This (the Directory node) gives a menu of major topics.
   Typing "q" exits, "?" lists all Info commands, "d" returns here,
   "h" gives a primer for first-timers,
   "mEmacs<Return>" visits the Emacs topic, etc.
@@ -73,8 +73,8 @@ moobler
 ### use it, otherwise create a minimal dir entry.
 ###
 ### Then remove that file from the list of existing files.  If any
-### additional files remain (ones that don't have a skeleton entry), 
-### then generate entries for those in the same way, putting the info for 
+### additional files remain (ones that don't have a skeleton entry),
+### then generate entries for those in the same way, putting the info for
 ### those at the end....
 
 infofiles=`(cd ${INFODIR}; /bin/ls | grep -v '\-[0-9]*$' | egrep -v '^dir$|^dir\.info$|^dir\.orig$')`

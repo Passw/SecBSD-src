@@ -142,7 +142,7 @@ static iso_map_type iso8859_1_map [] = {
   { NULL, 0, 0 }
 };
 
-
+
 /* ISO 8859-15, also known as Latin 9, differs from Latin 1 in only a
    few positions.  http://www.cs.tut.fi/~jkorpela/latin9.html has a good
    explanation and listing, summarized here.  The names are abbreviated
@@ -263,7 +263,7 @@ static iso_map_type iso8859_15_map [] = {
 };
 
 
-
+
 /* Date: Mon, 31 Mar 2003 00:19:28 +0200
    From: Wojciech Polak <polak@gnu.org>
 ...
@@ -548,7 +548,7 @@ language_type language_table[] = {
   { zu, "zu", "Zulu" },
   { last_language_code, NULL, NULL }
 };
-
+
 /* @documentlanguage.  Maybe we'll do something useful with this in the
    future.  For now, we just recognize it.  */
 
@@ -589,7 +589,7 @@ cm_documentlanguage (void)
 }
 
 
-
+
 /* Search through the encoding table for the given character, returning
    its equivalent.  */
 
@@ -721,7 +721,7 @@ add_encoded_char (char *html_str, char *info_str)
 }
 
 
-
+
 /* Output an accent for HTML or XML. */
 
 static void
@@ -832,7 +832,7 @@ cm_accent_generic_no_headers (int arg, int start, int end, int single,
 }
 
 
-
+
 /* Accent commands that take explicit arguments and don't have any
    special HTML support.  */
 
@@ -940,7 +940,7 @@ cm_accent_tilde (int arg, int start, int end)
 }
 
 
-
+
 /* Non-English letters/characters that don't insert themselves.  */
 void
 cm_special_char (int arg)

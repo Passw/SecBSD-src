@@ -61,7 +61,7 @@ Format of entire infokey file:
 	4 bytes		magic number E
 
 Format of INFO and EA sections:
-	
+
 	1 byte		flag: 1 == suppress default key bindings
 	Repeat:
 		X bytes		key sequence
@@ -69,7 +69,7 @@ Format of INFO and EA sections:
 		1 byte		action code (A_xxx)
 
 Format of VAR section:
-	
+
 	Repeat:
 		X bytes		variable name
 		1 byte '\0'	terminator

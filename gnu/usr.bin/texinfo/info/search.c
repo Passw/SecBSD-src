@@ -60,7 +60,7 @@ copy_binding (SEARCH_BINDING *binding)
   return (copy);
 }
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                 The Actual Searching Functions                   */
@@ -246,7 +246,7 @@ looking_at (char *string, SEARCH_BINDING *binding)
      string was found at binding->start. */
   return (search_end == binding->start);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                    Small String Searches                         */
@@ -329,7 +329,7 @@ skip_node_characters (char *string, int newlines_okay)
 
           continue;
         }
-      
+
       /* If the character following the close paren is a space or period,
          then this node name has no more characters associated with it. */
       if (c == '\t' ||
@@ -353,7 +353,7 @@ skip_node_characters (char *string, int newlines_okay)
   return (i);
 }
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                   Searching FILE_BUFFER's                        */

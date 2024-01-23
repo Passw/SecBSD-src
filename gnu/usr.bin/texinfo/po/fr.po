@@ -2,7 +2,7 @@
 # Copyright © 2004 Free Software Foundation, Inc.
 # Michel Robitaille <robitail@iro.umontreal.ca>, traducteur depuis/since 1996.
 #
-# Laurent Bourbeau est le traducteur officiel mais depuis plus d'un 
+# Laurent Bourbeau est le traducteur officiel mais depuis plus d'un
 # an, Michel assume la traduction avec l'accord de Laurent.
 #
 # Laurent Bourbeau <bourbeau@progiciels-bpi.ca>, 2001.

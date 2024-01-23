@@ -31,7 +31,7 @@
 
 /* Must match list in insertion.h.  */
 static char *insertion_type_names[] =
-{ 
+{
   "cartouche", "copying", "defcv", "deffn", "defivar", "defmac",
   "defmethod", "defop", "defopt", "defspec", "deftp", "deftypecv",
   "deftypefn", "deftypefun", "deftypeivar", "deftypemethod",
@@ -62,7 +62,7 @@ int in_detailmenu = 0;
 /* Whether to examine menu lines.  */
 int in_menu = 0;
 
-/* Set to 1 if <p> is written in normal context. 
+/* Set to 1 if <p> is written in normal context.
    Used for menu and itemize. */
 int in_paragraph = 0;
 
@@ -79,7 +79,7 @@ static int raw_output_block = 0;
 /* Non-zero if a <dl> element has a <dt> element in it.  We use this when
    deciding whether to insert a <br> or not.  */
 static int html_deflist_has_term = 0;
-
+
 void
 init_insertion_stack (void)
 {
@@ -128,7 +128,7 @@ current_item_function (void)
         case cartouche:
           elt = elt->next;
           break;
-      
+
         default:
           done = 1;
         }
@@ -147,7 +147,7 @@ get_item_function (void)
 {
   char *item_function;
   char *item_loc;
-  
+
   get_rest_of_line (0, &item_function);
 
   /* If the document erroneously says
@@ -399,7 +399,7 @@ enum_html (void)
 
   add_html_block_elt_args ("<ol type=%c start=%d>\n", type, start);
 }
-
+
 /* Conditionally parse based on the current command name. */
 void
 command_name_condition (void)
@@ -520,7 +520,7 @@ begin_insertion (enum insertion_type type)
          in the header of the Info file, before the first node, and thus
          get copied automatically to all the split files.  For xml, also
          output it right away since xml output is never split.
-         For html, we output it specifically in html_output_head. 
+         For html, we output it specifically in html_output_head.
          For plain text, there's no way to hide it, so the author must
           use @insertcopying in the desired location.  */
       if (docbook)
@@ -678,7 +678,7 @@ begin_insertion (enum insertion_type type)
 
       if (xml)
         xml_begin_enumerate (enumeration_arg);
-      
+
       if (isdigit (*enumeration_arg))
         start_enumerating (atoi (enumeration_arg), ENUM_DIGITS);
       else
@@ -982,7 +982,7 @@ end_insertion (int type)
       switch (type)
         {
         case ifinfo:
-        case documentdescription:       
+        case documentdescription:
           break;
         case quotation:
           xml_insert_quotation ("", END);
@@ -1030,7 +1030,7 @@ end_insertion (int type)
           break;
         case table:
         case ftable:
-        case vtable:      
+        case vtable:
         case itemize:
           xml_end_table (type);
           break;
@@ -1108,7 +1108,7 @@ end_insertion (int type)
         insert_string (document_description);
         xml_insert_element (DOCUMENTDESCRIPTION, END);
       break;
-      
+
     case menu:
       in_menu--;                /* No longer hacking menus. */
       if (html && !no_headers)
@@ -1265,7 +1265,7 @@ end_insertion (int type)
 
         if (type < defcv || type > defvr)
           line_error ("end_insertion internal error: type=%d", type);
-  
+
         base_type = get_base_type (type);
         switch (base_type)
           {
@@ -1293,12 +1293,12 @@ end_insertion (int type)
 	      xml_end_definition ();
             break;
           } /* switch (base_type)... */
-  
+
         current_indent -= default_indentation_increment;
         close_insertion_paragraph ();
       }
       break;
-      
+
     }
 
   if (current_indent < 0)
@@ -1341,7 +1341,7 @@ discard_insertions (int specials_ok)
     }
   line_number = real_line_number;
 }
-
+
 /* Insertion (environment) commands.  */
 
 void
@@ -1697,7 +1697,7 @@ handle_verbatim_environment (int find_end_verbatim)
       xml_insert_element (VERBATIM, END);
       escape_html = save_escape_html;
     }
-  
+
   in_fixed_width_font--;
   filling_enabled = save_filling_enabled;
   inhibit_paragraph_indentation = save_inhibit_paragraph_indentation;
@@ -1738,7 +1738,7 @@ cm_group (void)
 {
   begin_insertion (group);
 }
-
+
 /* Insert raw HTML (no escaping of `<' etc.). */
 void
 cm_html (int arg)
@@ -1887,7 +1887,7 @@ cm_ifnotxml (void)
     command_name_condition ();
 }
 
-
+
 /* Generic xrefable block with a caption.  */
 void
 cm_float (void)
@@ -1964,7 +1964,7 @@ cm_detailmenu (void)
     }
   begin_insertion (detailmenu);
 }
-
+
 /* Title page commands. */
 
 void
@@ -2081,7 +2081,7 @@ cm_end (void)
   end_insertion (type);
   free (temp);
 }
-
+
 /* @itemx, @item. */
 
 static int itemx_flag = 0;
@@ -2257,7 +2257,7 @@ cm_item (void)
               /* We are about to insert a <dt>, so this <dl> has a term.
                  Feel free to insert a <br> next time. :)  */
               html_deflist_has_term = 1;
-   
+
               add_html_block_elt ("<dt>");
               if (item_func && *item_func)
                 execute_string ("%s{%s}", item_func, rest_of_line);

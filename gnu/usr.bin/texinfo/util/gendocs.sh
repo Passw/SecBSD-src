@@ -2,7 +2,7 @@
 # gendocs.sh -- generate a GNU manual in many formats.  This script is
 #   mentioned in maintain.texi.  See the help message below for usage details.
 # $Id: gendocs.sh,v 1.1.1.1 2006/07/17 16:03:50 espie Exp $
-# 
+#
 # Copyright (C) 2003, 2004 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify

@@ -237,7 +237,7 @@ tilde_expand_word (char *filename)
                   if (expansion)
                     {
                       temp_name = xmalloc (1 + strlen (expansion)
-                                           + strlen (&dirname[i])); 
+                                           + strlen (&dirname[i]));
                       strcpy (temp_name, expansion);
                       strcat (temp_name, &dirname[i]);
                       free (expansion);
@@ -249,7 +249,7 @@ tilde_expand_word (char *filename)
           else
             {
               temp_name = xmalloc (1 + strlen (user_entry->pw_dir)
-                                   + strlen (&dirname[i])); 
+                                   + strlen (&dirname[i]));
               strcpy (temp_name, user_entry->pw_dir);
               strcat (temp_name, &dirname[i]);
 
@@ -266,7 +266,7 @@ tilde_expand_word (char *filename)
   return dirname;
 }
 
-
+
 #if defined (TEST)
 #undef NULL
 #include <stdio.h>

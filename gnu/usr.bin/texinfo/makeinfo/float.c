@@ -61,7 +61,7 @@ add_new_float (char *id, char *title, char *shorttitle,
 
     sprintf (s, "%s%d", new->number,
                 count_floats_of_type_in_chapter (text_expansion (type),
-                                                 new->number) + 1); 
+                                                 new->number) + 1);
     free (new->number);
     new->number = xstrdup (s);
   }

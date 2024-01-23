@@ -7,13 +7,13 @@
 ;;
 ;; $Id: texi-docstring-magic.el,v 1.1.1.2 2006/07/17 16:03:50 espie Exp $
 ;;
-;; This package is distributed under the terms of the 
-;; GNU General Public License, Version 2.   
-;; You should have a copy of the GPL with your version of 
+;; This package is distributed under the terms of the
+;; GNU General Public License, Version 2.
+;; You should have a copy of the GPL with your version of
 ;; GNU Emacs or the Texinfo distribution.
-;; 
 ;;
-;; This package generates Texinfo source fragments from Emacs 
+;;
+;; This package generates Texinfo source fragments from Emacs
 ;; docstrings.   This avoids documenting functions and variables
 ;; in more than one place, and automatically adds Texinfo markup
 ;; to docstrings.
@@ -26,7 +26,7 @@
 ;;  * Arguments to functions should be written in upper case: ARG1..ARGN
 ;;  * User options (variables users may want to set) should have docstrings
 ;;    beginning with an asterisk.
-;;  
+;;
 ;; Usage:
 ;;
 ;;  Write comments of the form:
@@ -39,7 +39,7 @@
 ;;
 ;;  This will insert @defopt, @deffn and the like underneath the
 ;;  magic comment strings.
-;;  
+;;
 ;;  The default value for user options will be printed.
 ;;
 ;;  Symbols are recognized if they are defined for faces, functions,
@@ -48,7 +48,7 @@
 ;; Automatic markup rules:
 ;;
 ;; 1. Indented lines are gathered into @lisp environment.
-;; 2. Pieces of text `stuff' or surrounded in quotes marked up with @samp. 
+;; 2. Pieces of text `stuff' or surrounded in quotes marked up with @samp.
 ;; 3. Words *emphasized* are made @strong{emphasized}
 ;; 4. Words sym-bol which are symbols become @code{sym-bol}.
 ;; 5. Upper cased words ARG corresponding to arguments become @var{arg}.
@@ -159,10 +159,10 @@
 Format of table is a list of elements of the form
    (regexp predicate replacement-form)
 If regexp matches and predicate holds, then replacement-form is
-evaluated to get the replacement for the match.  
+evaluated to get the replacement for the match.
 predicate and replacement-form can use variables arg,
 and forms such as (match-string 1 docstring)
-Match string 1 is assumed to determine the 
+Match string 1 is assumed to determine the
 length of the matched item, hence where parsing restarts from.
 The replacement must cover the whole match (match string 0),
 including any whitespace included to delimit matches.")
@@ -177,7 +177,7 @@ including any whitespace included to delimit matches.")
 	    (replace    (nth 2 test))
 	    (i		0)
 	    in-quoted-region)
-	
+
 	(while (and
 		(< i (length docstring))
 		(string-match regexp docstring i))
@@ -195,14 +195,14 @@ including any whitespace included to delimit matches.")
   ;; if not already a new paragraph.
   (let*
       ((pos      (string-match "\n" docstring))
-       (needscr  (and pos 
-		      (not (string= "\n" 
-				    (substring docstring 
-					       (1+ pos) 
+       (needscr  (and pos
+		      (not (string= "\n"
+				    (substring docstring
+					       (1+ pos)
 					       (+ pos 2)))))))
     (if (and pos needscr)
 	(concat (substring docstring 0 pos)
-		"@*\n" 
+		"@*\n"
 		(substring docstring (1+ pos)))
       docstring)))
 
@@ -223,7 +223,7 @@ including any whitespace included to delimit matches.")
   "Make a default value string for the value DEFAULT.
 Markup as @code{stuff} or @lisp stuff @end lisp."
   (let ((text       (format "%S" default)))
-    (concat 
+    (concat
      "\nThe default value is "
      (if (string-match "\n" text)
 	 ;; Carriage return will break @code, use @lisp
@@ -231,7 +231,7 @@ Markup as @code{stuff} or @lisp stuff @end lisp."
 	     (concat "the string: \n@lisp\n" default "\n@end lisp\n")
 	   (concat "the value: \n@lisp\n" text "\n@end lisp\n"))
        (concat "@code{" text "}.\n")))))
- 
+
 
 (defun texi-docstring-magic-texi-for (symbol)
   (cond
@@ -343,5 +343,5 @@ Markup as @code{stuff} or @lisp stuff @end lisp."
      (list (if (equal val "") v (intern val)))))
   (insert "\n" texi-docstring-magic-comment " " (symbol-name symbol)))
 
-	
+
 (provide 'texi-docstring-magic)

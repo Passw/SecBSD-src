@@ -86,7 +86,7 @@
 </xsl:template>
 
 <xsl:template match="TEXINFO/NODE/NODEPREV"/>
-	
+
 <xsl:template match="TEXINFO/NODE/NODEUP" mode="select">
  [ <b>Up: </b>
  <a>
@@ -117,7 +117,7 @@
 <xsl:template match="//MENU">
  <h3>Menu</h3>
  <xsl:apply-templates/>
-</xsl:template> 
+</xsl:template>
 
 <xsl:template match="//MENU/MENUENTRY">
  <a>

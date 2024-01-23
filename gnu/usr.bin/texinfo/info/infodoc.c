@@ -557,7 +557,7 @@ DECLARE_INFO_COMMAND (info_get_info_help_node, _("Visit Info node `(info)Help'")
       remember_window_and_node (active_window, node);
     }
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                   Groveling Info Keymaps and Docs                */

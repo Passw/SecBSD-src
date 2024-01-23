@@ -552,7 +552,7 @@ filesys_read_compressed (char *pathname, long int *filesize)
     {
       long offset, size;
       char *chunk;
-    
+
       offset = size = 0;
       chunk = (char *)xmalloc (FILESYS_PIPE_BUFFER_SIZE);
 
@@ -678,7 +678,7 @@ filesys_error_string (char *filename, int error_num)
   return (errmsg_buf);
 }
 
-
+
 /* Check for "dir" with all the possible info and compression suffixes,
    in combination.  */
 
@@ -693,19 +693,19 @@ is_dir_name (char *filename)
       char trydir[50];
       strcpy (trydir, "dir");
       strcat (trydir, info_suffixes[i]);
-      
+
       if (strcasecmp (filename, trydir) == 0)
         return 1;
 
       for (c = 0; compress_suffixes[c].suffix; c++)
         {
           char dir_compressed[50]; /* can be short */
-          strcpy (dir_compressed, trydir); 
+          strcpy (dir_compressed, trydir);
           strcat (dir_compressed, compress_suffixes[c].suffix);
           if (strcasecmp (filename, dir_compressed) == 0)
             return 1;
         }
-    }  
+    }
 
   return 0;
 }

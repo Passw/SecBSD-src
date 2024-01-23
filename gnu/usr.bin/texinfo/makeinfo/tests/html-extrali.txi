@@ -5,7 +5,7 @@
 @c From: Marius Groeger <mag@sysgo.de>, 13nov98.
 
 @menu
-* entry1:: 
+* entry1::
 @end menu
 
 @bye

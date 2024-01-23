@@ -600,7 +600,7 @@ display_cursor_at_point (WINDOW *window)
   terminal_goto_xy (hpos, vpos);
   fflush (stdout);
 }
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                   Functions Static to this File                  */

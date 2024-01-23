@@ -3331,7 +3331,7 @@ cm_image (int arg)
           add_html_elt ("<img src=");
           add_word_args ("\"%s\"", fullname);
           add_html_elt (" alt=");
-          add_word_args ("\"%s\">", 
+          add_word_args ("\"%s\">",
               escape_string (*alt_arg ? text_expansion (alt_arg) : fullname));
 
           if (image_in_div)

@@ -31,7 +31,7 @@ FSTACK *filestack = NULL;
 static int node_filename_stack_index = 0;
 static int node_filename_stack_size = 0;
 static char **node_filename_stack = NULL;
-
+
 /* Looking for include files.  */
 
 /* Given a string containing units of information separated by colons,
@@ -181,7 +181,7 @@ pop_path_from_include_path (void)
   free (include_files_path);
   include_files_path = tmp;
 }
-
+
 /* Find and load the file named FILENAME.  Return a pointer to
    the loaded file, or NULL if it can't be loaded.  If USE_PATH is zero,
    just look for the given file (this is used in handle_delayed_writes),
@@ -199,7 +199,7 @@ find_and_load (char *filename, int use_path)
   result = fullpath = NULL;
 
   fullpath
-    = get_file_info_in_path (filename, use_path ? include_files_path : NULL, 
+    = get_file_info_in_path (filename, use_path ? include_files_path : NULL,
                              &fileinfo);
 
   if (!fullpath)
@@ -259,7 +259,7 @@ error_exit:
   input_text[input_text_length+1] = 0;
   return result;
 }
-
+
 /* Pushing and popping files.  */
 static void
 push_node_filename (void)
@@ -414,7 +414,7 @@ full_pathname (char *filename)
   /* No filename given? */
   if (!filename || !*filename)
     return xstrdup ("");
-  
+
   /* Already absolute? */
   if (IS_ABSOLUTE (filename) ||
       (*filename == '.' &&
@@ -538,7 +538,7 @@ expand_filename (char *filename, char *input_name)
     {
       /* Make it so that relative names work. */
       char *result;
-      
+
       i = strlen (input_name) - 1;
 
       result = xmalloc (1 + strlen (input_name) + strlen (filename));
@@ -619,7 +619,7 @@ normalize_filename (char *fname)
 
   return fname;
 }
-
+
 /* Delayed writing functions.  A few of the commands
    needs to be handled at the end, namely @contents,
    @shortcontents, @printindex and @listoffloats.
@@ -652,7 +652,7 @@ register_delayed_write (char *delayed_command)
   if (FILENAME_CMP (current_output_filename, NULL_DEVICE) == 0
       || FILENAME_CMP (current_output_filename, ALSO_NULL_DEVICE) == 0)
     return;
-    
+
   /* We need the HTML header in the output,
      to get a proper output_position.  */
   if (!executing_string && html)

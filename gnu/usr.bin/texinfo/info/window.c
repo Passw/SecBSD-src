@@ -604,7 +604,7 @@ window_set_node_of_window (WINDOW *window, NODE *node)
   window_adjust_pagetop (window);
   window_make_modeline (window);
 }
-
+
 /* Delete WINDOW from the list of known windows.  If this window was the
    active window, make the next window in the chain be the active window.
    If the active window is the next or previous window, choose that window
@@ -656,7 +656,7 @@ window_delete_window (WINDOW *window)
     window_to_fix = prev;
   else
     window_to_fix = windows;
-    
+
   if (window_to_fix->first_row > window->first_row)
     {
       int diff;
@@ -1223,7 +1223,7 @@ window_set_state (WINDOW *window, SEARCH_STATE *state)
   window->point = state->point;
 }
 
-
+
 /* Manipulating home-made nodes.  */
 
 /* A place to buffer echo area messages. */
@@ -1242,7 +1242,7 @@ free_echo_area (void)
   echo_area_node = NULL;
   window_set_node_of_window (the_echo_area, echo_area_node);
 }
-  
+
 /* Clear the echo area, removing any message that is already present.
    The echo area is cleared immediately. */
 void

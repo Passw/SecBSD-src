@@ -52,7 +52,7 @@ MACRO_DEF **macro_list = NULL;
 
 int macro_list_len = 0;         /* Number of elements. */
 int macro_list_size = 0;        /* Number of slots in total. */
-
+
 /* Return the length of the array in ARRAY. */
 int
 array_len (char **array)
@@ -77,7 +77,7 @@ free_array (char **array)
       free (array);
     }
 }
-
+
 /* Return the macro definition of NAME or NULL if NAME is not defined. */
 MACRO_DEF *
 find_macro (char *name)
@@ -336,7 +336,7 @@ apply (char **named, char **actuals, char *body)
           else
             {
               int which;
-              
+
               /* Check against named parameters. */
               for (which = 0; named && named[which]; which++)
                 if (STREQ (named[which], param))
@@ -353,7 +353,7 @@ apply (char **named, char **actuals, char *body)
               else
                 { /* not a parameter, so it's an error.  */
                   warning (_("\\ in macro expansion followed by `%s' instead of parameter name"),
-                             param); 
+                             param);
                   len++;
                   text = xmalloc (1 + len);
                   sprintf (text, "\\%s", param);
@@ -447,7 +447,7 @@ execute_macro (MACRO_DEF *def)
     }
 }
 
-
+
 /* Read and remember the definition of a macro.  If RECURSIVE is set,
    set the ME_RECURSE flag.  MACTYPE is either "macro" or "rmacro", and
    tells us what the matching @end should be.  */
@@ -566,7 +566,7 @@ define_macro (char *mactype, int recursive)
                 }
             }
         }
-      
+
       /* If we have exactly one argument, do @quote-arg implicitly.  Not
          only does this match TeX's behavior (which can't feasibly be
          changed), but it's a good idea.  */
@@ -677,7 +677,7 @@ define_macro (char *mactype, int recursive)
 
   if (recursive)
     flags |= ME_RECURSE;
-    
+
   add_macro (name, arglist, body, input_filename, defining_line, flags);
 
   if (macro_expansion_output_stream && !executing_string)
@@ -699,18 +699,18 @@ define_macro (char *mactype, int recursive)
     }
 }
 
-void 
+void
 cm_macro (void)
 {
   define_macro ("macro", 0);
 }
 
-void 
+void
 cm_rmacro (void)
 {
   define_macro ("rmacro", 1);
 }
-
+
 /* Delete the macro with name NAME.  The macro is deleted from the list,
    but it is also returned.  If there was no macro defined, NULL is
    returned. */
@@ -778,7 +778,7 @@ cm_unmacro (void)
   if (macro_expansion_output_stream && !executing_string)
     remember_itext (input_text, input_text_offset);
 }
-
+
 /* How to output sections of the input file verbatim. */
 
 /* Set the value of POINTER's offset to OFFSET. */
@@ -871,7 +871,7 @@ me_execute_string (char *execution_string)
   int saved_in_paragraph = in_paragraph;
   escape_html = me_executing_string == 0;
   in_paragraph = 0;
-  
+
   pushfile ();
   input_text_offset = 0;
   /* The following xstrdup is so we can relocate input_text at will.  */
@@ -976,7 +976,7 @@ write_region_to_macro_output (char *string, int start, int end)
   if (macro_expansion_output_stream)
     fwrite (string + start, 1, end - start, macro_expansion_output_stream);
 }
-
+
 /* Aliases. */
 
 typedef struct alias_struct
@@ -986,7 +986,7 @@ typedef struct alias_struct
   struct alias_struct *next;
 } alias_type;
 
-static alias_type *aliases; 
+static alias_type *aliases;
 
 /* @alias aname = cmdname */
 
@@ -1024,11 +1024,11 @@ alias_expand (char *tok)
 
   return tok;
 }
-
+
 /* definfoenclose implementation.  */
 
 /* This structure is used to track enclosure macros.  When an enclosure
-   macro is recognized, a pointer to the enclosure block corresponding 
+   macro is recognized, a pointer to the enclosure block corresponding
    to its name is saved in the brace element for its argument. */
 typedef struct enclose_struct
 {
@@ -1038,7 +1038,7 @@ typedef struct enclose_struct
   struct enclose_struct *next;
 } enclosure_type;
 
-static enclosure_type *enclosures; 
+static enclosure_type *enclosures;
 
 typedef struct enclosure_stack_struct
 {

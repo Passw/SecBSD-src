@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-   
+
    Originally written by phr@gnu.org (Paul Rubin).  */
 
 #include "system.h"
@@ -29,7 +29,7 @@
 
 #define MAXCOLS 100             /* remove this limit later @@ */
 
-
+
 /*
  * Output environments.  This is a hack grafted onto existing
  * structure.  The "output environment" used to consist of the
@@ -84,7 +84,7 @@ static int hsep, vsep;
 
 /* whether this is the first row. */
 static int first_row;
-
+
 /* Called to handle a {...} template on the @multitable line.
    We're at the { and our first job is to find the matching }; as a side
    effect, we change *PARAMS to point to after it.  Our other job is to
@@ -119,21 +119,21 @@ find_template_width (char **params)
       (*params)++;
     }
   while (brace_level > 0);
-  
+
   template = substring (start + 1, *params - 1); /* omit braces */
   xtemplate = expansion (template, 0);
   len = strlen (xtemplate);
-  
+
   free (template);
   free (xtemplate);
-  
+
   return len;
 }
 
 /* Direct current output to environment number N.  Used when
    switching work from one column of a multitable to the next.
    Returns previous environment number. */
-static int 
+static int
 select_output_environment (int n)
 {
   struct env *e = &envs[current_env_no];
@@ -226,7 +226,7 @@ setup_multitable_parameters (void)
              number) and then non-whitespace (the number).  */
           while (*params && (*params == ' ' || *params == '\t'))
             params++;
-          /* Hmm, but what about @columnfractions 3foo.  Oh well, 
+          /* Hmm, but what about @columnfractions 3foo.  Oh well,
              it's invalid input anyway.  */
           while (*params && *params != ' ' && *params != '\t'
                  && *params != '\n' && *params != '@')
@@ -249,7 +249,7 @@ setup_multitable_parameters (void)
       /* This gives us two spaces between columns.  Seems reasonable.
          How to take into account current_indent here?  */
       setup_output_environment (i++, template_width + 2);
-      
+
     } else {
       warning (_("ignoring stray text `%s' after @multitable"), params);
       break;
@@ -314,7 +314,7 @@ draw_horizontal_separator (void)
   out_char ('\n');
 }
 
-
+
 /* multitable strategy:
     for each item {
        for each column in an item {
@@ -396,7 +396,7 @@ nselect_next_environment (void)
   select_output_environment (current_env_no + 1);
 }
 
-
+
 /* do anything needed at the beginning of processing a
    multitable column. */
 static void
@@ -452,10 +452,10 @@ output_multitable_row (void)
     }
     if (!remaining)
       break;
-    
+
     for (s = 0; s < envs[0].current_indent; s++)
       out_char (' ');
-    
+
     if (vsep)
       out_char ('|');
 
@@ -468,7 +468,7 @@ output_multitable_row (void)
         out_char (CHAR_AT (j));
       }
       offset[i] += j + 1;       /* skip last text plus skip the newline */
-      
+
       /* Do not output trailing blanks if we're in the last column and
          there will be no trailing |.  */
       if (i < last_column && !vsep)
@@ -480,7 +480,7 @@ output_multitable_row (void)
     out_char ('\n');    /* end of line */
     had_newline = 1;
   }
-  
+
   /* If completely blank item, get blank line despite no other output.  */
   if (!had_newline)
     out_char ('\n');    /* end of line */
@@ -584,7 +584,7 @@ cm_tab (void)
     error (_("ignoring @tab outside of multitable"));
 
   current_column_no++;
-  
+
   if (html)
     {
       if (seen_column_fractions)
@@ -611,7 +611,7 @@ cm_tab (void)
 void
 end_multitable (void)
 {
-  if (!html && !docbook) 
+  if (!html && !docbook)
     output_multitable_row ();
 
   /* Multitables cannot be nested.  Otherwise, we'd have to save the

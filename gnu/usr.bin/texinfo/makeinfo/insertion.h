@@ -22,7 +22,7 @@
 
 /* Must match list in insertion.c.  */
 enum insertion_type
-{ 
+{
   cartouche, copying, defcv, deffn, defivar, defmac, defmethod, defop,
   defopt, defspec, deftp, deftypecv, deftypefn, deftypefun, deftypeivar,
   deftypemethod, deftypeop, deftypevar, deftypevr, defun, defvar, defvr,

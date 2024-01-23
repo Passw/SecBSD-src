@@ -138,7 +138,7 @@ int info_windows_initialized_p = 0;
 static void info_short_help (void);
 static void init_messages (void);
 
-
+
 /* **************************************************************** */
 /*                                                                  */
 /*                Main Entry Point to the Info Program              */
@@ -540,7 +540,7 @@ add_file_directory_to_path (char *filename)
   free (directory_name);
 }
 
-
+
 /* Error handling.  */
 
 /* Non-zero if an error has been signalled. */
@@ -586,7 +586,7 @@ info_error (char *format, void *arg1, void *arg2)
     }
 }
 
-
+
 /* Produce a scaled down description of the available options to Info. */
 static void
 info_short_help (void)
@@ -645,7 +645,7 @@ Texinfo home page: http://www.gnu.org/software/texinfo/"));
   xexit (0);
 }
 
-
+
 /* Initialize strings for gettext.  Because gettext doesn't handle N_ or
    _ within macro definitions, we put shared messages into variables and
    use them that way.  This also has the advantage that there's only one

@@ -57,7 +57,7 @@ static long get_node_length (SEARCH_BINDING *binding);
    neccessary to fill in the nodes or tags arrays in FILE_BUFFER. */
 #define INFO_NO_TAGS  0
 #define INFO_GET_TAGS 1
-
+
 /* Global variables.  */
 
 /* When non-zero, this is a string describing the recent file error. */
@@ -68,7 +68,7 @@ FILE_BUFFER **info_loaded_files = NULL;
 
 /* The number of slots currently allocated to LOADED_FILES. */
 int info_loaded_files_slots = 0;
-
+
 /* Public functions for node manipulation.  */
 
 /* Used to build `dir' menu from `localdir' files found in INFOPATH. */
@@ -205,7 +205,7 @@ info_load_file (char *filename)
   return info_load_file_internal (filename, INFO_GET_TAGS);
 }
 
-
+
 /* Private functions implementation.  */
 
 /* The workhorse for info_find_file ().  Non-zero 2nd argument says to
@@ -379,7 +379,7 @@ info_load_file_internal (char *filename, int get_tags)
 
   return file_buffer;
 }
-
+
 /* Grovel FILE_BUFFER->contents finding tags and nodes, and filling in the
    various slots.  This can also be used to rebuild a tag or node table. */
 void
@@ -1045,7 +1045,7 @@ info_node_of_file_buffer_tags (FILE_BUFFER *file_buffer, char *nodename)
      Return NULL, since this file doesn't contain the desired node. */
   return NULL;
 }
-
+
 /* Managing file_buffers, nodes, and tags.  */
 
 /* Create a new, empty file buffer. */

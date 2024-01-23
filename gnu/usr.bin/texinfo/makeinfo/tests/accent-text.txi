@@ -50,9 +50,9 @@ Polish suppressed-L: @l{} @L{}
 
 O-with-slash: @o{} @O{}
 
-es-zet or sharp S: @ss{}          
+es-zet or sharp S: @ss{}
 
-pounds sterling: @pounds{}      
+pounds sterling: @pounds{}
 
 @c arg is command -- @dotless{i} is special-cased for HTML
 should be dotless i`: @`{@dotless{i}}

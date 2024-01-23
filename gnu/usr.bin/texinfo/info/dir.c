@@ -54,7 +54,7 @@ new_dir_file_p (struct stat *test)
   static unsigned dir_file_list_len = 0;
   static dir_file_list_entry_type *dir_file_list = NULL;
   unsigned i;
-  
+
   for (i = 0; i < dir_file_list_len; i++)
     {
       dir_file_list_entry_type entry;
@@ -62,9 +62,9 @@ new_dir_file_p (struct stat *test)
       if (entry.device == test->st_dev && entry.inode == test->st_ino)
         return 0;
     }
-  
+
   dir_file_list_len++;
-  dir_file_list = xrealloc (dir_file_list, 
+  dir_file_list = xrealloc (dir_file_list,
                         dir_file_list_len * sizeof (dir_file_list_entry_type));
   dir_file_list[dir_file_list_len - 1].device = test->st_dev;
   dir_file_list[dir_file_list_len - 1].inode = test->st_ino;
@@ -91,7 +91,7 @@ maybe_build_dir_node (char *dirname)
   /* Initialize the list we use to avoid reading the same dir file twice
      with the dir file just found.  */
   new_dir_file_p (&dir_buffer->finfo);
-  
+
   path_index = update_tags = 0;
 
   /* Using each element of the path, check for one of the files in
@@ -125,7 +125,7 @@ maybe_build_dir_node (char *dirname)
           int statable;
           int namelen = strlen (from_file);
           char *fullpath = xmalloc (3 + strlen (this_dir) + namelen);
-          
+
           strcpy (fullpath, this_dir);
           if (!IS_SLASH (fullpath[strlen (fullpath) - 1]))
             strcat (fullpath, "/");
