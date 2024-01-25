@@ -1067,7 +1067,7 @@ apldchidev_get_dimensions(struct apldchidev_softc *sc)
 		sc->sc_y_max = dim.y_max;
 		sc->sc_h_res = (100 * (dim.x_max - dim.x_min)) / dim.width;
 		sc->sc_v_res = (100 * (dim.y_max - dim.y_min)) / dim.height;
-	}		
+	}
 }
 
 void

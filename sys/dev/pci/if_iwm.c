@@ -9305,7 +9305,7 @@ iwm_set_rate_table_vht(struct iwm_node *in, struct iwm_lq_cmd *lqcmd)
 					tab &= ~IWM_RATE_VHT_MCS_RATE_CODE_MSK;
 					tab |= 8;
 				}
-					
+
 				tab |= IWM_RATE_MCS_RTS_REQUIRED_MSK;
 				if (i < 4) {
 					if (ieee80211_ra_vht_use_sgi(ni))

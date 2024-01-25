@@ -746,7 +746,7 @@ struct qwx_ce_ring {
 	uint32_t hal_ring_id;
 
 	/*
-	 * Per-transfer data. 
+	 * Per-transfer data.
 	 * Size and type of this data depends on how the ring is used.
 	 *
 	 * For transfers using DMA, the context contains pointers to

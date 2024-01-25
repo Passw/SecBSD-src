@@ -4,22 +4,22 @@
  * Copyright (c) 2012, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -268,7 +268,7 @@ static int
 do_gost94(unsigned char* data, size_t len, unsigned char* dest)
 {
 	const EVP_MD* md = EVP_get_digestbyname("md_gost94");
-	if(!md) 
+	if(!md)
 		return 0;
 	return sldns_digest_evp(data, (unsigned int)len, dest, md);
 }
@@ -318,8 +318,8 @@ secalgo_ds_digest(int algo, unsigned char* buf, size_t len,
 #endif
 			return 1;
 #endif
-		default: 
-			verbose(VERB_QUERY, "unknown DS digest algorithm %d", 
+		default:
+			verbose(VERB_QUERY, "unknown DS digest algorithm %d",
 				algo);
 			break;
 	}
@@ -395,7 +395,7 @@ dnskey_algo_id_is_supported(int id)
 
 #ifdef USE_DSA
 /**
- * Setup DSA key digest in DER encoding ... 
+ * Setup DSA key digest in DER encoding ...
  * @param sig: input is signature output alloced ptr (unless failure).
  * 	caller must free alloced ptr if this routine returns true.
  * @param len: input is initial siglen, output is output len.
@@ -542,7 +542,7 @@ void ecdsa_evp_workaround_init(void)
  * @return false on failure.
  */
 static int
-setup_key_digest(int algo, EVP_PKEY** evp_key, const EVP_MD** digest_type, 
+setup_key_digest(int algo, EVP_PKEY** evp_key, const EVP_MD** digest_type,
 	unsigned char* key, size_t keylen)
 {
 	switch(algo) {
@@ -677,7 +677,7 @@ setup_key_digest(int algo, EVP_PKEY** evp_key, const EVP_MD** digest_type,
 			break;
 #endif /* USE_ED448 */
 		default:
-			verbose(VERB_QUERY, "verify: unknown algorithm %d", 
+			verbose(VERB_QUERY, "verify: unknown algorithm %d",
 				algo);
 			return 0;
 	}
@@ -746,7 +746,7 @@ verify_canonrrset(sldns_buffer* buf, int algo, unsigned char* sigblock,
 	if(fake_sha1 && (algo == LDNS_DSA || algo == LDNS_DSA_NSEC3 || algo == LDNS_RSASHA1 || algo == LDNS_RSASHA1_NSEC3))
 		return sec_status_secure;
 #endif
-	
+
 	if(!setup_key_digest(algo, &evp_key, &digest_type, key, keylen)) {
 		verbose(VERB_QUERY, "verify: failed to setup key");
 		*reason = "use of key for crypto failed";
@@ -755,7 +755,7 @@ verify_canonrrset(sldns_buffer* buf, int algo, unsigned char* sigblock,
 	}
 #ifdef USE_DSA
 	/* if it is a DSA signature in bind format, convert to DER format */
-	if((algo == LDNS_DSA || algo == LDNS_DSA_NSEC3) && 
+	if((algo == LDNS_DSA || algo == LDNS_DSA_NSEC3) &&
 		sigblock_len == 1+2*SHA_DIGEST_LENGTH) {
 		if(!setup_dsa_sig(&sigblock, &sigblock_len)) {
 			verbose(VERB_QUERY, "verify: failed to setup DSA sig");
@@ -767,7 +767,7 @@ verify_canonrrset(sldns_buffer* buf, int algo, unsigned char* sigblock,
 	}
 #endif
 #if defined(USE_ECDSA) && defined(USE_DSA)
-	else 
+	else
 #endif
 #ifdef USE_ECDSA
 	if(algo == LDNS_ECDSAP256SHA256 || algo == LDNS_ECDSAP384SHA384) {
@@ -804,7 +804,7 @@ verify_canonrrset(sldns_buffer* buf, int algo, unsigned char* sigblock,
 			dofree, docrypto_free);
 		return sec;
 	}
-	if(EVP_DigestUpdate(ctx, (unsigned char*)sldns_buffer_begin(buf), 
+	if(EVP_DigestUpdate(ctx, (unsigned char*)sldns_buffer_begin(buf),
 		(unsigned int)sldns_buffer_limit(buf)) == 0) {
 		log_crypto_verbose(VERB_QUERY, "verify: EVP_DigestUpdate failed",
 			ERR_get_error());
@@ -989,8 +989,8 @@ secalgo_ds_digest(int algo, unsigned char* buf, size_t len,
 				== SECSuccess;
 #endif
 		case LDNS_HASH_GOST:
-		default: 
-			verbose(VERB_QUERY, "unknown DS digest algorithm %d", 
+		default:
+			verbose(VERB_QUERY, "unknown DS digest algorithm %d",
 				algo);
 			break;
 	}
@@ -1198,7 +1198,7 @@ static SECKEYPublicKey* nss_buf2rsa(unsigned char* key, size_t len)
 	/* key length at least one */
 	if(len < (size_t)offset + exp + 1)
 		return NULL;
-	
+
 	exponent.data = key+offset;
 	exponent.len = exp;
 	offset += exp;
@@ -1250,7 +1250,7 @@ nss_setup_key_digest(int algo, SECKEYPublicKey** pubkey, HASH_HashType* htype,
 	static unsigned char p_sha512[] = {0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60,
 	0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40};
 	/* from RFC6234 */
-	/* for future RSASHA384 .. 
+	/* for future RSASHA384 ..
 	static unsigned char p_sha384[] = {0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60,
 	0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30};
 	*/
@@ -1351,7 +1351,7 @@ nss_setup_key_digest(int algo, SECKEYPublicKey** pubkey, HASH_HashType* htype,
 #endif /* USE_ECDSA */
 		case LDNS_ECC_GOST:
 		default:
-			verbose(VERB_QUERY, "verify: unknown algorithm %d", 
+			verbose(VERB_QUERY, "verify: unknown algorithm %d",
 				algo);
 			return 0;
 	}
@@ -1372,7 +1372,7 @@ nss_setup_key_digest(int algo, SECKEYPublicKey** pubkey, HASH_HashType* htype,
  *	unchecked on format errors and alloc failures.
  */
 enum sec_status
-verify_canonrrset(sldns_buffer* buf, int algo, unsigned char* sigblock, 
+verify_canonrrset(sldns_buffer* buf, int algo, unsigned char* sigblock,
 	unsigned int sigblock_len, unsigned char* key, unsigned int keylen,
 	char** reason)
 {

@@ -316,7 +316,7 @@ fuseioctl(dev_t dev, u_long cmd, caddr_t addr, int flags, struct proc *p)
 			SIMPLEQ_REMOVE_AFTER(&fd->fd_fbufs_in, lastfbuf,
 			    fb_next);
 		rw_exit_write(&fd->fd_lock);
-	
+
 		stat_fbufs_in--;
 
 		/* Do not handle fbufs with bad len */
@@ -602,7 +602,7 @@ filt_fuse_process(struct knote *kn, struct kevent *kev)
 	int active;
 
 	rw_enter_write(&fd->fd_lock);
-	active = knote_process(kn, kev); 
+	active = knote_process(kn, kev);
 	rw_exit_write(&fd->fd_lock);
 
 	return (active);

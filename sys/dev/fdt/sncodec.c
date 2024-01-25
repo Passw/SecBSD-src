@@ -149,7 +149,7 @@ sncodec_attach(struct device *parent, struct device *self, void *aux)
 		free(sdz_gpio, M_TEMP, sdz_gpiolen);
 		delay(1000);
 	}
-	
+
 	/* Set volume to a reasonable level. */
 	sc->sc_dvc = DVC_LVL_30DB;
 	sc->sc_mute = MODE_CTRL_MODE_ACTIVE;

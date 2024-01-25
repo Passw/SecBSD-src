@@ -9868,7 +9868,7 @@ struct hal_reo_desc_thresh_reached_status {
 #define HAL_TX_ADDR_SEARCH_DEFAULT	0
 #define HAL_TX_ADDR_SEARCH_INDEX	1
 
-/* 
+/*
  * Copy Engine
  */
 

@@ -92,7 +92,7 @@ devm_device_add_group(struct device *dev, const struct attribute_group *g)
 #define dev_err_once(dev, fmt, arg...)				\
 	printf("drm:pid%d:%s *ERROR* " fmt, curproc->p_p->ps_pid,	\
 	    __func__ , ## arg)
-	
+
 #define dev_err_probe(dev, err, fmt, arg...)				\
 	printf("drm:pid%d:%s *ERROR* " fmt, curproc->p_p->ps_pid,	\
 	       __func__ , ## arg), err

@@ -5057,7 +5057,7 @@ qwx_qmi_decode_datalen(struct qwx_softc *sc, size_t *used, uint32_t *datalen,
 		printf("%s: bad datalen element size %u\n",
 		    sc->sc_dev.dv_xname, ei->elem_size);
 		return -1;
-		
+
 	}
 	*used = ei->elem_size;
 
@@ -6610,7 +6610,7 @@ qwx_qmi_send_request(struct qwx_softc *sc, uint16_t msg_id, size_t msg_len,
 	hdr.src_port_id = htole32(0x4000); /* TODO make human-readable */
 	hdr.dst_node_id = htole32(0x07); /* TODO make human-readable */
 	hdr.dst_port_id = htole32(0x01); /* TODO make human-readable */
-	hdr.size = htole32(encoded_len); 
+	hdr.size = htole32(encoded_len);
 
 	err = m_copyback(m, 0, sizeof(hdr), &hdr, M_NOWAIT);
 	if (err)
@@ -6679,7 +6679,7 @@ qwx_qmi_fw_ind_register_send(struct qwx_softc *sc)
 		return -1;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxfwind",
 		    SEC_TO_NSEC(1));
@@ -6753,7 +6753,7 @@ qwx_qmi_host_cap_send(struct qwx_softc *sc)
 		return -1;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxfwhcap",
 		    SEC_TO_NSEC(1));
@@ -6823,7 +6823,7 @@ qwx_qmi_mem_seg_send(struct qwx_softc *sc)
 		    sc->sc_dev.dv_xname);
 		mem_seg_len = 0;
 	} else if (sc->fwmem == NULL || QWX_DMA_LEN(sc->fwmem) < total_size) {
-		if (sc->fwmem != NULL) 
+		if (sc->fwmem != NULL)
 			qwx_dmamem_free(sc->sc_dmat, sc->fwmem);
 		sc->fwmem = qwx_dmamem_alloc(sc->sc_dmat, total_size, 65536);
 		if (sc->fwmem == NULL) {
@@ -6874,7 +6874,7 @@ qwx_qmi_mem_seg_send(struct qwx_softc *sc)
 		sc->qmi_resp.result = QMI_RESULT_SUCCESS_V01;
 	} else {
 		expected_result = QMI_RESULT_SUCCESS_V01;
-		sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+		sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	}
 	while (sc->qmi_resp.result != expected_result) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxfwrespmem",
@@ -6936,7 +6936,7 @@ qwx_qmi_request_target_cap(struct qwx_softc *sc)
 		goto out;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxfwcap",
 		    SEC_TO_NSEC(1));
@@ -7365,7 +7365,7 @@ qwx_qmi_load_file_target_mem(struct qwx_softc *sc, const u_char *data,
 			goto err_iounmap;
 		}
 
-		sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+		sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 		while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 			ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxbdf",
 			    SEC_TO_NSEC(1));
@@ -7602,7 +7602,7 @@ qwx_qmi_wlanfw_m3_info_send(struct qwx_softc *sc)
 		return ret;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxfwm3",
 		    SEC_TO_NSEC(1));
@@ -8449,7 +8449,7 @@ qwx_dp_shadow_timer_handler(void *arg)
 #endif
 	s = splnet();
 
-	/* 
+	/*
 	 * Update HP if there were no TX operations during the timeout interval,
 	 * and stop the timer. Timer will be restarted if more TX happens.
 	 */
@@ -8928,7 +8928,7 @@ qwx_qmi_wlanfw_wlan_ini_send(struct qwx_softc *sc, int enable)
 		return ret;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxini",
 		    SEC_TO_NSEC(1));
@@ -9004,7 +9004,7 @@ qwx_qmi_wlanfw_wlan_cfg_send(struct qwx_softc *sc)
 		goto out;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxwlancfg",
 		    SEC_TO_NSEC(1));
@@ -9038,7 +9038,7 @@ qwx_qmi_wlanfw_mode_send(struct qwx_softc *sc, enum ath11k_firmware_mode mode)
 		return ret;
 	}
 
-	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01; 
+	sc->qmi_resp.result = QMI_RESULT_FAILURE_V01;
 	while (sc->qmi_resp.result != QMI_RESULT_SUCCESS_V01) {
 		ret = tsleep_nsec(&sc->qmi_resp, 0, "qwxfwmode",
 		    SEC_TO_NSEC(1));
@@ -12424,7 +12424,7 @@ qwx_dp_rxbufs_replenish(struct qwx_softc *sc, int mac_id,
 			if (ret)
 				goto fail_free_mbuf;
 		}
-		
+
 		ret = bus_dmamap_load_mbuf(sc->sc_dmat, rx_data->map, m,
 		    BUS_DMA_READ | BUS_DMA_NOWAIT);
 		if (ret) {
@@ -14616,7 +14616,7 @@ qwx_core_stop(struct qwx_softc *sc)
 {
 	if (!test_bit(ATH11K_FLAG_CRASH_FLUSH, sc->sc_flags))
 		qwx_qmi_firmware_stop(sc);
-	
+
 	sc->ops.stop(sc);
 	qwx_wmi_detach(sc);
 	qwx_dp_pdev_reo_cleanup(sc);
@@ -16178,7 +16178,7 @@ qwx_ce_free_ring(struct qwx_softc *sc, struct qwx_ce_ring *ring)
 {
 	bus_size_t dsize;
 	size_t size;
-	
+
 	if (ring == NULL)
 		return;
 
@@ -17167,7 +17167,7 @@ qwx_reg_update_chan_list(struct qwx_softc *sc, uint8_t pdev_id)
 		ch->cfreq1 = ch->mhz;
 		ch->minpower = 0;
 		ch->maxpower = 40; /* XXX from Linux debug trace */
-		ch->maxregpower = ch->maxpower; 
+		ch->maxregpower = ch->maxpower;
 		ch->antennamax = 0;
 
 		/* TODO: Use appropriate phymodes */

@@ -27,7 +27,7 @@
 #include <keynote.h>
 
 
-char policy_assertions[] = 
+char policy_assertions[] =
 "Authorizer: \"POLICY\"\n" \
 "Licensees: \"rsa-hex:3048024100d15d08ce7d2103d93ef21a87330361\\\n" \
 "             ff123096b14330f9f0936e8f2064ef815ffdaabbb7d3ba47b\\\n" \

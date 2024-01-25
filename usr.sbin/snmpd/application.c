@@ -1721,7 +1721,7 @@ appl_report(struct snmp_message *statereference, int32_t requestid,
 	ureq->aru_vblist[0].avi_request_downstream = NULL;
 	ureq->aru_vblist[0].avi_next = NULL;
 	ureq->aru_vblist[0].avi_sub = NULL;
-	
+
 	appl_request_upstream_resolve(ureq);
 }
 

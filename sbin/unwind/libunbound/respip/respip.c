@@ -128,7 +128,7 @@ void
 respip_sockaddr_delete(struct respip_set* set, struct resp_addr* node)
 {
 	struct resp_addr* prev;
-	prev = (struct resp_addr*)rbtree_previous((struct rbnode_type*)node);	
+	prev = (struct resp_addr*)rbtree_previous((struct rbnode_type*)node);
 	lock_rw_destroy(&node->lock);
 	(void)rbtree_delete(&set->ip_tree, node);
 	/* no free'ing, all allocated in region */
@@ -943,7 +943,7 @@ respip_rewrite_reply(const struct query_info* qinfo,
 	for(a = az->rpz_first; a && !raddr && !(rpz_passthru && *rpz_passthru); a = a->rpz_az_next) {
 		lock_rw_rdlock(&a->lock);
 		r = a->rpz;
-		if(!r->taglist || taglist_intersect(r->taglist, 
+		if(!r->taglist || taglist_intersect(r->taglist,
 			r->taglistlen, ctaglist, ctaglen)) {
 			if((raddr = respip_addr_lookup(rep,
 				r->respip_set, &rrset_id, &rr_id))) {

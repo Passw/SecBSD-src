@@ -471,7 +471,7 @@ server_partial_file_request(struct httpd *env, struct client *clt, char *path,
 }
 
 /* ignore hidden files starting with a dot */
-static int 
+static int
 select_visible(const struct dirent *dp)
 {
     if (dp->d_name[0] == '.' &&
@@ -548,7 +548,7 @@ server_file_index(struct httpd *env, struct client *clt)
 
 	free(escapedpath);
 
-	if ((namesize = scandir(path, &namelist, select_visible, 
+	if ((namesize = scandir(path, &namelist, select_visible,
 	    alphasort)) == -1)
 		goto abort;
 
@@ -588,7 +588,7 @@ server_file_index(struct httpd *env, struct client *clt)
 			    "<td><a href=\"%s%s/\">%s/</a></td>\n"
 			    "    <td data-o=\"%lld\">%s</td><td>%s</td></tr>\n",
 			    strchr(escapeduri, ':') != NULL ? "./" : "",
-			    escapeduri, escapedhtml, 
+			    escapeduri, escapedhtml,
 			    (long long)t, tmstr, "-") == -1)
 				skip = 1;
 		} else if (S_ISREG(subst.st_mode)) {
@@ -599,7 +599,7 @@ server_file_index(struct httpd *env, struct client *clt)
 			    "<td title=\"%llu\">%s</td></tr>\n",
 			    strchr(escapeduri, ':') != NULL ? "./" : "",
 			    escapeduri, escapedhtml,
-			    (long long)t, tmstr, 
+			    (long long)t, tmstr,
 			    subst.st_size, human_size) == -1))
 				skip = 1;
 		}

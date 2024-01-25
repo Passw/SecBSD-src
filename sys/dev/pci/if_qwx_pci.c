@@ -1109,7 +1109,7 @@ qwx_pci_alloc_xfer_ring(struct qwx_softc *sc, struct qwx_pci_xfer_ring *ring,
 	memset(ring->data, 0, sizeof(ring->data));
 	for (i = 0; i < ring->num_elements; i++) {
 		struct qwx_xfer_data *xfer = &ring->data[i];
-		
+
 		err = bus_dmamap_create(sc->sc_dmat, QWX_PCI_XFER_MAX_DATA_SIZE,
 		    1, QWX_PCI_XFER_MAX_DATA_SIZE, 0, BUS_DMA_NOWAIT,
 		    &xfer->map);
@@ -3026,7 +3026,7 @@ qwx_mhi_fw_load_bhi(struct qwx_pci_softc *psc, uint8_t *data, size_t len)
 	qwx_pci_write(sc, psc->bhi_off + MHI_BHI_IMGADDR_LOW,
 	    paddr & 0xffffffff);
 	qwx_pci_write(sc, psc->bhi_off + MHI_BHI_IMGSIZE, len);
-	
+
 	/* Set a random transaction sequence number. */
 	do {
 		seq = arc4random_uniform(MHI_BHI_TXDB_SEQNUM_BMSK);

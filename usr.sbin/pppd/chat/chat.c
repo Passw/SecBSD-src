@@ -798,7 +798,7 @@ int sending;  /* set to 1 when sending (putting) this string. */
     fprintf(stderr, "clean(): guessed %d and used %d\n", new_length, s1-ret);
 #endif
     if (new_length < s1 - ret)
-	logmsg("clean(): new_length too short! %d < %d: \"%s\" -> \"%s\"", 
+	logmsg("clean(): new_length too short! %d < %d: \"%s\" -> \"%s\"",
 	       new_length, s1 - ret, s, ret);
 
     return ret;

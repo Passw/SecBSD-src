@@ -91,7 +91,7 @@
 #define MILLION_L    1000000l		/* For conversion to/from timeval */
 #define MILLION_D       1.0e6		/* Must be equal to MILLION_L */
 
-/* 
+/*
  * The era we're in if we have no reason to assume otherwise.
  * If unpack_ntp() sees a small offset the era is is assumed to be
  * NTP_ERA + 1.

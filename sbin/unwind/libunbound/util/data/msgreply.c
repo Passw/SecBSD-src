@@ -1,25 +1,25 @@
 /*
- * util/data/msgreply.c - store message and reply data. 
+ * util/data/msgreply.c - store message and reply data.
  *
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -72,12 +72,12 @@ int SERVE_ORIGINAL_TTL = 0;
 
 /** allocate qinfo, return 0 on error */
 static int
-parse_create_qinfo(sldns_buffer* pkt, struct msg_parse* msg, 
+parse_create_qinfo(sldns_buffer* pkt, struct msg_parse* msg,
 	struct query_info* qinf, struct regional* region)
 {
 	if(msg->qname) {
 		if(region)
-			qinf->qname = (uint8_t*)regional_alloc(region, 
+			qinf->qname = (uint8_t*)regional_alloc(region,
 				msg->qname_len);
 		else	qinf->qname = (uint8_t*)malloc(msg->qname_len);
 		if(!qinf->qname) return 0;
@@ -103,9 +103,9 @@ construct_reply_info_base(struct regional* region, uint16_t flags, size_t qd,
 	if(total >= RR_COUNT_MAX) return NULL; /* sanity check on numRRS*/
 	if(region)
 		rep = (struct reply_info*)regional_alloc(region, s);
-	else	rep = (struct reply_info*)malloc(s + 
+	else	rep = (struct reply_info*)malloc(s +
 			sizeof(struct rrset_ref) * (total));
-	if(!rep) 
+	if(!rep)
 		return NULL;
 	rep->flags = flags;
 	rep->qdcount = qd;
@@ -137,8 +137,8 @@ static int
 parse_create_repinfo(struct msg_parse* msg, struct reply_info** rep,
 	struct regional* region)
 {
-	*rep = construct_reply_info_base(region, msg->flags, msg->qdcount, 0, 
-		0, 0, msg->an_rrsets, msg->ns_rrsets, msg->ar_rrsets, 
+	*rep = construct_reply_info_base(region, msg->flags, msg->qdcount, 0,
+		0, 0, msg->an_rrsets, msg->ns_rrsets, msg->ar_rrsets,
 		msg->rrset_count, sec_status_unchecked, LDNS_EDE_NONE);
 	if(!*rep)
 		return 0;
@@ -153,10 +153,10 @@ reply_info_alloc_rrset_keys(struct reply_info* rep, struct alloc_cache* alloc,
 	for(i=0; i<rep->rrset_count; i++) {
 		if(region) {
 			rep->rrsets[i] = (struct ub_packed_rrset_key*)
-				regional_alloc(region, 
+				regional_alloc(region,
 				sizeof(struct ub_packed_rrset_key));
 			if(rep->rrsets[i]) {
-				memset(rep->rrsets[i], 0, 
+				memset(rep->rrsets[i], 0,
 					sizeof(struct ub_packed_rrset_key));
 				rep->rrsets[i]->entry.key = rep->rrsets[i];
 			}
@@ -209,7 +209,7 @@ soa_find_minttl(struct rr_parse* rr)
 
 /** do the rdata copy */
 static int
-rdata_copy(sldns_buffer* pkt, struct packed_rrset_data* data, uint8_t* to, 
+rdata_copy(sldns_buffer* pkt, struct packed_rrset_data* data, uint8_t* to,
 	struct rr_parse* rr, time_t* rr_ttl, uint16_t type,
 	sldns_pkt_section section)
 {
@@ -267,7 +267,7 @@ rdata_copy(sldns_buffer* pkt, struct packed_rrset_data* data, uint8_t* to,
 			switch(desc->_wireformat[rdf]) {
 			case LDNS_RDF_TYPE_DNAME:
 				oldpos = sldns_buffer_position(pkt);
-				dname_pkt_copy(pkt, to, 
+				dname_pkt_copy(pkt, to,
 					sldns_buffer_current(pkt));
 				to += pkt_dname_len(pkt);
 				pkt_len -= sldns_buffer_position(pkt)-oldpos;
@@ -294,13 +294,13 @@ rdata_copy(sldns_buffer* pkt, struct packed_rrset_data* data, uint8_t* to,
 	/* copy remaining rdata */
 	if(pkt_len >  0)
 		memmove(to, sldns_buffer_current(pkt), pkt_len);
-	
+
 	return 1;
 }
 
 /** copy over the data into packed rrset */
 static int
-parse_rr_copy(sldns_buffer* pkt, struct rrset_parse* pset, 
+parse_rr_copy(sldns_buffer* pkt, struct rrset_parse* pset,
 	struct packed_rrset_data* data)
 {
 	size_t i;
@@ -313,7 +313,7 @@ parse_rr_copy(sldns_buffer* pkt, struct rrset_parse* pset,
 	data->trust = rrset_trust_none;
 	data->security = sec_status_unchecked;
 	/* layout: struct - rr_len - rr_data - rr_ttl - rdata - rrsig */
-	data->rr_len = (size_t*)((uint8_t*)data + 
+	data->rr_len = (size_t*)((uint8_t*)data +
 		sizeof(struct packed_rrset_data));
 	data->rr_data = (uint8_t**)&(data->rr_len[total]);
 	data->rr_ttl = (time_t*)&(data->rr_data[total]);
@@ -322,7 +322,7 @@ parse_rr_copy(sldns_buffer* pkt, struct rrset_parse* pset,
 		data->rr_len[i] = rr->size;
 		data->rr_data[i] = nextrdata;
 		nextrdata += rr->size;
-		if(!rdata_copy(pkt, data, data->rr_data[i], rr, 
+		if(!rdata_copy(pkt, data, data->rr_data[i], rr,
 			&data->rr_ttl[i], pset->type, pset->section))
 			return 0;
 		rr = rr->next;
@@ -333,7 +333,7 @@ parse_rr_copy(sldns_buffer* pkt, struct rrset_parse* pset,
 		data->rr_len[i] = rr->size;
 		data->rr_data[i] = nextrdata;
 		nextrdata += rr->size;
-		if(!rdata_copy(pkt, data, data->rr_data[i], rr, 
+		if(!rdata_copy(pkt, data, data->rr_data[i], rr,
 			&data->rr_ttl[i], LDNS_RR_TYPE_RRSIG, pset->section))
 			return 0;
 		rr = rr->next;
@@ -351,9 +351,9 @@ parse_create_rrset(sldns_buffer* pkt, struct rrset_parse* pset,
 	if(pset->rr_count > RR_COUNT_MAX || pset->rrsig_count > RR_COUNT_MAX ||
 		pset->size > RR_COUNT_MAX)
 		return 0; /* protect against integer overflow */
-	s = sizeof(struct packed_rrset_data) + 
-		(pset->rr_count + pset->rrsig_count) * 
-		(sizeof(size_t)+sizeof(uint8_t*)+sizeof(time_t)) + 
+	s = sizeof(struct packed_rrset_data) +
+		(pset->rr_count + pset->rrsig_count) *
+		(sizeof(size_t)+sizeof(uint8_t*)+sizeof(time_t)) +
 		pset->size;
 	if(region)
 		*data = regional_alloc_zero(region, s);
@@ -379,14 +379,14 @@ get_rrset_trust(struct msg_parse* msg, struct rrset_parse* rrset)
 	if(rrset->section == LDNS_SECTION_ANSWER) {
 		if(AA) {
 			/* RFC2181 says remainder of CNAME chain is nonauth*/
-			if(msg->rrset_first && 
+			if(msg->rrset_first &&
 				msg->rrset_first->section==LDNS_SECTION_ANSWER
 				&& msg->rrset_first->type==LDNS_RR_TYPE_CNAME){
 				if(rrset == msg->rrset_first)
 					return rrset_trust_ans_AA;
 				else 	return rrset_trust_ans_noAA;
 			}
-			if(msg->rrset_first && 
+			if(msg->rrset_first &&
 				msg->rrset_first->section==LDNS_SECTION_ANSWER
 				&& msg->rrset_first->type==LDNS_RR_TYPE_DNAME){
 				if(rrset == msg->rrset_first ||
@@ -411,7 +411,7 @@ get_rrset_trust(struct msg_parse* msg, struct rrset_parse* rrset)
 
 int
 parse_copy_decompress_rrset(sldns_buffer* pkt, struct msg_parse* msg,
-	struct rrset_parse *pset, struct regional* region, 
+	struct rrset_parse *pset, struct regional* region,
 	struct ub_packed_rrset_key* pk)
 {
 	struct packed_rrset_data* data;
@@ -420,7 +420,7 @@ parse_copy_decompress_rrset(sldns_buffer* pkt, struct msg_parse* msg,
 	if(region)
 		pk->rk.dname = (uint8_t*)regional_alloc(
 			region, pset->dname_len);
-	else	pk->rk.dname = 
+	else	pk->rk.dname =
 			(uint8_t*)malloc(pset->dname_len);
 	if(!pk->rk.dname)
 		return 0;
@@ -444,7 +444,7 @@ parse_copy_decompress_rrset(sldns_buffer* pkt, struct msg_parse* msg,
 	return 1;
 }
 
-/** 
+/**
  * Copy and decompress rrs
  * @param pkt: the packet for compression pointer resolution.
  * @param msg: the parsed message
@@ -480,9 +480,9 @@ parse_copy_decompress(sldns_buffer* pkt, struct msg_parse* msg,
 	return 1;
 }
 
-int 
+int
 parse_create_msg(sldns_buffer* pkt, struct msg_parse* msg,
-	struct alloc_cache* alloc, struct query_info* qinf, 
+	struct alloc_cache* alloc, struct query_info* qinf,
 	struct reply_info** rep, struct regional* region)
 {
 	log_assert(pkt && msg);
@@ -502,13 +502,13 @@ parse_create_msg(sldns_buffer* pkt, struct msg_parse* msg,
 }
 
 int reply_info_parse(sldns_buffer* pkt, struct alloc_cache* alloc,
-        struct query_info* qinf, struct reply_info** rep, 
+        struct query_info* qinf, struct reply_info** rep,
 	struct regional* region, struct edns_data* edns)
 {
 	/* use scratch pad region-allocator during parsing. */
 	struct msg_parse* msg;
 	int ret;
-	
+
 	qinf->qname = NULL;
 	qinf->local_alias = NULL;
 	*rep = NULL;
@@ -516,7 +516,7 @@ int reply_info_parse(sldns_buffer* pkt, struct alloc_cache* alloc,
 		return LDNS_RCODE_SERVFAIL;
 	}
 	memset(msg, 0, sizeof(*msg));
-	
+
 	sldns_buffer_set_position(pkt, 0);
 	if((ret = parse_packet(pkt, msg, region)) != 0) {
 		return ret;
@@ -545,14 +545,14 @@ reply_info_sortref_cmp(const void* a, const void* b)
 	return 0;
 }
 
-void 
+void
 reply_info_sortref(struct reply_info* rep)
 {
 	qsort(&rep->ref[0], rep->rrset_count, sizeof(struct rrset_ref),
 		reply_info_sortref_cmp);
 }
 
-void 
+void
 reply_info_set_ttls(struct reply_info* rep, time_t timenow)
 {
 	size_t i, j;
@@ -572,11 +572,11 @@ reply_info_set_ttls(struct reply_info* rep, time_t timenow)
 	}
 }
 
-void 
+void
 reply_info_parsedelete(struct reply_info* rep, struct alloc_cache* alloc)
 {
 	size_t i;
-	if(!rep) 
+	if(!rep)
 		return;
 	/* no need to lock, since not shared in hashtables. */
 	for(i=0; i<rep->rrset_count; i++) {
@@ -589,7 +589,7 @@ reply_info_parsedelete(struct reply_info* rep, struct alloc_cache* alloc)
 	free(rep);
 }
 
-int 
+int
 query_info_parse(struct query_info* m, sldns_buffer* query)
 {
 	uint8_t* q = sldns_buffer_begin(query);
@@ -618,7 +618,7 @@ query_info_parse(struct query_info* m, sldns_buffer* query)
 	else if( (x) > (y) ) return +1; \
 	log_assert( (x) == (y) );
 
-int 
+int
 query_info_compare(void* m1, void* m2)
 {
 	struct query_info* msg1 = (struct query_info*)m1;
@@ -634,14 +634,14 @@ query_info_compare(void* m1, void* m2)
 #undef COMPARE_IT
 }
 
-void 
+void
 query_info_clear(struct query_info* m)
 {
 	free(m->qname);
 	m->qname = NULL;
 }
 
-size_t 
+size_t
 msgreply_sizefunc(void* k, void* d)
 {
 	struct msgreply_entry* q = (struct msgreply_entry*)k;
@@ -654,7 +654,7 @@ msgreply_sizefunc(void* k, void* d)
 	return s;
 }
 
-void 
+void
 query_entry_delete(void *k, void* ATTR_UNUSED(arg))
 {
 	struct msgreply_entry* q = (struct msgreply_entry*)k;
@@ -663,7 +663,7 @@ query_entry_delete(void *k, void* ATTR_UNUSED(arg))
 	free(q);
 }
 
-void 
+void
 reply_info_delete(void* d, void* ATTR_UNUSED(arg))
 {
 	struct reply_info* r = (struct reply_info*)d;
@@ -686,11 +686,11 @@ query_info_hash(struct query_info *q, uint16_t flags)
 	return h;
 }
 
-struct msgreply_entry* 
-query_info_entrysetup(struct query_info* q, struct reply_info* r, 
+struct msgreply_entry*
+query_info_entrysetup(struct query_info* q, struct reply_info* r,
 	hashvalue_type h)
 {
-	struct msgreply_entry* e = (struct msgreply_entry*)malloc( 
+	struct msgreply_entry* e = (struct msgreply_entry*)malloc(
 		sizeof(struct msgreply_entry));
 	if(!e) return NULL;
 	memcpy(&e->key, q, sizeof(*q));
@@ -713,7 +713,7 @@ query_info_entrysetup(struct query_info* q, struct reply_info* r,
 
 /** copy rrsets from replyinfo to dest replyinfo */
 static int
-repinfo_copy_rrsets(struct reply_info* dest, struct reply_info* from, 
+repinfo_copy_rrsets(struct reply_info* dest, struct reply_info* from,
 	struct regional* region)
 {
 	size_t i, s;
@@ -729,8 +729,8 @@ repinfo_copy_rrsets(struct reply_info* dest, struct reply_info* from,
 			dk->id = fk->id;
 			dk->rk.dname = (uint8_t*)regional_alloc_init(region,
 				fk->rk.dname, fk->rk.dname_len);
-		} else	
-			dk->rk.dname = (uint8_t*)memdup(fk->rk.dname, 
+		} else
+			dk->rk.dname = (uint8_t*)memdup(fk->rk.dname,
 				fk->rk.dname_len);
 		if(!dk->rk.dname)
 			return 0;
@@ -739,7 +739,7 @@ repinfo_copy_rrsets(struct reply_info* dest, struct reply_info* from,
 			dd = (struct packed_rrset_data*)regional_alloc_init(
 				region, fd, s);
 		else	dd = (struct packed_rrset_data*)memdup(fd, s);
-		if(!dd) 
+		if(!dd)
 			return 0;
 		packed_rrset_ptr_fixup(dd);
 		dk->entry.data = (void*)dd;
@@ -791,7 +791,7 @@ reply_info_copy(struct reply_info* rep, struct alloc_cache* alloc,
 	return cp;
 }
 
-uint8_t* 
+uint8_t*
 reply_find_final_cname_target(struct query_info* qinfo, struct reply_info* rep)
 {
 	uint8_t* sname = qinfo->qname;
@@ -800,8 +800,8 @@ reply_find_final_cname_target(struct query_info* qinfo, struct reply_info* rep)
 	for(i=0; i<rep->an_numrrsets; i++) {
 		struct ub_packed_rrset_key* s = rep->rrsets[i];
 		/* follow CNAME chain (if any) */
-		if(ntohs(s->rk.type) == LDNS_RR_TYPE_CNAME && 
-			ntohs(s->rk.rrset_class) == qinfo->qclass && 
+		if(ntohs(s->rk.type) == LDNS_RR_TYPE_CNAME &&
+			ntohs(s->rk.rrset_class) == qinfo->qclass &&
 			snamelen == s->rk.dname_len &&
 			query_dname_compare(sname, s->rk.dname) == 0) {
 			get_cname_target(s, &sname, &snamelen);
@@ -812,7 +812,7 @@ reply_find_final_cname_target(struct query_info* qinfo, struct reply_info* rep)
 	return NULL;
 }
 
-struct ub_packed_rrset_key* 
+struct ub_packed_rrset_key*
 reply_find_answer_rrset(struct query_info* qinfo, struct reply_info* rep)
 {
 	uint8_t* sname = qinfo->qname;
@@ -821,15 +821,15 @@ reply_find_answer_rrset(struct query_info* qinfo, struct reply_info* rep)
 	for(i=0; i<rep->an_numrrsets; i++) {
 		struct ub_packed_rrset_key* s = rep->rrsets[i];
 		/* first match type, for query of qtype cname */
-		if(ntohs(s->rk.type) == qinfo->qtype && 
-			ntohs(s->rk.rrset_class) == qinfo->qclass && 
+		if(ntohs(s->rk.type) == qinfo->qtype &&
+			ntohs(s->rk.rrset_class) == qinfo->qclass &&
 			snamelen == s->rk.dname_len &&
 			query_dname_compare(sname, s->rk.dname) == 0) {
 			return s;
 		}
 		/* follow CNAME chain (if any) */
-		if(ntohs(s->rk.type) == LDNS_RR_TYPE_CNAME && 
-			ntohs(s->rk.rrset_class) == qinfo->qclass && 
+		if(ntohs(s->rk.type) == LDNS_RR_TYPE_CNAME &&
+			ntohs(s->rk.rrset_class) == qinfo->qclass &&
 			snamelen == s->rk.dname_len &&
 			query_dname_compare(sname, s->rk.dname) == 0) {
 			get_cname_target(s, &sname, &snamelen);
@@ -844,8 +844,8 @@ struct ub_packed_rrset_key* reply_find_rrset_section_an(struct reply_info* rep,
 	size_t i;
 	for(i=0; i<rep->an_numrrsets; i++) {
 		struct ub_packed_rrset_key* s = rep->rrsets[i];
-		if(ntohs(s->rk.type) == type && 
-			ntohs(s->rk.rrset_class) == dclass && 
+		if(ntohs(s->rk.type) == type &&
+			ntohs(s->rk.rrset_class) == dclass &&
 			namelen == s->rk.dname_len &&
 			query_dname_compare(name, s->rk.dname) == 0) {
 			return s;
@@ -860,8 +860,8 @@ struct ub_packed_rrset_key* reply_find_rrset_section_ns(struct reply_info* rep,
 	size_t i;
 	for(i=rep->an_numrrsets; i<rep->an_numrrsets+rep->ns_numrrsets; i++) {
 		struct ub_packed_rrset_key* s = rep->rrsets[i];
-		if(ntohs(s->rk.type) == type && 
-			ntohs(s->rk.rrset_class) == dclass && 
+		if(ntohs(s->rk.type) == type &&
+			ntohs(s->rk.rrset_class) == dclass &&
 			namelen == s->rk.dname_len &&
 			query_dname_compare(name, s->rk.dname) == 0) {
 			return s;
@@ -876,8 +876,8 @@ struct ub_packed_rrset_key* reply_find_rrset(struct reply_info* rep,
 	size_t i;
 	for(i=0; i<rep->rrset_count; i++) {
 		struct ub_packed_rrset_key* s = rep->rrsets[i];
-		if(ntohs(s->rk.type) == type && 
-			ntohs(s->rk.rrset_class) == dclass && 
+		if(ntohs(s->rk.type) == type &&
+			ntohs(s->rk.rrset_class) == dclass &&
 			namelen == s->rk.dname_len &&
 			query_dname_compare(name, s->rk.dname) == 0) {
 			return s;
@@ -886,7 +886,7 @@ struct ub_packed_rrset_key* reply_find_rrset(struct reply_info* rep,
 	return NULL;
 }
 
-void 
+void
 log_dns_msg(const char* str, struct query_info* qinfo, struct reply_info* rep)
 {
 	/* not particularly fast but flexible, make wireformat and print */
@@ -956,14 +956,14 @@ log_reply_info(enum verbosity_value v, struct query_info *qinf,
 }
 
 void
-log_query_info(enum verbosity_value v, const char* str, 
+log_query_info(enum verbosity_value v, const char* str,
 	struct query_info* qinf)
 {
 	log_nametypeclass(v, str, qinf->qname, qinf->qtype, qinf->qclass);
 }
 
 int
-reply_check_cname_chain(struct query_info* qinfo, struct reply_info* rep) 
+reply_check_cname_chain(struct query_info* qinfo, struct reply_info* rep)
 {
 	/* check only answer section rrs for matching cname chain.
 	 * the cache may return changed rdata, but owner names are untouched.*/
@@ -988,7 +988,7 @@ reply_check_cname_chain(struct query_info* qinfo, struct reply_info* rep)
 }
 
 int
-reply_all_rrsets_secure(struct reply_info* rep) 
+reply_all_rrsets_secure(struct reply_info* rep)
 {
 	size_t i;
 	for(i=0; i<rep->rrset_count; i++) {
@@ -1206,7 +1206,7 @@ int inplace_cb_query_call(struct module_env* env, struct query_info* qinfo,
 	return 1;
 }
 
-int inplace_cb_edns_back_parsed_call(struct module_env* env, 
+int inplace_cb_edns_back_parsed_call(struct module_env* env,
 	struct module_qstate* qstate)
 {
 	struct inplace_cb* cb =

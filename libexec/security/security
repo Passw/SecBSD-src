@@ -686,7 +686,7 @@ sub check_disks {
 	my $disk_re = qr/
 	    \/
 	    (?:ccd|dk|fd|hd|hk|hp|jb|kra|ra|rb|rd|rl|rx|rz|sd|up|vnd|wd|xd)
-	    \d+ [B-H]? [a-p] 
+	    \d+ [B-H]? [a-p]
 	    $
 	/x;
 

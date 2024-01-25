@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -45,7 +45,7 @@
 #include "util/data/dname.h"
 #include "util/net_help.h"
 
-const char* 
+const char*
 strextstate(enum module_ext_state s)
 {
 	switch(s) {
@@ -60,7 +60,7 @@ strextstate(enum module_ext_state s)
 	return "bad_extstate_value";
 }
 
-const char* 
+const char*
 strmodulevent(enum module_ev e)
 {
 	switch(e) {
@@ -120,9 +120,9 @@ void errinf_origin(struct module_qstate* qstate, struct sock_list *origin)
 			snprintf(buf, sizeof(buf), "from ");
 		else	snprintf(buf, sizeof(buf), "and ");
 		if(p->len == 0)
-			snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), 
+			snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf),
 				"cache");
-		else 
+		else
 			addr_to_str(&p->addr, p->len, buf+strlen(buf),
 				sizeof(buf)-strlen(buf));
 		errinf(qstate, buf);
@@ -292,7 +292,7 @@ inplace_cb_register(void* cb, enum inplace_cb_list_type type, void* cbarg,
 	callback->next = NULL;
 	callback->cb = cb;
 	callback->cb_arg = cbarg;
-	
+
 	prevp = (struct inplace_cb**) &env->inplace_cb_lists[type];
 	/* append at end of list */
 	while(*prevp != NULL)

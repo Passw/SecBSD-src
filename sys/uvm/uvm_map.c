@@ -4319,7 +4319,7 @@ uvm_map_immutable(struct vm_map *map, vaddr_t start, vaddr_t end, int imut)
 			goto out;
 		entry1 = RBT_NEXT(uvm_map_addr, entry1);
 	}
-	
+
 	while (entry != NULL && entry->start < end) {
 		UVM_MAP_CLIP_END(map, entry, end);
 		if (imut)

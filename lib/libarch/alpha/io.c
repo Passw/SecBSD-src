@@ -56,7 +56,7 @@ ioperm(unsigned long from, unsigned long num, int on)
 #else
 	errx(1, "libio is only available on bwx capable machines");
 #endif
-	
+
 	return ops->ioperm(from, num, on);
 }
 
@@ -169,19 +169,19 @@ u_int64_t
 dense_base(void)
 {
 	static u_int64_t base = 0;
-	
+
 	if (base == 0) {
 		size_t len = sizeof(base);
 		int error;
 		int mib[3];
-		
+
 		mib[0] = CTL_MACHDEP;
 		mib[1] = CPU_CHIPSET;
 		mib[2] = CPU_CHIPSET_DENSE;
-		
+
 		if ((error = sysctl(mib, 3, &base, &len, NULL, 0)) < 0)
 			err(1, "machdep.chipset.dense_base");
 	}
-	
+
 	return base;
 }

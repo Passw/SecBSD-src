@@ -2224,7 +2224,7 @@ void intel_hdcp_component_init(struct drm_i915_private *i915)
 
 	if (!is_hdcp2_supported(i915))
 		return;
-	
+
 	STUB();
 #ifdef notyet
 	mutex_lock(&i915->display.hdcp.hdcp_mutex);

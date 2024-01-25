@@ -23,20 +23,20 @@ sldns_buffer_new(size_t capacity)
 	if (!buffer) {
 		return NULL;
 	}
-	
+
 	buffer->_data = (uint8_t *) malloc(capacity);
 	if (!buffer->_data) {
 		free(buffer);
 		return NULL;
 	}
-	
+
 	buffer->_position = 0;
 	buffer->_limit = buffer->_capacity = capacity;
 	buffer->_fixed = 0;
 	buffer->_status_err = 0;
-	
+
 	sldns_buffer_invariant(buffer);
-	
+
 	return buffer;
 }
 
@@ -45,7 +45,7 @@ sldns_buffer_new_frm_data(sldns_buffer *buffer, void *data, size_t size)
 {
 	assert(data != NULL);
 
-	buffer->_position = 0; 
+	buffer->_position = 0;
 	buffer->_limit = buffer->_capacity = size;
 	buffer->_fixed = 0;
 	if (!buffer->_fixed && buffer->_data)
@@ -57,7 +57,7 @@ sldns_buffer_new_frm_data(sldns_buffer *buffer, void *data, size_t size)
 	}
 	memcpy(buffer->_data, data, size);
 	buffer->_status_err = 0;
-	
+
 	sldns_buffer_invariant(buffer);
 }
 
@@ -74,7 +74,7 @@ int
 sldns_buffer_set_capacity(sldns_buffer *buffer, size_t capacity)
 {
 	void *data;
-	
+
 	sldns_buffer_invariant(buffer);
 	assert(buffer->_position <= capacity && !buffer->_fixed);
 
@@ -115,7 +115,7 @@ sldns_buffer_printf(sldns_buffer *buffer, const char *format, ...)
 	va_list args;
 	int written = 0;
 	size_t remaining;
-	
+
 	if (sldns_buffer_status_ok(buffer)) {
 		sldns_buffer_invariant(buffer);
 		assert(buffer->_limit == buffer->_capacity);
@@ -147,7 +147,7 @@ sldns_buffer_free(sldns_buffer *buffer)
 	free(buffer);
 }
 
-void 
+void
 sldns_buffer_copy(sldns_buffer* result, sldns_buffer* from)
 {
 	size_t tocopy = sldns_buffer_limit(from);

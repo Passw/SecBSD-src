@@ -439,7 +439,7 @@ void ttm_bo_kunmap(struct ttm_bo_kmap_obj *map)
 		    map->bo->resource->size);
 		break;
 	case ttm_bo_map_vmap:
-		vunmap(map->virtual, 
+		vunmap(map->virtual,
 		    map->bo->resource->size);
 		break;
 	case ttm_bo_map_kmap:

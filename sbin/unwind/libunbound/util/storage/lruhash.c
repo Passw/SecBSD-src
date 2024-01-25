@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -53,18 +53,18 @@ bin_init(struct lruhash_bin* array, size_t size)
 #endif
 	for(i=0; i<size; i++) {
 		lock_quick_init(&array[i].lock);
-		lock_protect(&array[i].lock, &array[i], 
+		lock_protect(&array[i].lock, &array[i],
 			sizeof(struct lruhash_bin));
 	}
 }
 
-struct lruhash* 
+struct lruhash*
 lruhash_create(size_t start_size, size_t maxmem,
 	lruhash_sizefunc_type sizefunc, lruhash_compfunc_type compfunc,
 	lruhash_delkeyfunc_type delkeyfunc,
 	lruhash_deldatafunc_type deldatafunc, void* arg)
 {
-	struct lruhash* table = (struct lruhash*)calloc(1, 
+	struct lruhash* table = (struct lruhash*)calloc(1,
 		sizeof(struct lruhash));
 	if(!table)
 		return NULL;
@@ -90,12 +90,12 @@ lruhash_create(size_t start_size, size_t maxmem,
 	}
 	bin_init(table->array, table->size);
 	lock_protect(&table->lock, table, sizeof(*table));
-	lock_protect(&table->lock, table->array, 
+	lock_protect(&table->lock, table->array,
 		table->size*sizeof(struct lruhash_bin));
 	return table;
 }
 
-void 
+void
 bin_delete(struct lruhash* table, struct lruhash_bin* bin)
 {
 	struct lruhash_entry* p, *np;
@@ -114,8 +114,8 @@ bin_delete(struct lruhash* table, struct lruhash_bin* bin)
 	}
 }
 
-void 
-bin_split(struct lruhash* table, struct lruhash_bin* newa, 
+void
+bin_split(struct lruhash* table, struct lruhash_bin* newa,
 	int newmask)
 {
 	size_t i;
@@ -150,7 +150,7 @@ bin_split(struct lruhash* table, struct lruhash_bin* newa,
 	}
 }
 
-void 
+void
 lruhash_delete(struct lruhash* table)
 {
 	size_t i;
@@ -164,7 +164,7 @@ lruhash_delete(struct lruhash* table)
 	free(table);
 }
 
-void 
+void
 bin_overflow_remove(struct lruhash_bin* bin, struct lruhash_entry* entry)
 {
 	struct lruhash_entry* p = bin->overflow_list;
@@ -179,7 +179,7 @@ bin_overflow_remove(struct lruhash_bin* bin, struct lruhash_entry* entry)
 	}
 }
 
-void 
+void
 reclaim_space(struct lruhash* table, struct lruhash_entry** list)
 {
 	struct lruhash_entry* d;
@@ -189,8 +189,8 @@ reclaim_space(struct lruhash* table, struct lruhash_entry** list)
 	while(table->num > 1 && table->space_used > table->space_max) {
 		/* notice that since we hold the hashtable lock, nobody
 		   can change the lru chain. So it cannot be deleted underneath
-		   us. We still need the hashbin and entry write lock to make 
-		   sure we flush all users away from the entry. 
+		   us. We still need the hashbin and entry write lock to make
+		   sure we flush all users away from the entry.
 		   which is unlikely, since it is LRU, if someone got a rdlock
 		   it would be moved to front, but to be sure. */
 		d = table->lru_end;
@@ -215,8 +215,8 @@ reclaim_space(struct lruhash* table, struct lruhash_entry** list)
 	}
 }
 
-struct lruhash_entry* 
-bin_find_entry(struct lruhash* table, 
+struct lruhash_entry*
+bin_find_entry(struct lruhash* table,
 	struct lruhash_bin* bin, hashvalue_type hash, void* key, size_t* collisions)
 {
 	size_t c = 0;
@@ -232,7 +232,7 @@ bin_find_entry(struct lruhash* table,
 	return p;
 }
 
-void 
+void
 table_grow(struct lruhash* table)
 {
 	struct lruhash_bin* newa;
@@ -258,16 +258,16 @@ table_grow(struct lruhash* table)
 		lock_quick_destroy(&table->array[i].lock);
 	}
 	free(table->array);
-	
+
 	table->size *= 2;
 	table->size_mask = newmask;
 	table->array = newa;
-	lock_protect(&table->lock, table->array, 
+	lock_protect(&table->lock, table->array,
 		table->size*sizeof(struct lruhash_bin));
 	return;
 }
 
-void 
+void
 lru_front(struct lruhash* table, struct lruhash_entry* entry)
 {
 	entry->lru_prev = NULL;
@@ -278,7 +278,7 @@ lru_front(struct lruhash* table, struct lruhash_entry* entry)
 	table->lru_start = entry;
 }
 
-void 
+void
 lru_remove(struct lruhash* table, struct lruhash_entry* entry)
 {
 	if(entry->lru_prev)
@@ -289,7 +289,7 @@ lru_remove(struct lruhash* table, struct lruhash_entry* entry)
 	else	table->lru_end = entry->lru_prev;
 }
 
-void 
+void
 lru_touch(struct lruhash* table, struct lruhash_entry* entry)
 {
 	log_assert(table && entry);
@@ -301,7 +301,7 @@ lru_touch(struct lruhash* table, struct lruhash_entry* entry)
 	lru_front(table, entry);
 }
 
-void 
+void
 lruhash_insert(struct lruhash* table, hashvalue_type hash,
         struct lruhash_entry* entry, void* data, void* cb_arg)
 {
@@ -360,7 +360,7 @@ lruhash_insert(struct lruhash* table, hashvalue_type hash,
 	}
 }
 
-struct lruhash_entry* 
+struct lruhash_entry*
 lruhash_lookup(struct lruhash* table, hashvalue_type hash, void* key, int wr)
 {
 	struct lruhash_entry* entry;
@@ -382,7 +382,7 @@ lruhash_lookup(struct lruhash* table, hashvalue_type hash, void* key, int wr)
 	return entry;
 }
 
-void 
+void
 lruhash_remove(struct lruhash* table, hashvalue_type hash, void* key)
 {
 	struct lruhash_entry* entry;
@@ -406,7 +406,7 @@ lruhash_remove(struct lruhash* table, hashvalue_type hash, void* key)
 		return;
 	}
 	table->num--;
-	table->space_used -= (*table->sizefunc)(entry->key, entry->data);	
+	table->space_used -= (*table->sizefunc)(entry->key, entry->data);
 	lock_rw_wrlock(&entry->lock);
 	if(table->markdelfunc)
 		(*table->markdelfunc)(entry->key);
@@ -426,7 +426,7 @@ bin_clear(struct lruhash* table, struct lruhash_bin* bin)
 	struct lruhash_entry* p, *np;
 	void *d;
 	lock_quick_lock(&bin->lock);
-	p = bin->overflow_list; 
+	p = bin->overflow_list;
 	while(p) {
 		lock_rw_wrlock(&p->lock);
 		np = p->overflow_next;
@@ -463,7 +463,7 @@ lruhash_clear(struct lruhash* table)
 	lock_quick_unlock(&table->lock);
 }
 
-void 
+void
 lruhash_status(struct lruhash* table, const char* id, int extended)
 {
 	lock_quick_lock(&table->lock);
@@ -491,7 +491,7 @@ lruhash_status(struct lruhash* table, const char* id, int extended)
 			if(here > max) max = here;
 			if(here < min) min = here;
 		}
-		log_info("  bin min %d, avg %.2lf, max %d", min, 
+		log_info("  bin min %d, avg %.2lf, max %d", min,
 			(double)table->num/(double)table->size, max);
 	}
 	lock_quick_unlock(&table->lock);
@@ -507,12 +507,12 @@ lruhash_get_mem(struct lruhash* table)
 	if(table->size != 0) {
 		size_t i;
 		for(i=0; i<table->size; i++)
-			s += sizeof(struct lruhash_bin) + 
+			s += sizeof(struct lruhash_bin) +
 				lock_get_mem(&table->array[i].lock);
 	}
 #else /* no THREAD_DEBUG */
 	if(table->size != 0)
-		s += (table->size)*(sizeof(struct lruhash_bin) + 
+		s += (table->size)*(sizeof(struct lruhash_bin) +
 			lock_get_mem(&table->array[0].lock));
 #endif
 	lock_quick_unlock(&table->lock);
@@ -520,7 +520,7 @@ lruhash_get_mem(struct lruhash* table)
 	return s;
 }
 
-void 
+void
 lruhash_setmarkdel(struct lruhash* table, lruhash_markdelfunc_type md)
 {
 	lock_quick_lock(&table->lock);
@@ -528,8 +528,8 @@ lruhash_setmarkdel(struct lruhash* table, lruhash_markdelfunc_type md)
 	lock_quick_unlock(&table->lock);
 }
 
-void 
-lruhash_traverse(struct lruhash* h, int wr, 
+void
+lruhash_traverse(struct lruhash* h, int wr,
 	void (*func)(struct lruhash_entry*, void*), void* arg)
 {
 	size_t i;

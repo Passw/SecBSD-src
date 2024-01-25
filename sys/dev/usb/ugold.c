@@ -512,7 +512,7 @@ ugold_si700x_type(struct ugold_softc *sc)
 			goto identified;
 		}
 	}
-	
+
 	printf("%s: unknown model \"%s\"\n",
 	    sc->sc_hdev.sc_dev.dv_xname, model);
 	sc->sc_num_sensors = 0;

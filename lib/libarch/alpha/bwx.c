@@ -59,17 +59,17 @@ static void
 bwx_open_mem(void)
 {
 
-	if (mem_fd != -1) 
+	if (mem_fd != -1)
 		return;
 	mem_fd = open(_PATH_MEM, O_RDWR);
-	if (mem_fd < 0) 
+	if (mem_fd < 0)
 		mem_fd = open(PATH_APERTURE, O_RDWR);
 	if (mem_fd < 0)
-		err(1, "Failed to open both %s and %s", _PATH_MEM, 
+		err(1, "Failed to open both %s and %s", _PATH_MEM,
 		    PATH_APERTURE);
 }
 
-static void 
+static void
 bwx_close_mem(void)
 {
 
@@ -85,7 +85,7 @@ bwx_init(void)
 	size_t len = sizeof(u_int64_t);
 	int error;
 	int mib[3];
-	
+
 	page_mask = getpagesize() - 1;
 
 	mib[0] = CTL_MACHDEP;
@@ -111,13 +111,13 @@ bwx_ioperm(u_int32_t from, u_int32_t num, int on)
 
 	if (bwx_int1_ports != MAP_FAILED)
 		return 0;
-	
+
 	bwx_open_mem();
 	start = trunc_page(from);
 	end = round_page(from + num);
 	if ((bwx_int1_ports = mmap(0, end-start, PROT_READ|PROT_WRITE,
 	    MAP_SHARED, mem_fd, bwx_io_base + BWX_EV56_INT1 + start)) ==
-	    MAP_FAILED) 
+	    MAP_FAILED)
 		err(1, "mmap int1");
 	if ((bwx_int2_ports = mmap(0, end-start, PROT_READ|PROT_WRITE,
 	    MAP_SHARED, mem_fd, bwx_io_base + BWX_EV56_INT2 + start)) ==
@@ -125,7 +125,7 @@ bwx_ioperm(u_int32_t from, u_int32_t num, int on)
 		err(1, "mmap int2");
 	if ((bwx_int4_ports = mmap(0, end-start, PROT_READ|PROT_WRITE,
 	    MAP_SHARED, mem_fd, bwx_io_base + BWX_EV56_INT4 + start)) ==
-	    MAP_FAILED) 
+	    MAP_FAILED)
 		err(1, "mmap int4");
 	bwx_close_mem();
 	return 0;
