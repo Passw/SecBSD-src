@@ -2622,7 +2622,7 @@ Cell *dosub(Node **a, int subop)        /* sub and gsub */
 matching_text:
 		if (mtype == MT_REPLACE || *patbeg == '\0')
 			goto next_search;  /* skip matching text */
-		
+
 		if (patlen == 0)
 			patlen = u8_nextlen(patbeg);
 		adjbuf(&buf, &bufsz, (pb-buf) + patlen, recsize, &pb, "dosub");
