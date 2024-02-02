@@ -1,4 +1,4 @@
-/* $OpenBSD: gss-genr.c,v 1.28 2021/01/27 10:05:28 djm Exp $ */
+/* $OpenBSD: gss-genr.c,v 1.29 2024/02/01 02:37:33 djm Exp $ */
 
 /*
  * Copyright (c) 2001-2007 Simon Wilkinson. All rights reserved.
