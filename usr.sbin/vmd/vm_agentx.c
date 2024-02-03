@@ -1,4 +1,4 @@
-/*	$OpenBSD: vm_agentx.c,v 1.1 2022/09/13 10:28:19 martijn Exp $ */
+/*	$OpenBSD: vm_agentx.c,v 1.2 2024/02/02 14:58:02 dv Exp $ */
 
 /*
  * Copyright (c) 2022 Martijn van Duren <martijn@openbsd.org>
@@ -106,7 +106,7 @@ vm_agentx(struct privsep *ps, struct privsep_proc *p)
 	 * group permissions.
 	 */
 	if ((grp = getgrnam(AGENTX_GROUP)) == NULL)
-		fatal("getgrnam");
+		fatal("failed to get group: %s", AGENTX_GROUP);
 	ps->ps_pw->pw_gid = grp->gr_gid;
 
 	proc_run(ps, p, procs, nitems(procs), vm_agentx_run, NULL);
