@@ -836,7 +836,7 @@ private:
 } // namespace
 
 AArch64BtiPac::AArch64BtiPac() {
-#ifdef __OpenBSD__
+#ifdef __SecBSD__
   btiHeader = true;
 #else
   btiHeader = (config->andFeatures & GNU_PROPERTY_AARCH64_FEATURE_1_BTI);
@@ -941,7 +941,7 @@ void AArch64BtiPac::writePlt(uint8_t *buf, const Symbol &sym,
 }
 
 static TargetInfo *getTargetInfo() {
-#ifdef __OpenBSD__
+#ifdef __SecBSD__
   static AArch64BtiPac t;
   return &t;
 #else
