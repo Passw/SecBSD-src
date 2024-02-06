@@ -7868,7 +7868,7 @@ qwx_core_check_dt(struct qwx_softc *sc)
 #ifdef __HAVE_FDT
 	if (sc->sc_node == 0)
 		return 0;
-	
+
 	OF_getprop(sc->sc_node, "qcom,ath11k-calibration-variant",
 	    sc->qmi_target.bdf_ext, sizeof(sc->qmi_target.bdf_ext) - 1);
 #endif
@@ -14715,7 +14715,7 @@ qwx_dp_tx_complete_msdu(struct qwx_softc *sc, struct dp_tx_ring *tx_ring,
 	tx_data->m = NULL;
 
 	/* TODO: Tx rate adjustment? */
-	
+
 	if (tx_ring->queued > 0)
 		tx_ring->queued--;
 }
@@ -15426,7 +15426,7 @@ qwx_dp_rx_alloc_mon_status_buf(struct qwx_softc *sc,
 		if (ret)
 			goto fail_free_mbuf;
 	}
-	
+
 	ret = bus_dmamap_load_mbuf(sc->sc_dmat, rx_data->map, m,
 	    BUS_DMA_READ | BUS_DMA_NOWAIT);
 	if (ret) {
@@ -20794,7 +20794,7 @@ struct qwx_vif *
 qwx_vif_alloc(struct qwx_softc *sc)
 {
 	struct qwx_vif *arvif;
-	struct qwx_txmgmt_queue *txmgmt; 
+	struct qwx_txmgmt_queue *txmgmt;
 	int i, ret = 0;
 	const bus_size_t size = IEEE80211_MAX_LEN;
 
@@ -22859,7 +22859,7 @@ qwx_auth(struct qwx_softc *sc)
 	}
 
 	qwx_recalculate_mgmt_rate(sc, ni, arvif->vdev_id, pdev->pdev_id);
-	
+
 	ret = qwx_mac_station_add(sc, arvif, pdev->pdev_id, ni);
 	if (ret)
 		return ret;

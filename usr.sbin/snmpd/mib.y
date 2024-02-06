@@ -290,7 +290,7 @@ typedef union {
 %token	ENTERPRISE EXPLICIT EXPORTS EXTERNAL FALSE FROM GROUP Gauge32
 %token	IDENTIFIER IMPLICIT IMPLIED IMPORTS INCLUDES INDEX INTEGER
 %token	Integer32 IpAddress LASTUPDATED MANDATORYGROUPS MAX MAXACCESS
-%token	MIN MINACCESS MINUSINFINITY MODULE MODULECOMPLIANCE MODULEIDENTITY 
+%token	MIN MINACCESS MINUSINFINITY MODULE MODULECOMPLIANCE MODULEIDENTITY
 %token	NOTIFICATIONGROUP NOTIFICATIONTYPE NOTIFICATIONS ASNNULL
 %token	OBJECT OBJECTGROUP OBJECTIDENTITY OBJECTTYPE OBJECTS OCTET OF
 %token	OPTIONAL ORGANIZATION Opaque PLUSINFINITY PRESENT PRIVATE
@@ -356,7 +356,7 @@ module			: moduleidentifier DEFINITIONS PRODUCTION BEGIN {
 						    module);
 					} else
 						mib_modulefree(module);
-				} else 
+				} else
 					RB_INSERT(modulesci, &modulesci, module);
 				module = NULL;
 			}
@@ -392,7 +392,7 @@ symbolsfrom		: symbollist FROM moduleidentifier {
 				for (i = 0; $1[i][0] != '\0'; i++)
 					symbols[i] = $1[i];
 				symbols[i] = NULL;
-					
+
 				if (mib_imports_add($3, symbols) == -1)
 					YYERROR;
 			}
@@ -403,7 +403,7 @@ symbolsfrom		: symbollist FROM moduleidentifier {
 				for (i = 0; $1[i][0] != '\0'; i++)
 					symbols[i] = $1[i];
 				symbols[i] = NULL;
-					
+
 				if (mib_imports_add($3, symbols) == -1)
 					YYERROR;
 

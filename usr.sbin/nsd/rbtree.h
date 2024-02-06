@@ -49,7 +49,7 @@ struct rbtree {
 /* rbtree.c */
 rbtree_type *rbtree_create(region_type *region, int (*cmpf)(const void *, const void *));
 rbnode_type *rbtree_insert(rbtree_type *rbtree, rbnode_type *data);
-/* returns node that is now unlinked from the tree. User to delete it. 
+/* returns node that is now unlinked from the tree. User to delete it.
  * returns 0 if node not present */
 rbnode_type *rbtree_delete(rbtree_type *rbtree, const void *key);
 rbnode_type *rbtree_search(rbtree_type *rbtree, const void *key);

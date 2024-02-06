@@ -813,7 +813,7 @@ next:
 	if (session)
 		pipex_rele_session(session);
 
-	return (session_tmp); 
+	return (session_tmp);
 }
 
 void

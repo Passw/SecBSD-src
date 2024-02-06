@@ -1642,7 +1642,7 @@ qwx_pcic_ext_irq_config(struct qwx_softc *sc, struct pci_attach_args *pa)
 
 		irq_grp->sc = sc;
 		irq_grp->grp_id = i;
-#if 0	
+#if 0
 		init_dummy_netdev(&irq_grp->napi_ndev);
 		netif_napi_add(&irq_grp->napi_ndev, &irq_grp->napi,
 			       ath11k_pcic_ext_grp_napi_poll);
