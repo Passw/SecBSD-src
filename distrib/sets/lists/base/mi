@@ -6521,6 +6521,7 @@
 ./usr/share/zoneinfo/tzdata.zi
 ./usr/share/zoneinfo/zone.tab
 ./usr/share/zoneinfo/zone1970.tab
+./usr/share/zoneinfo/zonenow.tab
 ./var
 ./var/account
 ./var/agentx

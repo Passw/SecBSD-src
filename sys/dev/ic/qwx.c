@@ -1,4 +1,4 @@
-/*	$OpenBSD: qwx.c,v 1.18 2024/02/06 14:18:15 stsp Exp $	*/
+/*	$OpenBSD: qwx.c,v 1.28 2024/02/08 14:36:22 stsp Exp $	*/
 
 /*
  * Copyright 2023 Stefan Sperling <stsp@openbsd.org>
@@ -8249,7 +8249,7 @@ qwx_qmi_load_file_target_mem(struct qwx_softc *sc, const u_char *data,
 #ifdef notyet
 	void *bdf_addr = NULL;
 #endif
-	int ret;
+	int ret = EINVAL; /* empty fw image */
 	uint32_t remaining = len;
 
 	req = malloc(sizeof(*req), M_DEVBUF, M_NOWAIT | M_ZERO);
@@ -8393,7 +8393,7 @@ qwx_qmi_load_bdf_qmi(struct qwx_softc *sc, int regdb)
 	fw_size = MIN(sc->hw_params.fw.board_size, boardfw_len);
 
 	ret = qwx_qmi_load_file_target_mem(sc, boardfw, fw_size, bdf_type);
-	if (ret < 0) {
+	if (ret) {
 		printf("%s: failed to load bdf file\n", __func__);
 		goto out;
 	}
@@ -9401,6 +9401,10 @@ qwx_dp_shadow_start_timer(struct qwx_softc *sc, struct hal_srng *srng,
 	lockdep_assert_held(&srng->lock);
 #endif
 	if (!sc->hw_params.supports_shadow_regs)
+		return;
+
+	update_timer->tx_num++;
+	if (update_timer->started)
 		return;
 
 	update_timer->started = 1;
@@ -11422,7 +11426,7 @@ qwx_peer_assoc_conf_event(struct qwx_softc *sc, struct mbuf *m)
 
 	DNPRINTF(QWX_D_WMI, "%s: event peer assoc conf ev vdev id %d "
 	    "macaddr %s\n", __func__, peer_assoc_conf.vdev_id,
-	    ether_sprintf(peer_assoc_conf.macaddr));
+	    ether_sprintf((u_char *)peer_assoc_conf.macaddr));
 
 	sc->peer_assoc_done = 1;
 	wakeup(&sc->peer_assoc_done);
@@ -12729,6 +12733,9 @@ qwx_wmi_process_mgmt_tx_comp(struct qwx_softc *sc,
 	if (arvif->txmgmt.queued > 0)
 		arvif->txmgmt.queued--;
 
+	if (arvif->txmgmt.queued < nitems(arvif->txmgmt.data) - 1)
+		sc->qfullmsk &= ~(1U << QWX_MGMT_QUEUE_ID);
+
 	if (tx_compl_param->status != 0)
 		ifp->if_oerrors++;
 }
@@ -12750,6 +12757,93 @@ qwx_mgmt_tx_compl_event(struct qwx_softc *sc, struct mbuf *m)
 	    "desc_id %d, status %d ack_rssi %d", __func__,
 	    tx_compl_param.pdev_id, tx_compl_param.desc_id,
 	    tx_compl_param.status, tx_compl_param.ack_rssi);
+}
+
+int
+qwx_pull_roam_ev(struct qwx_softc *sc, struct mbuf *m,
+    struct wmi_roam_event *roam_ev)
+{
+	const void **tb;
+	const struct wmi_roam_event *ev;
+	int ret;
+
+	tb = qwx_wmi_tlv_parse_alloc(sc, mtod(m, void *), m->m_pkthdr.len);
+	if (tb == NULL) {
+		ret = ENOMEM;
+		printf("%s: failed to parse tlv: %d\n",
+		    sc->sc_dev.dv_xname, ret);
+		return ret;
+	}
+
+	ev = tb[WMI_TAG_ROAM_EVENT];
+	if (!ev) {
+		printf("%s: failed to fetch roam ev\n",
+		    sc->sc_dev.dv_xname);
+		free(tb, M_DEVBUF, WMI_TAG_MAX * sizeof(*tb));
+		return EPROTO;
+	}
+
+	roam_ev->vdev_id = ev->vdev_id;
+	roam_ev->reason = ev->reason;
+	roam_ev->rssi = ev->rssi;
+
+	free(tb, M_DEVBUF, WMI_TAG_MAX * sizeof(*tb));
+	return 0;
+}
+
+void
+qwx_mac_handle_beacon_miss(struct qwx_softc *sc, uint32_t vdev_id)
+{
+	struct ieee80211com *ic = &sc->sc_ic;
+
+	if ((ic->ic_opmode != IEEE80211_M_STA) ||
+	    (ic->ic_state != IEEE80211_S_RUN))
+		return;
+
+	if (ic->ic_mgt_timer == 0) {
+		if (ic->ic_if.if_flags & IFF_DEBUG)
+			printf("%s: receiving no beacons from %s; checking if "
+			    "this AP is still responding to probe requests\n",
+			    sc->sc_dev.dv_xname,
+			    ether_sprintf(ic->ic_bss->ni_macaddr));
+		/*
+		 * Rather than go directly to scan state, try to send a
+		 * directed probe request first. If that fails then the
+		 * state machine will drop us into scanning after timing
+		 * out waiting for a probe response.
+		 */
+		IEEE80211_SEND_MGMT(ic, ic->ic_bss,
+		    IEEE80211_FC0_SUBTYPE_PROBE_REQ, 0);
+	}
+}
+
+void
+qwx_roam_event(struct qwx_softc *sc, struct mbuf *m)
+{
+	struct wmi_roam_event roam_ev = {};
+
+	if (qwx_pull_roam_ev(sc, m, &roam_ev) != 0) {
+		printf("%s: failed to extract roam event\n",
+		    sc->sc_dev.dv_xname);
+		return;
+	}
+
+	DNPRINTF(QWX_D_WMI, "%s: event roam vdev %u reason 0x%08x rssi %d\n",
+	    __func__, roam_ev.vdev_id, roam_ev.reason, roam_ev.rssi);
+
+	if (roam_ev.reason >= WMI_ROAM_REASON_MAX)
+		return;
+
+	switch (roam_ev.reason) {
+	case WMI_ROAM_REASON_BEACON_MISS:
+		qwx_mac_handle_beacon_miss(sc, roam_ev.vdev_id);
+		break;
+	case WMI_ROAM_REASON_BETTER_AP:
+	case WMI_ROAM_REASON_LOW_RSSI:
+	case WMI_ROAM_REASON_SUITABLE_AP_FOUND:
+	case WMI_ROAM_REASON_HO_FAILED:
+		break;
+	}
 }
 
 void
@@ -12813,10 +12907,10 @@ qwx_wmi_tlv_op_rx(struct qwx_softc *sc, struct mbuf *m)
 	case WMI_PEER_STA_KICKOUT_EVENTID:
 		ath11k_peer_sta_kickout_event(ab, skb);
 		break;
-	case WMI_ROAM_EVENTID:
-		ath11k_roam_event(ab, skb);
-		break;
 #endif
+	case WMI_ROAM_EVENTID:
+		qwx_roam_event(sc, m);
+		break;
 	case WMI_CHAN_INFO_EVENTID:
 		DPRINTF("%s: 0x%x: chan info event\n", __func__, id);
 		qwx_chan_info_event(sc, m);
@@ -14693,10 +14787,76 @@ qwx_dp_tx_status_parse(struct qwx_softc *sc, struct hal_wbm_release_ring *desc,
 }
 
 void
+qwx_dp_tx_free_txbuf(struct qwx_softc *sc, int msdu_id,
+    struct dp_tx_ring *tx_ring)
+{
+	struct qwx_tx_data *tx_data;
+
+	if (msdu_id >= sc->hw_params.tx_ring_size)
+		return;
+
+	tx_data = &tx_ring->data[msdu_id];
+
+	bus_dmamap_unload(sc->sc_dmat, tx_data->map);
+	m_freem(tx_data->m);
+	tx_data->m = NULL;
+
+	if (tx_ring->queued > 0)
+		tx_ring->queued--;
+}
+
+void
+qwx_dp_tx_htt_tx_complete_buf(struct qwx_softc *sc, struct dp_tx_ring *tx_ring,
+    struct qwx_dp_htt_wbm_tx_status *ts)
+{
+	/* Not using Tx status info for now. Just free the buffer. */
+	qwx_dp_tx_free_txbuf(sc, ts->msdu_id, tx_ring);
+}
+
+void
 qwx_dp_tx_process_htt_tx_complete(struct qwx_softc *sc, void *desc,
     uint8_t mac_id, uint32_t msdu_id, struct dp_tx_ring *tx_ring)
 {
-	printf("%s: not implemented\n", __func__);
+	struct htt_tx_wbm_completion *status_desc;
+	struct qwx_dp_htt_wbm_tx_status ts = {0};
+	enum hal_wbm_htt_tx_comp_status wbm_status;
+
+	status_desc = desc + HTT_TX_WBM_COMP_STATUS_OFFSET;
+
+	wbm_status = FIELD_GET(HTT_TX_WBM_COMP_INFO0_STATUS,
+	    status_desc->info0);
+
+	switch (wbm_status) {
+	case HAL_WBM_REL_HTT_TX_COMP_STATUS_OK:
+	case HAL_WBM_REL_HTT_TX_COMP_STATUS_DROP:
+	case HAL_WBM_REL_HTT_TX_COMP_STATUS_TTL:
+		ts.acked = (wbm_status == HAL_WBM_REL_HTT_TX_COMP_STATUS_OK);
+		ts.msdu_id = msdu_id;
+		ts.ack_rssi = FIELD_GET(HTT_TX_WBM_COMP_INFO1_ACK_RSSI,
+		    status_desc->info1);
+
+		if (FIELD_GET(HTT_TX_WBM_COMP_INFO2_VALID, status_desc->info2))
+			ts.peer_id = FIELD_GET(HTT_TX_WBM_COMP_INFO2_SW_PEER_ID,
+			    status_desc->info2);
+		else
+			ts.peer_id = HTT_INVALID_PEER_ID;
+
+		qwx_dp_tx_htt_tx_complete_buf(sc, tx_ring, &ts);
+		break;
+	case HAL_WBM_REL_HTT_TX_COMP_STATUS_REINJ:
+	case HAL_WBM_REL_HTT_TX_COMP_STATUS_INSPECT:
+		qwx_dp_tx_free_txbuf(sc, msdu_id, tx_ring);
+		break;
+	case HAL_WBM_REL_HTT_TX_COMP_STATUS_MEC_NOTIFY:
+		/* This event is to be handled only when the driver decides to
+		 * use WDS offload functionality.
+		 */
+		break;
+	default:
+		printf("%s: Unknown htt tx status %d\n",
+		    sc->sc_dev.dv_xname, wbm_status);
+		break;
+	}
 }
 
 void
@@ -14800,6 +14960,9 @@ qwx_dp_tx_completion_handler(struct qwx_softc *sc, int ring_id)
 #endif
 		qwx_dp_tx_complete_msdu(sc, tx_ring, msdu_id, &ts);
 	}
+
+	if (tx_ring->queued < sc->hw_params.tx_ring_size - 1)
+		sc->qfullmsk &= ~(1 << ring_id);
 
 	return 0;
 }
@@ -15189,6 +15352,7 @@ qwx_dp_rx_process_msdu(struct qwx_softc *sc, struct qwx_rx_msdu *msdu,
 
 	if (msdu->is_frag) {
 		m_adj(msdu->m, hal_rx_desc_sz);
+		msdu->m->m_len = msdu->m->m_pkthdr.len = msdu_len;
 	} else if (!msdu->is_continuation) {
 		if ((msdu_len + hal_rx_desc_sz) > DP_RX_BUFFER_SIZE) {
 #if 0
@@ -15207,6 +15371,7 @@ qwx_dp_rx_process_msdu(struct qwx_softc *sc, struct qwx_rx_msdu *msdu,
 			return EINVAL;
 		}
 		m_adj(msdu->m, hal_rx_desc_sz + l3_pad_bytes);
+		msdu->m->m_len = msdu->m->m_pkthdr.len = msdu_len;
 	} else {
 		ret = qwx_dp_rx_msdu_coalesce(sc, msdu_list, msdu, last_buf,
 		    l3_pad_bytes, msdu_len);
@@ -15496,9 +15661,9 @@ qwx_dp_rx_reap_mon_status_ring(struct qwx_softc *sc, int mac_id,
 			}
 
 			bus_dmamap_sync(sc->sc_dmat, rx_data->map, 0,
-			    m->m_pkthdr.len, BUS_DMASYNC_POSTREAD);
+			    rx_data->m->m_pkthdr.len, BUS_DMASYNC_POSTREAD);
 
-			tlv = mtod(m, struct hal_tlv_hdr *);
+			tlv = mtod(rx_data->m, struct hal_tlv_hdr *);
 			if (FIELD_GET(HAL_TLV_HDR_TAG, tlv->tl) !=
 					HAL_RX_STATUS_BUFFER_DONE) {
 				printf("%s: mon status DONE not set %lx, "
@@ -17414,7 +17579,7 @@ qwx_wmi_vdev_up(struct qwx_softc *sc, uint32_t vdev_id, uint32_t pdev_id,
 	}
 
 	DNPRINTF(QWX_D_WMI, "%s: cmd vdev up id 0x%x assoc id %d bssid %s\n",
-	    __func__, vdev_id, aid, ether_sprintf(bssid));
+	    __func__, vdev_id, aid, ether_sprintf((u_char *)bssid));
 
 	return 0;
 }
@@ -22061,7 +22226,6 @@ qwx_dp_tx(struct qwx_softc *sc, struct qwx_vif *arvif, uint8_t pdev_id,
 
 	if (test_bit(ATH11K_FLAG_CRASH_FLUSH, sc->sc_flags)) {
 		m_freem(m);
-		printf("%s: crash flush\n", __func__);
 		return ESHUTDOWN;
 	}
 #if 0
@@ -22112,10 +22276,8 @@ qwx_dp_tx(struct qwx_softc *sc, struct qwx_vif *arvif, uint8_t pdev_id,
 
 		if (wh->i_fc[1] & IEEE80211_FC1_PROTECTED) {
 			k = ieee80211_get_txkey(ic, wh, ni);
-			if ((m = ieee80211_encrypt(ic, m, k)) == NULL) {
-				printf("%s: encrypt failed\n", __func__);
+			if ((m = ieee80211_encrypt(ic, m, k)) == NULL)
 				return ENOBUFS;
-			}
 			/* 802.11 header may have moved. */
 			wh = mtod(m, struct ieee80211_frame *);
 		}
@@ -22169,11 +22331,26 @@ qwx_dp_tx(struct qwx_softc *sc, struct qwx_vif *arvif, uint8_t pdev_id,
 #endif
 	ret = bus_dmamap_load_mbuf(sc->sc_dmat, tx_data->map,
 	    m, BUS_DMA_WRITE | BUS_DMA_NOWAIT);
-	if (ret) {
+	if (ret && ret != EFBIG) {
 		printf("%s: failed to map Tx buffer: %d\n",
 		    sc->sc_dev.dv_xname, ret);
 		m_freem(m);
 		return ret;
+	}
+	if (ret) {
+		/* Too many DMA segments, linearize mbuf. */
+		if (m_defrag(m, M_DONTWAIT)) {
+			m_freem(m);
+			return ENOBUFS;
+		}
+		ret = bus_dmamap_load_mbuf(sc->sc_dmat, tx_data->map, m,
+		    BUS_DMA_NOWAIT | BUS_DMA_WRITE);
+		if (ret) {
+			printf("%s: failed to map Tx buffer: %d\n",
+			    sc->sc_dev.dv_xname, ret);
+			m_freem(m);
+			return ret;
+		}
 	}
 	ti.paddr = tx_data->map->dm_segs[0].ds_addr;
 
@@ -22188,7 +22365,6 @@ qwx_dp_tx(struct qwx_softc *sc, struct qwx_vif *arvif, uint8_t pdev_id,
 
 	hal_tcl_desc = (void *)qwx_hal_srng_src_get_next_entry(sc, tcl_ring);
 	if (!hal_tcl_desc) {
-		printf("%s: hal_tcl_desc == NULL\n", __func__);
 		/* NOTE: It is highly unlikely we'll be running out of tcl_ring
 		 * desc because the desc is directly enqueued onto hw queue.
 		 */
@@ -22217,6 +22393,10 @@ qwx_dp_tx(struct qwx_softc *sc, struct qwx_vif *arvif, uint8_t pdev_id,
 #endif
 	tx_ring->queued++;
 	tx_ring->cur = (tx_ring->cur + 1) % sc->hw_params.tx_ring_size;
+
+	if (tx_ring->queued >= sc->hw_params.tx_ring_size - 1)
+		sc->qfullmsk |= (1 << ti.ring_id); 
+
 	return 0;
 }
 
@@ -22288,10 +22468,25 @@ qwx_mac_mgmt_tx_wmi(struct qwx_softc *sc, struct qwx_vif *arvif,
 #endif
 	ret = bus_dmamap_load_mbuf(sc->sc_dmat, tx_data->map,
 	    m, BUS_DMA_WRITE | BUS_DMA_NOWAIT);
-	if (ret) {
+	if (ret && ret != EFBIG) {
 		printf("%s: failed to map mgmt Tx buffer: %d\n",
 		    sc->sc_dev.dv_xname, ret);
 		return ret;
+	}
+	if (ret) {
+		/* Too many DMA segments, linearize mbuf. */
+		if (m_defrag(m, M_DONTWAIT)) {
+			m_freem(m);
+			return ENOBUFS;
+		}
+		ret = bus_dmamap_load_mbuf(sc->sc_dmat, tx_data->map, m,
+		    BUS_DMA_NOWAIT | BUS_DMA_WRITE);
+		if (ret) {
+			printf("%s: failed to map mgmt Tx buffer: %d\n",
+			    sc->sc_dev.dv_xname, ret);
+			m_freem(m);
+			return ret;
+		}
 	}
 
 	ret = qwx_wmi_mgmt_send(sc, arvif, pdev_id, buf_id, m, tx_data);
@@ -22303,6 +22498,10 @@ qwx_mac_mgmt_tx_wmi(struct qwx_softc *sc, struct qwx_vif *arvif,
 
 	txmgmt->cur = (txmgmt->cur + 1) % nitems(txmgmt->data);
 	txmgmt->queued++;
+
+	if (txmgmt->queued >= nitems(txmgmt->data) - 1)
+		sc->qfullmsk |= (1U << QWX_MGMT_QUEUE_ID);
+
 	return 0;
 
 err_unmap_buf:
@@ -23065,8 +23264,7 @@ qwx_run(struct qwx_softc *sc)
 #endif
 
 	DNPRINTF(QWX_D_MAC, "%s: vdev %d up (associated) bssid %s aid %d\n",
-	    __func__, arvif->vdev_id, ether_sprintf(ni->ni_bssid),
-	    vif->cfg.aid);
+	    __func__, arvif->vdev_id, ether_sprintf(ni->ni_bssid), arvif->aid);
 
 	ret = qwx_wmi_set_peer_param(sc, ni->ni_macaddr, arvif->vdev_id,
 	    pdev_id, WMI_PEER_AUTHORIZE, 1);
