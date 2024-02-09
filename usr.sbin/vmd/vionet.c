@@ -1,4 +1,4 @@
-/*	$OpenBSD: vionet.c,v 1.10 2024/02/05 21:58:09 dv Exp $	*/
+/*	$OpenBSD: vionet.c,v 1.12 2024/02/10 02:19:12 dv Exp $	*/
 
 /*
  * Copyright (c) 2023 Dave Voutila <dv@openbsd.org>
@@ -514,8 +514,9 @@ vionet_rx_copy(struct vionet_dev *dev, int fd, const struct iovec *iov,
 		/* If reading the tap(4), we should get valid ethernet. */
 		log_warnx("%s: invalid packet size", __func__);
 		return (0);
-	} else if (sz != sizeof(struct packet)) {
-		log_warnx("%s: invalid injected packet object", __func__);
+	} else if (fd == pipe_inject[READ] && sz != sizeof(struct packet)) {
+		log_warnx("%s: invalid injected packet object (sz=%ld)",
+		    __func__, sz);
 		return (0);
 	}
 
@@ -764,8 +765,9 @@ vionet_notify_tx(struct virtio_dev *dev)
 		if (vionet->local) {
 			dhcpsz = dhcp_request(dev, iov->iov_base, iov->iov_len,
 			    &dhcppkt);
-			log_debug("%s: detected dhcp request of %zu bytes",
-			    __func__, dhcpsz);
+			if (dhcpsz > 0)
+				log_debug("%s: detected dhcp request of %zu bytes",
+			    	    __func__, dhcpsz);
 		}
 
 		/* Write our packet to the tap(4). */
