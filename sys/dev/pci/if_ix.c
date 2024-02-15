@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_ix.c,v 1.207 2024/02/13 13:58:19 bluhm Exp $	*/
+/*	$OpenBSD: if_ix.c,v 1.209 2024/02/15 10:56:53 mglocker Exp $	*/
 
 /******************************************************************************
 
@@ -2494,16 +2494,12 @@ ixgbe_tx_offload(struct mbuf *mp, uint32_t *vlan_macip_lens,
 {
 	struct ether_extracted ext;
 	int offload = 0;
-	uint32_t ethlen, iphlen;
 
 	ether_extract_headers(mp, &ext);
-	ethlen = sizeof(*ext.eh);
 
-	*vlan_macip_lens |= (ethlen << IXGBE_ADVTXD_MACLEN_SHIFT);
+	*vlan_macip_lens |= (sizeof(*ext.eh) << IXGBE_ADVTXD_MACLEN_SHIFT);
 
 	if (ext.ip4) {
-		iphlen = ext.ip4hlen;
-
 		if (ISSET(mp->m_pkthdr.csum_flags, M_IPV4_CSUM_OUT)) {
 			*olinfo_status |= IXGBE_TXD_POPTS_IXSM << 8;
 			offload = 1;
@@ -2512,8 +2508,6 @@ ixgbe_tx_offload(struct mbuf *mp, uint32_t *vlan_macip_lens,
 		*type_tucmd_mlhl |= IXGBE_ADVTXD_TUCMD_IPV4;
 #ifdef INET6
 	} else if (ext.ip6) {
-		iphlen = sizeof(*ext.ip6);
-
 		*type_tucmd_mlhl |= IXGBE_ADVTXD_TUCMD_IPV6;
 #endif
 	} else {
@@ -2522,7 +2516,7 @@ ixgbe_tx_offload(struct mbuf *mp, uint32_t *vlan_macip_lens,
 		return offload;
 	}
 
-	*vlan_macip_lens |= iphlen;
+	*vlan_macip_lens |= ext.iphlen;
 
 	if (ext.tcp) {
 		*type_tucmd_mlhl |= IXGBE_ADVTXD_TUCMD_L4T_TCP;
@@ -2548,7 +2542,7 @@ ixgbe_tx_offload(struct mbuf *mp, uint32_t *vlan_macip_lens,
 			*mss_l4len_idx |= outlen << IXGBE_ADVTXD_MSS_SHIFT;
 			*mss_l4len_idx |= thlen << IXGBE_ADVTXD_L4LEN_SHIFT;
 
-			hdrlen = ethlen + iphlen + thlen;
+			hdrlen = sizeof(*ext.eh) + ext.iphlen + thlen;
 			paylen = mp->m_pkthdr.len - hdrlen;
 			CLR(*olinfo_status, IXGBE_ADVTXD_PAYLEN_MASK
 			    << IXGBE_ADVTXD_PAYLEN_SHIFT);
@@ -3266,22 +3260,24 @@ ixgbe_rxeof(struct rx_ring *rxr)
 
 			if (pkts > 1) {
 				struct ether_extracted ext;
-				uint32_t hdrlen, paylen;
+				uint32_t paylen;
 
-				/* Calculate header size. */
+				/*
+				 * Calculate the payload size:
+				 *
+				 * The packet length returned by the NIC
+				 * (sendmp->m_pkthdr.len) can contain
+				 * padding, which we don't want to count
+				 * in to the payload size.  Therefore, we
+				 * calculate the real payload size based
+				 * on the total ip length field (ext.iplen).
+				 */
 				ether_extract_headers(sendmp, &ext);
-				hdrlen = sizeof(*ext.eh);
-#if NVLAN > 0
-				if (ISSET(sendmp->m_flags, M_VLANTAG) ||
-				    ext.evh)
-					hdrlen += ETHER_VLAN_ENCAP_LEN;
-#endif
-				if (ext.ip4)
-					hdrlen += ext.ip4hlen;
-				if (ext.ip6)
-					hdrlen += sizeof(*ext.ip6);
+				paylen = ext.iplen;
+				if (ext.ip4 || ext.ip6)
+					paylen -= ext.iphlen;
 				if (ext.tcp) {
-					hdrlen += ext.tcphlen;
+					paylen -= ext.tcphlen;
 					tcpstat_inc(tcps_inhwlro);
 					tcpstat_add(tcps_inpktlro, pkts);
 				} else {
@@ -3293,8 +3289,6 @@ ixgbe_rxeof(struct rx_ring *rxr)
 				 * mark it as TSO, set a correct mss,
 				 * and recalculate the TCP checksum.
 				 */
-				paylen = sendmp->m_pkthdr.len > hdrlen ?
-				    sendmp->m_pkthdr.len - hdrlen : 0;
 				if (ext.tcp && paylen >= pkts) {
 					SET(sendmp->m_pkthdr.csum_flags,
 					    M_TCP_TSO);
