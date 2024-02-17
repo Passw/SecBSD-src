@@ -302,6 +302,10 @@
 ./etc/signify/secbsd-14-fw.pub
 ./etc/signify/secbsd-14-pkg.pub
 ./etc/signify/secbsd-14-syspatch.pub
+./etc/signify/secbsd-15-base.pub
+./etc/signify/secbsd-15-fw.pub
+./etc/signify/secbsd-15-pkg.pub
+./etc/signify/secbsd-145-syspatch.pub
 ./etc/skel
 ./etc/skel/.ssh
 ./etc/ssh

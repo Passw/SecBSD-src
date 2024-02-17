@@ -1,4 +1,4 @@
-/*	$OpenBSD: qwx.c,v 1.40 2024/02/15 16:29:45 stsp Exp $	*/
+/*	$OpenBSD: qwx.c,v 1.45 2024/02/16 22:46:07 phessler Exp $	*/
 
 /*
  * Copyright 2023 Stefan Sperling <stsp@openbsd.org>
@@ -186,10 +186,8 @@ qwx_init(struct ifnet *ifp)
 	sc->vdev_id_11d_scan = QWX_11D_INVALID_VDEV_ID;
 
 	error = qwx_core_init(sc);
-	if (error) {
-		printf(": failed to init core: %d\n", error);
+	if (error)
 		return error;
-	}
 
 	memset(&sc->qrtr_server, 0, sizeof(sc->qrtr_server));
 	sc->qrtr_server.node = QRTR_NODE_BCAST;
@@ -213,34 +211,31 @@ qwx_init(struct ifnet *ifp)
 	ieee80211_media_init(ifp, qwx_media_change, ieee80211_media_status);
 
 	if (sc->attached) {
-		/*
-		 * We are either going up for the first time or qwx_stop() ran
-		 * before us and has waited for any stale tasks to finish up.
-		 */
-		KASSERT(sc->task_refs.r_refs == 0);
+		/* Update MAC in case the upper layers changed it. */
+		IEEE80211_ADDR_COPY(ic->ic_myaddr,
+		    ((struct arpcom *)ifp)->ac_enaddr);
+	} else {
+		sc->attached = 1;
+
+		/* Configure initial MAC address. */
+		error = if_setlladdr(ifp, ic->ic_myaddr);
+		if (error)
+			printf("%s: could not set MAC address %s: %d\n",
+			    sc->sc_dev.dv_xname, ether_sprintf(ic->ic_myaddr),
+			    error);
+	}
+
+	if (ifp->if_flags & IFF_UP) {
 		refcnt_init(&sc->task_refs);
 
 		ifq_clr_oactive(&ifp->if_snd);
 		ifp->if_flags |= IFF_RUNNING;
-
-		/* Update MAC in case the upper layers changed it. */
-		IEEE80211_ADDR_COPY(ic->ic_myaddr,
-		    ((struct arpcom *)ifp)->ac_enaddr);
 
 		error = qwx_mac_start(sc);
 		if (error)
 			return error;
 
 		ieee80211_begin_scan(ifp);
-	} else {
-		sc->attached = 1;
-
-		/* Configure MAC address at boot-time. */
-		error = if_setlladdr(ifp, ic->ic_myaddr);
-		if (error)
-			printf("%s: could not set MAC address %s: %d\n",
-			    sc->sc_dev.dv_xname, ether_sprintf(ic->ic_myaddr),
-			    error);
 	}
 
 	return 0;
@@ -6818,6 +6813,9 @@ qwx_qmi_recv_wlanfw_request_mem_indication(struct qwx_softc *sc, struct mbuf *m,
 
 	DNPRINTF(QWX_D_QMI, "%s\n", __func__);
 
+	if (!sc->expect_fwmem_req || sc->sc_req_mem_ind != NULL)
+		return;
+
 	/* This structure is too large for the stack. */
 	ind = malloc(sizeof(*ind), M_DEVBUF, M_NOWAIT | M_ZERO);
 	if (ind == NULL)
@@ -7098,7 +7096,7 @@ qwx_qrtr_recv_msg(struct qwx_softc *sc, struct mbuf *m)
 		wakeup(&sc->qrtr_server);
 		break;
 	default:
-		printf("%s: unhandled qrtr type %u\n",
+		DPRINTF("%s: unhandled qrtr type %u\n",
 		    sc->sc_dev.dv_xname, type);
 		return;
 	}
@@ -7751,11 +7749,15 @@ qwx_qmi_mem_seg_send(struct qwx_softc *sc)
 		}
 	}
 
+	sc->expect_fwmem_req = 0;
+
 	ind = sc->sc_req_mem_ind;
 	mem_seg_len = le32toh(ind->mem_seg_len);
 	if (mem_seg_len > mem_seg_len_max) {
 		printf("%s: firmware requested too many memory segments: %u\n",
 		    sc->sc_dev.dv_xname, mem_seg_len);
+		free(sc->sc_req_mem_ind, M_DEVBUF, sizeof(*sc->sc_req_mem_ind));
+		sc->sc_req_mem_ind = NULL;
 		return -1;
 	}
 
@@ -7764,6 +7766,9 @@ qwx_qmi_mem_seg_send(struct qwx_softc *sc)
 		if (ind->mem_seg[i].size == 0) {
 			printf("%s: firmware requested zero-sized "
 			    "memory segment %u\n", sc->sc_dev.dv_xname, i);
+			free(sc->sc_req_mem_ind, M_DEVBUF,
+			    sizeof(*sc->sc_req_mem_ind));
+			sc->sc_req_mem_ind = NULL;
 			return -1;
 		}
 		total_size += le32toh(ind->mem_seg[i].size);
@@ -7847,8 +7852,10 @@ qwx_qmi_mem_seg_send(struct qwx_softc *sc)
 		}
 	}
 
-	if (mem_seg_len == 0)
-		return EBUSY;
+	if (mem_seg_len == 0) {
+		sc->expect_fwmem_req = 1;
+		return EBUSY; /* retry */
+	}
 
 	if (!sc->hw_params.fixed_fw_mem) {
 		while (!sc->fwmem_ready) {
@@ -13003,7 +13010,7 @@ qwx_wmi_tlv_op_rx(struct qwx_softc *sc, struct mbuf *m)
 		DPRINTF("%s: 0x%x: wlan freq avoid event\n", __func__, id);
 		break;
 	default:
-		printf("%s: unsupported event id 0x%x\n", __func__, id);
+		DPRINTF("%s: unsupported event id 0x%x\n", __func__, id);
 		break;
 	}
 
@@ -19057,11 +19064,13 @@ qwx_qmi_event_server_arrive(struct qwx_softc *sc)
 	int ret;
 
 	sc->fw_init_done = 0;
+	sc->expect_fwmem_req = 1;
 
 	ret = qwx_qmi_fw_ind_register_send(sc);
 	if (ret < 0) {
 		printf("%s: failed to send qmi firmware indication: %d\n",
 		    sc->sc_dev.dv_xname, ret);
+		sc->expect_fwmem_req = 0;
 		return ret;
 	}
 
@@ -19069,12 +19078,14 @@ qwx_qmi_event_server_arrive(struct qwx_softc *sc)
 	if (ret < 0) {
 		printf("%s: failed to send qmi host cap: %d\n",
 		    sc->sc_dev.dv_xname, ret);
+		sc->expect_fwmem_req = 0;
 		return ret;
 	}
 
 	ret = qwx_qmi_mem_seg_send(sc);
 	if (ret == EBUSY)
 		ret = qwx_qmi_mem_seg_send(sc);
+	sc->expect_fwmem_req = 0;
 	if (ret) {
 		printf("%s: failed to send qmi memory segments: %d\n",
 		    sc->sc_dev.dv_xname, ret);
@@ -19120,10 +19131,8 @@ qwx_core_init(struct qwx_softc *sc)
 	}
 
 	error = sc->ops.power_up(sc);
-	if (error) {
-		printf("failed to power up :%d\n", error);
+	if (error)
 		qwx_qmi_deinit_service(sc);
-	}
 
 	return error;
 }
@@ -22274,8 +22283,17 @@ void
 qwx_init_task(void *arg)
 {
 	struct qwx_softc *sc = arg;
+	struct ifnet *ifp = &sc->sc_ic.ic_if;
+	int s = splnet();
+	rw_enter_write(&sc->ioctl_rwl);
 
-	printf("%s: %s not implemented\n", sc->sc_dev.dv_xname, __func__);
+	qwx_stop(ifp);
+
+	if ((ifp->if_flags & (IFF_UP | IFF_RUNNING)) == IFF_UP)
+		qwx_init(ifp);
+
+	rw_exit(&sc->ioctl_rwl);
+	splx(s);
 }
 
 void
