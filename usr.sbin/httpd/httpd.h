@@ -45,7 +45,7 @@
 
 #define CONF_FILE		"/etc/httpd.conf"
 #define HTTPD_USER		"www"
-#define HTTPD_SERVERNAME	"Mictlantecuhtli"
+#define HTTPD_SERVERNAME	"Yatagarasu"
 #define HTTPD_DOCROOT		"/htdocs"
 #define HTTPD_ERRDOCTEMPLATE	"err" /* 3-char name */
 #define HTTPD_ERRDOCROOT_MAX	(PATH_MAX - sizeof("000.html"))
