@@ -2258,7 +2258,7 @@ ixl_configure_rss(struct ixl_softc *sc)
 	if (error != 0)
 		return (error);
 
-	/* nothing to clena up :( */
+	/* nothing to clean up :( */
 
 	return (0);
 }
@@ -3284,7 +3284,7 @@ ixl_rxeof(struct ixl_softc *sc, struct ixl_rx_ring *rxr)
 		bus_dmamap_sync(sc->sc_dmat, map, 0, map->dm_mapsize,
 		    BUS_DMASYNC_POSTREAD);
 		bus_dmamap_unload(sc->sc_dmat, map);
-		
+
 		m = rxm->rxm_m;
 		rxm->rxm_m = NULL;
 
