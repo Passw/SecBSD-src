@@ -147,7 +147,7 @@ static struct timespec ArchMTimeMember(const char *, const char *, bool);
 static FILE *ArchFindMember(const char *, const char *, struct ar_hdr *, const char *);
 static void ArchTouch(const char *, const char *);
 #if defined(__svr4__) || defined(__SVR4) || \
-    (defined(__OpenBSD__) && defined(__ELF__))
+    (defined(__SecBSD__) && defined(__ELF__))
 #define SVR4ARCHIVES
 #endif
 static bool parse_archive(Buffer, const char **, Lst, SymTable *);
