@@ -1,4 +1,4 @@
-/*	$OpenBSD: parse.c,v 1.15 2022/12/26 18:43:49 jmc Exp $ */
+/*	$OpenBSD: parse.c,v 1.19 2024/02/21 13:24:37 claudio Exp $ */
 
 /*
  * Copyright (c) 2016-2017 Martin Pieuchot
@@ -50,7 +50,11 @@ struct pool it_pool, im_pool, ir_pool;
 #define nitems(_a)	(sizeof((_a)) / sizeof((_a)[0]))
 #endif
 
-#define DPRINTF(x...)	do { /*printf(x)*/ } while (0)
+#ifdef DEBUG
+#define DPRINTF(x...)	do { printf(x); } while (0)
+#else
+#define DPRINTF(x...)	do { ; } while (0)
+#endif
 
 #define VOID_OFFSET	1	/* Fake offset for generating "void" type. */
 
@@ -329,6 +333,11 @@ it_cmp(struct itype *a, struct itype *b)
 	    (diff = (a->it_size - b->it_size) != 0))
 		return diff;
 
+	/* Arrays need to have same number of elements */
+	if ((a->it_type == CTF_K_ARRAY) &&
+	    (diff = (a->it_nelems - b->it_nelems) != 0))
+		return diff;
+
 	/* Match by name */
 	if (!(a->it_flags & ITF_ANON) && !(b->it_flags & ITF_ANON))
 		return strcmp(it_name(a), it_name(b));
@@ -341,7 +350,7 @@ it_cmp(struct itype *a, struct itype *b)
 	if ((a->it_refp != NULL) && (b->it_refp != NULL))
 		return it_cmp(a->it_refp, b->it_refp);
 
-	return 1;
+	return 0;
 }
 
 int
@@ -833,7 +842,7 @@ parse_refers(struct dwdie *die, size_t psz, int type)
 
 	if (it->it_ref == 0 && (it->it_size == sizeof(void *) ||
 	    type == CTF_K_CONST || type == CTF_K_VOLATILE ||
-	    type == CTF_K_POINTER)) {
+	    type == CTF_K_POINTER || type == CTF_K_TYPEDEF)) {
 		/* Work around GCC/clang not emiting a type for void */
 		it->it_flags &= ~ITF_UNRES;
 		it->it_ref = VOID_OFFSET;
@@ -1345,6 +1354,8 @@ dav2val(struct dwaval *dav, size_t psz)
 	case DW_FORM_sdata:
 	case DW_FORM_data8:
 	case DW_FORM_ref8:
+	case DW_FORM_udata:
+	case DW_FORM_ref_udata:
 		val = dav->dav_u64;
 		break;
 	case DW_FORM_strp:

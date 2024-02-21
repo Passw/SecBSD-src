@@ -1,4 +1,4 @@
-/*	$OpenBSD: extern.h,v 1.204 2024/02/16 05:18:29 tb Exp $ */
+/*	$OpenBSD: extern.h,v 1.207 2024/02/21 12:48:25 tb Exp $ */
 /*
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -652,7 +652,6 @@ void		 takey_free(struct takey *);
 void		 tak_free(struct tak *);
 struct tak	*tak_parse(X509 **, const char *, int, const unsigned char *,
 		    size_t);
-struct tak	*tak_read(struct ibuf *);
 
 void		 aspa_buffer(struct ibuf *, const struct aspa *);
 void		 aspa_free(struct aspa *);
@@ -703,16 +702,15 @@ int		 cms_parse_validate_detached(X509 **, const char *,
 /* Work with RFC 3779 IP addresses, prefixes, ranges. */
 
 int		 ip_addr_afi_parse(const char *, const ASN1_OCTET_STRING *,
-			enum afi *);
+		    enum afi *);
 int		 ip_addr_parse(const ASN1_BIT_STRING *,
-			enum afi, const char *, struct ip_addr *);
+		    enum afi, const char *, struct ip_addr *);
 void		 ip_addr_print(const struct ip_addr *, enum afi, char *,
-			size_t);
-int		 ip_addr_cmp(const struct ip_addr *, const struct ip_addr *);
+		    size_t);
 int		 ip_addr_check_overlap(const struct cert_ip *,
-			const char *, const struct cert_ip *, size_t, int);
+		    const char *, const struct cert_ip *, size_t, int);
 int		 ip_addr_check_covered(enum afi, const unsigned char *,
-			const unsigned char *, const struct cert_ip *, size_t);
+		    const unsigned char *, const struct cert_ip *, size_t);
 int		 ip_cert_compose_ranges(struct cert_ip *);
 void		 ip_roa_compose_ranges(struct roa_ip *);
 void		 ip_warn(const char *, const char *, const struct cert_ip *);
@@ -729,9 +727,9 @@ int		 sbgp_parse_ipaddrblk(const char *, const IPAddrBlocks *,
 
 int		 as_id_parse(const ASN1_INTEGER *, uint32_t *);
 int		 as_check_overlap(const struct cert_as *, const char *,
-			const struct cert_as *, size_t, int);
+		    const struct cert_as *, size_t, int);
 int		 as_check_covered(uint32_t, uint32_t,
-			const struct cert_as *, size_t);
+		    const struct cert_as *, size_t);
 void		 as_warn(const char *, const char *, const struct cert_as *);
 
 int		 sbgp_as_id(const char *, struct cert_as *, size_t *,
@@ -904,9 +902,10 @@ int		 output_json(FILE *, struct vrp_tree *, struct brk_tree *,
 int		 output_ometric(FILE *, struct vrp_tree *, struct brk_tree *,
 		    struct vap_tree *, struct stats *);
 
-void		logx(const char *fmt, ...)
+void		 logx(const char *fmt, ...)
 		    __attribute__((format(printf, 1, 2)));
-time_t		getmonotime(void);
+time_t		 getmonotime(void);
+time_t		 get_current_time(void);
 
 int	mkpath(const char *);
 int	mkpathat(int, const char *);
@@ -957,13 +956,5 @@ int	mkpathat(int, const char *);
 
 /* Maximum number of delegated hosting locations (repositories) for each TAL. */
 #define MAX_REPO_PER_TAL	1000
-
-/*
- * Time - Evaluation time is used as the current time if it is
- * larger than X509_TIME_MIN, otherwise the system time is used.
- */
-#define X509_TIME_MAX 253402300799LL
-#define X509_TIME_MIN -62167219200LL
-extern time_t  get_current_time(void);
 
 #endif /* ! EXTERN_H */
