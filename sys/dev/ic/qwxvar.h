@@ -1,4 +1,4 @@
-/*	$OpenBSD: qwxvar.h,v 1.20 2024/02/16 14:13:45 stsp Exp $	*/
+/*	$OpenBSD: qwxvar.h,v 1.22 2024/02/22 09:08:08 stsp Exp $	*/
 
 /*
  * Copyright (c) 2018-2019 The Linux Foundation.
@@ -1782,7 +1782,14 @@ struct qwx_softc {
 	struct qwx_survey_info	survey[IEEE80211_CHAN_MAX];
 
 	int			attached;
-	int			have_firmware;
+	struct {
+		u_char *data;
+		size_t size;
+	} fw_img[4];
+#define QWX_FW_AMSS	0
+#define QWX_FW_BOARD	1
+#define QWX_FW_M3	2
+#define QWX_FW_REGDB	3
 
 	int			sc_tx_timer;
 	uint32_t		qfullmsk;
@@ -1901,6 +1908,7 @@ int	qwx_dp_service_srng(struct qwx_softc *, int);
 int	qwx_init_hw_params(struct qwx_softc *);
 int	qwx_attach(struct qwx_softc *);
 void	qwx_detach(struct qwx_softc *);
+int	qwx_activate(struct device *, int);
 
 void	qwx_core_deinit(struct qwx_softc *);
 void	qwx_ce_cleanup_pipes(struct qwx_softc *);
