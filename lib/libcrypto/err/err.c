@@ -1,4 +1,4 @@
-/* $OpenBSD: err.c,v 1.56 2023/07/28 10:23:19 tb Exp $ */
+/* $OpenBSD: err.c,v 1.58 2024/02/24 07:53:01 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -328,17 +328,14 @@ err_string_data_cmp(const ERR_STRING_DATA *a, const ERR_STRING_DATA *b)
 }
 static IMPLEMENT_LHASH_COMP_FN(err_string_data, ERR_STRING_DATA)
 
-static
-LHASH_OF(ERR_STRING_DATA) *int_err_get(int create)
+static LHASH_OF(ERR_STRING_DATA) *
+int_err_get(int create)
 {
 	LHASH_OF(ERR_STRING_DATA) *ret = NULL;
 
 	CRYPTO_w_lock(CRYPTO_LOCK_ERR);
-	if (!int_error_hash && create) {
-		CRYPTO_push_info("int_err_get (err.c)");
+	if (!int_error_hash && create)
 		int_error_hash = lh_ERR_STRING_DATA_new();
-		CRYPTO_pop_info();
-	}
 	if (int_error_hash)
 		ret = int_error_hash;
 	CRYPTO_w_unlock(CRYPTO_LOCK_ERR);
@@ -425,17 +422,14 @@ err_state_cmp(const ERR_STATE *a, const ERR_STATE *b)
 }
 static IMPLEMENT_LHASH_COMP_FN(err_state, ERR_STATE)
 
-static
-LHASH_OF(ERR_STATE) *int_thread_get(int create)
+static LHASH_OF(ERR_STATE) *
+int_thread_get(int create)
 {
 	LHASH_OF(ERR_STATE) *ret = NULL;
 
 	CRYPTO_w_lock(CRYPTO_LOCK_ERR);
-	if (!int_thread_hash && create) {
-		CRYPTO_push_info("int_thread_get (err.c)");
+	if (!int_thread_hash && create)
 		int_thread_hash = lh_ERR_STATE_new();
-		CRYPTO_pop_info();
-	}
 	if (int_thread_hash) {
 		int_thread_hash_references++;
 		ret = int_thread_hash;
