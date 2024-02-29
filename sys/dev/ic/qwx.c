@@ -1,4 +1,4 @@
-/*	$OpenBSD: qwx.c,v 1.52 2024/02/24 15:21:39 cheloha Exp $	*/
+/*	$OpenBSD: qwx.c,v 1.54 2024/02/29 11:45:47 stsp Exp $	*/
 
 /*
  * Copyright 2023 Stefan Sperling <stsp@openbsd.org>
@@ -12793,6 +12793,7 @@ qwx_mgmt_rx_event(struct qwx_softc *sc, struct mbuf *m)
 	}
 #endif
 	ieee80211_input(ifp, m, ni, &rxi);
+	ieee80211_release_node(ic, ni);
 exit:
 #ifdef notyet
 	rcu_read_unlock();
@@ -21332,7 +21333,7 @@ qwx_ce_rx_post_buf(struct qwx_softc *sc)
 		pipe = &sc->ce.ce_pipe[i];
 		ret = qwx_ce_rx_post_pipe(pipe);
 		if (ret) {
-			if (ret == ENOBUFS)
+			if (ret == ENOSPC)
 				continue;
 
 			printf("%s: failed to post rx buf to pipe: %d err: %d\n",
@@ -21436,7 +21437,7 @@ qwx_ce_recv_process_cb(struct qwx_ce_pipe *pipe)
 	}
 
 	err = qwx_ce_rx_post_pipe(pipe);
-	if (err && err != ENOBUFS) {
+	if (err && err != ENOSPC) {
 		printf("%s: failed to post rx buf to pipe: %d err: %d\n",
 		    __func__, pipe->pipe_num, err);
 #ifdef notyet
