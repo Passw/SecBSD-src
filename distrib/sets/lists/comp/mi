@@ -1781,7 +1781,6 @@
 ./usr/share/man/man3/ASN1_mbstring_copy.3
 ./usr/share/man/man3/ASN1_parse_dump.3
 ./usr/share/man/man3/ASN1_put_object.3
-./usr/share/man/man3/ASN1_time_parse.3
 ./usr/share/man/man3/ASRange_new.3
 ./usr/share/man/man3/AUTHORITY_KEYID_new.3
 ./usr/share/man/man3/BASIC_CONSTRAINTS_new.3
@@ -2194,7 +2193,6 @@
 ./usr/share/man/man3/X509_ATTRIBUTE_new.3
 ./usr/share/man/man3/X509_ATTRIBUTE_set1_object.3
 ./usr/share/man/man3/X509_CINF_new.3
-./usr/share/man/man3/X509_CRL_METHOD_new.3
 ./usr/share/man/man3/X509_CRL_get0_by_serial.3
 ./usr/share/man/man3/X509_CRL_new.3
 ./usr/share/man/man3/X509_CRL_print.3
