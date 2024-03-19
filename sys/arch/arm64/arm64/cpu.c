@@ -1,4 +1,4 @@
-/*	$OpenBSD: cpu.c,v 1.111 2024/03/17 13:05:40 kettenis Exp $	*/
+/*	$OpenBSD: cpu.c,v 1.113 2024/03/18 21:57:22 kettenis Exp $	*/
 
 /*
  * Copyright (c) 2016 Dale Rahn <drahn@dalerahn.com>
@@ -278,6 +278,43 @@ void	cpu_kstat_attach(struct cpu_info *ci);
 void	cpu_opp_kstat_attach(struct cpu_info *ci);
 #endif
 
+/*
+ * Enable mitigation for Spectre-V4 speculative store bypass
+ * vulnerabilities (CVE-2018-3639).
+ */
+void
+cpu_mitigate_spectre_v4(struct cpu_info *ci)
+{
+	uint64_t id;
+
+	switch (CPU_IMPL(ci->ci_midr)) {
+	case CPU_IMPL_ARM:
+		switch (CPU_PART(ci->ci_midr)) {
+		case CPU_PART_CORTEX_A35:
+		case CPU_PART_CORTEX_A53:
+		case CPU_PART_CORTEX_A55:
+			/* Not vulnerable. */
+			return;
+		}
+		break;
+	case CPU_IMPL_QCOM:
+		switch (CPU_PART(ci->ci_midr)) {
+		case CPU_PART_KRYO400_SILVER:
+			/* Not vulnerable. */
+			return;
+		}
+		break;
+	}
+
+	/* SSBS tells us Spectre-V4 is mitigated. */
+	id = READ_SPECIALREG(id_aa64pfr1_el1);
+	if (ID_AA64PFR1_SSBS(id) >= ID_AA64PFR1_SSBS_PSTATE)
+		return;
+
+	/* Enable firmware workaround if required. */
+	smccc_enable_arch_workaround_2();
+}
+
 void
 cpu_identify(struct cpu_info *ci)
 {
@@ -289,13 +326,14 @@ cpu_identify(struct cpu_info *ci)
 	static uint64_t prev_id_aa64pfr0;
 	static uint64_t prev_id_aa64pfr1;
 	uint64_t midr, impl, part;
-	uint64_t clidr, id;
-	uint32_t ctr, ccsidr, sets, ways, line;
+	uint64_t clidr, ccsidr, id;
+	uint32_t ctr, sets, ways, line;
 	const char *impl_name = NULL;
 	const char *part_name = NULL;
 	const char *il1p_name = NULL;
 	const char *sep;
 	struct cpu_cores *coreselecter = cpu_cores_none;
+	int ccidx;
 	int i;
 
 	midr = READ_SPECIALREG(midr_el1);
@@ -348,7 +386,18 @@ cpu_identify(struct cpu_info *ci)
 		break;
 	}
 
+	id = READ_SPECIALREG(id_aa64mmfr2_el1);
 	clidr = READ_SPECIALREG(clidr_el1);
+	if (ID_AA64MMFR2_CCIDX(id) > ID_AA64MMFR2_CCIDX_IMPL) {
+		/* Reserved value.  Don't print cache information. */
+		clidr = 0;
+	} else if (ID_AA64MMFR2_CCIDX(id) == ID_AA64MMFR2_CCIDX_IMPL) {
+		/* CCSIDR_EL1 uses the new 64-bit format. */
+		ccidx = 1;
+	} else {
+		/* CCSIDR_EL1 uses the old 32-bit format. */
+		ccidx = 0;
+	}
 	for (i = 0; i < 7; i++) {
 		if ((clidr & CLIDR_CTYPE_MASK) == 0)
 			break;
@@ -359,9 +408,15 @@ cpu_identify(struct cpu_info *ci)
 			    i << CSSELR_LEVEL_SHIFT | CSSELR_IND);
 			__asm volatile("isb");
 			ccsidr = READ_SPECIALREG(ccsidr_el1);
-			sets = CCSIDR_SETS(ccsidr);
-			ways = CCSIDR_WAYS(ccsidr);
-			line = CCSIDR_LINE_SIZE(ccsidr);
+			if (ccidx) {
+				sets = CCSIDR_CCIDX_SETS(ccsidr);
+				ways = CCSIDR_CCIDX_WAYS(ccsidr);
+				line = CCSIDR_CCIDX_LINE_SIZE(ccsidr);
+			} else {
+				sets = CCSIDR_SETS(ccsidr);
+				ways = CCSIDR_WAYS(ccsidr);
+				line = CCSIDR_LINE_SIZE(ccsidr);
+			}
 			printf("%s %dKB %db/line %d-way L%d %sI-cache", sep,
 			    (sets * ways * line) / 1024, line, ways, (i + 1),
 			    il1p_name);
@@ -372,9 +427,15 @@ cpu_identify(struct cpu_info *ci)
 			WRITE_SPECIALREG(csselr_el1, i << CSSELR_LEVEL_SHIFT);
 			__asm volatile("isb");
 			ccsidr = READ_SPECIALREG(ccsidr_el1);
-			sets = CCSIDR_SETS(ccsidr);
-			ways = CCSIDR_WAYS(ccsidr);
-			line = CCSIDR_LINE_SIZE(ccsidr);
+			if (ccidx) {
+				sets = CCSIDR_CCIDX_SETS(ccsidr);
+				ways = CCSIDR_CCIDX_WAYS(ccsidr);
+				line = CCSIDR_CCIDX_LINE_SIZE(ccsidr);
+			} else {
+				sets = CCSIDR_SETS(ccsidr);
+				ways = CCSIDR_WAYS(ccsidr);
+				line = CCSIDR_LINE_SIZE(ccsidr);
+			}
 			printf("%s %dKB %db/line %d-way L%d D-cache", sep,
 			    (sets * ways * line) / 1024, line, ways, (i + 1));
 			sep = ",";
@@ -383,9 +444,15 @@ cpu_identify(struct cpu_info *ci)
 			WRITE_SPECIALREG(csselr_el1, i << CSSELR_LEVEL_SHIFT);
 			__asm volatile("isb");
 			ccsidr = READ_SPECIALREG(ccsidr_el1);
-			sets = CCSIDR_SETS(ccsidr);
-			ways = CCSIDR_WAYS(ccsidr);
-			line = CCSIDR_LINE_SIZE(ccsidr);
+			if (ccidx) {
+				sets = CCSIDR_CCIDX_SETS(ccsidr);
+				ways = CCSIDR_CCIDX_WAYS(ccsidr);
+				line = CCSIDR_CCIDX_LINE_SIZE(ccsidr);
+			} else {
+				sets = CCSIDR_SETS(ccsidr);
+				ways = CCSIDR_WAYS(ccsidr);
+				line = CCSIDR_LINE_SIZE(ccsidr);
+			}
 			printf("%s %dKB %db/line %d-way L%d cache", sep,
 			    (sets * ways * line) / 1024, line, ways, (i + 1));
 		}
@@ -478,7 +545,7 @@ cpu_identify(struct cpu_info *ci)
 	 */
 #if NPSCI > 0
 	if (ci->ci_trampoline_vectors == (vaddr_t)trampoline_vectors_none &&
-	    psci_flush_bp_has_bhb()) {
+	    smccc_needs_arch_workaround_3()) {
 		ci->ci_flush_bp = cpu_flush_bp_noop;
 		if (psci_method() == PSCI_METHOD_HVC)
 			ci->ci_trampoline_vectors =
@@ -508,6 +575,8 @@ cpu_identify(struct cpu_info *ci)
 		ci->ci_flush_bp = cpu_flush_bp_noop;
 		ci->ci_trampoline_vectors = (vaddr_t)trampoline_vectors_none;
 	}
+
+	cpu_mitigate_spectre_v4(ci);
 
 	/*
 	 * Apple CPUs provide detailed information for SError.
