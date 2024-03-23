@@ -104,6 +104,9 @@ unsigned int dev_round;			/* device block size */
 int dev_rate;				/* device sample rate (Hz) */
 unsigned int dev_pchan, dev_rchan;	/* play & rec channels count */
 adata_t *dev_pbuf, *dev_rbuf;		/* play & rec buffers */
+struct aparams dev_par;			/* device sample format */
+struct conv dev_enc, dev_dec;		/* format conversions */
+unsigned char *dev_encbuf, *dev_decbuf;	/* buf for format conversions */
 long long dev_pos;			/* last MMC position in frames */
 #define DEV_STOP	0		/* stopped */
 #define DEV_START	1		/* started */
@@ -141,15 +144,15 @@ char usagestr[] = "usage: aucat [-dn] [-b size] "
     "[-q port] [-r rate] [-v volume]\n";
 
 static void *
-allocbuf(int nfr, int nch)
+allocbuf(int nfr, int nch, int bps)
 {
 	size_t fsize;
 
-	if (nch < 0 || nch > NCHAN_MAX) {
-		log_puts("allocbuf: bogus channel count\n");
+	if (nch < 0 || nch > NCHAN_MAX || bps < 0 || bps > 4) {
+		log_puts("allocbuf: bogus channels or bytes per sample count\n");
 		panic();
 	}
-	fsize = nch * sizeof(adata_t);
+	fsize = nch * bps;
 	return reallocarray(NULL, nfr, fsize);
 }
 
@@ -343,12 +346,12 @@ slot_init(struct slot *s)
 		if (s->afile.fmt != AFILE_FMT_PCM ||
 		    !aparams_native(&s->afile.par)) {
 			dec_init(&s->conv, &s->afile.par, s->afile.nch);
-			s->convbuf = allocbuf(s->round, s->afile.nch);
+			s->convbuf = allocbuf(s->round, s->afile.nch, sizeof(adata_t));
 		}
 		if (s->afile.rate != dev_rate) {
 			resamp_init(&s->resamp, s->afile.rate, dev_rate,
 			    s->afile.nch);
-			s->resampbuf = allocbuf(dev_round, s->afile.nch);
+			s->resampbuf = allocbuf(dev_round, s->afile.nch, sizeof(adata_t));
 		}
 	}
 	if (s->mode & SIO_REC) {
@@ -358,11 +361,11 @@ slot_init(struct slot *s)
 		if (s->afile.rate != dev_rate) {
 			resamp_init(&s->resamp, dev_rate, s->afile.rate,
 			    s->afile.nch);
-			s->resampbuf = allocbuf(dev_round, s->afile.nch);
+			s->resampbuf = allocbuf(dev_round, s->afile.nch, sizeof(adata_t));
 		}
 		if (!aparams_native(&s->afile.par)) {
 			enc_init(&s->conv, &s->afile.par, s->afile.nch);
-			s->convbuf = allocbuf(s->round, s->afile.nch);
+			s->convbuf = allocbuf(s->round, s->afile.nch, sizeof(adata_t));
 		}
 
 		/*
@@ -673,6 +676,7 @@ dev_open(char *dev, int mode, int bufsz, char *port)
 {
 	int rate, pmax, rmax;
 	struct sio_par par;
+	char encstr[ENCMAX];
 	struct slot *s;
 
 	if (port) {
@@ -723,32 +727,41 @@ dev_open(char *dev, int mode, int bufsz, char *port)
 		log_puts(": couldn't set audio params\n");
 		return 0;
 	}
-	if (par.bits != ADATA_BITS ||
-	    par.bps != sizeof(adata_t) ||
-	    (par.bps > 1 && par.le != SIO_LE_NATIVE) ||
-	    (par.bps * 8 > par.bits && par.msb)) {
-		log_puts(dev_name);
-		log_puts(": unsupported audio params\n");
-		return 0;
-	}
+	dev_par.bits = par.bits;
+	dev_par.bps = par.bps;
+	dev_par.sig = par.sig;
+	dev_par.le = par.le;
+	dev_par.msb = par.msb;
 	dev_mode = mode;
 	dev_rate = par.rate;
 	dev_bufsz = par.bufsz;
 	dev_round = par.round;
 	if (mode & SIO_PLAY) {
 		dev_pchan = par.pchan;
-		dev_pbuf = allocbuf(dev_round, dev_pchan);
+		dev_pbuf = allocbuf(dev_round, dev_pchan, sizeof(adata_t));
 	}
 	if (mode & SIO_REC) {
 		dev_rchan = par.rchan;
-		dev_rbuf = allocbuf(dev_round, dev_rchan);
+		dev_rbuf = allocbuf(dev_round, dev_rchan, sizeof(adata_t));
+	}
+	if (!aparams_native(&dev_par)) {
+		if (mode & SIO_PLAY) {
+			dev_encbuf = allocbuf(dev_round, dev_pchan, dev_par.bps);
+			enc_init(&dev_enc, &dev_par, dev_pchan);
+		}
+		if (mode & SIO_REC) {
+			dev_decbuf = allocbuf(dev_round, dev_rchan, dev_par.bps);
+			dec_init(&dev_dec, &dev_par, dev_rchan);
+		}
 	}
 	dev_pstate = DEV_STOP;
 	if (log_level >= 2) {
 		log_puts(dev_name);
 		log_puts(": ");
 		log_putu(dev_rate);
-		log_puts("Hz");
+		log_puts("Hz, ");
+		aparams_enctostr(&dev_par, encstr);
+		log_puts(encstr);
 		if (dev_mode & SIO_PLAY) {
 			log_puts(", play 0:");
 			log_puti(dev_pchan - 1);
@@ -1106,7 +1119,7 @@ offline(void)
 	dev_bufsz = rate;
 	dev_round = rate;
 	dev_pchan = dev_rchan = cmax + 1;
-	dev_pbuf = dev_rbuf = allocbuf(dev_round, dev_pchan);
+	dev_pbuf = dev_rbuf = allocbuf(dev_round, dev_pchan, sizeof(adata_t));
 	dev_pstate = DEV_STOP;
 	for (s = slot_list; s != NULL; s = s->next)
 		slot_init(s);
@@ -1145,8 +1158,8 @@ playrec_cycle(void)
 		if (dev_prime > 0)
 			dev_prime--;
 		else {
-			todo = dev_round * dev_rchan * sizeof(adata_t);
-			p = (unsigned char *)dev_rbuf;
+			todo = dev_round * dev_rchan * dev_par.bps;
+			p = dev_decbuf ? dev_decbuf : (unsigned char *)dev_rbuf;
 			while (todo > 0) {
 				n = sio_read(dev_sh, p, todo);
 				if (n == 0) {
@@ -1159,12 +1172,24 @@ playrec_cycle(void)
 				todo -= n;
 			}
 			rcnt = slot_list_copy(dev_round, dev_rchan, dev_rbuf);
+			if (dev_decbuf) {
+				dec_do(&dev_dec,
+				    dev_decbuf, (unsigned char *)dev_rbuf,
+				    dev_round);
+			}
 		}
 	}
 	if (dev_mode & SIO_PLAY) {
 		pcnt = slot_list_mix(dev_round, dev_pchan, dev_pbuf);
-		todo = sizeof(adata_t) * dev_pchan * dev_round;
-		n = sio_write(dev_sh, dev_pbuf, todo);
+		todo = dev_par.bps * dev_pchan * dev_round;
+		if (dev_encbuf) {
+			enc_do(&dev_enc,
+			    (unsigned char *)dev_pbuf, dev_encbuf,
+			    dev_round);
+			p = dev_encbuf;
+		} else
+			p = (unsigned char *)dev_pbuf;
+		n = sio_write(dev_sh, p, todo);
 		if (n == 0) {
 			log_puts(dev_name);
 			log_puts(": failed to write to device\n");

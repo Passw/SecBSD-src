@@ -1,4 +1,4 @@
-/*	$OpenBSD: util.c,v 1.83 2024/03/20 09:35:46 claudio Exp $ */
+/*	$OpenBSD: util.c,v 1.85 2024/03/22 15:41:34 claudio Exp $ */
 
 /*
  * Copyright (c) 2006 Claudio Jeker <claudio@openbsd.org>
@@ -31,6 +31,22 @@
 #include "bgpd.h"
 #include "rde.h"
 #include "log.h"
+
+char *
+ibuf_get_string(struct ibuf *buf, size_t len)
+{
+	char *str;
+
+	if (ibuf_size(buf) < len) {
+		errno = EBADMSG;
+		return (NULL);
+	}
+	str = strndup(ibuf_data(buf), len);
+	if (str == NULL)
+		return (NULL);
+	ibuf_skip(buf, len);
+	return (str);
+}
 
 const char *
 log_addr(const struct bgpd_addr *addr)
@@ -306,6 +322,32 @@ log_policy(enum role role)
 		return "peer";
 	default:
 		return "unknown";
+	}
+}
+
+const char *
+log_capability(uint8_t capa)
+{
+	static char buf[20];
+
+	switch (capa) {
+	case CAPA_MP:
+		return "Multiprotocol Extensions";
+	case CAPA_REFRESH:
+		return "Route Refresh";
+	case CAPA_ROLE:
+		return "BGP Role";
+	case CAPA_RESTART:
+		return "Graceful Restart";
+	case CAPA_AS4BYTE:
+		return "4-octet AS number";
+	case CAPA_ADD_PATH:
+		return "ADD-PATH";
+	case CAPA_ENHANCED_RR:
+		return "Enhanced Route Refresh";
+	default:
+		snprintf(buf, sizeof(buf), "unknown %u", capa);
+		return buf;
 	}
 }
 
