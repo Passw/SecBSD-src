@@ -1,4 +1,4 @@
-/* $OpenBSD: x509_trs.c,v 1.45 2024/03/24 00:35:45 tb Exp $ */
+/* $OpenBSD: x509_trs.c,v 1.49 2024/03/25 00:46:57 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 1999.
  */
@@ -65,12 +65,13 @@
 #include <openssl/x509v3.h>
 
 #include "crypto_internal.h"
+#include "x509_internal.h"
 #include "x509_local.h"
 
 typedef struct x509_trust_st {
 	int trust;
 	int (*check_trust)(struct x509_trust_st *, X509 *);
-	int arg1;
+	int nid;
 } X509_TRUST;
 
 static int
@@ -78,34 +79,32 @@ obj_trust(int id, X509 *x)
 {
 	ASN1_OBJECT *obj;
 	int i, nid;
-	X509_CERT_AUX *ax;
+	X509_CERT_AUX *aux;
 
-	ax = x->aux;
-	if (!ax)
+	if ((aux = x->aux) == NULL)
 		return X509_TRUST_UNTRUSTED;
-	if (ax->reject) {
-		for (i = 0; i < sk_ASN1_OBJECT_num(ax->reject); i++) {
-			obj = sk_ASN1_OBJECT_value(ax->reject, i);
-			nid = OBJ_obj2nid(obj);
-			if (nid == id || nid == NID_anyExtendedKeyUsage)
-				return X509_TRUST_REJECTED;
-		}
+
+	for (i = 0; i < sk_ASN1_OBJECT_num(aux->reject); i++) {
+		obj = sk_ASN1_OBJECT_value(aux->reject, i);
+		nid = OBJ_obj2nid(obj);
+		if (nid == id || nid == NID_anyExtendedKeyUsage)
+			return X509_TRUST_REJECTED;
 	}
-	if (ax->trust) {
-		for (i = 0; i < sk_ASN1_OBJECT_num(ax->trust); i++) {
-			obj = sk_ASN1_OBJECT_value(ax->trust, i);
-			nid = OBJ_obj2nid(obj);
-			if (nid == id || nid == NID_anyExtendedKeyUsage)
-				return X509_TRUST_TRUSTED;
-		}
+
+	for (i = 0; i < sk_ASN1_OBJECT_num(aux->trust); i++) {
+		obj = sk_ASN1_OBJECT_value(aux->trust, i);
+		nid = OBJ_obj2nid(obj);
+		if (nid == id || nid == NID_anyExtendedKeyUsage)
+			return X509_TRUST_TRUSTED;
 	}
+
 	return X509_TRUST_UNTRUSTED;
 }
 
 static int
 trust_compat(X509_TRUST *trust, X509 *x)
 {
-	X509_check_purpose(x, -1, 0);
+	/* Extensions already cached in X509_check_trust(). */
 	if (x->ex_flags & EXFLAG_SS)
 		return X509_TRUST_TRUSTED;
 	else
@@ -116,7 +115,7 @@ static int
 trust_1oidany(X509_TRUST *trust, X509 *x)
 {
 	if (x->aux && (x->aux->trust || x->aux->reject))
-		return obj_trust(trust->arg1, x);
+		return obj_trust(trust->nid, x);
 	/* we don't have any trust settings: for compatibility
 	 * we return trusted if it is self signed
 	 */
@@ -127,7 +126,7 @@ static int
 trust_1oid(X509_TRUST *trust, X509 *x)
 {
 	if (x->aux)
-		return obj_trust(trust->arg1, x);
+		return obj_trust(trust->nid, x);
 	return X509_TRUST_UNTRUSTED;
 }
 
@@ -144,37 +143,37 @@ static const X509_TRUST trstandard[] = {
 	{
 		.trust = X509_TRUST_SSL_CLIENT,
 		.check_trust = trust_1oidany,
-		.arg1 = NID_client_auth,
+		.nid = NID_client_auth,
 	},
 	{
 		.trust = X509_TRUST_SSL_SERVER,
 		.check_trust = trust_1oidany,
-		.arg1 = NID_server_auth,
+		.nid = NID_server_auth,
 	},
 	{
 		.trust = X509_TRUST_EMAIL,
 		.check_trust = trust_1oidany,
-		.arg1 = NID_email_protect,
+		.nid = NID_email_protect,
 	},
 	{
 		.trust = X509_TRUST_OBJECT_SIGN,
 		.check_trust = trust_1oidany,
-		.arg1 = NID_code_sign,
+		.nid = NID_code_sign,
 	},
 	{
 		.trust = X509_TRUST_OCSP_SIGN,
 		.check_trust = trust_1oid,
-		.arg1 = NID_OCSP_sign,
+		.nid = NID_OCSP_sign,
 	},
 	{
 		.trust = X509_TRUST_OCSP_REQUEST,
 		.check_trust = trust_1oid,
-		.arg1 = NID_ad_OCSP,
+		.nid = NID_ad_OCSP,
 	},
 	{
 		.trust = X509_TRUST_TSA,
 		.check_trust = trust_1oidany,
-		.arg1 = NID_time_stamp,
+		.nid = NID_time_stamp,
 	},
 };
 
@@ -190,6 +189,10 @@ X509_check_trust(X509 *x, int trust_id, int flags)
 
 	if (trust_id == -1)
 		return 1;
+
+	/* Call early so the trust handlers don't need to modify the certs. */
+	if (!x509v3_cache_extensions(x))
+		return X509_TRUST_UNTRUSTED;
 
 	/*
 	 * XXX beck/jsing This enables self signed certs to be trusted for
