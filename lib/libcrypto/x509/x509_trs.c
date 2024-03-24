@@ -1,4 +1,4 @@
-/* $OpenBSD: x509_trs.c,v 1.42 2024/03/02 10:50:26 tb Exp $ */
+/* $OpenBSD: x509_trs.c,v 1.45 2024/03/24 00:35:45 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 1999.
  */
@@ -69,15 +69,12 @@
 
 typedef struct x509_trust_st {
 	int trust;
-	int flags;
-	int (*check_trust)(struct x509_trust_st *, X509 *, int);
-	char *name;
+	int (*check_trust)(struct x509_trust_st *, X509 *);
 	int arg1;
-	void *arg2;
 } X509_TRUST;
 
 static int
-obj_trust(int id, X509 *x, int flags)
+obj_trust(int id, X509 *x)
 {
 	ASN1_OBJECT *obj;
 	int i, nid;
@@ -106,7 +103,7 @@ obj_trust(int id, X509 *x, int flags)
 }
 
 static int
-trust_compat(X509_TRUST *trust, X509 *x, int flags)
+trust_compat(X509_TRUST *trust, X509 *x)
 {
 	X509_check_purpose(x, -1, 0);
 	if (x->ex_flags & EXFLAG_SS)
@@ -116,21 +113,21 @@ trust_compat(X509_TRUST *trust, X509 *x, int flags)
 }
 
 static int
-trust_1oidany(X509_TRUST *trust, X509 *x, int flags)
+trust_1oidany(X509_TRUST *trust, X509 *x)
 {
 	if (x->aux && (x->aux->trust || x->aux->reject))
-		return obj_trust(trust->arg1, x, flags);
+		return obj_trust(trust->arg1, x);
 	/* we don't have any trust settings: for compatibility
 	 * we return trusted if it is self signed
 	 */
-	return trust_compat(trust, x, flags);
+	return trust_compat(trust, x);
 }
 
 static int
-trust_1oid(X509_TRUST *trust, X509 *x, int flags)
+trust_1oid(X509_TRUST *trust, X509 *x)
 {
 	if (x->aux)
-		return obj_trust(trust->arg1, x, flags);
+		return obj_trust(trust->arg1, x);
 	return X509_TRUST_UNTRUSTED;
 }
 
@@ -143,48 +140,40 @@ static const X509_TRUST trstandard[] = {
 	{
 		.trust = X509_TRUST_COMPAT,
 		.check_trust = trust_compat,
-		.name = "compatible",
 	},
 	{
 		.trust = X509_TRUST_SSL_CLIENT,
 		.check_trust = trust_1oidany,
-		.name = "SSL Client",
 		.arg1 = NID_client_auth,
 	},
 	{
 		.trust = X509_TRUST_SSL_SERVER,
 		.check_trust = trust_1oidany,
-		.name = "SSL Server",
 		.arg1 = NID_server_auth,
 	},
 	{
 		.trust = X509_TRUST_EMAIL,
 		.check_trust = trust_1oidany,
-		.name = "S/MIME email",
 		.arg1 = NID_email_protect,
 	},
 	{
 		.trust = X509_TRUST_OBJECT_SIGN,
 		.check_trust = trust_1oidany,
-		.name = "Object Signer",
 		.arg1 = NID_code_sign,
 	},
 	{
 		.trust = X509_TRUST_OCSP_SIGN,
 		.check_trust = trust_1oid,
-		.name = "OCSP responder",
 		.arg1 = NID_OCSP_sign,
 	},
 	{
 		.trust = X509_TRUST_OCSP_REQUEST,
 		.check_trust = trust_1oid,
-		.name = "OCSP request",
 		.arg1 = NID_ad_OCSP,
 	},
 	{
 		.trust = X509_TRUST_TSA,
 		.check_trust = trust_1oidany,
-		.name = "TSA server",
 		.arg1 = NID_time_stamp,
 	},
 };
@@ -213,18 +202,18 @@ X509_check_trust(X509 *x, int trust_id, int flags)
 	 */
 	if (trust_id == 0) {
 		int rv;
-		rv = obj_trust(NID_anyExtendedKeyUsage, x, 0);
+		rv = obj_trust(NID_anyExtendedKeyUsage, x);
 		if (rv != X509_TRUST_UNTRUSTED)
 			return rv;
-		return trust_compat(NULL, x, 0);
+		return trust_compat(NULL, x);
 	}
 
 	if (trust_id < X509_TRUST_MIN || trust_id > X509_TRUST_MAX)
-		return obj_trust(trust_id, x, flags);
+		return obj_trust(trust_id, x);
 
 	idx = trust_id - X509_TRUST_MIN;
 	trust = &trstandard[idx];
 
-	return trust->check_trust((X509_TRUST *)trust, x, flags);
+	return trust->check_trust((X509_TRUST *)trust, x);
 }
 LCRYPTO_ALIAS(X509_check_trust);
