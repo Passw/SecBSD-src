@@ -3448,22 +3448,34 @@ amdgpu_init_backlight(struct amdgpu_device *adev)
 	struct backlight_device *bd = adev->dm.backlight_dev[0];
 	struct drm_connector_list_iter conn_iter;
 	struct drm_connector *connector;
+	struct amdgpu_dm_connector *aconnector;
 
 	if (bd == NULL)
 		return;
 
 	drm_connector_list_iter_begin(dev, &conn_iter);
 	drm_for_each_connector_iter(connector, &conn_iter) {
-		if (connector->connector_type != DRM_MODE_CONNECTOR_LVDS &&
-		    connector->connector_type != DRM_MODE_CONNECTOR_eDP &&
-		    connector->connector_type != DRM_MODE_CONNECTOR_DSI)
+		aconnector = to_amdgpu_dm_connector(connector);
+
+		if (connector->registration_state != DRM_CONNECTOR_REGISTERED)
 			continue;
+
+		if (aconnector->bl_idx == -1)
+			continue;
+
+		dev->registered = false;
+		connector->registration_state = DRM_CONNECTOR_UNREGISTERED;
 
 		connector->backlight_device = bd;
 		connector->backlight_property = drm_property_create_range(dev,
 		    0, "Backlight", 0, bd->props.max_brightness);
 		drm_object_attach_property(&connector->base,
 		    connector->backlight_property, bd->props.brightness);
+
+		connector->registration_state = DRM_CONNECTOR_REGISTERED;
+		dev->registered = true;
+
+		break;
 	}
 	drm_connector_list_iter_end(&conn_iter);
 }
