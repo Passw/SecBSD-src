@@ -2,6 +2,9 @@
 #
 # This file is for testing purposes only.
 
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+
 xset b 0 0 0
 
 if [ -x /usr/local/bin/dbus-launch -a -z "${DBUS_SESSION_BUS_ADDRESS}" ]; then

@@ -1641,9 +1641,8 @@ $code.=<<___;
 .size	AES_set_decrypt_key,.-AES_set_decrypt_key
 ___
 
-# void AES_cbc_encrypt (const void char *inp, unsigned char *out,
-#			size_t length, const AES_KEY *key,
-#			unsigned char *ivp,const int enc);
+# void aes_cbc_encrypt_internal(const void char *inp, unsigned char *out,
+#     size_t length, const AES_KEY *key, unsigned char *ivp,const int enc);
 {
 # stack frame layout
 # -8(%rsp)		return address
@@ -1660,15 +1659,15 @@ my $aes_key="80(%rsp)";		# copy of aes_key
 my $mark="80+240(%rsp)";	# copy of aes_key->rounds
 
 $code.=<<___;
-.globl	AES_cbc_encrypt
-.type	AES_cbc_encrypt,\@function,6
+.globl	aes_cbc_encrypt_internal
+.type	aes_cbc_encrypt_internal,\@function,6
 .align	16
 .extern	OPENSSL_ia32cap_P
 .hidden	OPENSSL_ia32cap_P
 .globl	asm_AES_cbc_encrypt
 .hidden	asm_AES_cbc_encrypt
 asm_AES_cbc_encrypt:
-AES_cbc_encrypt:
+aes_cbc_encrypt_internal:
 	_CET_ENDBR
 	cmp	\$0,%rdx	# check length
 	je	.Lcbc_epilogue
@@ -2118,7 +2117,7 @@ AES_cbc_encrypt:
 	popfq
 .Lcbc_epilogue:
 	ret
-.size	AES_cbc_encrypt,.-AES_cbc_encrypt
+.size	aes_cbc_encrypt_internal,.-aes_cbc_encrypt_internal
 ___
 }
 
@@ -2799,9 +2798,9 @@ cbc_se_handler:
 	.rva	.LSEH_end_AES_set_decrypt_key
 	.rva	.LSEH_info_AES_set_decrypt_key
 
-	.rva	.LSEH_begin_AES_cbc_encrypt
-	.rva	.LSEH_end_AES_cbc_encrypt
-	.rva	.LSEH_info_AES_cbc_encrypt
+	.rva	.LSEH_begin_aes_cbc_encrypt_internal
+	.rva	.LSEH_end_aes_cbc_encrypt_internal
+	.rva	.LSEH_info_aes_cbc_encrypt_internal
 
 .section	.xdata
 .align	8
@@ -2821,7 +2820,7 @@ cbc_se_handler:
 	.byte	9,0,0,0
 	.rva	key_se_handler
 	.rva	.Ldec_key_prologue,.Ldec_key_epilogue	# HandlerData[]
-.LSEH_info_AES_cbc_encrypt:
+.LSEH_info_aes_cbc_encrypt_internal:
 	.byte	9,0,0,0
 	.rva	cbc_se_handler
 ___
