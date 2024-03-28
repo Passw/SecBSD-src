@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.175 2024/03/19 19:27:33 tb Exp $
+# $OpenBSD: Makefile,v 1.183 2024/03/28 02:09:28 jsing Exp $
 
 LIB=	crypto
 LIBREBUILD=y
@@ -72,12 +72,8 @@ SRCS+= o_fips.c
 SRCS+= o_str.c
 
 # aes/
-SRCS+= aes_cfb.c
-SRCS+= aes_ctr.c
-SRCS+= aes_ecb.c
+SRCS+= aes.c
 SRCS+= aes_ige.c
-SRCS+= aes_ofb.c
-SRCS+= aes_wrap.c
 
 # asn1/
 SRCS+= a_bitstr.c
@@ -142,10 +138,7 @@ SRCS+= x_x509.c
 SRCS+= x_x509a.c
 
 # bf/
-SRCS+= bf_cfb64.c
-SRCS+= bf_ecb.c
-SRCS+= bf_ofb64.c
-SRCS+= bf_skey.c
+SRCS+= blowfish.c
 
 # bio/
 SRCS+= b_dump.c
@@ -273,12 +266,14 @@ SRCS+= cbc_enc.c
 SRCS+= cfb64ede.c
 SRCS+= cfb64enc.c
 SRCS+= cfb_enc.c
+SRCS+= des_enc.c
 SRCS+= ecb3_enc.c
 SRCS+= ecb_enc.c
 SRCS+= ede_cbcm_enc.c
 SRCS+= enc_read.c
 SRCS+= enc_writ.c
 SRCS+= fcrypt.c
+SRCS+= fcrypt_b.c
 SRCS+= ofb64ede.c
 SRCS+= ofb64enc.c
 SRCS+= ofb_enc.c
@@ -496,6 +491,9 @@ SRCS+= rc2_ecb.c
 SRCS+= rc2_skey.c
 SRCS+= rc2cfb64.c
 SRCS+= rc2ofb64.c
+
+# rc4/
+SRCS+= rc4.c
 
 # ripemd/
 SRCS+= ripemd.c
@@ -793,14 +791,9 @@ obj_dat.h: obj_mac.h ${SSL_OBJECTS}/obj_dat.pl
 CFLAGS+=-DOPENSSL_NO_ASM
 SRCS+= aes_core.c
 SRCS+= aes_cbc.c
-SRCS+= bf_enc.c
 SRCS+= camellia.c
 SRCS+= cmll_cbc.c
 SRCS+= cmll_misc.c
-SRCS+= des_enc.c
-SRCS+= fcrypt_b.c
-SRCS+= rc4_enc.c
-SRCS+= rc4_skey.c
 SRCS+= wp_block.c
 .endif
 

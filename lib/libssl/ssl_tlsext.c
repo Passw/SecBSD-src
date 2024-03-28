@@ -1,8 +1,8 @@
-/* $OpenBSD: ssl_tlsext.c,v 1.143 2024/03/26 03:44:11 beck Exp $ */
+/* $OpenBSD: ssl_tlsext.c,v 1.146 2024/03/28 00:22:35 beck Exp $ */
 /*
  * Copyright (c) 2016, 2017, 2019 Joel Sing <jsing@openbsd.org>
  * Copyright (c) 2017 Doug Hogan <doug@openbsd.org>
- * Copyright (c) 2018-2019 Bob Beck <beck@openbsd.org>
+ * Copyright (c) 2018-2019, 2024 Bob Beck <beck@openbsd.org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -33,6 +33,7 @@
 #include "ssl_tlsext.h"
 
 #define TLSEXT_TYPE_alpn TLSEXT_TYPE_application_layer_protocol_negotiation
+#define TLSEXT_MAX_SUPPORTED_GROUPS 64
 
 /*
  * Supported Application-Layer Protocol Negotiation - RFC 7301
@@ -230,21 +231,25 @@ static int
 tlsext_supportedgroups_server_process(SSL *s, uint16_t msg_type, CBS *cbs,
     int *alert)
 {
-	CBS grouplist;
-	uint16_t *groups;
+	uint16_t *groups = NULL;
 	size_t groups_len;
-	int i;
+	CBS grouplist;
+	int i, j;
+	int ret = 0;
 
 	if (!CBS_get_u16_length_prefixed(cbs, &grouplist))
-		return 0;
+		goto err;
 
 	groups_len = CBS_len(&grouplist);
 	if (groups_len == 0 || groups_len % 2 != 0)
-		return 0;
+		goto err;
 	groups_len /= 2;
 
+	if (groups_len > TLSEXT_MAX_SUPPORTED_GROUPS)
+		goto err;
+
 	if (s->hit)
-		return 1;
+		goto done;
 
 	if (s->s3->hs.tls13.hrr) {
 		if (s->session->tlsext_supportedgroups == NULL) {
@@ -257,33 +262,49 @@ tlsext_supportedgroups_server_process(SSL *s, uint16_t msg_type, CBS *cbs,
 		 * did not change its list of supported groups.
 		 */
 
-		return 1;
+		goto done;
 	}
 
 	if (s->session->tlsext_supportedgroups != NULL)
-		return 0; /* XXX internal error? */
+		goto err; /* XXX internal error? */
 
 	if ((groups = reallocarray(NULL, groups_len, sizeof(uint16_t))) == NULL) {
 		*alert = SSL_AD_INTERNAL_ERROR;
-		return 0;
+		goto err;
 	}
 
 	for (i = 0; i < groups_len; i++) {
-		if (!CBS_get_u16(&grouplist, &groups[i])) {
-			free(groups);
-			return 0;
+		if (!CBS_get_u16(&grouplist, &groups[i]))
+			goto err;
+		/*
+		 * Do not allow duplicate groups to be sent. This is not
+		 * currently specified in RFC 8446 or earlier, but there is no
+		 * legitimate justification for this to occur in TLS 1.2 or TLS
+		 * 1.3.
+		 */
+		for (j = 0; j < i; j++) {
+			if (groups[i] == groups[j]) {
+				*alert = SSL_AD_ILLEGAL_PARAMETER;
+				goto err;
+			}
 		}
 	}
 
-	if (CBS_len(&grouplist) != 0) {
-		free(groups);
-		return 0;
-	}
+	if (CBS_len(&grouplist) != 0)
+		goto err;
 
 	s->session->tlsext_supportedgroups = groups;
 	s->session->tlsext_supportedgroups_length = groups_len;
+	groups = NULL;
 
-	return 1;
+
+ done:
+	ret = 1;
+
+ err:
+	free(groups);
+
+	return ret;
 }
 
 /* This extension is never used by the server. */
@@ -303,22 +324,8 @@ static int
 tlsext_supportedgroups_client_process(SSL *s, uint16_t msg_type, CBS *cbs,
     int *alert)
 {
-	/*
-	 * Servers should not send this extension per the RFC.
-	 *
-	 * However, certain F5 BIG-IP systems incorrectly send it. This bug is
-	 * from at least 2014 but as of 2017, there are still large sites with
-	 * this unpatched in production. As a result, we need to currently skip
-	 * over the extension and ignore its content:
-	 *
-	 *  https://support.f5.com/csp/article/K37345003
-	 */
-	if (!CBS_skip(cbs, CBS_len(cbs))) {
-		*alert = SSL_AD_INTERNAL_ERROR;
-		return 0;
-	}
-
-	return 1;
+	/* Servers should not send this extension per the RFC. */
+	return 0;
 }
 
 /*
@@ -1443,14 +1450,65 @@ tlsext_keyshare_client_build(SSL *s, uint16_t msg_type, CBB *cbb)
 static int
 tlsext_keyshare_server_process(SSL *s, uint16_t msg_type, CBS *cbs, int *alert)
 {
-	CBS client_shares, key_exchange;
+	const uint16_t *client_groups = NULL, *server_groups = NULL;
+	size_t client_groups_len = 0, server_groups_len = 0;
+	size_t i, j, client_groups_index;
+	int preferred_group_found = 0;
 	int decode_error;
-	uint16_t group;
+	uint16_t group, client_preferred_group;
+	CBS client_shares, key_exchange;
+
+	/*
+	 * RFC 8446 section 4.2.8:
+	 *
+	 * Each KeyShareEntry value MUST correspond to a group offered in the
+	 * "supported_groups" extension and MUST appear in the same order.
+	 * However, the values MAY be a non-contiguous subset of the
+	 * "supported_groups".
+	 */
+
+	if (!tlsext_extension_seen(s, TLSEXT_TYPE_supported_groups)) {
+		*alert = SSL_AD_ILLEGAL_PARAMETER;
+		return 0;
+	}
+	if (!tlsext_extension_processed(s, TLSEXT_TYPE_supported_groups)) {
+		*alert = SSL_AD_INTERNAL_ERROR;
+		return 0;
+	}
+
+	/*
+	 * XXX similar to tls1_get_supported_group, but client pref
+	 * only - consider deduping later.
+	 */
+	/*
+	 * We are now assured of at least one client group.
+	 * Get the client and server group preference orders.
+	 */
+	tls1_get_group_list(s, 0, &server_groups, &server_groups_len);
+	tls1_get_group_list(s, 1, &client_groups, &client_groups_len);
+
+	/*
+	 * Find the group that is most preferred by the client that
+	 * we also support.
+	 */
+	for (i = 0; i < client_groups_len && !preferred_group_found; i++) {
+		if (!ssl_security_supported_group(s, client_groups[i]))
+			continue;
+		for (j = 0; j < server_groups_len; j++) {
+			if (server_groups[j] == client_groups[i]) {
+				client_preferred_group = client_groups[i];
+				preferred_group_found = 1;
+				break;
+			}
+		}
+	}
 
 	if (!CBS_get_u16_length_prefixed(cbs, &client_shares))
 		return 0;
 
+	client_groups_index = 0;
 	while (CBS_len(&client_shares) > 0) {
+		int client_sent_group;
 
 		/* Unpack client share. */
 		if (!CBS_get_u16(&client_shares, &group))
@@ -1459,9 +1517,21 @@ tlsext_keyshare_server_process(SSL *s, uint16_t msg_type, CBS *cbs, int *alert)
 			return 0;
 
 		/*
-		 * XXX - check key exchange against supported groups from client.
-		 * XXX - check that groups only appear once.
+		 * Ensure the client share group was sent in supported groups,
+		 * and was sent in the same order as supported groups. The
+		 * supported groups has already been checked for duplicates.
 		 */
+		client_sent_group = 0;
+		while (client_groups_index < client_groups_len) {
+			if (group == client_groups[client_groups_index++]) {
+				client_sent_group = 1;
+				break;
+			}
+		}
+		if (!client_sent_group) {
+			*alert = SSL_AD_ILLEGAL_PARAMETER;
+			return 0;
+		}
 
 		/*
 		 * Ignore this client share if we're using earlier than TLSv1.3
@@ -1472,8 +1542,14 @@ tlsext_keyshare_server_process(SSL *s, uint16_t msg_type, CBS *cbs, int *alert)
 		if (s->s3->hs.key_share != NULL)
 			continue;
 
-		/* XXX - consider implementing server preference. */
-		if (!tls1_check_group(s, group))
+		/*
+		 * Ignore this client share if it is not for the most client
+		 * preferred supported group. This avoids a potential downgrade
+		 * situation where the client sends a client share for something
+		 * less preferred, and we choose to to use it instead of
+		 * requesting the more preferred group.
+		 */
+		if (!preferred_group_found || group != client_preferred_group)
 			continue;
 
 		/* Decode and store the selected key share. */

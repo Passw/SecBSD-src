@@ -6,20 +6,14 @@
 SRCS+= aes_cbc.c
 CFLAGS+= -DAES_ASM
 SSLASM+= aes aes-armv4
-# bf
-SRCS+= bf_enc.c
 # bn
 CFLAGS+= -DOPENSSL_BN_ASM_MONT
 SSLASM+= bn armv4-mont
 # camellia
 SRCS+= camellia.c cmll_cbc.c cmll_misc.c
-# des
-SRCS+= des_enc.c fcrypt_b.c
 # modes
 CFLAGS+= -DGHASH_ASM
 SSLASM+= modes ghash-armv4
-# rc4
-SRCS+= rc4_enc.c rc4_skey.c
 # sha
 CFLAGS+= -DSHA1_ASM
 SSLASM+= sha sha1-armv4-large

@@ -1,4 +1,4 @@
-/* $OpenBSD: rc4_enc.c,v 1.18 2022/11/26 16:08:54 tb Exp $ */
+/* $OpenBSD: rc4.c,v 1.9 2024/03/28 01:49:29 jsing Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -59,7 +59,6 @@
 #include <endian.h>
 
 #include <openssl/rc4.h>
-#include "rc4_local.h"
 
 /* RC4 as implemented from a posting from
  * Newsgroups: sci.crypt
@@ -69,8 +68,13 @@
  * Date: Wed, 14 Sep 1994 06:35:31 GMT
  */
 
-void
-RC4(RC4_KEY *key, size_t len, const unsigned char *indata,
+#ifdef HAVE_RC4_INTERNAL
+void rc4_internal(RC4_KEY *key, size_t len, const unsigned char *indata,
+    unsigned char *outdata);
+
+#else
+static void
+rc4_internal(RC4_KEY *key, size_t len, const unsigned char *indata,
     unsigned char *outdata)
 {
 	RC4_INT *d;
@@ -251,4 +255,53 @@ RC4(RC4_KEY *key, size_t len, const unsigned char *indata,
 	}
 	key->x = x;
 	key->y = y;
+}
+#endif
+
+#ifdef HAVE_RC4_SET_KEY_INTERNAL
+void rc4_set_key_internal(RC4_KEY *key, int len, const unsigned char *data);
+
+#else
+static void
+rc4_set_key_internal(RC4_KEY *key, int len, const unsigned char *data)
+{
+	RC4_INT tmp;
+	int id1, id2;
+	RC4_INT *d;
+	unsigned int i;
+
+	d = &(key->data[0]);
+	key->x = 0;
+	key->y = 0;
+	id1 = id2 = 0;
+
+#define SK_LOOP(d,n) { \
+		tmp=d[(n)]; \
+		id2 = (data[id1] + tmp + id2) & 0xff; \
+		if (++id1 == len) id1=0; \
+		d[(n)]=d[id2]; \
+		d[id2]=tmp; }
+
+	for (i = 0; i < 256; i++)
+		d[i] = i;
+	for (i = 0; i < 256; i += 4) {
+		SK_LOOP(d, i + 0);
+		SK_LOOP(d, i + 1);
+		SK_LOOP(d, i + 2);
+		SK_LOOP(d, i + 3);
+	}
+}
+#endif
+
+void
+RC4(RC4_KEY *key, size_t len, const unsigned char *indata,
+    unsigned char *outdata)
+{
+	rc4_internal(key, len, indata, outdata);
+}
+
+void
+RC4_set_key(RC4_KEY *key, int len, const unsigned char *data)
+{
+	rc4_set_key_internal(key, len, data);
 }

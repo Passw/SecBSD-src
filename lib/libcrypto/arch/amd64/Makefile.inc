@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile.inc,v 1.13 2023/04/15 18:23:54 tb Exp $
+# $OpenBSD: Makefile.inc,v 1.18 2024/03/28 01:57:00 jsing Exp $
 
 # amd64-specific libcrypto build rules
 
@@ -13,9 +13,6 @@ SSLASM+= aes bsaes-x86_64
 CFLAGS+= -DVPAES_ASM
 SSLASM+= aes vpaes-x86_64
 SSLASM+= aes aesni-x86_64
-SSLASM+= aes aesni-sha1-x86_64
-# bf
-SRCS+= bf_enc.c
 # bn
 CFLAGS+= -DOPENSSL_IA32_SSE2
 CFLAGS+= -DRSA_ASM
@@ -42,8 +39,6 @@ SRCS += word_clz.S
 # camellia
 SRCS+=	cmll_misc.c
 SSLASM+= camellia cmll-x86_64
-# des
-SRCS+= des_enc.c fcrypt_b.c
 # md5
 CFLAGS+= -DMD5_ASM
 SSLASM+= md5 md5-x86_64
@@ -51,9 +46,9 @@ SSLASM+= md5 md5-x86_64
 CFLAGS+= -DGHASH_ASM
 SSLASM+= modes ghash-x86_64
 # rc4
-CFLAGS+= -DRC4_MD5_ASM
+CFLAGS+= -DHAVE_RC4_INTERNAL
+CFLAGS+= -DHAVE_RC4_SET_KEY_INTERNAL
 SSLASM+= rc4 rc4-x86_64
-SSLASM+= rc4 rc4-md5-x86_64
 # ripemd
 # sha
 CFLAGS+= -DSHA1_ASM

@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile.inc,v 1.7 2023/01/20 10:07:52 jsing Exp $
+# $OpenBSD: Makefile.inc,v 1.11 2024/03/28 01:57:00 jsing Exp $
 
 # mips64-specific libcrypto build rules
 
@@ -6,18 +6,12 @@
 SRCS+= aes_cbc.c
 CFLAGS+= -DAES_ASM
 SSLASM+= aes aes-mips aes-mips
-# bf
-SRCS+= bf_enc.c
 # bn
 SSLASM+= bn mips bn-mips
 SSLASM+= bn mips-mont mips-mont
 CFLAGS+= -DOPENSSL_BN_ASM_MONT
 # camellia
 SRCS+= camellia.c cmll_cbc.c cmll_misc.c
-# des
-SRCS+= des_enc.c fcrypt_b.c
-# rc4
-SRCS+= rc4_enc.c rc4_skey.c
 # sha
 SSLASM+= sha sha1-mips sha1-mips
 CFLAGS+= -DSHA1_ASM
