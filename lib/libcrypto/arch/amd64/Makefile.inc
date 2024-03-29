@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile.inc,v 1.21 2024/03/29 01:24:07 jsing Exp $
+# $OpenBSD: Makefile.inc,v 1.27 2024/03/29 11:00:57 jsing Exp $
 
 # amd64-specific libcrypto build rules
 
@@ -14,6 +14,10 @@ CFLAGS+= -DVPAES_ASM
 SSLASM+= aes vpaes-x86_64
 SSLASM+= aes aesni-x86_64
 CFLAGS+= -DHAVE_AES_CBC_ENCRYPT_INTERNAL
+CFLAGS+= -DHAVE_AES_SET_ENCRYPT_KEY_INTERNAL
+CFLAGS+= -DHAVE_AES_SET_DECRYPT_KEY_INTERNAL
+CFLAGS+= -DHAVE_AES_ENCRYPT_INTERNAL
+CFLAGS+= -DHAVE_AES_DECRYPT_INTERNAL
 # bn
 CFLAGS+= -DOPENSSL_IA32_SSE2
 CFLAGS+= -DRSA_ASM
@@ -37,9 +41,6 @@ SRCS += bignum_sqr_8_16_alt.S
 SRCS += bignum_sub.S
 SRCS += word_clz.S
 
-# camellia
-SRCS+=	cmll_misc.c
-SSLASM+= camellia cmll-x86_64
 # md5
 CFLAGS+= -DMD5_ASM
 SSLASM+= md5 md5-x86_64
@@ -66,8 +67,6 @@ GENERATED+= sha512-x86_64.S
 sha512-x86_64.S: ${LCRYPTO_SRC}/sha/asm/sha512-x86_64.pl ${EXTRA_PL}
 	cd ${LCRYPTO_SRC}/sha/asm ; \
 		/usr/bin/perl ./sha512-x86_64.pl ${.OBJDIR}/${.TARGET}
-# whrlpool
-SRCS+= wp_block.c
 
 .for dir f in ${SSLASM}
 SRCS+=	${f}.S

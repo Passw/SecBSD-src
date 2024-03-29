@@ -1,16 +1,15 @@
-# $OpenBSD: Makefile.inc,v 1.20 2024/03/28 12:52:58 jsing Exp $
+# $OpenBSD: Makefile.inc,v 1.24 2024/03/29 11:00:57 jsing Exp $
 
 # hppa-specific libcrypto build rules
 
 # aes
-SRCS+= aes_core.c
 CFLAGS+= -DAES_ASM
 SSLASM+= aes aes-parisc aes-parisc
+CFLAGS+= -DHAVE_AES_ENCRYPT_INTERNAL
+CFLAGS+= -DHAVE_AES_DECRYPT_INTERNAL
 # bn
 SSLASM+= bn parisc-mont parisc-mont
 CFLAGS+= -DOPENSSL_BN_ASM_MONT -DBN_DIV2W
-# camellia
-SRCS+= camellia.c cmll_cbc.c cmll_misc.c
 # modes
 CFLAGS+= -DGHASH_ASM
 SSLASM+= modes ghash-parisc ghash-parisc
@@ -19,8 +18,6 @@ CFLAGS+= -DSHA1_ASM
 SSLASM+= sha sha1-parisc sha1-parisc
 CFLAGS+= -DSHA256_ASM
 SSLASM+= sha sha512-parisc sha256-parisc
-# whrlpool
-SRCS+= wp_block.c
 
 .for dir src dst in ${SSLASM}
 SRCS+=	${dst}.S

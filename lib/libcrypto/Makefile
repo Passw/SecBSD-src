@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.185 2024/03/28 12:52:58 jsing Exp $
+# $OpenBSD: Makefile,v 1.192 2024/03/29 07:36:38 jsing Exp $
 
 LIB=	crypto
 LIBREBUILD=y
@@ -73,6 +73,7 @@ SRCS+= o_str.c
 
 # aes/
 SRCS+= aes.c
+SRCS+= aes_core.c
 SRCS+= aes_ige.c
 
 # asn1/
@@ -200,17 +201,10 @@ SRCS+= bs_cbb.c
 SRCS+= bs_cbs.c
 
 # camellia/
-SRCS+= cmll_cfb.c
-SRCS+= cmll_ctr.c
-SRCS+= cmll_ecb.c
-SRCS+= cmll_ofb.c
+SRCS+= camellia.c
 
 # cast/
-SRCS+= c_cfb64.c
-SRCS+= c_ecb.c
-SRCS+= c_enc.c
-SRCS+= c_ofb64.c
-SRCS+= c_skey.c
+SRCS+= cast.c
 
 # chacha/
 SRCS+= chacha.c
@@ -393,11 +387,7 @@ SRCS+= hm_pmeth.c
 SRCS+= hmac.c
 
 # idea/
-SRCS+= i_cbc.c
-SRCS+= i_cfb64.c
-SRCS+= i_ecb.c
-SRCS+= i_ofb64.c
-SRCS+= i_skey.c
+SRCS+= idea.c
 
 # kdf/
 SRCS+= hkdf_evp.c
@@ -557,7 +547,7 @@ SRCS+= ui_openssl.c
 SRCS+= ui_util.c
 
 # whrlpool/
-SRCS+= wp_dgst.c
+SRCS+= whirlpool.c
 
 # x509/
 SRCS+= by_dir.c
@@ -788,11 +778,6 @@ obj_dat.h: obj_mac.h ${SSL_OBJECTS}/obj_dat.pl
 .include "${.CURDIR}/arch/${MACHINE_CPU}/Makefile.inc"
 .else
 CFLAGS+=-DOPENSSL_NO_ASM
-SRCS+= aes_core.c
-SRCS+= camellia.c
-SRCS+= cmll_cbc.c
-SRCS+= cmll_misc.c
-SRCS+= wp_block.c
 .endif
 
 BUILDFIRST = ${GENERATED}
