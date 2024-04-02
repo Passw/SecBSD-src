@@ -1,4 +1,4 @@
-/*	$OpenBSD: sys_process.c,v 1.96 2024/03/30 13:33:20 mpi Exp $	*/
+/*	$OpenBSD: sys_process.c,v 1.97 2024/04/02 08:27:22 deraadt Exp $	*/
 /*	$NetBSD: sys_process.c,v 1.55 1996/05/15 06:17:47 tls Exp $	*/
 
 /*-
