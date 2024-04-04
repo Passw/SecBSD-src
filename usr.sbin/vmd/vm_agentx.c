@@ -473,7 +473,7 @@ vm_agentx_operstate(int mask)
 static void
 vm_agentx_vmHvSoftware(struct agentx_varbind *vb)
 {
-	agentx_varbind_string(vb, "OpenBSD VMM");
+	agentx_varbind_string(vb, "SecBSD VMM");
 }
 
 static void
