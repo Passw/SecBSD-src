@@ -1,4 +1,4 @@
-/*	$OpenBSD: bgpd.h,v 1.489 2024/03/22 15:41:34 claudio Exp $ */
+/*	$OpenBSD: bgpd.h,v 1.491 2024/04/09 12:09:19 claudio Exp $ */
 
 /*
  * Copyright (c) 2003, 2004 Henning Brauer <henning@openbsd.org>
@@ -53,6 +53,7 @@
 #define	RT_BUF_SIZE			16384
 #define	MAX_RTSOCK_BUF			(2 * 1024 * 1024)
 #define	MAX_COMM_MATCH			3
+#define	MAX_ASPA_SPAS_COUNT		10000
 
 #define	BGPD_OPT_VERBOSE		0x0001
 #define	BGPD_OPT_VERBOSE2		0x0002
@@ -432,6 +433,9 @@ enum capa_codes {
 #define	CAPA_AP_RECV		0x01
 #define	CAPA_AP_SEND		0x02
 #define	CAPA_AP_BIDIR		0x03
+#define	CAPA_AP_MASK		0x0f
+#define	CAPA_AP_RECV_ENFORCE	0x10	/* internal only */
+#define	CAPA_AP_SEND_ENFORCE	0x20	/* internal only */
 
 /* values for RFC 9234 - BGP Open Policy */
 #define CAPA_ROLE_PROVIDER	0x00

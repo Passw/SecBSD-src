@@ -1,4 +1,4 @@
-/*	$OpenBSD: crypto_init.c,v 1.19 2024/03/19 19:27:33 tb Exp $ */
+/*	$OpenBSD: crypto_init.c,v 1.21 2024/04/10 14:51:02 beck Exp $ */
 /*
  * Copyright (c) 2018 Bob Beck <beck@openbsd.org>
  *
@@ -41,6 +41,7 @@ void
 OPENSSL_init(void)
 {
 }
+LCRYPTO_ALIAS(OPENSSL_init);
 
 static void
 OPENSSL_init_crypto_internal(void)
@@ -98,19 +99,23 @@ void
 OpenSSL_add_all_ciphers(void)
 {
 }
+LCRYPTO_ALIAS(OpenSSL_add_all_ciphers);
 
 void
 OpenSSL_add_all_digests(void)
 {
 }
+LCRYPTO_ALIAS(OpenSSL_add_all_digests);
 
 void
 OPENSSL_add_all_algorithms_noconf(void)
 {
 }
+LCRYPTO_ALIAS(OPENSSL_add_all_algorithms_noconf);
 
 void
 OPENSSL_add_all_algorithms_conf(void)
 {
 	OPENSSL_config(NULL);
 }
+LCRYPTO_ALIAS(OPENSSL_add_all_algorithms_conf);
