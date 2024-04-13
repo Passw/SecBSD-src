@@ -1,5 +1,5 @@
 # acx_nlnetlabs.m4 - common macros for configure checks
-# Copyright 2009, Wouter Wijngaards, NLnet Labs.   
+# Copyright 2009, Wouter Wijngaards, NLnet Labs.
 # BSD licensed.
 #
 # Version 48
@@ -124,7 +124,7 @@
 
 dnl Escape backslashes as \\, for C:\ paths, for the C preprocessor defines.
 dnl for example, ACX_ESCAPE_BACKSLASH($from_var, to_var)
-dnl $1: the text to change. 
+dnl $1: the text to change.
 dnl $2: the result.
 AC_DEFUN([ACX_ESCAPE_BACKSLASH], [$2="`echo $1 | sed -e 's/\\\\/\\\\\\\\/g'`"
 ])
@@ -141,7 +141,7 @@ dnl Checks if the compiler will accept the flag.
 dnl $1: the flag without a - in front, so g to check -g.
 dnl $2: executed if yes
 dnl $3: executed if no
-AC_DEFUN([ACX_CHECK_COMPILER_FLAG], 
+AC_DEFUN([ACX_CHECK_COMPILER_FLAG],
 [
 AC_REQUIRE([AC_PROG_CC])
 AC_MSG_CHECKING(whether $CC supports -$1)
@@ -241,12 +241,12 @@ AC_MSG_CHECKING([$CC dependency flag])
 echo 'void f(void){}' >conftest.c
 if test "`$CC -MM conftest.c 2>&1`" = "conftest.o: conftest.c"; then
 	DEPFLAG="-MM"
-else 
+else
   if test "`$CC -xM1 conftest.c 2>&1`" = "conftest.o: conftest.c"; then
 	DEPFLAG="-xM1"
   else
 	DEPFLAG="-MM"  # dunno do something
-  fi 
+  fi
 fi
 AC_MSG_RESULT($DEPFLAG)
 rm -f conftest.c
@@ -456,7 +456,7 @@ AC_DEFUN([ACX_CHECK_FLTO], [
 ])
 
 dnl Check the printf-format attribute (if any)
-dnl result in HAVE_ATTR_FORMAT.  
+dnl result in HAVE_ATTR_FORMAT.
 dnl Make sure you also include the AHX_CONFIG_FORMAT_ATTRIBUTE.
 AC_DEFUN([ACX_CHECK_FORMAT_ATTRIBUTE],
 [AC_REQUIRE([AC_PROG_CC])
@@ -490,7 +490,7 @@ AC_DEFUN([AHX_CONFIG_FORMAT_ATTRIBUTE],
 ])
 
 dnl Check how to mark function arguments as unused.
-dnl result in HAVE_ATTR_UNUSED.  
+dnl result in HAVE_ATTR_UNUSED.
 dnl Make sure you include AHX_CONFIG_UNUSED_ATTRIBUTE also.
 AC_DEFUN([ACX_CHECK_UNUSED_ATTRIBUTE],
 [AC_REQUIRE([AC_PROG_CC])
@@ -562,7 +562,7 @@ LT_INIT
 ])
 
 dnl Detect if u_char type is defined, otherwise define it.
-AC_DEFUN([ACX_TYPE_U_CHAR], 
+AC_DEFUN([ACX_TYPE_U_CHAR],
 [AC_CHECK_TYPE([u_char], ,
 	[AC_DEFINE([u_char], [unsigned char], [Define to 'unsigned char if not defined])], [
 AC_INCLUDES_DEFAULT
@@ -573,7 +573,7 @@ AC_INCLUDES_DEFAULT
 
 dnl Detect if rlim_t type is defined, otherwise define it.
 AC_DEFUN([ACX_TYPE_RLIM_T],
-[AC_CHECK_TYPE(rlim_t, , 
+[AC_CHECK_TYPE(rlim_t, ,
 	[AC_DEFINE([rlim_t], [unsigned long], [Define to 'int' if not defined])], [
 AC_INCLUDES_DEFAULT
 #ifdef HAVE_SYS_RESOURCE_H
@@ -584,7 +584,7 @@ AC_INCLUDES_DEFAULT
 dnl Detect if socklen_t type is defined, otherwise define it.
 AC_DEFUN([ACX_TYPE_SOCKLEN_T],
 [
-AC_CHECK_TYPE(socklen_t, , 
+AC_CHECK_TYPE(socklen_t, ,
 	[AC_DEFINE([socklen_t], [int], [Define to 'int' if not defined])], [
 AC_INCLUDES_DEFAULT
 #ifdef HAVE_SYS_SOCKET_H
@@ -723,7 +723,7 @@ AC_DEFUN([ACX_SSL_CHECKS], [
                           [If you have EVP_sha256])
               ],[
                 AC_MSG_RESULT(no)
-                # check if -lwsock32 or -lgdi32 are needed.	
+                # check if -lwsock32 or -lgdi32 are needed.
                 BAKLIBS="$LIBS"
                 BAKSSLLIBS="$LIBSSL_LIBS"
 		LIBS="$LIBS -lgdi32 -lws2_32"
@@ -833,7 +833,7 @@ AC_ARG_WITH(ssl, AS_HELP_STRING([--with-ssl=pathname],[enable SSL (will check /u
 
 dnl Check for SSL, where ssl is optional (--without-ssl is allowed)
 dnl Adds --with-ssl option, searches for openssl and defines HAVE_SSL if found
-dnl Setup of CPPFLAGS, CFLAGS.  Adds -lcrypto to LIBS. 
+dnl Setup of CPPFLAGS, CFLAGS.  Adds -lcrypto to LIBS.
 dnl Checks main header files of SSL.
 dnl
 AC_DEFUN([ACX_WITH_SSL_OPTIONAL],
@@ -1092,7 +1092,7 @@ int main(void)
 	/* send and receive on the socket */
 	if((p=fork()) == 0) {
 		for(i=0; i<num; i++) {
-			if(sendto(cfd, &i, sizeof(i), 0, 
+			if(sendto(cfd, &i, sizeof(i), 0,
 				(struct sockaddr*)&a, sizeof(a)) < 0) {
 				perror("sendto");
 				return 1;
@@ -1453,7 +1453,7 @@ int main(void)
   AC_LIBOBJ([memcmp])
 ], [ AC_MSG_RESULT([cross-compile no])
   AC_DEFINE([MEMCMP_IS_BROKEN], [1], [Define if memcmp() does not compare unsigned bytes])
-  AC_LIBOBJ([memcmp]) 
+  AC_LIBOBJ([memcmp])
 ]) ])
 
 dnl define memcmp to its replacement, pass unique id for program as arg
