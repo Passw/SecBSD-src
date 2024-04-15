@@ -1,4 +1,4 @@
-/*	$OpenBSD: scandir.c,v 1.21 2019/06/28 13:32:41 deraadt Exp $ */
+/*	$OpenBSD: scandir.c,v 1.22 2024/04/14 11:21:08 florian Exp $ */
 /*
  * Copyright (c) 1983, 1993
  *	The Regents of the University of California.  All rights reserved.
