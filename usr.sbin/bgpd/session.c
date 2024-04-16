@@ -2514,7 +2514,7 @@ parse_notification(struct peer *peer)
 
 	/* XXX */
 	ibuf_from_buffer(&ibuf, p, datalen);
-	
+
 	if (ibuf_get_n8(&ibuf, &errcode) == -1 ||
 	    ibuf_get_n8(&ibuf, &subcode) == -1) {
 		log_peer_warnx(&peer->conf, "received bad notification");

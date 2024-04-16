@@ -165,7 +165,7 @@ log_notification(const struct peer *peer, uint8_t errcode, uint8_t subcode,
 
 			if (ibuf_get_n8(&ibuf, &capa_code) == -1)
 				break;
-			
+
 			logit(LOG_ERR, "%s: %s notification: %s, %s: %s",
 			    p, dir, errnames[errcode], suberrname,
 			    log_capability(capa_code));
