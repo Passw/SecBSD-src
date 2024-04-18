@@ -103,7 +103,7 @@ spin() {
 			echo -n "$p"'\b'
 			sleep 0.125
 		done
-		echo -n " "'\b' 
+		echo -n " "'\b'
 	}>/dev/tty
 }
 
