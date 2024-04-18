@@ -1,4 +1,4 @@
-/*	$OpenBSD: options.c,v 1.112 2024/04/16 23:09:35 jca Exp $	*/
+/*	$OpenBSD: options.c,v 1.114 2024/04/17 18:12:12 jca Exp $	*/
 /*	$NetBSD: options.c,v 1.6 1996/03/26 23:54:18 mrg Exp $	*/
 
 /*-
@@ -230,7 +230,7 @@ FSUB fsub[] = {
 /* 10: POSIX PAX */
 	{"pax", 5120, BLKMULT, 0, 1, BLKMULT, 0, pax_id, no_op,
 	ustar_rd, tar_endrd, no_op, pax_wr, tar_endwr, tar_trail,
-	tar_opt},
+	pax_opt},
 #endif
 };
 #define	F_OCPIO	0	/* format when called as cpio -6 */
@@ -241,7 +241,7 @@ FSUB fsub[] = {
 # define F_TAR	5	/* default write format when called as tar: ustar */
 # define DEFLT	5	/* default write format when called as pax: ustar */
 #else
-# define F_TAR	10	/* default write format when called as tar: ustar */
+# define F_TAR	10	/* default write format when called as tar: pax */
 # define DEFLT	10	/* default write format when called as pax: pax */
 #endif
 
