@@ -1,4 +1,4 @@
-/* $OpenBSD: bss_conn.c,v 1.40 2024/04/15 15:40:08 tb Exp $ */
+/* $OpenBSD: bss_conn.c,v 1.41 2024/04/19 09:54:36 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
