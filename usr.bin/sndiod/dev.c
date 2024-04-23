@@ -1,4 +1,4 @@
-/*	$OpenBSD: dev.c,v 1.108 2024/04/02 05:21:32 ratchov Exp $	*/
+/*	$OpenBSD: dev.c,v 1.112 2024/04/22 11:01:02 ratchov Exp $	*/
 /*
  * Copyright (c) 2008-2012 Alexandre Ratchov <alex@caoua.org>
  *
@@ -41,8 +41,6 @@ void dev_sub_bcopy(struct dev *, struct slot *);
 void dev_onmove(struct dev *, int);
 void dev_master(struct dev *, unsigned int);
 void dev_cycle(struct dev *);
-struct dev *dev_new(char *, struct aparams *, unsigned int, unsigned int,
-    unsigned int, unsigned int, unsigned int, unsigned int);
 void dev_adjpar(struct dev *, int, int, int);
 int dev_allocbufs(struct dev *);
 void dev_freebufs(struct dev *);
@@ -519,7 +517,8 @@ dev_mix_badd(struct dev *d, struct slot *s)
 	}
 
 	if (s->mix.resampbuf) {
-		resamp_do(&s->mix.resamp, in, s->mix.resampbuf, s->round);
+		resamp_do(&s->mix.resamp,
+		    in, s->mix.resampbuf, s->round, d->round);
 		in = s->mix.resampbuf;
 	}
 
@@ -656,7 +655,7 @@ dev_sub_bcopy(struct dev *d, struct slot *s)
 
 	if (s->sub.resampbuf) {
 		resamp_do(&s->sub.resamp,
-		    s->sub.resampbuf, resamp_out, d->round);
+		    s->sub.resampbuf, resamp_out, d->round, s->round);
 	}
 
 	if (s->sub.encbuf)
@@ -2340,6 +2339,8 @@ ctlslot_update(struct ctlslot *s)
 		/* if control is hidden */
 		c->desc_mask |= s->self;
 	}
+	if (s->ops)
+		s->ops->sync(s->arg);
 }
 
 void
@@ -2553,6 +2554,7 @@ ctl_update(struct ctl *c)
 			c->refs_mask |= s->self;
 		/* if control is hidden */
 		c->desc_mask |= s->self;
+		s->ops->sync(s->arg);
 	}
 }
 
@@ -2601,16 +2603,18 @@ ctl_onval(int scope, void *arg0, void *arg1, int val)
 	return 1;
 }
 
-void
+int
 ctl_del(int scope, void *arg0, void *arg1)
 {
 	struct ctl *c, **pc;
+	int found;
 
+	found = 0;
 	pc = &ctl_list;
 	for (;;) {
 		c = *pc;
 		if (c == NULL)
-			return;
+			return found;
 		if (ctl_match(c, scope, arg0, arg1)) {
 #ifdef DEBUG
 			if (log_level >= 2) {
@@ -2618,6 +2622,7 @@ ctl_del(int scope, void *arg0, void *arg1)
 				log_puts(": removed\n");
 			}
 #endif
+			found++;
 			c->refs_mask &= ~CTL_DEVMASK;
 			if (c->refs_mask == 0) {
 				*pc = c->next;
