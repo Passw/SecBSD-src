@@ -1,4 +1,4 @@
-/* $OpenBSD: x509_req.c,v 1.33 2023/04/25 09:46:36 job Exp $ */
+/* $OpenBSD: x509_req.c,v 1.36 2024/05/08 08:20:08 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -170,64 +170,33 @@ X509_REQ_check_private_key(X509_REQ *x, EVP_PKEY *k)
 }
 LCRYPTO_ALIAS(X509_REQ_check_private_key);
 
-/* It seems several organisations had the same idea of including a list of
- * extensions in a certificate request. There are at least two OIDs that are
- * used and there may be more: so the list is configurable.
- */
-
-static int ext_nid_list[] = {NID_ext_req, NID_ms_ext_req, NID_undef};
-
-static int *ext_nids = ext_nid_list;
-
 int
-X509_REQ_extension_nid(int req_nid)
+X509_REQ_extension_nid(int nid)
 {
-	int i, nid;
-
-	for (i = 0; ; i++) {
-		nid = ext_nids[i];
-		if (nid == NID_undef)
-			return 0;
-		else if (req_nid == nid)
-			return 1;
-	}
+	return nid == NID_ext_req || nid == NID_ms_ext_req;
 }
 LCRYPTO_ALIAS(X509_REQ_extension_nid);
-
-int *
-X509_REQ_get_extension_nids(void)
-{
-	return ext_nids;
-}
-LCRYPTO_ALIAS(X509_REQ_get_extension_nids);
-
-void
-X509_REQ_set_extension_nids(int *nids)
-{
-	ext_nids = nids;
-}
-LCRYPTO_ALIAS(X509_REQ_set_extension_nids);
 
 STACK_OF(X509_EXTENSION) *
 X509_REQ_get_extensions(X509_REQ *req)
 {
 	X509_ATTRIBUTE *attr;
 	ASN1_TYPE *ext = NULL;
-	int idx, *pnid;
+	int idx;
 	const unsigned char *p;
 
-	if (req == NULL || req->req_info == NULL || ext_nids == NULL)
+	if (req == NULL || req->req_info == NULL)
 		return NULL;
-	for (pnid = ext_nids; *pnid != NID_undef; pnid++) {
-		idx = X509_REQ_get_attr_by_NID(req, *pnid, -1);
-		if (idx == -1)
-			continue;
-		attr = X509_REQ_get_attr(req, idx);
-		ext = X509_ATTRIBUTE_get0_type(attr, 0);
-		break;
-	}
-	if (ext == NULL)
-		return sk_X509_EXTENSION_new_null();
+
+	if ((idx = X509_REQ_get_attr_by_NID(req, NID_ext_req, -1)) == -1)
+		idx = X509_REQ_get_attr_by_NID(req, NID_ms_ext_req, -1);
+	if (idx == -1)
+		return NULL;
+
+	if ((attr = X509_REQ_get_attr(req, idx)) == NULL)
+		return NULL;
+	if ((ext = X509_ATTRIBUTE_get0_type(attr, 0)) == NULL)
+		return NULL;
 	if (ext->type != V_ASN1_SEQUENCE)
 		return NULL;
 	p = ext->value.sequence->data;
@@ -354,3 +323,22 @@ i2d_re_X509_REQ_tbs(X509_REQ *req, unsigned char **pp)
 	return i2d_X509_REQ_INFO(req->req_info, pp);
 }
 LCRYPTO_ALIAS(i2d_re_X509_REQ_tbs);
+
+/*
+ * XXX - remove the API below in the next major bump
+ */
+
+int *
+X509_REQ_get_extension_nids(void)
+{
+	X509error(ERR_R_DISABLED);
+	return NULL;
+}
+LCRYPTO_ALIAS(X509_REQ_get_extension_nids);
+
+void
+X509_REQ_set_extension_nids(int *nids)
+{
+	X509error(ERR_R_DISABLED);
+}
+LCRYPTO_ALIAS(X509_REQ_set_extension_nids);
