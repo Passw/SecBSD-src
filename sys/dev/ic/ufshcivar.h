@@ -1,4 +1,4 @@
-/*	$OpenBSD: ufshcivar.h,v 1.1 2023/02/04 23:11:59 mglocker Exp $ */
+/*	$OpenBSD: ufshcivar.h,v 1.4 2024/05/09 08:06:42 mglocker Exp $ */
 
 /*
  * Copyright (c) 2022 Marcus Glocker <mglocker@openbsd.org>
@@ -40,6 +40,10 @@ struct ufshci_ccb {
 	bus_dmamap_t			 ccb_dmamap;
 	void				*ccb_cookie;
 	int				 ccb_slot;
+#define CCB_STATUS_FREE		0
+#define CCB_STATUS_INPROGRESS	1
+#define CCB_STATUS_READY2FREE	2
+	int				 ccb_status;
 	void				 (*ccb_done)(struct ufshci_softc *,
 					     struct ufshci_ccb *);
 };
@@ -54,6 +58,8 @@ struct ufshci_softc {
 	bus_dma_tag_t		 sc_dmat;
 
 	uint8_t			 sc_intraggr_enabled;
+	uint8_t			 sc_iacth;
+	struct mutex		 sc_cmd_mtx;
 
 	uint32_t		 sc_ver;
 	uint32_t		 sc_cap;
