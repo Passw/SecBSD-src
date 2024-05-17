@@ -73,6 +73,7 @@
 ./usr/libdata/perl5/arm-secbsd/CORE/perlio.h
 ./usr/libdata/perl5/arm-secbsd/CORE/perliol.h
 ./usr/libdata/perl5/arm-secbsd/CORE/perlsdio.h
+./usr/libdata/perl5/arm-secbsd/CORE/perlstatic.h
 ./usr/libdata/perl5/arm-secbsd/CORE/perlvars.h
 ./usr/libdata/perl5/arm-secbsd/CORE/perly.h
 ./usr/libdata/perl5/arm-secbsd/CORE/pp.h
@@ -81,10 +82,13 @@
 ./usr/libdata/perl5/arm-secbsd/CORE/reentr.h
 ./usr/libdata/perl5/arm-secbsd/CORE/regcharclass.h
 ./usr/libdata/perl5/arm-secbsd/CORE/regcomp.h
+./usr/libdata/perl5/arm-secbsd/CORE/regcomp_internal.h
 ./usr/libdata/perl5/arm-secbsd/CORE/regexp.h
+./usr/libdata/perl5/arm-secbsd/CORE/reginline.h
 ./usr/libdata/perl5/arm-secbsd/CORE/regnodes.h
 ./usr/libdata/perl5/arm-secbsd/CORE/sbox32_hash.h
 ./usr/libdata/perl5/arm-secbsd/CORE/scope.h
+./usr/libdata/perl5/arm-secbsd/CORE/scope_types.h
 ./usr/libdata/perl5/arm-secbsd/CORE/sv.h
 ./usr/libdata/perl5/arm-secbsd/CORE/sv_inline.h
 ./usr/libdata/perl5/arm-secbsd/CORE/syscall_emulator.h
