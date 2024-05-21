@@ -1,4 +1,4 @@
-/*	$OpenBSD: ufshci.c,v 1.22 2024/05/15 18:01:10 mglocker Exp $ */
+/*	$OpenBSD: ufshci.c,v 1.24 2024/05/16 10:52:11 mglocker Exp $ */
 
 /*
  * Copyright (c) 2022 Marcus Glocker <mglocker@openbsd.org>
@@ -185,9 +185,6 @@ ufshci_attach(struct ufshci_softc *sc)
 	DPRINTF(1, "HCMID (0x%08x):\n", sc->sc_hcmid);
 	DPRINTF(1, " BI=0x%04x\n", UFSHCI_REG_HCMID_BI(sc->sc_hcmid));
 	DPRINTF(1, " MIC=0x%04x\n", UFSHCI_REG_HCMID_MIC(sc->sc_hcmid));
-
-	/* XXX: Using more than one slot currently causes OCS errors */
-	sc->sc_nutrs = 1;
 
 	if (sc->sc_nutrs > 32) {
 		printf("%s: NUTRS can't be >32 (is %d)!\n",
@@ -513,7 +510,7 @@ ufshci_utr_cmd_nop(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_NOP_OUT;
 	ucd->cmd.hdr.flags = 0;
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -603,7 +600,7 @@ ufshci_utr_cmd_lun(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
 	ucd->cmd.hdr.flags = (1 << 6); /* Bit-5 = Write, Bit-6 = Read */
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -710,7 +707,7 @@ ufshci_utr_cmd_inquiry(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
 	ucd->cmd.hdr.flags = (1 << 6); /* Bit-5 = Write, Bit-6 = Read */
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -815,7 +812,7 @@ ufshci_utr_cmd_capacity16(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
 	ucd->cmd.hdr.flags = (1 << 6); /* Bit-5 = Write, Bit-6 = Read */
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -924,7 +921,7 @@ ufshci_utr_cmd_capacity(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
 	ucd->cmd.hdr.flags = (1 << 6); /* Bit-5 = Write, Bit-6 = Read */
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -1003,6 +1000,8 @@ ufshci_utr_cmd_io(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	struct ufshci_utrd *utrd;
 	struct ufshci_ucd *ucd;
 	bus_dmamap_t dmap = ccb->ccb_dmamap;
+	uint32_t blocks;
+	uint64_t lba;
 
 	/* 7.2.1 Basic Steps when Building a UTP Transfer Request: 1) */
 	slot = ccb->ccb_slot;
@@ -1038,7 +1037,7 @@ ufshci_utr_cmd_io(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	else
 		ucd->cmd.hdr.flags = (1 << 5); /* Bit-5 = Write */
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -1047,7 +1046,16 @@ ufshci_utr_cmd_io(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.device_info = 0;
 	ucd->cmd.hdr.ds_len = 0;
 
-	ucd->cmd.expected_xfer_len = htobe32(xs->datalen);
+	/*
+	 * JESD220C-2_1.pdf, page 88, d) Expected Data Transfer Length:
+	 * "When the COMMAND UPIU encodes a SCSI WRITE or SCSI READ command
+	 * (specifically WRITE (6), READ (6), WRITE (10), READ (10),
+	 * WRITE (16), or READ (16)), the value of this field shall be the
+	 * product of the Logical Block Size (bLogicalBlockSize) and the
+	 * TRANSFER LENGTH field of the CDB."
+	 */
+	scsi_cmd_rw_decode(&xs->cmd, &lba, &blocks);
+	ucd->cmd.expected_xfer_len = htobe32(UFSHCI_LBS * blocks);
 
 	memcpy(ucd->cmd.cdb, &xs->cmd, sizeof(ucd->cmd.cdb));
 
@@ -1140,7 +1148,7 @@ ufshci_utr_cmd_sync(struct ufshci_softc *sc, struct ufshci_ccb *ccb,
 	ucd->cmd.hdr.tc = UPIU_TC_I2T_COMMAND;
 	ucd->cmd.hdr.flags = 0; /* No data transfer */
 	ucd->cmd.hdr.lun = 0;
-	ucd->cmd.hdr.taskid = 0;
+	ucd->cmd.hdr.task_tag = slot;
 	ucd->cmd.hdr.cmd_set_type = 0; /* SCSI command */
 	ucd->cmd.hdr.query = 0;
 	ucd->cmd.hdr.response = 0;
@@ -1207,16 +1215,19 @@ ufshci_xfer_complete(struct ufshci_softc *sc)
 {
 	struct ufshci_ccb *ccb;
 	uint32_t reg;
-	int i;
+	int i, timeout;
 
 	mtx_enter(&sc->sc_cmd_mtx);
 
 	/* Wait for all commands to complete. */
-	while ((reg = ufshci_doorbell_read(sc))) {
-		DPRINTF(3, "%s: doorbell reg=0x%x\n", __func__, reg);
+	for (timeout = 5000; timeout != 0; timeout--) {
+		reg = ufshci_doorbell_read(sc);
 		if (reg == 0)
 			break;
+		delay(10);
 	}
+	if (timeout == 0)
+		printf("%s: timeout (reg=0x%x)\n", __func__, reg);
 
 	for (i = 0; i < sc->sc_nutrs; i++) {
 		ccb = &sc->sc_ccbs[i];
