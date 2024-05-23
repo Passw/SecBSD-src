@@ -1,4 +1,4 @@
-#	$OpenBSD: Makefile.inc,v 1.90 2024/05/17 00:30:23 djm Exp $
+#	$OpenBSD: Makefile.inc,v 1.92 2024/05/22 15:24:55 naddy Exp $
 
 .include <bsd.own.mk>
 
@@ -23,9 +23,9 @@ CDIAGFLAGS+=	-Widiomatic-parentheses -Wparentheses
 .if ${COMPILER_VERSION:L} != "gcc3"
 CDIAGFLAGS+=	-Wstrict-aliasing=2
 CDIAGFLAGS+=	-Wold-style-definition
+CDIAGFLAGS+=	-Werror
 .endif
 
-CDIAGFLAGS+=	-Werror
 #CDIAGFLAGS+=	-fno-common
 #DEBUG=-g
 #INSTALL_STRIP=
