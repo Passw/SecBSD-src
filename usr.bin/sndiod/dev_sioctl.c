@@ -1,4 +1,4 @@
-/*	$OpenBSD: dev_sioctl.c,v 1.8 2024/04/22 10:43:55 ratchov Exp $	*/
+/*	$OpenBSD: dev_sioctl.c,v 1.10 2024/05/24 15:16:09 ratchov Exp $	*/
 /*
  * Copyright (c) 2014-2020 Alexandre Ratchov <alex@caoua.org>
  *
@@ -70,7 +70,7 @@ dev_sioctl_ondesc(void *arg, struct sioctl_desc *desc, int val)
 	}
 
 	ctl_new(CTL_HW, d, &desc->addr,
-	    desc->type, group,
+	    desc->type, desc->display, group,
 	    desc->node0.name, desc->node0.unit, desc->func,
 	    desc->node1.name, desc->node1.unit, desc->maxval, val);
 }
@@ -91,7 +91,8 @@ dev_sioctl_onval(void *arg, unsigned int addr, unsigned int val)
 	}
 
 	for (c = ctl_list; c != NULL; c = c->next) {
-		if (c->scope != CTL_HW || c->u.hw.addr != addr)
+		if (c->scope != CTL_HW || c->u.hw.dev != d ||
+		    c->u.hw.addr != addr)
 			continue;
 
 		if (log_level >= 2) {
