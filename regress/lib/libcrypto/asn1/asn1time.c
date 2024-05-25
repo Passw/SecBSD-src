@@ -1,4 +1,4 @@
-/* $OpenBSD: asn1time.c,v 1.26 2024/04/08 19:57:40 beck Exp $ */
+/* $OpenBSD: asn1time.c,v 1.28 2024/05/25 12:47:25 tb Exp $ */
 /*
  * Copyright (c) 2015 Joel Sing <jsing@openbsd.org>
  * Copyright (c) 2024 Google Inc.
