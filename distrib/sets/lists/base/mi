@@ -222,6 +222,7 @@
 ./etc/rc.d/bgplgd
 ./etc/rc.d/bootparamd
 ./etc/rc.d/cron
+./etc/rc.d/dhcp6leased
 ./etc/rc.d/dhcpd
 ./etc/rc.d/dhcpleased
 ./etc/rc.d/dhcrelay
@@ -329,6 +330,7 @@
 ./sbin/chown
 ./sbin/clri
 ./sbin/dhclient
+./sbin/dhcp6leased
 ./sbin/dhcpleased
 ./sbin/disklabel
 ./sbin/dmesg
@@ -6560,6 +6562,7 @@
 ./var/cron/tabs
 ./var/db
 ./var/db/acpi
+./var/db/dhcp6leased
 ./var/db/dhcpleased
 ./var/db/ldap
 ./var/db/ns
