@@ -1,4 +1,4 @@
-/*	$OpenBSD: cert.c,v 1.133 2024/06/03 12:58:39 tb Exp $ */
+/*	$OpenBSD: cert.c,v 1.136 2024/06/04 14:10:53 tb Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2021 Job Snijders <job@openbsd.org>
@@ -506,7 +506,7 @@ sbgp_sia(const char *fn, struct cert *cert, X509_EXTENSION *ext)
 	ACCESS_DESCRIPTION	*ad;
 	ASN1_OBJECT		*oid;
 	const char		*mftfilename;
-	char			*carepo = NULL, *rpkimft = NULL;
+	char			*carepo = NULL, *rpkimft = NULL, *notify = NULL;
 	int			 i, rc = 0;
 
 	assert(cert->repo == NULL && cert->mft == NULL && cert->notify == NULL);
@@ -529,7 +529,7 @@ sbgp_sia(const char *fn, struct cert *cert, X509_EXTENSION *ext)
 		oid = ad->method;
 
 		if (OBJ_cmp(oid, carepo_oid) == 0) {
-			if (!x509_location(fn, "SIA: caRepository", NULL,
+			if (!x509_location(fn, "SIA: caRepository",
 			    ad->location, &carepo))
 				goto out;
 			if (cert->repo == NULL && strncasecmp(carepo,
@@ -544,7 +544,7 @@ sbgp_sia(const char *fn, struct cert *cert, X509_EXTENSION *ext)
 			free(carepo);
 			carepo = NULL;
 		} else if (OBJ_cmp(oid, manifest_oid) == 0) {
-			if (!x509_location(fn, "SIA: rpkiManifest", NULL,
+			if (!x509_location(fn, "SIA: rpkiManifest",
 			    ad->location, &rpkimft))
 				goto out;
 			if (cert->mft == NULL && strncasecmp(rpkimft,
@@ -560,8 +560,30 @@ sbgp_sia(const char *fn, struct cert *cert, X509_EXTENSION *ext)
 			rpkimft = NULL;
 		} else if (OBJ_cmp(oid, notify_oid) == 0) {
 			if (!x509_location(fn, "SIA: rpkiNotify",
-			    HTTPS_PROTO, ad->location, &cert->notify))
+			    ad->location, &notify))
 				goto out;
+			if (strncasecmp(notify, HTTPS_PROTO,
+			    HTTPS_PROTO_LEN) != 0) {
+				warnx("%s: non-https uri in rpkiNotify: %s",
+				    fn, cert->notify);
+				free(notify);
+				goto out;
+			}
+			if (cert->notify != NULL) {
+				warnx("%s: unexpected rpkiNotify accessMethod",
+				    fn);
+				free(notify);
+				goto out;
+			}
+			cert->notify = notify;
+			notify = NULL;
+		} else {
+			char buf[128];
+
+			OBJ_obj2txt(buf, sizeof(buf), oid, 0);
+			warnx("%s: RFC 6487 section 4.8.8.1: unexpected"
+			    " accessMethod: %s", fn, buf);
+			goto out;
 		}
 	}
 
