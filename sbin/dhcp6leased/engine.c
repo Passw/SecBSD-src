@@ -1,4 +1,4 @@
-/*	$OpenBSD: engine.c,v 1.8 2024/06/04 15:48:47 florian Exp $	*/
+/*	$OpenBSD: engine.c,v 1.12 2024/06/05 16:15:47 florian Exp $	*/
 
 /*
  * Copyright (c) 2017, 2021, 2024 Florian Obser <florian@openbsd.org>
@@ -83,6 +83,16 @@ const char* if_state_name[] = {
 	"IPv6 only",
 };
 
+enum reconfigure_action {
+	CONFIGURE,
+	DECONFIGURE,
+};
+
+const char* reconfigure_action_name[] = {
+	"configure",
+	"deconfigure",
+};
+
 struct dhcp6leased_iface {
 	LIST_ENTRY(dhcp6leased_iface)	 entries;
 	enum if_state			 state;
@@ -122,12 +132,11 @@ void			 state_transition(struct dhcp6leased_iface *, enum
 void			 iface_timeout(int, short, void *);
 void			 request_dhcp_discover(struct dhcp6leased_iface *);
 void			 request_dhcp_request(struct dhcp6leased_iface *);
-void			 log_lease(struct dhcp6leased_iface *, int);
 void			 configure_interfaces(struct dhcp6leased_iface *);
-void			 send_configure_interface(struct iface_pd_conf *,
-			     struct prefix *);
-void			 send_deconfigure_interface(struct dhcp6leased_iface *);
-void			 parse_lease(struct dhcp6leased_iface *,
+void			 deconfigure_interfaces(struct dhcp6leased_iface *);
+void			 send_reconfigure_interface(struct iface_pd_conf *,
+			     struct prefix *, enum reconfigure_action);
+void			 parse_lease_xxx(struct dhcp6leased_iface *,
 			     struct imsg_ifinfo *);
 int			 engine_imsg_compose_main(int, pid_t, void *, uint16_t);
 const char		*dhcp_message_type2str(uint8_t);
@@ -436,8 +445,6 @@ engine_dispatch_main(int fd, short event, void *bula)
 				fatalx("%s: IMSG_UPDATE_IF wrong length: %lu",
 				    __func__, IMSG_DATA_SIZE(imsg));
 			memcpy(&imsg_ifinfo, imsg.data, sizeof(imsg_ifinfo));
-			if (imsg_ifinfo.lease[LEASE_SIZE - 1] != '\0')
-				fatalx("Invalid lease");
 			engine_update_iface(&imsg_ifinfo);
 			break;
 		case IMSG_RECONF_CONF:
@@ -592,7 +599,9 @@ void
 engine_update_iface(struct imsg_ifinfo *imsg_ifinfo)
 {
 	struct dhcp6leased_iface	*iface;
-	int			 need_refresh = 0;
+	struct iface_conf		*iface_conf;
+	int				 need_refresh = 0;
+	char				 ifnamebuf[IF_NAMESIZE], *if_name;
 
 	iface = get_dhcp6leased_iface_by_id(imsg_ifinfo->if_index);
 
@@ -628,18 +637,38 @@ engine_update_iface(struct imsg_ifinfo *imsg_ifinfo)
 	if (!need_refresh)
 		return;
 
-	if (iface->running && LINK_STATE_IS_UP(iface->link_state)) {
-#if 0
-XXXX
-		if (iface->requested_ip.s_addr == INADDR_ANY)
-			parse_lease(iface, imsg_ifinfo);
+	if ((if_name = if_indextoname(iface->if_index, ifnamebuf)) == NULL) {
+		log_debug("%s: unknown interface %d", __func__,
+		    iface->if_index);
+		return;
+	}
 
-		if (iface->requested_ip.s_addr == INADDR_ANY)
-			state_transition(iface, IF_INIT);
-		else
+	if ((iface_conf = find_iface_conf(&engine_conf->iface_list, if_name))
+	    == NULL) {
+		log_debug("%s: no interface configuration for %d", __func__,
+		    iface->if_index);
+		return;
+	}
+
+	if (iface->running && LINK_STATE_IS_UP(iface->link_state)) {
+		uint32_t	 i;
+		int		 got_lease;
+
+		if (iface->pds[0].prefix_len == 0)
+			memcpy(iface->pds, imsg_ifinfo->pds,
+			    sizeof(iface->pds));
+
+		got_lease = 0;
+		for (i = 0; i < iface_conf->ia_count; i++) {
+			if (iface->pds[i].prefix_len > 0) {
+				got_lease = 1;
+				break;
+			}
+		}
+		if (got_lease)
 			state_transition(iface, IF_REBOOTING);
-#endif
-		state_transition(iface, IF_INIT);
+		else
+			state_transition(iface, IF_INIT);
 	} else
 		state_transition(iface, IF_DOWN);
 }
@@ -665,7 +694,7 @@ remove_dhcp6leased_iface(uint32_t if_index)
 	if (iface == NULL)
 		return;
 
-	send_deconfigure_interface(iface);
+	deconfigure_interfaces(iface);
 	LIST_REMOVE(iface, entries);
 	evtimer_del(&iface->timer);
 	free(iface);
@@ -875,6 +904,7 @@ parse_dhcp(struct dhcp6leased_iface *iface, struct imsg_dhcp *dhcp)
 		case IF_REQUESTING:
 		case IF_RENEWING:
 		case IF_REBINDING:
+		case IF_REBOOTING:
 			break;
 		case IF_INIT:
 			if (rapid_commit && engine_conf->rapid_commit)
@@ -1012,7 +1042,7 @@ XXXX
 		}
 		if (old_state == IF_DOWN) {
 			/* nameservers already withdrawn when if went down */
-			send_deconfigure_interface(iface);
+			deconfigure_interfaces(iface);
 			/* nothing more to do until iface comes back */
 			iface->timo.tv_sec = -1;
 		} else {
@@ -1037,7 +1067,7 @@ XXXX
 		case IF_REBINDING:
 		case IF_REBOOTING:
 			/* lease expired, got DHCPNAK or timeout: delete IP */
-			send_deconfigure_interface(iface);
+			deconfigure_interfaces(iface);
 			/* fall through */
 		case IF_DOWN:
 			iface->timo.tv_sec = START_EXP_BACKOFF;
@@ -1223,8 +1253,6 @@ request_dhcp_request(struct dhcp6leased_iface *iface)
 		fatalx("invalid state IF_BOUND in %s", __func__);
 		break;
 	case IF_REBOOTING:
-		fatalx("XXX state IF_REBOOTING in %s not IMPL", __func__);
-		break;
 	case IF_REQUESTING:
 	case IF_RENEWING:
 	case IF_REBINDING:
@@ -1242,6 +1270,7 @@ request_dhcp_request(struct dhcp6leased_iface *iface)
 		engine_imsg_compose_frontend(IMSG_SEND_RENEW, 0, &imsg,
 		    sizeof(imsg));
 		break;
+	case IF_REBOOTING:
 	case IF_REBINDING:
 		engine_imsg_compose_frontend(IMSG_SEND_REBIND, 0, &imsg,
 		    sizeof(imsg));
@@ -1251,15 +1280,46 @@ request_dhcp_request(struct dhcp6leased_iface *iface)
 	}
 }
 
-void
-log_lease(struct dhcp6leased_iface *iface, int deconfigure)
-{
-	fatalx("%s: not implemented", __func__); /* XXX */
-}
-
 /* XXX we need to install a reject route for the delegated prefix */
 void
 configure_interfaces(struct dhcp6leased_iface *iface)
+{
+	struct iface_conf	*iface_conf;
+	struct iface_ia_conf	*ia_conf;
+	struct iface_pd_conf	*pd_conf;
+	struct imsg_lease_info	 imsg_lease_info;
+	char			 ifnamebuf[IF_NAMESIZE], *if_name;
+
+
+	if ((if_name = if_indextoname(iface->if_index, ifnamebuf)) == NULL) {
+		log_debug("%s: unknown interface %d", __func__,
+		    iface->if_index);
+		return;
+	}
+	if ((iface_conf = find_iface_conf(&engine_conf->iface_list, if_name))
+	    == NULL) {
+		log_debug("%s: no interface configuration for %d", __func__,
+		    iface->if_index);
+		return;
+	}
+
+	memset(&imsg_lease_info, 0, sizeof(imsg_lease_info));
+	imsg_lease_info.if_index = iface->if_index;
+	memcpy(imsg_lease_info.pds, iface->pds, sizeof(iface->pds));
+	engine_imsg_compose_main(IMSG_WRITE_LEASE, 0, &imsg_lease_info,
+	    sizeof(imsg_lease_info));
+
+	SIMPLEQ_FOREACH(ia_conf, &iface_conf->iface_ia_list, entry) {
+		struct prefix	*pd = &iface->pds[ia_conf->id];
+
+		SIMPLEQ_FOREACH(pd_conf, &ia_conf->iface_pd_list, entry) {
+			send_reconfigure_interface(pd_conf, pd, CONFIGURE);
+		}
+	}
+}
+
+void
+deconfigure_interfaces(struct dhcp6leased_iface *iface)
 {
 	struct iface_conf	*iface_conf;
 	struct iface_ia_conf	*ia_conf;
@@ -1283,18 +1343,22 @@ configure_interfaces(struct dhcp6leased_iface *iface)
 		struct prefix	*pd = &iface->pds[ia_conf->id];
 
 		SIMPLEQ_FOREACH(pd_conf, &ia_conf->iface_pd_list, entry) {
-			send_configure_interface(pd_conf, pd);
+			send_reconfigure_interface(pd_conf, pd, DECONFIGURE);
 		}
 	}
 }
 
 void
-send_configure_interface(struct iface_pd_conf *pd_conf, struct prefix *pd)
+send_reconfigure_interface(struct iface_pd_conf *pd_conf, struct prefix *pd,
+    enum reconfigure_action action)
 {
 	struct imsg_configure_address	 address;
 	uint32_t			 if_index;
 	int				 i;
 	char				 ntopbuf[INET6_ADDRSTRLEN];
+
+	if (pd->prefix_len == 0)
+		return;
 
 	if (strcmp(pd_conf->name, "reserve") == 0)
 		return;
@@ -1318,27 +1382,20 @@ send_configure_interface(struct iface_pd_conf *pd_conf, struct prefix *pd)
 
 	in6_prefixlen2mask(&address.mask, pd_conf->prefix_len);
 
-	log_debug("%s: %s: %s/%d", __func__, pd_conf->name,
-	    inet_ntop(AF_INET6, &address.addr.sin6_addr, ntopbuf,
-	    INET6_ADDRSTRLEN), pd_conf->prefix_len);
+	log_debug("%s: %s %s: %s/%d", __func__, pd_conf->name,
+	    reconfigure_action_name[action], inet_ntop(AF_INET6,
+	    &address.addr.sin6_addr, ntopbuf, INET6_ADDRSTRLEN),
+	    pd_conf->prefix_len);
 
 	address.vltime = pd->vltime;
 	address.pltime = pd->pltime;
 
-	engine_imsg_compose_main(IMSG_CONFIGURE_ADDRESS, 0, &address,
-	    sizeof(address));
-}
-
-void
-send_deconfigure_interface(struct dhcp6leased_iface *iface)
-{
-	fatalx("%s: not implemented", __func__); /* XXX */
-}
-
-void
-parse_lease(struct dhcp6leased_iface *iface, struct imsg_ifinfo *imsg_ifinfo)
-{
-	fatalx("%s: not implemented", __func__); /* XXX */
+	if (action == CONFIGURE)
+		engine_imsg_compose_main(IMSG_CONFIGURE_ADDRESS, 0, &address,
+		    sizeof(address));
+	else
+		engine_imsg_compose_main(IMSG_DECONFIGURE_ADDRESS, 0, &address,
+		    sizeof(address));
 }
 
 const char *
