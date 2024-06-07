@@ -1,4 +1,4 @@
-/*	$OpenBSD: cert.c,v 1.136 2024/06/04 14:10:53 tb Exp $ */
+/*	$OpenBSD: cert.c,v 1.140 2024/06/06 12:38:02 tb Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2021 Job Snijders <job@openbsd.org>
@@ -1073,7 +1073,6 @@ struct cert *
 ta_parse(const char *fn, struct cert *p, const unsigned char *pkey,
     size_t pkeysz)
 {
-	ASN1_TIME	*notBefore, *notAfter;
 	EVP_PKEY	*pk, *opk;
 	time_t		 now = get_current_time();
 
@@ -1095,40 +1094,39 @@ ta_parse(const char *fn, struct cert *p, const unsigned char *pkey,
 		    "pubkey does not match TAL pubkey", fn);
 		goto badcert;
 	}
-
-	if ((notBefore = X509_get_notBefore(p->x509)) == NULL) {
-		warnx("%s: certificate has invalid notBefore", fn);
-		goto badcert;
-	}
-	if ((notAfter = X509_get_notAfter(p->x509)) == NULL) {
-		warnx("%s: certificate has invalid notAfter", fn);
-		goto badcert;
-	}
-	if (X509_cmp_time(notBefore, &now) != -1) {
+	if (p->notbefore >= now) {
 		warnx("%s: certificate not yet valid", fn);
 		goto badcert;
 	}
-	if (X509_cmp_time(notAfter, &now) != 1) {
+	if (p->notafter <= now) {
 		warnx("%s: certificate has expired", fn);
 		goto badcert;
 	}
 	if (p->aki != NULL && strcmp(p->aki, p->ski)) {
-		warnx("%s: RFC 6487 section 8.4.2: "
+		warnx("%s: RFC 6487 section 4.8.3: "
 		    "trust anchor AKI, if specified, must match SKI", fn);
 		goto badcert;
 	}
 	if (p->aia != NULL) {
-		warnx("%s: RFC 6487 section 8.4.7: "
+		warnx("%s: RFC 6487 section 4.8.7: "
 		    "trust anchor must not have AIA", fn);
 		goto badcert;
 	}
 	if (p->crl != NULL) {
-		warnx("%s: RFC 6487 section 8.4.2: "
+		warnx("%s: RFC 6487 section 4.8.6: "
 		    "trust anchor may not specify CRL resource", fn);
 		goto badcert;
 	}
 	if (p->purpose == CERT_PURPOSE_BGPSEC_ROUTER) {
 		warnx("%s: BGPsec cert cannot be a trust anchor", fn);
+		goto badcert;
+	}
+	/*
+	 * Do not replace with a <= 0 check since OpenSSL 3 broke that:
+	 * https://github.com/openssl/openssl/issues/24575
+	 */
+	if (X509_verify(p->x509, pk) != 1) {
+		warnx("%s: failed to verify signature", fn);
 		goto badcert;
 	}
 	if (x509_any_inherits(p->x509)) {
@@ -1139,7 +1137,7 @@ ta_parse(const char *fn, struct cert *p, const unsigned char *pkey,
 	EVP_PKEY_free(pk);
 	return p;
 
-badcert:
+ badcert:
 	EVP_PKEY_free(pk);
 	cert_free(p);
 	return NULL;

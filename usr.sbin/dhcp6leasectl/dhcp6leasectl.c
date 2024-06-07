@@ -1,7 +1,7 @@
-/*	$OpenBSD: dhcpleasectl.c,v 1.8 2024/06/06 15:07:46 florian Exp $	*/
+/*	$OpenBSD: dhcp6leasectl.c,v 1.1 2024/06/06 15:16:57 florian Exp $	*/
 
 /*
- * Copyright (c) 2021 Florian Obser <florian@openbsd.org>
+ * Copyright (c) 2021, 2024 Florian Obser <florian@openbsd.org>
  * Copyright (c) 2005 Claudio Jeker <claudio@openbsd.org>
  * Copyright (c) 2004, 2005 Esben Norby <norby@openbsd.org>
  * Copyright (c) 2003 Henning Brauer <henning@openbsd.org>
@@ -44,7 +44,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "dhcpleased.h"
+#include "dhcp6leased.h"
 
 __dead void	 usage(void);
 void		 show_interface_msg(struct ctl_engine_info *);
@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 	char			*sockname;
 	const char		*errstr;
 
-	sockname = _PATH_DHCPLEASED_SOCKET;
+	sockname = _PATH_CTRL_SOCKET;
 	while ((ch = getopt(argc, argv, "ls:w:")) != -1) {
 		switch (ch) {
 		case 'l':
@@ -102,40 +102,6 @@ main(int argc, char *argv[])
 
 	if ((if_index = if_nametoindex(argv[0])) == 0)
 		errx(1, "unknown interface");
-
-	if (!lFlag) {
-		struct ifreq	 ifr, ifr_x;
-		int		 ioctl_sock;
-
-		if ((ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-			err(1, NULL);
-
-		strlcpy(ifr.ifr_name, argv[0], sizeof(ifr.ifr_name));
-		strlcpy(ifr_x.ifr_name, argv[0], sizeof(ifr.ifr_name));
-
-		if (ioctl(ioctl_sock, SIOCGIFFLAGS, &ifr) == -1)
-			err(1, "SIOCGIFFLAGS");
-
-		if (ioctl(ioctl_sock, SIOCGIFXFLAGS, &ifr_x) == -1)
-			err(1, "SIOCGIFFLAGS");
-
-		if (!(ifr.ifr_flags & IFF_UP) ||
-		    !(ifr_x.ifr_flags & IFXF_AUTOCONF4)) {
-			if (geteuid())
-				errx(1, "need root privileges");
-		}
-
-		if (!(ifr.ifr_flags & IFF_UP)) {
-			ifr.ifr_flags |= IFF_UP;
-			if (ioctl(ioctl_sock, SIOCSIFFLAGS, &ifr) == -1)
-				err(1, "SIOCSIFFLAGS");
-		}
-		if (!(ifr_x.ifr_flags & IFXF_AUTOCONF4)) {
-			ifr_x.ifr_flags |= IFXF_AUTOCONF4;
-			if (ioctl(ioctl_sock, SIOCSIFXFLAGS, &ifr_x) == -1)
-				err(1, "SIOCSIFFLAGS");
-		}
-	}
 
 	if (lFlag && !maxwait_set)
 		maxwait = 0;
@@ -223,60 +189,25 @@ show_interface_msg(struct ctl_engine_info *cei)
 {
 	struct timespec		 now, diff;
 	time_t			 d, h, m, s;
-	int			 i;
+	int			 i, has_pd = 0;
 	char			 buf[IF_NAMESIZE], *bufp;
-	char			 ipbuf[INET_ADDRSTRLEN];
-	char			 maskbuf[INET_ADDRSTRLEN];
-	char			 gwbuf[INET_ADDRSTRLEN];
+	char			 ntopbuf[INET6_ADDRSTRLEN];
 
 	bufp = if_indextoname(cei->if_index, buf);
 	printf("%s [%s]\n", bufp != NULL ? bufp : "unknown", cei->state);
-	memset(ipbuf, 0, sizeof(ipbuf));
-	if (cei->requested_ip.s_addr != INADDR_ANY) {
+
+	for (i = 0; i < MAX_IA; i++) {
+		if (cei->pds[i].prefix_len == 0)
+			continue;
+		has_pd = 1;
+		printf ("\tIA_PD %d: %s/%d\n", i, inet_ntop(AF_INET6,
+		    &cei->pds[i], ntopbuf, INET6_ADDRSTRLEN),
+		    cei->pds[i].prefix_len);
+	}
+
+	if (has_pd) {
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		timespecsub(&now, &cei->request_time, &diff);
-		memset(ipbuf, 0, sizeof(ipbuf));
-		memset(maskbuf, 0, sizeof(maskbuf));
-		memset(gwbuf, 0, sizeof(gwbuf));
-		if (inet_ntop(AF_INET, &cei->requested_ip, ipbuf,
-		    sizeof(ipbuf)) == NULL)
-			ipbuf[0] = '\0';
-		if (inet_ntop(AF_INET, &cei->mask, maskbuf, sizeof(maskbuf))
-		    == NULL)
-			maskbuf[0] = '\0';
-		printf("\tinet %s netmask %s\n", ipbuf, maskbuf);
-		for (i = 0; i < cei->routes_len; i++) {
-			if (inet_ntop(AF_INET, &cei->routes[i].dst, ipbuf,
-			    sizeof(ipbuf)) == NULL)
-				ipbuf[0] = '\0';
-			if (inet_ntop(AF_INET, &cei->routes[i].mask, maskbuf,
-			    sizeof(maskbuf)) == NULL)
-				maskbuf[0] = '\0';
-			if (inet_ntop(AF_INET, &cei->routes[i].gw,
-			    gwbuf, sizeof(gwbuf)) == NULL)
-				gwbuf[0] = '\0';
-
-			if (cei->routes[i].dst.s_addr == INADDR_ANY
-			    && cei->routes[i].mask.s_addr == INADDR_ANY)
-				printf("\tdefault gateway %s\n", gwbuf);
-			else
-				printf("\troute %s/%d gateway %s\n",
-				    ipbuf, 33 -
-				    ffs(ntohl(cei->routes[i].mask.s_addr)),
-				    gwbuf);
-		}
-		if (cei->nameservers[0].s_addr != INADDR_ANY) {
-			printf("\tnameservers");
-			for (i = 0; i < MAX_RDNS_COUNT &&
-				 cei->nameservers[i].s_addr != INADDR_ANY;
-			     i++) {
-				if (inet_ntop(AF_INET, &cei->nameservers[i],
-				    ipbuf, sizeof(ipbuf)) == NULL)
-					continue;
-				printf(" %s", ipbuf);
-			}
-			printf("\n");
-		}
 		s = cei->lease_time - diff.tv_sec;
 		if (s < 0)
 			s = 0;
@@ -304,16 +235,6 @@ show_interface_msg(struct ctl_engine_info *cei)
 			printf("\tlease %lld minute%s\n", m, m > 1 ? "s" : "");
 		} else
 			printf("\tlease %lld second%s\n", s, s > 1 ? "s" : "");
+
 	}
-	if (cei->server_identifier.s_addr != INADDR_ANY) {
-		if (inet_ntop(AF_INET, &cei->server_identifier, ipbuf,
-		    sizeof(ipbuf)) == NULL)
-			ipbuf[0] = '\0';
-	} else if (cei->dhcp_server.s_addr != INADDR_ANY) {
-		if (inet_ntop(AF_INET, &cei->dhcp_server, ipbuf, sizeof(ipbuf))
-		    == NULL)
-			ipbuf[0] = '\0';
-	}
-	if (ipbuf[0] != '\0')
-		printf("\tdhcp server %s\n", ipbuf);
 }
