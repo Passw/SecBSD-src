@@ -1,4 +1,4 @@
-/*	$OpenBSD: extern.h,v 1.221 2024/06/04 04:17:18 tb Exp $ */
+/*	$OpenBSD: extern.h,v 1.224 2024/06/08 13:30:35 tb Exp $ */
 /*
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -107,8 +107,10 @@ struct cert_ip {
 
 enum cert_purpose {
 	CERT_PURPOSE_INVALID,
+	CERT_PURPOSE_TA,
 	CERT_PURPOSE_CA,
-	CERT_PURPOSE_BGPSEC_ROUTER
+	CERT_PURPOSE_EE,
+	CERT_PURPOSE_BGPSEC_ROUTER,
 };
 
 /*
@@ -901,6 +903,7 @@ struct ibuf	*io_buf_recvfd(int, struct ibuf **);
 /* X509 helpers. */
 
 void		 x509_init_oid(void);
+int		 x509_cache_extensions(X509 *, const char *);
 int		 x509_get_aia(X509 *, const char *, char **);
 int		 x509_get_aki(X509 *, const char *, char **);
 int		 x509_get_sia(X509 *, const char *, char **);
@@ -922,6 +925,7 @@ time_t		 x509_find_expires(time_t, struct auth *, struct crl_tree *);
 
 /* printers */
 char		*nid2str(int);
+const char	*purpose2str(enum cert_purpose);
 char		*time2str(time_t);
 void		 x509_print(const X509 *);
 void		 tal_print(const struct tal *);

@@ -1,4 +1,4 @@
-/*	$OpenBSD: cert.c,v 1.140 2024/06/06 12:38:02 tb Exp $ */
+/*	$OpenBSD: cert.c,v 1.144 2024/06/08 13:33:49 tb Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2021 Job Snijders <job@openbsd.org>
@@ -744,6 +744,15 @@ cert_parse_ee_cert(const char *fn, int talid, X509 *x)
 	if (!cert_check_subject_and_issuer(fn, x))
 		goto out;
 
+	if (!x509_cache_extensions(x, fn))
+		goto out;
+
+	if ((cert->purpose = x509_get_purpose(x, fn)) != CERT_PURPOSE_EE) {
+		warnx("%s: expected EE cert, got %s", fn,
+		    purpose2str(cert->purpose));
+		goto out;
+	}
+
 	if (X509_get_key_usage(x) != KU_DIGITAL_SIGNATURE) {
 		warnx("%s: RFC 6487 section 4.8.4: KU must be digitalSignature",
 		    fn);
@@ -827,11 +836,8 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 		goto out;
 	}
 
-	/* Cache X509v3 extensions, see X509_check_ca(3). */
-	if (X509_check_purpose(x, -1, -1) <= 0) {
-		warnx("%s: could not cache X509v3 extensions", fn);
+	if (!x509_cache_extensions(x, fn))
 		goto out;
-	}
 
 	if (X509_get_version(x) != 2) {
 		warnx("%s: RFC 6487 4.1: X.509 version must be v3", fn);
@@ -957,11 +963,12 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 		goto out;
 	if (!x509_get_notafter(x, fn, &cert->notafter))
 		goto out;
-	cert->purpose = x509_get_purpose(x, fn);
 
 	/* Validation on required fields. */
-
+	cert->purpose = x509_get_purpose(x, fn);
 	switch (cert->purpose) {
+	case CERT_PURPOSE_TA:
+		/* XXX - caller should indicate if it expects TA or CA cert */
 	case CERT_PURPOSE_CA:
 		if ((pkey = X509_get0_pubkey(x)) == NULL) {
 			warnx("%s: X509_get0_pubkey failed", fn);
@@ -1015,6 +1022,9 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 			goto out;
 		}
 		break;
+	case CERT_PURPOSE_EE:
+		warn("%s: unexpected EE cert", fn);
+		goto out;
 	default:
 		warnx("%s: x509_get_purpose failed in %s", fn, __func__);
 		goto out;
@@ -1117,8 +1127,9 @@ ta_parse(const char *fn, struct cert *p, const unsigned char *pkey,
 		    "trust anchor may not specify CRL resource", fn);
 		goto badcert;
 	}
-	if (p->purpose == CERT_PURPOSE_BGPSEC_ROUTER) {
-		warnx("%s: BGPsec cert cannot be a trust anchor", fn);
+	if (p->purpose != CERT_PURPOSE_TA) {
+		warnx("%s: expected trust anchor purpose, got %s", fn,
+		    purpose2str(p->purpose));
 		goto badcert;
 	}
 	/*

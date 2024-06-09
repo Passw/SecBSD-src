@@ -1,4 +1,4 @@
-/*	$OpenBSD: x509.c,v 1.93 2024/06/04 14:17:24 tb Exp $ */
+/*	$OpenBSD: x509.c,v 1.97 2024/06/08 13:32:30 tb Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2021 Claudio Jeker <claudio@openbsd.org>
@@ -133,6 +133,26 @@ x509_init_oid(void)
 }
 
 /*
+ * A number of critical OpenSSL API functions can't properly indicate failure
+ * and are unreliable if the extensions aren't already cached. An old trick is
+ * to cache the extensions using an error-checked call to X509_check_purpose()
+ * with a purpose of -1. This way functions such as X509_check_ca(), X509_cmp(),
+ * X509_get_key_usage(), X509_get_extended_key_usage() won't lie.
+ *
+ * Should be called right after deserialization and is essentially free to call
+ * multiple times.
+ */
+int
+x509_cache_extensions(X509 *x509, const char *fn)
+{
+	if (X509_check_purpose(x509, -1, 0) <= 0) {
+		warnx("%s: could not cache X509v3 extensions", fn);
+		return 0;
+	}
+	return 1;
+}
+
+/*
  * Parse X509v3 authority key identifier (AKI), RFC 6487 sec. 4.8.3.
  * Returns the AKI or NULL if it could not be parsed.
  * The AKI is formatted as a hex string.
@@ -246,18 +266,34 @@ x509_get_ski(X509 *x, const char *fn, char **ski)
 }
 
 /*
- * Check the certificate's purpose: CA or BGPsec Router.
- * Return a member of enum cert_purpose.
+ * Check the cert's purpose: the cA bit in basic constraints distinguishes
+ * between TA/CA and EE/BGPsec router. TAs are self-signed, CAs not self-issued,
+ * EEs have no extended key usage, BGPsec router have id-kp-bgpsec-router OID.
  */
 enum cert_purpose
 x509_get_purpose(X509 *x, const char *fn)
 {
 	BASIC_CONSTRAINTS		*bc = NULL;
 	EXTENDED_KEY_USAGE		*eku = NULL;
-	int				 crit;
+	int				 crit, ext_flags, is_ca;
 	enum cert_purpose		 purpose = CERT_PURPOSE_INVALID;
 
-	if (X509_check_ca(x) == 1) {
+	if (!x509_cache_extensions(x, fn))
+		goto out;
+
+	ext_flags = X509_get_extension_flags(x);
+
+	/* This weird API can return 0, 1, 2, 4, 5 but can't error... */
+	if ((is_ca = X509_check_ca(x)) > 1) {
+		if (is_ca == 4)
+			warnx("%s: RFC 6487: sections 4.8.1 and 4.8.4: "
+			    "no basic constraints, but keyCertSign set", fn);
+		else
+			warnx("%s: unexpected legacy certificate", fn);
+		goto out;
+	}
+
+	if (is_ca) {
 		bc = X509_get_ext_d2i(x, NID_basic_constraints, &crit, NULL);
 		if (bc == NULL) {
 			if (crit != -1)
@@ -278,27 +314,50 @@ x509_get_purpose(X509 *x, const char *fn)
 			    "Constraint must be absent", fn);
 			goto out;
 		}
-		purpose = CERT_PURPOSE_CA;
+		/*
+		 * EXFLAG_SI means that issuer and subject are identical.
+		 * EXFLAG_SS is SI plus the AKI is absent or matches the SKI.
+		 * Thus, exactly the trust anchors should have EXFLAG_SS set
+		 * and we should never see EXFLAG_SI without EXFLAG_SS.
+		 */
+		if ((ext_flags & EXFLAG_SS) != 0)
+			purpose = CERT_PURPOSE_TA;
+		else if ((ext_flags & EXFLAG_SI) == 0)
+			purpose = CERT_PURPOSE_CA;
+		else
+			warnx("%s: RFC 6487, section 4.8.3: "
+			    "self-issued cert with AKI-SKI mismatch", fn);
 		goto out;
 	}
 
-	if (X509_get_extension_flags(x) & EXFLAG_BCONS) {
+	if ((ext_flags & EXFLAG_BCONS) != 0) {
 		warnx("%s: Basic Constraints ext in non-CA cert", fn);
 		goto out;
 	}
 
+	/*
+	 * EKU is only defined for BGPsec Router certs and must be absent from
+	 * EE certs.
+	 */
 	eku = X509_get_ext_d2i(x, NID_ext_key_usage, &crit, NULL);
 	if (eku == NULL) {
 		if (crit != -1)
 			warnx("%s: error parsing EKU", fn);
 		else
-			warnx("%s: EKU: extension missing", fn);
+			purpose = CERT_PURPOSE_EE; /* EKU absent */
 		goto out;
 	}
 	if (crit != 0) {
 		warnx("%s: EKU: extension must not be marked critical", fn);
 		goto out;
 	}
+
+	/*
+	 * XXX - this isn't quite correct: other EKU OIDs are allowed per
+	 * RFC 8209, section 3.1.3.2, e.g., anyEKU could potentially help
+	 * avoid tripping up validators that don't know about the BGPsec
+	 * router purpose. Drop check or downgrade from error to warning?
+	 */
 	if (sk_ASN1_OBJECT_num(eku) != 1) {
 		warnx("%s: EKU: expected 1 purpose, have %d", fn,
 		    sk_ASN1_OBJECT_num(eku));
