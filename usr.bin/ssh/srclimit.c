@@ -106,6 +106,8 @@ srclimit_init(int max, int persource, int ipv4len, int ipv6len,
 	penalty_cfg = *penalty_conf;
 	penalty_exempt = penalty_exempt_conf == NULL ?
 	    NULL : xstrdup(penalty_exempt_conf);
+	RB_INIT(&penalties_by_addr);
+	RB_INIT(&penalties_by_expiry);
 	if (max_persource == INT_MAX)	/* no limit */
 		return;
 	debug("%s: max connections %d, per source %d, masks %d,%d", __func__,
@@ -115,8 +117,6 @@ srclimit_init(int max, int persource, int ipv4len, int ipv6len,
 	children = xcalloc(max_children, sizeof(*children));
 	for (i = 0; i < max_children; i++)
 		children[i].id = -1;
-	RB_INIT(&penalties_by_addr);
-	RB_INIT(&penalties_by_expiry);
 }
 
 /* returns 1 if connection allowed, 0 if not allowed. */
@@ -259,7 +259,7 @@ srclimit_penalty_check_allow(int sock, const char **reason)
 			return 1;
 		}
 	}
-	if (npenalties > (size_t)penalty_cfg.max_sources &&
+	if (npenalties >= (size_t)penalty_cfg.max_sources &&
 	    penalty_cfg.overflow_mode == PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL) {
 		*reason = "too many penalised addresses";
 		return 0;
@@ -293,14 +293,14 @@ srclimit_remove_expired_penalties(void)
 	while (npenalties > (size_t)penalty_cfg.max_sources) {
 		if ((p = RB_MIN(penalties_by_expiry,
 		    &penalties_by_expiry)) == NULL)
-			break; /* shouldn't happen */
+			fatal_f("internal error: penalty tables corrupt (find)");
 		bits = p->addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
 		addr_masklen_ntop(&p->addr, bits, s, sizeof(s));
 		debug3_f("overflow, remove %s", s);
 		if (RB_REMOVE(penalties_by_expiry,
 		    &penalties_by_expiry, p) != p ||
 		    RB_REMOVE(penalties_by_addr, &penalties_by_addr, p) != p)
-			fatal_f("internal error: penalty tables corrupt");
+			fatal_f("internal error: penalty tables corrupt (remove)");
 		free(p);
 		npenalties--;
 	}

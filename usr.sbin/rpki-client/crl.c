@@ -1,5 +1,6 @@
-/*	$OpenBSD: crl.c,v 1.37 2024/06/05 13:36:28 tb Exp $ */
+/*	$OpenBSD: crl.c,v 1.40 2024/06/11 15:33:46 tb Exp $ */
 /*
+ * Copyright (c) 2024 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
  *
  * Permission to use, copy, modify, and distribute this software for any
@@ -131,6 +132,7 @@ crl_check_revoked(const char *fn, X509_CRL *x509_crl)
 		 * XXX - as of May 2024, ~15% of RPKI CRLs fail this check due
 		 * to a bug in rpki-rs/Krill. So silently accept this for now.
 		 * https://github.com/NLnetLabs/krill/issues/1197
+		 * https://github.com/NLnetLabs/rpki-rs/pull/295
 		 */
 		if (verbose > 1)
 			warnx("%s: RFC 5280, section 5.1.2.6: revoked "
@@ -165,9 +167,7 @@ crl_parse(const char *fn, const unsigned char *der, size_t len)
 {
 	const unsigned char	*oder;
 	struct crl		*crl;
-	const X509_ALGOR	*palg;
 	const X509_NAME		*name;
-	const ASN1_OBJECT	*cobj;
 	const ASN1_TIME		*at;
 	int			 count, nid, rc = 0;
 
@@ -200,13 +200,10 @@ crl_parse(const char *fn, const unsigned char *der, size_t len)
 	if (!x509_valid_name(fn, "issuer", name))
 		goto out;
 
-	X509_CRL_get0_signature(crl->x509_crl, NULL, &palg);
-	if (palg == NULL) {
-		warnx("%s: X509_CRL_get0_signature", fn);
+	if ((nid = X509_CRL_get_signature_nid(crl->x509_crl)) == NID_undef) {
+		warnx("%s: unknown signature type", fn);
 		goto out;
 	}
-	X509_ALGOR_get0(&cobj, NULL, NULL, palg);
-	nid = OBJ_obj2nid(cobj);
 	if (experimental && nid == NID_ecdsa_with_SHA256) {
 		if (verbose)
 			warnx("%s: P-256 support is experimental", fn);

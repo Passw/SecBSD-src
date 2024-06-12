@@ -1,4 +1,4 @@
-/*	$OpenBSD: cert.c,v 1.144 2024/06/08 13:33:49 tb Exp $ */
+/*	$OpenBSD: cert.c,v 1.147 2024/06/12 04:01:20 tb Exp $ */
 /*
  * Copyright (c) 2022 Theo Buehler <tb@openbsd.org>
  * Copyright (c) 2021 Job Snijders <job@openbsd.org>
@@ -753,18 +753,6 @@ cert_parse_ee_cert(const char *fn, int talid, X509 *x)
 		goto out;
 	}
 
-	if (X509_get_key_usage(x) != KU_DIGITAL_SIGNATURE) {
-		warnx("%s: RFC 6487 section 4.8.4: KU must be digitalSignature",
-		    fn);
-		goto out;
-	}
-
-	/* EKU may be allowed for some purposes in the future. */
-	if (X509_get_extended_key_usage(x) != UINT32_MAX) {
-		warnx("%s: RFC 6487 section 4.8.5: EKU not allowed", fn);
-		goto out;
-	}
-
 	index = X509_get_ext_by_NID(x, NID_sbgp_ipAddrBlock, -1);
 	if ((ext = X509_get_ext(x, index)) != NULL) {
 		if (!sbgp_ipaddrblk(fn, cert, ext))
@@ -809,9 +797,7 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 	int			 i, extsz;
 	X509			*x = NULL;
 	X509_EXTENSION		*ext = NULL;
-	const X509_ALGOR	*palg;
-	const ASN1_BIT_STRING	*piuid = NULL, *psuid = NULL;
-	const ASN1_OBJECT	*cobj;
+	const ASN1_BIT_STRING	*issuer_uid = NULL, *subject_uid = NULL;
 	ASN1_OBJECT		*obj;
 	EVP_PKEY		*pkey;
 	int			 nid, ip, as, sia, cp, crldp, aia, aki, ski,
@@ -844,13 +830,10 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 		goto out;
 	}
 
-	X509_get0_signature(NULL, &palg, x);
-	if (palg == NULL) {
-		warnx("%s: X509_get0_signature", fn);
+	if ((nid = X509_get_signature_nid(x)) == NID_undef) {
+		warnx("%s: unknown signature type", fn);
 		goto out;
 	}
-	X509_ALGOR_get0(&cobj, NULL, NULL, palg);
-	nid = OBJ_obj2nid(cobj);
 	if (experimental && nid == NID_ecdsa_with_SHA256) {
 		if (verbose)
 			warnx("%s: P-256 support is experimental", fn);
@@ -860,8 +843,8 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 		goto out;
 	}
 
-	X509_get0_uids(x, &piuid, &psuid);
-	if (piuid != NULL || psuid != NULL) {
+	X509_get0_uids(x, &issuer_uid, &subject_uid);
+	if (issuer_uid != NULL || subject_uid != NULL) {
 		warnx("%s: issuer or subject unique identifiers not allowed",
 		    fn);
 		goto out;
@@ -976,19 +959,6 @@ cert_parse_pre(const char *fn, const unsigned char *der, size_t len)
 		}
 		if (!valid_ca_pkey(fn, pkey))
 			goto out;
-
-		if (X509_get_key_usage(x) != (KU_KEY_CERT_SIGN | KU_CRL_SIGN)) {
-			warnx("%s: RFC 6487 section 4.8.4: key usage violation",
-			    fn);
-			goto out;
-		}
-
-		/* EKU may be allowed for some purposes in the future. */
-		if (X509_get_extended_key_usage(x) != UINT32_MAX) {
-			warnx("%s: RFC 6487 section 4.8.5: EKU not allowed",
-			    fn);
-			goto out;
-		}
 
 		if (cert->mft == NULL) {
 			warnx("%s: RFC 6487 section 4.8.8: missing SIA", fn);
