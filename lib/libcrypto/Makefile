@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.196 2024/06/24 06:43:22 tb Exp $
+# $OpenBSD: Makefile,v 1.199 2024/07/09 16:41:44 tb Exp $
 
 LIB=	crypto
 LIBREBUILD=y
@@ -19,9 +19,9 @@ CFLAGS+= -Wall -Wundef
 CFLAGS+= -Werror -Wshadow
 .endif
 CFLAGS+= -DLIBRESSL_INTERNAL
-.ifdef NAMESPACE
+
 CFLAGS+= -DLIBRESSL_NAMESPACE -DLIBRESSL_CRYPTO_NAMESPACE
-.endif
+
 CFLAGS+= -DHAVE_FUNOPEN
 
 CFLAGS+= -I${LCRYPTO_SRC}
@@ -391,6 +391,7 @@ SRCS+= idea.c
 # kdf/
 SRCS+= hkdf_evp.c
 SRCS+= kdf_err.c
+SRCS+= tls1_prf.c
 
 # lhash/
 SRCS+= lhash.c
@@ -745,18 +746,11 @@ includes: prereq
 	    echo $$j; \
 	    eval "$$j"; \
 	done;
-.ifdef NAMESPACE
 ${VERSION_SCRIPT}: ${SYMBOL_LIST} ${SYMBOL_NAMESPACE}
 	{ printf '{\n\tglobal:\n'; \
 	  sed '/^[._a-zA-Z]/s/$$/;/; s/^/		/' ${SYMBOL_NAMESPACE}; \
 	  sed '/^[._a-zA-Z]/s/$$/;/; s/^/		/' ${SYMBOL_LIST}; \
 	  printf '\n\tlocal:\n\t\t*;\n};\n'; } >$@.tmp && mv $@.tmp $@
-.else
-${VERSION_SCRIPT}: ${SYMBOL_LIST}
-	{ printf '{\n\tglobal:\n'; \
-	  sed '/^[._a-zA-Z]/s/$$/;/; s/^/		/' ${SYMBOL_LIST}; \
-	  printf '\n\tlocal:\n\t\t*;\n};\n'; } >$@.tmp && mv $@.tmp $@
-.endif
 
 # generated
 CFLAGS+= -I${.OBJDIR}
