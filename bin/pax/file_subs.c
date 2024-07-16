@@ -1,4 +1,4 @@
-/*	$OpenBSD: file_subs.c,v 1.56 2023/11/26 16:04:17 espie Exp $	*/
+/*	$OpenBSD: file_subs.c,v 1.57 2024/07/14 14:32:02 jca Exp $	*/
 /*	$NetBSD: file_subs.c,v 1.4 1995/03/21 09:07:18 cgd Exp $	*/
 
 /*-
