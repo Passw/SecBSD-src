@@ -1,4 +1,4 @@
-/* $OpenBSD: ssl_local.h,v 1.19 2024/07/16 14:38:04 jsing Exp $ */
+/* $OpenBSD: ssl_local.h,v 1.21 2024/07/20 04:04:23 jsing Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -438,12 +438,9 @@ struct ssl_session_st {
 	time_t time;
 	int references;
 
-	const SSL_CIPHER *cipher;
 	unsigned long cipher_id;	/* when ASN.1 loaded, this
 					 * needs to be used to load
 					 * the 'cipher' structure */
-
-	STACK_OF(SSL_CIPHER) *ciphers; /* shared ciphers? */
 
 	char *tlsext_hostname;
 
@@ -567,6 +564,9 @@ typedef struct ssl_handshake_st {
 
 	/* Cipher being negotiated in this handshake. */
 	const SSL_CIPHER *cipher;
+
+	/* Ciphers sent by the client. */
+	STACK_OF(SSL_CIPHER) *client_ciphers;
 
 	/* Extensions seen in this handshake. */
 	uint32_t extensions_seen;
@@ -1266,9 +1266,9 @@ int ssl_merge_cipherlists(STACK_OF(SSL_CIPHER) *cipherlist,
     STACK_OF(SSL_CIPHER) *cipherlist_tls13,
     STACK_OF(SSL_CIPHER) **out_cipherlist);
 void ssl_update_cache(SSL *s, int mode);
-int ssl_cipher_get_evp(const SSL_SESSION *s, const EVP_CIPHER **enc,
+int ssl_cipher_get_evp(SSL *s, const EVP_CIPHER **enc,
     const EVP_MD **md, int *mac_pkey_type, int *mac_secret_size);
-int ssl_cipher_get_evp_aead(const SSL_SESSION *s, const EVP_AEAD **aead);
+int ssl_cipher_get_evp_aead(SSL *s, const EVP_AEAD **aead);
 int ssl_get_handshake_evp_md(SSL *s, const EVP_MD **md);
 
 int ssl_verify_cert_chain(SSL *s, STACK_OF(X509) *sk);
