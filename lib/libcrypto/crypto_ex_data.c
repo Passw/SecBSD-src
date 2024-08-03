@@ -1,4 +1,4 @@
-/* $OpenBSD: crypto_ex_data.c,v 1.2 2024/08/02 14:02:33 tb Exp $ */
+/* $OpenBSD: crypto_ex_data.c,v 1.4 2024/08/03 07:45:26 tb Exp $ */
 /*
  * Copyright (c) 2023 Joel Sing <jsing@openbsd.org>
  *
@@ -19,7 +19,7 @@
 
 #include <openssl/crypto.h>
 
-#define CRYPTO_EX_DATA_MAX_INDEX 16
+#define CRYPTO_EX_DATA_MAX_INDEX 32
 
 struct crypto_ex_data {
 	int class_index;
@@ -104,7 +104,7 @@ CRYPTO_get_ex_new_index(int class_index, long argl, void *argp,
 		    sizeof(struct crypto_ex_data_class))) == NULL)
 			goto err;
 		if ((new_class->indexes = calloc(CRYPTO_EX_DATA_MAX_INDEX,
-                    sizeof(struct crypto_ex_data_index))) == NULL)
+                    sizeof(struct crypto_ex_data_index *))) == NULL)
 			goto err;
 		new_class->indexes_len = CRYPTO_EX_DATA_MAX_INDEX;
 		new_class->next_index = 1;
