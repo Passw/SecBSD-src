@@ -1,4 +1,4 @@
-/* $OpenBSD: acpi_x86.c,v 1.23 2024/08/04 11:05:18 kettenis Exp $ */
+/* $OpenBSD: acpi_x86.c,v 1.25 2024/08/08 07:02:38 kettenis Exp $ */
 /*
  * Copyright (c) 2005 Thorsten Lockert <tholo@sigmasoft.com>
  * Copyright (c) 2005 Jordan Hargrave <jordan@openbsd.org>
@@ -87,6 +87,7 @@ sleep_setstate(void *v)
 int
 gosleep(void *v)
 {
+	extern int cpu_wakeups;
 	struct acpi_softc *sc = v;
 	int ret;
 
@@ -107,8 +108,20 @@ gosleep(void *v)
 	if (sc->sc_pmc_suspend)
 		sc->sc_pmc_suspend(sc->sc_pmc_cookie);
 
-	ret = acpi_sleep_cpu(sc, sc->sc_state);
-	acpi_resume_cpu(sc, sc->sc_state);
+	cpu_wakeups = 0;
+	sc->sc_wakeup = 0;
+	sc->sc_wakeups = 0;
+	while (!sc->sc_wakeup) {
+		ret = acpi_sleep_cpu(sc, sc->sc_state);
+		acpi_resume_cpu(sc, sc->sc_state);
+		sc->sc_wakeups++;
+
+		if (sc->sc_ec && sc->sc_wakegpe == sc->sc_ec->sc_gpe) {
+			sc->sc_wakeup = 0;
+			acpiec_gpehandler(sc, sc->sc_wakegpe, sc->sc_ec);
+		} else
+			sc->sc_wakeup = 1;
+	}
 
 	if (sc->sc_pmc_resume)
 		sc->sc_pmc_resume(sc->sc_pmc_cookie);
@@ -151,10 +164,15 @@ checklids(struct acpi_softc *sc)
 int
 suspend_finish(void *v)
 {
+	extern int cpu_wakeups;
 	struct acpi_softc *sc = v;
 
+	printf("wakeups: %d %d\n", cpu_wakeups, sc->sc_wakeups);
 	printf("wakeup event: ");
 	switch (sc->sc_wakegpe) {
+	case 0:
+		printf("unknown\n");
+		break;
 	case -1:
 		printf("PWRBTN\n");
 		break;
@@ -165,6 +183,7 @@ suspend_finish(void *v)
 		printf("GPE 0x%x\n", sc->sc_wakegpe);
 		break;
 	}
+	sc->sc_wakegpe = 0;
 
 	acpi_record_event(sc, APM_NORMAL_RESUME);
 	acpi_indicator(sc, ACPI_SST_WORKING);

@@ -1,4 +1,4 @@
-/*	$OpenBSD: kern_exit.c,v 1.228 2024/07/29 09:49:49 claudio Exp $	*/
+/*	$OpenBSD: kern_exit.c,v 1.230 2024/08/06 18:41:20 claudio Exp $	*/
 /*	$NetBSD: kern_exit.c,v 1.39 1996/04/22 01:38:25 christos Exp $	*/
 
 /*

@@ -1,4 +1,4 @@
-/*	$OpenBSD: acpivar.h,v 1.132 2024/08/04 11:05:18 kettenis Exp $	*/
+/*	$OpenBSD: acpivar.h,v 1.134 2024/08/08 07:02:38 kettenis Exp $	*/
 /*
  * Copyright (c) 2005 Thorsten Lockert <tholo@sigmasoft.com>
  *
@@ -264,6 +264,8 @@ struct acpi_softc {
 	struct aml_node		*sc_sst;
 	struct aml_node		*sc_wak;
 	int			sc_state;
+	int			sc_wakeup;
+	int			sc_wakeups;
 	time_t			sc_resume_time;
 	struct acpiec_softc	*sc_ec;		/* XXX assume single EC */
 
@@ -341,6 +343,7 @@ int	acpi_set_gpehandler(struct acpi_softc *, int,
 
 void	acpiec_read(struct acpiec_softc *, uint8_t, int, uint8_t *);
 void	acpiec_write(struct acpiec_softc *, uint8_t, int, uint8_t *);
+int	acpiec_gpehandler(struct acpi_softc *, int, void *);
 
 #if NACPIPWRRES > 0
 int	acpipwrres_ref_incr(struct acpipwrres_softc *, struct aml_node *);
