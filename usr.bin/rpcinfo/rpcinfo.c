@@ -1,4 +1,4 @@
-/*	$OpenBSD: rpcinfo.c,v 1.16 2023/03/08 04:43:12 guenther Exp $	*/
+/*	$OpenBSD: rpcinfo.c,v 1.17 2024/08/11 11:56:08 florian Exp $	*/
 
 /*
  * Copyright (c) 2010, Oracle America, Inc.
