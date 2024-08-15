@@ -1,4 +1,4 @@
-/*	$OpenBSD: radiusd.c,v 1.52 2024/07/22 09:27:16 yasuoka Exp $	*/
+/*	$OpenBSD: radiusd.c,v 1.55 2024/08/14 07:06:50 yasuoka Exp $	*/
 
 /*
  * Copyright (c) 2013, 2023 Internet Initiative Japan Inc.
@@ -518,10 +518,10 @@ radiusd_listen_handle_packet(struct radiusd_listen *listn,
 			break;	/* found it */
 	}
 	if (q != NULL) {
-		log_info("Received %s(code=%d) from %s id=%d: duplicate "
-		    "request by q=%u", radius_code_string(req_code), req_code,
+		log_info("Received %s(code=%d) from %s id=%d: duplicated "
+		    "with q=%u", radius_code_string(req_code), req_code,
 		    peerstr, req_id, q->id);
-		/* XXX RFC 5080 suggests to answer the cached result */
+		q = NULL;
 		goto on_error;
 	}
 
@@ -708,9 +708,11 @@ radius_query_access_response(struct radius_query *q)
 				goto on_error;
 			q0 = q;
 			q = q->prev;
+			/* dissolve the relation */
+			q0->prev = NULL;
+			q->hasnext = false;
 			radiusd_module_next_response(q->authen->auth->module,
 			    q, q_last->res);
-			q0->prev = NULL;
 			radiusd_access_request_aborted(q0);
 			return;
 		}
@@ -864,6 +866,7 @@ radiusd_access_request_next(struct radius_query *q, RADIUS_PACKET *pkt)
 	radius_get_authenticator(pkt, q_next->req_auth);
 	q_next->authen = authen;
 	q_next->prev = q;
+	q->hasnext = true;
 	strlcpy(q_next->username, username, sizeof(q_next->username));
 	TAILQ_INSERT_TAIL(&q->radiusd->query, q_next, next);
 
@@ -878,8 +881,12 @@ radiusd_access_request_next(struct radius_query *q, RADIUS_PACKET *pkt)
 void
 radiusd_access_request_aborted(struct radius_query *q)
 {
-	if (q->prev != NULL)
+	if (q->hasnext)	/* don't abort if filtering */
+		return;
+	if (q->prev != NULL) {
+		q->prev->hasnext = false;
 		radiusd_access_request_aborted(q->prev);
+	}
 	if (q->req != NULL)
 		radius_delete_packet(q->req);
 	if (q->res != NULL)
@@ -1398,6 +1405,7 @@ radiusd_module_imsg_read(struct radiusd_module *module)
 		if (n == 0)
 			return (0);
 		radiusd_module_imsg(module, &imsg);
+		imsg_free(&imsg);
 	}
 
 	return (0);
