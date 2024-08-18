@@ -1,4 +1,4 @@
-/*	$OpenBSD: radiusd_ipcp.c,v 1.9 2024/08/14 04:47:08 yasuoka Exp $	*/
+/*	$OpenBSD: radiusd_ipcp.c,v 1.12 2024/08/16 09:54:21 yasuoka Exp $	*/
 
 /*
  * Copyright (c) 2024 Internet Initiative Japan Inc.
@@ -191,6 +191,7 @@ static void	 ipcp_put_db(struct module_ipcp *, struct assigned_ipv4 *);
 static void	 ipcp_del_db(struct module_ipcp *, struct assigned_ipv4 *);
 static void	 ipcp_db_dump_fill_record(struct radiusd_ipcp_db_dump *, int,
 		    struct assigned_ipv4 *);
+static void	 ipcp_update_time(struct module_ipcp *);
 static void	 ipcp_on_timer(int, short, void *);
 static void	 ipcp_schedule_timer(struct module_ipcp *);
 static void	 ipcp_dae_send_disconnect_request(struct assigned_ipv4 *);
@@ -252,6 +253,7 @@ main(int argc, char *argv[])
 	ipcp_fini(&module_ipcp);
 
 	event_loop(0);
+	event_base_free(NULL);
 
 	exit(EXIT_SUCCESS);
 }
@@ -267,6 +269,7 @@ ipcp_init(struct module_ipcp *self)
 	TAILQ_INIT(&self->daes);
 	self->seq = 1;
 	self->no_session_timeout = true;
+	ipcp_update_time(self);
 }
 
 void
@@ -277,6 +280,7 @@ ipcp_start(void *ctx)
 	struct module_ipcp_dae	*dae;
 	int			 sock;
 
+	ipcp_update_time(self);
 	if (self->start_wait == 0)
 		self->start_wait = RADIUSD_IPCP_START_WAIT;
 
@@ -322,6 +326,7 @@ ipcp_stop(void *ctx)
 	struct module_ipcp		*self = ctx;
 	struct module_ipcp_dae		*dae;
 
+	ipcp_update_time(self);
 	/* stop the sockets for DAE */
 	TAILQ_FOREACH(dae, &self->daes, next) {
 		if (dae->sock >= 0) {
@@ -341,11 +346,14 @@ ipcp_fini(struct module_ipcp *self)
 	struct user			*user, *usert;
 	struct module_ipcp_ctrlconn	*ctrl, *ctrlt;
 	struct module_ipcp_dae		*dae, *daet;
+	struct ipcp_address		*addr, *addrt;
 
 	RB_FOREACH_SAFE(assign, assigned_ipv4_tree, &self->ipv4s, assignt)
 		ipcp_ipv4_release(self, assign);
-	RB_FOREACH_SAFE(user, user_tree, &self->users, usert)
+	RB_FOREACH_SAFE(user, user_tree, &self->users, usert) {
+		RB_REMOVE(user_tree, &self->users, user);
 		free(user);
+	}
 	TAILQ_FOREACH_SAFE(ctrl, &self->ctrls, next, ctrlt)
 		free(ctrl);
 	TAILQ_FOREACH_SAFE(dae, &self->daes, next, daet) {
@@ -355,6 +363,8 @@ ipcp_fini(struct module_ipcp *self)
 		}
 		free(dae);
 	}
+	TAILQ_FOREACH_SAFE(addr, &self->addrs, next, addrt)
+		free(addr);
 	if (evtimer_pending(&self->ev_timer, NULL))
 		evtimer_del(&self->ev_timer);
 	module_destroy(self->base);
@@ -556,6 +566,7 @@ ipcp_dispatch_control(void *ctx, struct imsg *imsg)
 	struct radiusctl_client		*client;
 	const char			*cause;
 
+	ipcp_update_time(self);
 	datalen = imsg->hdr.len - IMSG_HEADER_SIZE;
 	switch (imsg->hdr.type) {
 	case IMSG_RADIUSD_MODULE_CTRL_UNBIND:
@@ -711,7 +722,7 @@ ipcp_resdeco(void *ctx, u_int q_id, const u_char *req, size_t reqlen,
 	struct user		*user = NULL;
 	struct assigned_ipv4	*assigned = NULL, *assign;
 
-	clock_gettime(CLOCK_BOOTTIME, &self->uptime);
+	ipcp_update_time(self);
 
 	if ((radres = radius_convert_packet(res, reslen)) == NULL) {
 		log_warn("%s: radius_convert_packet() failed", __func__);
@@ -1002,7 +1013,7 @@ ipcp_accounting_request(void *ctx, u_int q_id, const u_char *pkt,
 				 stat;
 	struct module_ipcp_dae	*dae;
 
-	clock_gettime(CLOCK_BOOTTIME, &self->uptime);
+	ipcp_update_time(self);
 
 	if ((radpkt = radius_convert_packet(pkt, pktlen)) == NULL) {
 		log_warn("%s: radius_convert_packet() failed", __func__);
@@ -1467,11 +1478,17 @@ ipcp_db_dump_fill_record(struct radiusd_ipcp_db_dump *dump, int idx,
  * Timer
  ***********************************************************************/
 void
+ipcp_update_time(struct module_ipcp *self)
+{
+	clock_gettime(CLOCK_BOOTTIME, &self->uptime);
+}
+
+void
 ipcp_on_timer(int fd, short ev, void *ctx)
 {
 	struct module_ipcp *self = ctx;
 
-	clock_gettime(CLOCK_BOOTTIME, &self->uptime);
+	ipcp_update_time(self);
 	ipcp_schedule_timer(self);
 }
 
@@ -1573,11 +1590,15 @@ ipcp_dae_request_on_timeout(int fd, short ev, void *ctx)
 {
 	struct assigned_ipv4	*assign = ctx;
 	char			 buf[80];
+	struct radiusctl_client	*client;
 
 	if (assign->dae_ntry >= (int)nitems(dae_request_timeouts)) {
 		log_warnx("No answer for Disconnect-Request seq=%u from %s",
 		    assign->seq, print_addr((struct sockaddr *)
 		    &assign->dae->nas_addr, buf, sizeof(buf)));
+		TAILQ_FOREACH(client, &assign->dae_clients, entry)
+			module_imsg_compose(assign->dae->ipcp->base, IMSG_NG,
+			    client->peerid, 0, -1, NULL, 0);
 		ipcp_dae_reset_request(assign);
 	} else
 		ipcp_dae_send_disconnect_request(assign);
@@ -1595,6 +1616,8 @@ ipcp_dae_on_event(int fd, short ev, void *ctx)
 	char			 buf[80], causestr[80];
 	const char		*cause = "";
 	struct radiusctl_client	*client;
+
+	ipcp_update_time(self);
 
 	if ((ev & EV_READ) == 0)
 		return;
@@ -1856,7 +1879,7 @@ radius_error_cause_string(unsigned val)
 	    { RADIUS_ERROR_CAUSE_UNSUPPORTED_EXTENSION,
 	      "Unsupported Extension" },
 	    { RADIUS_ERROR_CAUSE_INVALID_ATTRIBUTE_VALUE,
-	      "Invalid Attribute Valu" },
+	      "Invalid Attribute Value" },
 	    { RADIUS_ERROR_CAUSE_ADMINISTRATIVELY_PROHIBITED,
 	      "Administratively Prohibited" },
 	    { RADIUS_ERROR_CAUSE_REQUEST_NOT_ROUTABLE,
@@ -1930,9 +1953,9 @@ parse_addr(const char *str0, int af, struct sockaddr *sa, socklen_t salen)
 		free(str);
 		return (-1);
 	}
+	free(str);
 	if (salen < ai->ai_addrlen) {
 		freeaddrinfo(ai);
-		free(str);
 		return (-1);
 	}
 	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
