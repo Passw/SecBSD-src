@@ -1,4 +1,4 @@
-/*	$OpenBSD: qwx.c,v 1.64 2024/08/17 08:12:46 stsp Exp $	*/
+/*	$OpenBSD: qwx.c,v 1.66 2024/08/19 08:22:30 jsg Exp $	*/
 
 /*
  * Copyright 2023 Stefan Sperling <stsp@openbsd.org>
@@ -158,6 +158,7 @@ int qwx_wmi_vdev_install_key(struct qwx_softc *,
 int qwx_dp_peer_rx_pn_replay_config(struct qwx_softc *, struct qwx_vif *,
     struct ieee80211_node *, struct ieee80211_key *, int);
 void qwx_setkey_clear(struct qwx_softc *);
+void qwx_vif_free_all(struct qwx_softc *);
 
 int qwx_scan(struct qwx_softc *);
 void qwx_scan_abort(struct qwx_softc *);
@@ -172,7 +173,8 @@ qwx_node_alloc(struct ieee80211com *ic)
 	struct qwx_node *nq;
 
 	nq = malloc(sizeof(struct qwx_node), M_DEVBUF, M_NOWAIT | M_ZERO);
-	nq->peer.peer_id = HAL_INVALID_PEERID;
+	if (nq != NULL)
+		nq->peer.peer_id = HAL_INVALID_PEERID;
 	return (struct ieee80211_node *)nq;
 }
 
@@ -347,6 +349,8 @@ qwx_stop(struct ifnet *ifp)
 
 	/* power off hardware */
 	qwx_core_deinit(sc);
+
+	qwx_vif_free_all(sc);
 
 	splx(s);
 }
@@ -22813,6 +22817,18 @@ qwx_vif_free(struct qwx_softc *sc, struct qwx_vif *arvif)
 	}
 
 	free(arvif, M_DEVBUF, sizeof(*arvif));
+}
+
+void
+qwx_vif_free_all(struct qwx_softc *sc)
+{
+	struct qwx_vif *arvif;
+
+	while (!TAILQ_EMPTY(&sc->vif_list)) {
+		arvif = TAILQ_FIRST(&sc->vif_list);
+		TAILQ_REMOVE(&sc->vif_list, arvif, entry);
+		qwx_vif_free(sc, arvif);
+	}
 }
 
 struct qwx_vif *

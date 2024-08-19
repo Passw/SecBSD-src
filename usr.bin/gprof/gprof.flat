@@ -18,15 +18,15 @@ calls      the number of times this function was invoked, if
 
  self      the average number of milliseconds spent in this
 ms/call    function per call, if this function is profiled,
-	   else blank.
+           else blank.
 
  total     the average number of milliseconds spent in this
 ms/call    function and its descendents per call, if this
-	   function is profiled, else blank.
+           function is profiled, else blank.
 
 name       the name of the function.  This is the minor sort
            for this listing. The index shows the location of
-	   the function in the gprof listing. If the index is
-	   in parenthesis it shows where it would appear in
-	   the gprof listing if it were to be printed.
+           the function in the gprof listing. If the index is
+           in parenthesis it shows where it would appear in
+           the gprof listing if it were to be printed.
 
