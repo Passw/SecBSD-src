@@ -1,4 +1,4 @@
-# $SecBSD: dot.xsession,v 0.4 2024/01/07 19:32:27 purplerain Exp $
+# $SecBSD: dot.xsession,v 0.5 2024/08/21 05:14:40 purplerain Exp $
 #
 # This file is for testing purposes only.
 
@@ -17,8 +17,8 @@ fi
 #manual: https://man.openbsd.org/cwm.1
 #uncomment lines below
 #xterm -geometry 320x1+0+0 -fa "Spleen:size=16" -bg "black" \
-#      -fg grey -fs 12 -name termbar -class termbar \
-#      -T termbar -e ~/.termbar &
+#      -fg grey -fs 12 -name bar -class bar \
+#      -T bar -e ~/.bar &
 #
 #cwm
 #rcctl enable xenodm
