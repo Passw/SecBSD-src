@@ -1,4 +1,4 @@
-/*	$OpenBSD: in_proto.c,v 1.110 2024/08/20 07:47:25 mvs Exp $	*/
+/*	$OpenBSD: in_proto.c,v 1.112 2024/08/21 12:53:36 mvs Exp $	*/
 /*	$NetBSD: in_proto.c,v 1.14 1996/02/18 18:58:32 christos Exp $	*/
 
 /*
