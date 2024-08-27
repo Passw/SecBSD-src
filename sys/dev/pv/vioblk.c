@@ -1,4 +1,4 @@
-/*	$OpenBSD: vioblk.c,v 1.41 2024/08/01 11:13:19 sf Exp $	*/
+/*	$OpenBSD: vioblk.c,v 1.43 2024/08/27 18:44:12 sf Exp $	*/
 
 /*
  * Copyright (c) 2012 Stefan Fritsch.
@@ -156,8 +156,8 @@ const struct scsi_adapter vioblk_switch = {
 int
 vioblk_match(struct device *parent, void *match, void *aux)
 {
-	struct virtio_softc *va = aux;
-	if (va->sc_childdevid == PCI_PRODUCT_VIRTIO_BLOCK)
+	struct virtio_attach_args *va = aux;
+	if (va->va_devid == PCI_PRODUCT_VIRTIO_BLOCK)
 		return 1;
 	return 0;
 }
@@ -208,8 +208,8 @@ vioblk_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_capacity = virtio_read_device_config_8(vsc,
 	    VIRTIO_BLK_CONFIG_CAPACITY);
 
-	if (virtio_alloc_vq(vsc, &sc->sc_vq[0], 0, MAXPHYS, ALLOC_SEGS,
-	    "I/O request") != 0) {
+	if (virtio_alloc_vq(vsc, &sc->sc_vq[0], 0, ALLOC_SEGS, "I/O request")
+	    != 0) {
 		printf("\nCan't alloc virtqueue\n");
 		goto err;
 	}
