@@ -1,4 +1,4 @@
-/* $OpenBSD: x509_conf.c,v 1.22 2024/08/28 08:59:03 tb Exp $ */
+/* $OpenBSD: x509_conf.c,v 1.27 2024/08/31 10:04:50 tb Exp $ */
 /* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
  * project 1999.
  */
@@ -66,6 +66,7 @@
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
 
+#include "conf_local.h"
 #include "x509_local.h"
 
 static int v3_check_critical(const char **value);
@@ -403,15 +404,6 @@ X509V3_EXT_REQ_add_nconf(CONF *conf, X509V3_CTX *ctx, const char *section,
 }
 LCRYPTO_ALIAS(X509V3_EXT_REQ_add_nconf);
 
-/* XXX - remove in next bump. */
-char *
-X509V3_get_string(X509V3_CTX *ctx, const char *name, const char *section)
-{
-	X509V3error(ERR_R_DISABLED);
-	return NULL;
-}
-LCRYPTO_ALIAS(X509V3_get_string);
-
 STACK_OF(CONF_VALUE) *
 X509V3_get_section(X509V3_CTX *ctx, const char *section)
 {
@@ -421,22 +413,12 @@ X509V3_get_section(X509V3_CTX *ctx, const char *section)
 	}
 	return NCONF_get_section(ctx->db, section);
 }
-LCRYPTO_ALIAS(X509V3_get_section);
-
-/* XXX - remove in next bump. */
-void
-X509V3_string_free(X509V3_CTX *ctx, char *str)
-{
-	return;
-}
-LCRYPTO_ALIAS(X509V3_string_free);
 
 void
 X509V3_section_free(X509V3_CTX *ctx, STACK_OF(CONF_VALUE) *section)
 {
 	return;
 }
-LCRYPTO_ALIAS(X509V3_section_free);
 
 void
 X509V3_set_nconf(X509V3_CTX *ctx, CONF *conf)
@@ -478,40 +460,3 @@ X509V3_EXT_conf_nid(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx, int nid,
 	return X509V3_EXT_nconf_nid(&ctmp, ctx, nid, value);
 }
 LCRYPTO_ALIAS(X509V3_EXT_conf_nid);
-
-/*
- * XXX - remove everything below in the next bump.
- */
-
-void
-X509V3_set_conf_lhash(X509V3_CTX *ctx, LHASH_OF(CONF_VALUE) *lhash)
-{
-}
-LCRYPTO_ALIAS(X509V3_set_conf_lhash);
-
-int
-X509V3_EXT_add_conf(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx,
-    const char *section, X509 *cert)
-{
-	X509V3error(ERR_R_DISABLED);
-	return 0;
-}
-LCRYPTO_ALIAS(X509V3_EXT_add_conf);
-
-int
-X509V3_EXT_CRL_add_conf(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx,
-    const char *section, X509_CRL *crl)
-{
-	X509V3error(ERR_R_DISABLED);
-	return 0;
-}
-LCRYPTO_ALIAS(X509V3_EXT_CRL_add_conf);
-
-int
-X509V3_EXT_REQ_add_conf(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx,
-    const char *section, X509_REQ *req)
-{
-	X509V3error(ERR_R_DISABLED);
-	return 0;
-}
-LCRYPTO_ALIAS(X509V3_EXT_REQ_add_conf);

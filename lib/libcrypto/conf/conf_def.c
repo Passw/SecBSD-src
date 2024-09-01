@@ -1,4 +1,4 @@
-/* $OpenBSD: conf_def.c,v 1.37 2024/08/28 15:48:33 tb Exp $ */
+/* $OpenBSD: conf_def.c,v 1.44 2024/08/31 09:46:17 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -63,12 +63,12 @@
 
 #include <openssl/buffer.h>
 #include <openssl/conf.h>
-#include <openssl/conf_api.h>
 #include <openssl/err.h>
 #include <openssl/lhash.h>
 #include <openssl/stack.h>
 
 #include "conf_def.h"
+#include "conf_local.h"
 
 #define MAX_CONF_VALUE_LENGTH 65536
 
@@ -81,7 +81,7 @@ static char *scan_dquote(CONF *conf, char *p);
 #define scan_esc(conf,p)	(((IS_EOF((conf),(p)[1]))?((p)+1):((p)+2)))
 
 static CONF *
-def_create(CONF_METHOD *meth)
+def_create(const CONF_METHOD *meth)
 {
 	CONF *ret;
 
@@ -101,20 +101,6 @@ def_init_default(CONF *conf)
 		return 0;
 
 	conf->meth = NCONF_default();
-	conf->meth_data = CONF_type_default;
-	conf->data = NULL;
-
-	return 1;
-}
-
-static int
-def_init_WIN32(CONF *conf)
-{
-	if (conf == NULL)
-		return 0;
-
-	conf->meth = NCONF_WIN32();
-	conf->meth_data = (void *)CONF_type_win32;
 	conf->data = NULL;
 
 	return 1;
@@ -333,7 +319,10 @@ err:
 		*line = eline;
 	ERR_asprintf_error_data("line %ld", eline);
 	if ((h != conf->data) && (conf->data != NULL)) {
-		CONF_free(conf->data);
+		CONF ctmp;
+
+		CONF_set_nconf(&ctmp, conf->data);
+		ctmp.meth->destroy_data(&ctmp);
 		conf->data = NULL;
 	}
 	if (v != NULL) {
@@ -648,7 +637,7 @@ def_to_int(const CONF *conf, char c)
 	return c - '0';
 }
 
-static CONF_METHOD default_method = {
+static const CONF_METHOD default_method = {
 	.name = "OpenSSL default",
 	.create = def_create,
 	.init = def_init_default,
@@ -661,29 +650,8 @@ static CONF_METHOD default_method = {
 	.load = def_load,
 };
 
-static CONF_METHOD WIN32_method = {
-	"WIN32",
-	def_create,
-	def_init_WIN32,
-	def_destroy,
-	def_destroy_data,
-	def_load_bio,
-	def_dump,
-	def_is_number,
-	def_to_int,
-	def_load,
-};
-
-CONF_METHOD *
+const CONF_METHOD *
 NCONF_default(void)
 {
 	return &default_method;
 }
-LCRYPTO_ALIAS(NCONF_default);
-
-CONF_METHOD *
-NCONF_WIN32(void)
-{
-	return &WIN32_method;
-}
-LCRYPTO_ALIAS(NCONF_WIN32);

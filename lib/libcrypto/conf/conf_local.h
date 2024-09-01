@@ -1,4 +1,4 @@
-/* $OpenBSD: ecb_enc.c,v 1.20 2024/03/29 01:47:29 joshua Exp $ */
+/* $OpenBSD: conf_local.h,v 1.7 2024/08/31 09:54:31 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -56,28 +56,58 @@
  * [including the GNU Public Licence.]
  */
 
-#include "des_local.h"
-#include <openssl/opensslv.h>
-#include <openssl/bio.h>
+#ifndef HEADER_CONF_LOCAL_H
+#define HEADER_CONF_LOCAL_H
 
-void
-DES_ecb_encrypt(const_DES_cblock *input, DES_cblock *output,
-    DES_key_schedule *ks, int enc)
-{
-	DES_LONG l;
-	DES_LONG ll[2];
-	const unsigned char *in = &(*input)[0];
-	unsigned char *out = &(*output)[0];
+__BEGIN_HIDDEN_DECLS
 
-	c2l(in, l);
-	ll[0] = l;
-	c2l(in, l);
-	ll[1] = l;
-	DES_encrypt1(ll, ks, enc);
-	l = ll[0];
-	l2c(l, out);
-	l = ll[1];
-	l2c(l, out);
-	l = ll[0] = ll[1] = 0;
-}
-LCRYPTO_ALIAS(DES_ecb_encrypt);
+const CONF_METHOD *NCONF_default(void);
+
+struct conf_method_st {
+	const char *name;
+	CONF *(*create)(const CONF_METHOD *meth);
+	int (*init)(CONF *conf);
+	int (*destroy)(CONF *conf);
+	int (*destroy_data)(CONF *conf);
+	int (*load_bio)(CONF *conf, BIO *bp, long *eline);
+	int (*dump)(const CONF *conf, BIO *bp);
+	int (*is_number)(const CONF *conf, char c);
+	int (*to_int)(const CONF *conf, char c);
+	int (*load)(CONF *conf, const char *name, long *eline);
+};
+
+int CONF_module_add(const char *name, conf_init_func *ifunc,
+    conf_finish_func *ffunc);
+
+const char *CONF_imodule_get_name(const CONF_IMODULE *md);
+const char *CONF_imodule_get_value(const CONF_IMODULE *md);
+void *CONF_imodule_get_usr_data(const CONF_IMODULE *md);
+void CONF_imodule_set_usr_data(CONF_IMODULE *md, void *usr_data);
+CONF_MODULE *CONF_imodule_get_module(const CONF_IMODULE *md);
+unsigned long CONF_imodule_get_flags(const CONF_IMODULE *md);
+void CONF_imodule_set_flags(CONF_IMODULE *md, unsigned long flags);
+void *CONF_module_get_usr_data(CONF_MODULE *pmod);
+void CONF_module_set_usr_data(CONF_MODULE *pmod, void *usr_data);
+
+int CONF_parse_list(const char *list, int sep, int nospc,
+    int (*list_cb)(const char *elem, int len, void *usr), void *arg);
+
+void CONF_set_nconf(CONF *conf, LHASH_OF(CONF_VALUE) *hash);
+
+CONF_VALUE *_CONF_new_section(CONF *conf, const char *section);
+CONF_VALUE *_CONF_get_section(const CONF *conf, const char *section);
+STACK_OF(CONF_VALUE) *_CONF_get_section_values(const CONF *conf,
+    const char *section);
+
+int _CONF_add_string(CONF *conf, CONF_VALUE *section, CONF_VALUE *value);
+char *_CONF_get_string(const CONF *conf, const char *section,
+    const char *name);
+
+int _CONF_new_data(CONF *conf);
+void _CONF_free_data(CONF *conf);
+
+void OPENSSL_load_builtin_modules(void);
+
+__END_HIDDEN_DECLS
+
+#endif /* HEADER_CONF_LOCAL_H */
