@@ -1,4 +1,4 @@
-/*	$OpenBSD: ccp.c,v 1.6 2024/08/13 20:48:00 bluhm Exp $ */
+/*	$OpenBSD: ccp.c,v 1.9 2024/09/01 19:25:06 bluhm Exp $ */
 
 /*
  * Copyright (c) 2018 David Gwynne <dlg@openbsd.org>
@@ -24,6 +24,7 @@
 #include <sys/malloc.h>
 #include <sys/kernel.h>
 #include <sys/timeout.h>
+#include <sys/pledge.h>
 
 #include <machine/bus.h>
 
@@ -129,7 +130,7 @@ psp_attach(struct ccp_softc *sc)
 
 	/*
          * create and map Trusted Memory Region (TMR); size 1 Mbyte,
-         * needs to be aligend to 1 Mbyte.
+         * needs to be aligned to 1 Mbyte.
 	 */
 	sc->sc_tmr_size = size = PSP_TMR_SIZE;
 	if (bus_dmamap_create(sc->sc_dmat, size, 1, size, 0,
@@ -564,6 +565,29 @@ psp_deactivate(struct psp_deactivate *udeact)
 }
 
 int
+psp_guest_shutdown(struct psp_guest_shutdown *ugshutdown)
+{
+	struct psp_deactivate	deact;
+	struct psp_decommission	decom;
+	int			ret;
+
+	bzero(&deact, sizeof(deact));
+	deact.handle = ugshutdown->handle;
+	if ((ret = psp_deactivate(&deact)) != 0)
+		return (ret);
+
+	if ((ret = psp_df_flush()) != 0)
+		return (ret);
+
+	bzero(&decom, sizeof(decom));
+	decom.handle = ugshutdown->handle;
+	if ((ret = psp_decommission(&decom)) != 0)
+		return (ret);
+
+	return (0);
+}
+
+int
 psp_snp_get_pstatus(struct psp_snp_platform_status *ustatus)
 {
 	struct ccp_softc	*sc = ccp_softc;
@@ -641,17 +665,39 @@ pspioctl(dev_t dev, u_long cmd, caddr_t data, int flag, struct proc *p)
 	case PSP_IOC_DEACTIVATE:
 		ret = psp_deactivate((struct psp_deactivate *)data);
 		break;
+	case PSP_IOC_GUEST_SHUTDOWN:
+		ret = psp_guest_shutdown((struct psp_guest_shutdown *)data);
+		break;
 	case PSP_IOC_SNP_GET_PSTATUS:
 		ret =
 		    psp_snp_get_pstatus((struct psp_snp_platform_status *)data);
 		break;
 	default:
-		printf("%s: unkown ioctl code 0x%lx\n", __func__, cmd);
 		ret = ENOTTY;
+		break;
 	}
 
 	rw_exit_write(&ccp_softc->sc_lock);
 
 	return (ret);
+}
+
+int
+pledge_ioctl_psp(struct proc *p, long com)
+{
+	switch (com) {
+	case PSP_IOC_GET_PSTATUS:
+	case PSP_IOC_DF_FLUSH:
+	case PSP_IOC_GET_GSTATUS:
+	case PSP_IOC_LAUNCH_START:
+	case PSP_IOC_LAUNCH_UPDATE_DATA:
+	case PSP_IOC_LAUNCH_MEASURE:
+	case PSP_IOC_LAUNCH_FINISH:
+	case PSP_IOC_ACTIVATE:
+	case PSP_IOC_GUEST_SHUTDOWN:
+		return (0);
+	default:
+		return (pledge_fail(p, EPERM, PLEDGE_VMM));
+	}
 }
 #endif	/* __amd64__ */

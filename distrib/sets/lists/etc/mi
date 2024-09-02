@@ -34,8 +34,6 @@
 ./etc/skel/.login
 ./etc/skel/.mailrc
 ./etc/skel/.profile
-./etc/skel/.version
-./etc/skel/.xsession
 ./etc/skel/.ssh/authorized_keys
 ./etc/spwd.db
 ./etc/ssh/ssh_config

@@ -134,10 +134,6 @@ distribution-etc-root-var: distrib-dirs
 		    ${DESTDIR}/etc/skel/.mailrc; \
 		${INSTALL} -c -o root -g wheel -m 644 dot.profile \
 		    ${DESTDIR}/etc/skel/.profile; \
-		${INSTALL} -c -o root -g wheel -m 644 dot.version \
-		    ${DESTDIR}/etc/skel/.version; \
-		${INSTALL} -c -o root -g wheel -m 644 dot.xsession \
-		    ${DESTDIR}/etc/skel/.xsession; \
 		${INSTALL} -c -o root -g wheel -m 644 dot.Xdefaults \
 		    ${DESTDIR}/etc/skel/.Xdefaults; \
 		${INSTALL} -c -o root -g wheel -m 644 dot.cvsrc \
