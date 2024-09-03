@@ -1,4 +1,4 @@
-/*	$OpenBSD: repo.c,v 1.64 2024/08/29 09:54:13 job Exp $ */
+/*	$OpenBSD: repo.c,v 1.66 2024/09/03 15:37:03 tb Exp $ */
 /*
  * Copyright (c) 2021 Claudio Jeker <claudio@openbsd.org>
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
@@ -656,7 +656,7 @@ rrdp_session_parse(struct rrdprepo *rr)
 {
 	FILE *f;
 	struct rrdp_session *state;
-	int fd, ln = 0, deltacnt = 0;
+	int fd, i, ln = 0, deltacnt = 0;
 	const char *errstr;
 	char *line = NULL, *file;
 	size_t len = 0;
@@ -673,6 +673,7 @@ rrdp_session_parse(struct rrdprepo *rr)
 		if (errno != ENOENT)
 			warn("%s: open state file", rr->basedir);
 		free(file);
+		rr->last_reset = now;
 		return state;
 	}
 	free(file);
@@ -690,13 +691,19 @@ rrdp_session_parse(struct rrdprepo *rr)
 			break;
 		case 1:
 			state->serial = strtonum(line, 1, LLONG_MAX, &errstr);
-			if (errstr)
-				goto fail;
+			if (errstr) {
+				warnx("%s: state file: serial is %s: %s",
+				   rr->basedir, errstr, line);
+				goto reset;
+			}
 			break;
 		case 2:
 			rr->last_reset = strtonum(line, 1, LLONG_MAX, &errstr);
-			if (errstr)
-				goto fail;
+			if (errstr) {
+				warnx("%s: state file: last_reset is %s: %s",
+				    rr->basedir, errstr, line);
+				goto reset;
+			}
 			break;
 		case 3:
 			if (strcmp(line, "-") == 0)
@@ -705,13 +712,21 @@ rrdp_session_parse(struct rrdprepo *rr)
 				err(1, NULL);
 			break;
 		default:
-			if (deltacnt >= MAX_RRDP_DELTAS)
-				goto fail;
+			if (deltacnt >= MAX_RRDP_DELTAS) {
+				warnx("%s: state file: too many deltas: %d",
+				    rr->basedir, deltacnt);
+				goto reset;
+			}
 			if ((state->deltas[deltacnt++] = strdup(line)) == NULL)
 				err(1, NULL);
 			break;
 		}
 		ln++;
+	}
+
+	if (ferror(f)) {
+		warn("%s: error reading state file", rr->basedir);
+		goto reset;
 	}
 
 	/* check if it's time for reinitialization */
@@ -725,20 +740,17 @@ rrdp_session_parse(struct rrdprepo *rr)
 		goto reset;
 	}
 
-	if (ferror(f))
-		goto fail;
 	fclose(f);
 	free(line);
 	return state;
-
- fail:
-	warnx("%s: corrupted state file, reinitializing", rr->basedir);
 
  reset:
 	fclose(f);
 	free(line);
 	free(state->session_id);
 	free(state->last_mod);
+	for (i = 0; i < MAX_RRDP_DELTAS; i++)
+		free(state->deltas[i]);
 	memset(state, 0, sizeof(*state));
 	rr->last_reset = now;
 	return state;
