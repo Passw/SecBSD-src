@@ -449,6 +449,28 @@ fptr_whitelist_mod_deinit(void (*fptr)(struct module_env* env, int id))
 }
 
 int
+fptr_whitelist_mod_startup(int (*fptr)(struct module_env* env, int id))
+{
+#ifdef USE_IPSET
+	if(fptr == &ipset_startup) return 1;
+#else
+	(void)fptr;
+#endif
+	return 0;
+}
+
+int
+fptr_whitelist_mod_destartup(void (*fptr)(struct module_env* env, int id))
+{
+#ifdef USE_IPSET
+	if(fptr == &ipset_destartup) return 1;
+#else
+	(void)fptr;
+#endif
+	return 0;
+}
+
+int
 fptr_whitelist_mod_operate(void (*fptr)(struct module_qstate* qstate,
         enum module_ev event, int id, struct outbound_entry* outbound))
 {
