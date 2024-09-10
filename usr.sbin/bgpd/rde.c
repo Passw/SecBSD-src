@@ -1,4 +1,4 @@
-/*	$OpenBSD: rde.c,v 1.630 2024/09/09 12:59:49 claudio Exp $ */
+/*	$OpenBSD: rde.c,v 1.632 2024/09/09 15:00:45 claudio Exp $ */
 
 /*
  * Copyright (c) 2003, 2004 Henning Brauer <henning@openbsd.org>
@@ -1277,8 +1277,6 @@ rde_dispatch_imsg_rtr(struct imsgbuf *imsgbuf)
 		case IMSG_RECONF_ASPA_TAS:
 			if (aspa == NULL)
 				fatalx("unexpected IMSG_RECONF_ASPA_TAS");
-			if (imsg_get_len(&imsg) != aspa->num * sizeof(uint32_t))
-				fatalx("IMSG_RECONF_ASPA_TAS bad len");
 			aspa->tas = reallocarray(NULL, aspa->num,
 			    sizeof(uint32_t));
 			if (aspa->tas == NULL)
@@ -2194,8 +2192,22 @@ rde_attr_parse(struct ibuf *buf, struct rde_peer *peer,
 	case ATTR_CLUSTER_LIST:
 		if (!CHECK_FLAGS(flags, ATTR_OPTIONAL, 0))
 			goto bad_flags;
-		if (ibuf_size(&attrbuf) % 4 != 0)
-			goto bad_len;
+		if (peer->conf.ebgp) {
+			/* As per RFC7606 use "attribute discard" here. */
+			log_peer_warnx(&peer->conf, "bad CLUSTER_LIST, "
+			    "received from external peer, attribute discarded");
+			break;
+		}
+		if (ibuf_size(&attrbuf) % 4 != 0 || ibuf_size(&attrbuf) == 0) {
+			/*
+			 * mark update as bad and withdraw all routes as per
+			 * RFC 7606
+			 */
+			a->flags |= F_ATTR_PARSE_ERR;
+			log_peer_warnx(&peer->conf, "bad CLUSTER_LIST, "
+			    "path invalidated and prefix withdrawn");
+			break;
+		}
 		goto optattr;
 	case ATTR_MP_REACH_NLRI:
 		if (!CHECK_FLAGS(flags, ATTR_OPTIONAL, 0))
