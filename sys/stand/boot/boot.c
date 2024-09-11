@@ -53,7 +53,7 @@ struct cmd_state cmd;
 /* bootprompt can be set by MD code to avoid prompt first time round */
 int bootprompt = 1;
 char *kernelfile = KERNEL;		/* can be changed by MD code */
-int boottimeout = 1;			/* can be changed by MD code */
+int boottimeout = 5;			/* can be changed by MD code */
 
 char	rnddata[BOOTRANDOM_MAX] __aligned(sizeof(long));
 struct rc4_ctx randomctx;
