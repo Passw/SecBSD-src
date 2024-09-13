@@ -1,4 +1,4 @@
-/*	$OpenBSD: ufs_ihash.c,v 1.28 2024/09/04 17:00:08 beck Exp $	*/
+/*	$OpenBSD: ufs_ihash.c,v 1.30 2024/09/11 08:29:55 claudio Exp $	*/
 /*	$NetBSD: ufs_ihash.c,v 1.3 1996/02/09 22:36:04 christos Exp $	*/
 
 /*
@@ -42,6 +42,7 @@
 #include <ufs/ufs/inode.h>
 #include <ufs/ufs/ufs_extern.h>
 #include <ufs/ufs/ufsmount.h>
+#include <ufs/ext2fs/ext2fs_extern.h>
 
 #include <crypto/siphash.h>
 
@@ -108,8 +109,27 @@ loop:
 			* the previously committed vdoom() or this should be
 			* dealt with so this can't happen.
 			*/
+#ifdef FUSE
+			/*
+			 * XXX for whatever stupid reason fuse decided to
+			 * use ufs inodes and with this ufs_ihashget.
+			 * fuse needs to grow up and use its own inode
+			 * structure and hash.
+			 */
+			if (vp->v_tag == VT_FUSEFS)
+				return (vp);
+#endif
 			if (VTOI(vp) != ip ||
-			    (DIP(ip, nlink) <= 0 &&
+			    ((
+#ifdef EXT2FS
+			    /*
+			     * XXX DIP does not cover ext2fs so hack
+			     * around this for now since this is using
+			     * ufs_ihashget as well.
+			     */
+			    IS_EXT2_VNODE(vp) ? ip->i_e2fs_nlink <= 0 :
+#endif
+			    DIP(ip, nlink) <= 0) &&
 			     (vp->v_mount->mnt_flag & MNT_RDONLY) == 0)) {
 				/*
 				 * This should recycle the inode immediately,

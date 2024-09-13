@@ -1,4 +1,4 @@
-/*	$OpenBSD: nfs_serv.c,v 1.127 2024/08/17 07:02:13 jsg Exp $	*/
+/*	$OpenBSD: nfs_serv.c,v 1.129 2024/09/11 12:22:34 claudio Exp $	*/
 /*     $NetBSD: nfs_serv.c,v 1.34 1997/05/12 23:37:12 fvdl Exp $       */
 
 /*
@@ -94,10 +94,8 @@ nfsm_reply(struct nfsm_info *infop, struct nfsrv_descript *nfsd,
 		statuslen = 0;
 	(void)nfs_rephead(statuslen, nfsd, slp, error,
 		&infop->nmi_mreq, &infop->nmi_mb);
-	if (infop->nmi_mrep != NULL) {
-		m_freem(infop->nmi_mrep);
-		infop->nmi_mrep = NULL;
-	}
+	m_freem(infop->nmi_mrep);
+	infop->nmi_mrep = NULL;
 	*mrq = infop->nmi_mreq;
 	if (error && (!infop->nmi_v3 || error == EBADRPC))
 		return error;
@@ -424,11 +422,13 @@ nfsm_srvnamesiz(struct nfsm_info *infop, int *lenp)
 	if (tl == NULL)
 		return 1;
 	len = fxdr_unsigned(int32_t, *tl);
-	if (len > NFS_MAXNAMLEN)
+	if (len > NFS_MAXNAMLEN) {
 		*infop->nmi_errorp = NFSERR_NAMETOL;
-	else if (len <= 0)
+		*lenp = 0;
+	} else if (len <= 0) {
 		*infop->nmi_errorp = EBADRPC;
-	else {
+		*lenp = 0;
+	} else {
 		*infop->nmi_errorp = 0;
 		*lenp = len;
 	}
@@ -471,8 +471,13 @@ nfsrv_lookup(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		goto nfsmout;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	NDINIT(&nd, LOOKUP, LOCKLEAF | SAVESTART, UIO_SYSSPACE, NULL, procp);
@@ -1045,8 +1050,13 @@ nfsrv_create(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		return error;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	NDINIT(&nd, CREATE, LOCKPARENT | LOCKLEAF | SAVESTART, UIO_SYSSPACE,
@@ -1332,8 +1342,13 @@ nfsrv_mknod(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		return error;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	NDINIT(&nd, CREATE, LOCKPARENT | LOCKLEAF | SAVESTART, UIO_SYSSPACE,
@@ -1509,8 +1524,13 @@ nfsrv_remove(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		goto nfsmout;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
  	NDINIT(&nd, DELETE, LOCKPARENT | LOCKLEAF, UIO_SYSSPACE, NULL, procp);
@@ -1605,8 +1625,13 @@ nfsrv_rename(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		return error;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	/*
@@ -1816,8 +1841,13 @@ nfsrv_link(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		goto nfsmout;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	error = nfsrv_fhtovp(fhp, 0, &vp, cred, slp, nam, &rdonly);
@@ -1929,8 +1959,13 @@ nfsrv_symlink(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		return error;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	NDINIT(&nd, CREATE, LOCKPARENT | SAVESTART, UIO_SYSSPACE, NULL, procp);
@@ -2089,8 +2124,13 @@ nfsrv_mkdir(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		return error;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	NDINIT(&nd, CREATE, LOCKPARENT, UIO_SYSSPACE, NULL, procp);
@@ -2218,8 +2258,13 @@ nfsrv_rmdir(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 	if (nfsm_srvnamesiz(&info, &len) != 0)
 		goto nfsmout;
 	if (error) {
-		if (nfsm_reply(&info, nfsd, slp, mrq, error, 0) != 0)
-			return 0;
+		/*
+		 * nfsm_reply would return zero if v3 and an error different
+		 * from EBADRPC. But it does not make sense to continue
+		 * anyway if the error set in nfsm_srvnamesiz is NFSERR_NAMETOL.
+		 */
+		(void)nfsm_reply(&info, nfsd, slp, mrq, error, 0);
+		return 0;
 	}
 
 	NDINIT(&nd, DELETE, LOCKPARENT | LOCKLEAF, UIO_SYSSPACE, NULL, procp);
