@@ -351,7 +351,7 @@ getversion(void)
 	if (version == NULL) {
 		if (uname(&u) < 0)
 			fatalx("uname failed");
-		xasprintf(&version, "openbsd-%s", u.release);
+		xasprintf(&version, "secbsd-%s", u.release);
 	}
 	return (version);
 }
