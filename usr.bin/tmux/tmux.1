@@ -1,4 +1,4 @@
-.\" $OpenBSD: tmux.1,v 1.958 2024/10/01 10:10:29 nicm Exp $
+.\" $OpenBSD: tmux.1,v 1.962 2024/10/05 00:32:55 nicm Exp $
 .\"
 .\" Copyright (c) 2007 Nicholas Marriott <nicholas.marriott@gmail.com>
 .\"
@@ -14,7 +14,7 @@
 .\" IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
 .\" OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd $Mdocdate: October 1 2024 $
+.Dd $Mdocdate: October 5 2024 $
 .Dt TMUX 1
 .Os
 .Sh NAME
@@ -1801,6 +1801,7 @@ Exit copy mode.
 Clear the current selection.
 .It Xo
 .Ic copy-end-of-line
+.Op Fl CP
 .Op Ar prefix
 .Xc
 Copy from the cursor position to the end of the line.
@@ -1808,11 +1809,13 @@ Copy from the cursor position to the end of the line.
 is used to name the new paste buffer.
 .It Xo
 .Ic copy-end-of-line-and-cancel
+.Op Fl CP
 .Op Ar prefix
 .Xc
 Copy from the cursor position and exit copy mode.
 .It Xo
 .Ic copy-pipe-end-of-line
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1822,6 +1825,7 @@ Copy from the cursor position to the end of the line and pipe the text to
 is used to name the new paste buffer.
 .It Xo
 .Ic copy-pipe-end-of-line-and-cancel
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1830,16 +1834,19 @@ Same as
 but also exit copy mode.
 .It Xo
 .Ic copy-line
+.Op Fl CP
 .Op Ar prefix
 .Xc
 Copy the entire line.
 .It Xo
 .Ic copy-line-and-cancel
+.Op Fl CP
 .Op Ar prefix
 .Xc
 Copy the entire line and exit copy mode.
 .It Xo
 .Ic copy-pipe-line
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1849,6 +1856,7 @@ Copy the entire line and pipe the text to
 is used to name the new paste buffer.
 .It Xo
 .Ic copy-pipe-line-and-cancel
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1857,6 +1865,7 @@ Same as
 but also exit copy mode.
 .It Xo
 .Ic copy-pipe
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1866,6 +1875,7 @@ Copy the selection, clear it and pipe its text to
 is used to name the new paste buffer.
 .It Xo
 .Ic copy-pipe-no-clear
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1874,6 +1884,7 @@ Same as
 but do not clear the selection.
 .It Xo
 .Ic copy-pipe-and-cancel
+.Op Fl CP
 .Op Ar command
 .Op Ar prefix
 .Xc
@@ -1882,11 +1893,13 @@ Same as
 but also exit copy mode.
 .It Xo
 .Ic copy-selection
+.Op Fl CP
 .Op Ar prefix
 .Xc
 Copies the current selection.
 .It Xo
 .Ic copy-selection-no-clear
+.Op Fl CP
 .Op Ar prefix
 .Xc
 Same as
@@ -1894,6 +1907,7 @@ Same as
 but do not clear the selection.
 .It Xo
 .Ic copy-selection-and-cancel
+.Op Fl CP
 .Op Ar prefix
 (vi: Enter)
 (emacs: M-w)
@@ -2341,6 +2355,16 @@ variants of some commands exit copy mode after they have completed (for copy
 commands) or when the cursor reaches the bottom (for scrolling commands).
 .Ql -no-clear
 variants do not clear the selection.
+All the copy commands can take the
+.Fl C
+and
+.Fl P
+flags.
+The
+.Fl C
+flag suppresses setting the terminal clipboard when copying, while the
+.Fl P
+flag suppresses adding a paste buffer with the text.
 .Pp
 The next and previous word keys skip over whitespace and treat consecutive
 runs of either word separators or other letters as words.
@@ -2557,7 +2581,7 @@ the end of the visible pane.
 The default is to capture only the visible contents of the pane.
 .It Xo
 .Ic choose-client
-.Op Fl NrZ
+.Op Fl NryZ
 .Op Fl F Ar format
 .Op Fl f Ar filter
 .Op Fl K Ar key-format
@@ -2573,6 +2597,8 @@ or the list may be navigated and an item chosen or otherwise manipulated using
 the keys below.
 .Fl Z
 zooms the pane.
+.Fl y
+disables any confirmation prompts.
 The following keys may be used in client mode:
 .Bl -column "Key" "Function" -offset indent
 .It Sy "Key" Ta Sy "Function"
@@ -2631,7 +2657,7 @@ starts without the preview or if given twice with the larger preview.
 This command works only if at least one client is attached.
 .It Xo
 .Ic choose-tree
-.Op Fl GNrswZ
+.Op Fl GNrswyZ
 .Op Fl F Ar format
 .Op Fl f Ar filter
 .Op Fl K Ar key-format
@@ -2651,6 +2677,8 @@ starts with sessions collapsed and
 with windows collapsed.
 .Fl Z
 zooms the pane.
+.Fl y
+disables any confirmation prompts.
 The following keys may be used in tree mode:
 .Bl -column "Key" "Function" -offset indent
 .It Sy "Key" Ta Sy "Function"
@@ -4805,6 +4833,8 @@ see the
 .Sx STYLES
 section.
 .Pp
+.It Ic copy-mode-position-format Ar format
+Format of the position indicator in copy mode.
 .It Xo Ic mode-keys
 .Op Ic vi | emacs
 .Xc
@@ -5282,6 +5312,8 @@ Run when a new session created.
 Run when a session closed.
 .It session-renamed
 Run when a session is renamed.
+.It window-layout-changed
+Run when a window layout is changed.
 .It window-linked
 Run when a window is linked into a session.
 .It window-renamed
@@ -6783,7 +6815,7 @@ The buffer commands are as follows:
 .Bl -tag -width Ds
 .It Xo
 .Ic choose-buffer
-.Op Fl NZr
+.Op Fl NryZ
 .Op Fl F Ar format
 .Op Fl f Ar filter
 .Op Fl K Ar key-format
@@ -6799,6 +6831,8 @@ or the list may be navigated and an item chosen or otherwise manipulated using
 the keys below.
 .Fl Z
 zooms the pane.
+.Fl y
+disables any confirmation prompts.
 The following keys may be used in buffer mode:
 .Bl -column "Key" "Function" -offset indent
 .It Sy "Key" Ta Sy "Function"
