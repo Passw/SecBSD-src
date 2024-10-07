@@ -1,4 +1,4 @@
-/* $OpenBSD: server-client.c,v 1.411 2024/10/05 12:10:16 nicm Exp $ */
+/* $OpenBSD: server-client.c,v 1.413 2024/10/07 12:58:36 nicm Exp $ */
 
 /*
  * Copyright (c) 2009 Nicholas Marriott <nicholas.marriott@gmail.com>
@@ -1866,6 +1866,26 @@ server_client_update_latest(struct client *c)
 	notify_client("client-active", c);
 }
 
+/* Get repeat time. */
+static u_int
+server_client_repeat_time(struct client *c, struct key_binding *bd)
+{
+	struct session	*s = c->session;
+	u_int		 repeat, initial;
+
+	if (~bd->flags & KEY_BINDING_REPEAT)
+		return (0);
+	repeat = options_get_number(s->options, "repeat-time");
+	if (repeat == 0)
+		return (0);
+	if ((~c->flags & CLIENT_REPEAT) || bd->key != c->last_key) {
+		initial = options_get_number(s->options, "initial-repeat-time");
+		if (initial != 0)
+			repeat = initial;
+	}
+	return (repeat);
+}
+
 /*
  * Handle data key input from client. This owns and can modify the key event it
  * is given and is responsible for freeing it.
@@ -1884,7 +1904,7 @@ server_client_key_callback(struct cmdq_item *item, void *data)
 	struct timeval			 tv;
 	struct key_table		*table, *first;
 	struct key_binding		*bd;
-	int				 xtimeout;
+	u_int				 repeat;
 	uint64_t			 flags, prefix_delay;
 	struct cmd_find_state		 fs;
 	key_code			 key0, prefix, prefix2;
@@ -2040,12 +2060,13 @@ try_again:
 		 * If this is a repeating key, start the timer. Otherwise reset
 		 * the client back to the root table.
 		 */
-		xtimeout = options_get_number(s->options, "repeat-time");
-		if (xtimeout != 0 && (bd->flags & KEY_BINDING_REPEAT)) {
+		repeat = server_client_repeat_time(c, bd);
+		if (repeat != 0) {
 			c->flags |= CLIENT_REPEAT;
+			c->last_key = bd->key;
 
-			tv.tv_sec = xtimeout / 1000;
-			tv.tv_usec = (xtimeout % 1000) * 1000L;
+			tv.tv_sec = repeat / 1000;
+			tv.tv_usec = (repeat % 1000) * 1000L;
 			evtimer_del(&c->repeat_timer);
 			evtimer_add(&c->repeat_timer, &tv);
 		} else {
@@ -2452,7 +2473,7 @@ server_client_reset_state(struct client *c)
 
 	/* Move cursor to pane cursor and offset. */
 	if (c->prompt_string != NULL) {
-		n = options_get_number(c->session->options, "status-position");
+		n = options_get_number(oo, "status-position");
 		if (n == 0)
 			cy = 0;
 		else {
@@ -2463,22 +2484,37 @@ server_client_reset_state(struct client *c)
 				cy = tty->sy - n;
 		}
 		cx = c->prompt_cursor;
-		mode &= ~MODE_CURSOR;
-	} else if (c->overlay_draw == NULL) {
-		cursor = 0;
-		tty_window_offset(tty, &ox, &oy, &sx, &sy);
-		if (wp->xoff + s->cx >= ox && wp->xoff + s->cx <= ox + sx &&
-		    wp->yoff + s->cy >= oy && wp->yoff + s->cy <= oy + sy) {
-			cursor = 1;
 
-			cx = wp->xoff + s->cx - ox;
-			cy = wp->yoff + s->cy - oy;
+		n = options_get_number(oo, "prompt-cursor-colour");
+		s->default_ccolour = n;
+		n = options_get_number(oo, "prompt-cursor-style");
+		screen_set_cursor_style(n, &s->default_cstyle,
+		    &s->default_mode);
+	} else {
+		n = options_get_number(wp->options, "cursor-colour");
+		s->default_ccolour = n;
+		n = options_get_number(wp->options, "cursor-style");
+		screen_set_cursor_style(n, &s->default_cstyle,
+		    &s->default_mode);
 
-			if (status_at_line(c) == 0)
-				cy += status_line_size(c);
+		if (c->overlay_draw == NULL) {
+			cursor = 0;
+			tty_window_offset(tty, &ox, &oy, &sx, &sy);
+			if (wp->xoff + s->cx >= ox &&
+			    wp->xoff + s->cx <= ox + sx &&
+			    wp->yoff + s->cy >= oy &&
+			    wp->yoff + s->cy <= oy + sy) {
+				cursor = 1;
+
+				cx = wp->xoff + s->cx - ox;
+				cy = wp->yoff + s->cy - oy;
+
+				if (status_at_line(c) == 0)
+					cy += status_line_size(c);
+			}
+			if (!cursor)
+				mode &= ~MODE_CURSOR;
 		}
-		if (!cursor)
-			mode &= ~MODE_CURSOR;
 	}
 	log_debug("%s: cursor to %u,%u", __func__, cx, cy);
 	tty_cursor(tty, cx, cy);
