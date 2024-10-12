@@ -1,4 +1,4 @@
-/* $OpenBSD: err.c,v 1.65 2024/10/02 15:21:39 jsing Exp $ */
+/* $OpenBSD: err.c,v 1.73 2024/10/11 13:32:22 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -127,8 +127,6 @@
 DECLARE_LHASH_OF(ERR_STRING_DATA);
 DECLARE_LHASH_OF(ERR_STATE);
 
-typedef struct st_ERR_FNS ERR_FNS;
-
 typedef struct err_state_st {
 	CRYPTO_THREADID tid;
 	int err_flags[ERR_NUM_ERRORS];
@@ -141,54 +139,54 @@ typedef struct err_state_st {
 } ERR_STATE;
 
 #ifndef OPENSSL_NO_ERR
-static ERR_STRING_DATA ERR_str_libraries[] = {
-	{ERR_PACK(ERR_LIB_NONE,0,0),		"unknown library"},
-	{ERR_PACK(ERR_LIB_SYS,0,0),		"system library"},
-	{ERR_PACK(ERR_LIB_BN,0,0),		"bignum routines"},
-	{ERR_PACK(ERR_LIB_RSA,0,0),		"rsa routines"},
-	{ERR_PACK(ERR_LIB_DH,0,0),		"Diffie-Hellman routines"},
-	{ERR_PACK(ERR_LIB_EVP,0,0),		"digital envelope routines"},
-	{ERR_PACK(ERR_LIB_BUF,0,0),		"memory buffer routines"},
-	{ERR_PACK(ERR_LIB_OBJ,0,0),		"object identifier routines"},
-	{ERR_PACK(ERR_LIB_PEM,0,0),		"PEM routines"},
-	{ERR_PACK(ERR_LIB_DSA,0,0),		"dsa routines"},
-	{ERR_PACK(ERR_LIB_X509,0,0),		"x509 certificate routines"},
-	{ERR_PACK(ERR_LIB_ASN1,0,0),		"asn1 encoding routines"},
-	{ERR_PACK(ERR_LIB_CONF,0,0),		"configuration file routines"},
-	{ERR_PACK(ERR_LIB_CRYPTO,0,0),		"common libcrypto routines"},
-	{ERR_PACK(ERR_LIB_EC,0,0),		"elliptic curve routines"},
-	{ERR_PACK(ERR_LIB_SSL,0,0),		"SSL routines"},
-	{ERR_PACK(ERR_LIB_BIO,0,0),		"BIO routines"},
-	{ERR_PACK(ERR_LIB_PKCS7,0,0),		"PKCS7 routines"},
-	{ERR_PACK(ERR_LIB_X509V3,0,0),		"X509 V3 routines"},
-	{ERR_PACK(ERR_LIB_PKCS12,0,0),		"PKCS12 routines"},
-	{ERR_PACK(ERR_LIB_RAND,0,0),		"random number generator"},
-	{ERR_PACK(ERR_LIB_DSO,0,0),		"DSO support routines"},
-	{ERR_PACK(ERR_LIB_TS,0,0),		"time stamp routines"},
-	{ERR_PACK(ERR_LIB_ENGINE,0,0),		"engine routines"},
-	{ERR_PACK(ERR_LIB_OCSP,0,0),		"OCSP routines"},
-	{ERR_PACK(ERR_LIB_FIPS,0,0),		"FIPS routines"},
-	{ERR_PACK(ERR_LIB_CMS,0,0),		"CMS routines"},
-	{ERR_PACK(ERR_LIB_HMAC,0,0),		"HMAC routines"},
-	{ERR_PACK(ERR_LIB_GOST,0,0),		"GOST routines"},
+static const ERR_STRING_DATA ERR_str_libraries[] = {
+	{ERR_PACK(ERR_LIB_NONE, 0, 0),		"unknown library"},
+	{ERR_PACK(ERR_LIB_SYS, 0, 0),		"system library"},
+	{ERR_PACK(ERR_LIB_BN, 0, 0),		"bignum routines"},
+	{ERR_PACK(ERR_LIB_RSA, 0, 0),		"rsa routines"},
+	{ERR_PACK(ERR_LIB_DH, 0, 0),		"Diffie-Hellman routines"},
+	{ERR_PACK(ERR_LIB_EVP, 0, 0),		"digital envelope routines"},
+	{ERR_PACK(ERR_LIB_BUF, 0, 0),		"memory buffer routines"},
+	{ERR_PACK(ERR_LIB_OBJ, 0, 0),		"object identifier routines"},
+	{ERR_PACK(ERR_LIB_PEM, 0, 0),		"PEM routines"},
+	{ERR_PACK(ERR_LIB_DSA, 0, 0),		"dsa routines"},
+	{ERR_PACK(ERR_LIB_X509, 0, 0),		"x509 certificate routines"},
+	{ERR_PACK(ERR_LIB_ASN1, 0, 0),		"asn1 encoding routines"},
+	{ERR_PACK(ERR_LIB_CONF, 0, 0),		"configuration file routines"},
+	{ERR_PACK(ERR_LIB_CRYPTO, 0, 0),	"common libcrypto routines"},
+	{ERR_PACK(ERR_LIB_EC, 0, 0),		"elliptic curve routines"},
+	{ERR_PACK(ERR_LIB_SSL, 0, 0),		"SSL routines"},
+	{ERR_PACK(ERR_LIB_BIO, 0, 0),		"BIO routines"},
+	{ERR_PACK(ERR_LIB_PKCS7, 0, 0),		"PKCS7 routines"},
+	{ERR_PACK(ERR_LIB_X509V3, 0, 0),	"X509 V3 routines"},
+	{ERR_PACK(ERR_LIB_PKCS12, 0, 0),	"PKCS12 routines"},
+	{ERR_PACK(ERR_LIB_RAND, 0, 0),		"random number generator"},
+	{ERR_PACK(ERR_LIB_DSO, 0, 0),		"DSO support routines"},
+	{ERR_PACK(ERR_LIB_TS, 0, 0),		"time stamp routines"},
+	{ERR_PACK(ERR_LIB_ENGINE, 0, 0),	"engine routines"},
+	{ERR_PACK(ERR_LIB_OCSP, 0, 0),		"OCSP routines"},
+	{ERR_PACK(ERR_LIB_FIPS, 0, 0),		"FIPS routines"},
+	{ERR_PACK(ERR_LIB_CMS, 0, 0),		"CMS routines"},
+	{ERR_PACK(ERR_LIB_HMAC, 0, 0),		"HMAC routines"},
+	{ERR_PACK(ERR_LIB_GOST, 0, 0),		"GOST routines"},
 	{0, NULL},
 };
 
-static ERR_STRING_DATA ERR_str_functs[] = {
-	{ERR_PACK(0,SYS_F_FOPEN, 0),     	"fopen"},
-	{ERR_PACK(0,SYS_F_CONNECT, 0),		"connect"},
-	{ERR_PACK(0,SYS_F_GETSERVBYNAME, 0),	"getservbyname"},
-	{ERR_PACK(0,SYS_F_SOCKET, 0),		"socket"},
-	{ERR_PACK(0,SYS_F_IOCTLSOCKET, 0),	"ioctl"},
-	{ERR_PACK(0,SYS_F_BIND, 0),		"bind"},
-	{ERR_PACK(0,SYS_F_LISTEN, 0),		"listen"},
-	{ERR_PACK(0,SYS_F_ACCEPT, 0),		"accept"},
-	{ERR_PACK(0,SYS_F_OPENDIR, 0),		"opendir"},
-	{ERR_PACK(0,SYS_F_FREAD, 0),		"fread"},
+static const ERR_STRING_DATA ERR_str_functs[] = {
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_FOPEN, 0),		"fopen"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_CONNECT, 0),	"connect"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_GETSERVBYNAME, 0),	"getservbyname"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_SOCKET, 0),	"socket"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_IOCTLSOCKET, 0),	"ioctl"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_BIND, 0),		"bind"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_LISTEN, 0),	"listen"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_ACCEPT, 0),	"accept"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_OPENDIR, 0),	"opendir"},
+	{ERR_PACK(ERR_LIB_SYS, SYS_F_FREAD, 0),		"fread"},
 	{0, NULL},
 };
 
-static ERR_STRING_DATA ERR_str_reasons[] = {
+static const ERR_STRING_DATA ERR_str_reasons[] = {
 	{ERR_R_SYS_LIB,				"system lib"},
 	{ERR_R_BN_LIB,				"BN lib"},
 	{ERR_R_RSA_LIB,				"RSA lib"},
@@ -226,7 +224,7 @@ static ERR_STRING_DATA ERR_str_reasons[] = {
 	{ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED,	"called a function you should not call"},
 	{ERR_R_PASSED_NULL_PARAMETER,		"passed a null parameter"},
 	{ERR_R_INTERNAL_ERROR,			"internal error"},
-	{ERR_R_DISABLED	,			"called a function that was disabled at compile-time"},
+	{ERR_R_DISABLED,			"called a function that was disabled at compile-time"},
 	{ERR_R_INIT_FAIL,			"initialization failure"},
 
 	{0, NULL},
@@ -253,8 +251,6 @@ static pthread_t err_init_thread;
  * These are the callbacks provided to "lh_new()" when creating the LHASH tables
  * internal to the "err_defaults" implementation.
  */
-
-/* The internal functions used in the "err_defaults" implementation */
 
 static unsigned long
 err_string_data_hash(const ERR_STRING_DATA *a)
@@ -475,36 +471,23 @@ err_get_next_lib(void)
 #define LEN_SYS_STR_REASON 32
 
 static ERR_STRING_DATA SYS_str_reasons[NUM_SYS_STR_REASONS + 1];
-/* SYS_str_reasons is filled with copies of strerror() results at
- * initialization.
- * 'errno' values up to 127 should cover all usual errors,
- * others will be displayed numerically by ERR_error_string.
- * It is crucial that we have something for each reason code
- * that occurs in ERR_str_reasons, or bogus reason strings
- * will be returned for SYSerror(which always gets an errno
- * value and never one of those 'standard' reason codes. */
+
+/*
+ * SYS_str_reasons is filled with copies of strerror() results at
+ * initialization. 'errno' values up to 127 should cover all usual errors,
+ * others will be displayed numerically by ERR_error_string. It is crucial that
+ * we have something for each reason code that occurs in ERR_str_reasons, or
+ * bogus reason strings will be returned for SYSerror(), which always gets an
+ * errno value and never one of those 'standard' reason codes.
+ */
 
 static void
-build_SYS_str_reasons(void)
+err_build_SYS_str_reasons(void)
 {
 	/* malloc cannot be used here, use static storage instead */
 	static char strerror_tab[NUM_SYS_STR_REASONS][LEN_SYS_STR_REASON];
-	int i;
-	static int init = 1;
 	int save_errno;
-
-	CRYPTO_r_lock(CRYPTO_LOCK_ERR);
-	if (!init) {
-		CRYPTO_r_unlock(CRYPTO_LOCK_ERR);
-		return;
-	}
-
-	CRYPTO_r_unlock(CRYPTO_LOCK_ERR);
-	CRYPTO_w_lock(CRYPTO_LOCK_ERR);
-	if (!init) {
-		CRYPTO_w_unlock(CRYPTO_LOCK_ERR);
-		return;
-	}
+	int i;
 
 	/* strerror(3) will set errno to EINVAL when i is an unknown errno. */
 	save_errno = errno;
@@ -526,33 +509,33 @@ build_SYS_str_reasons(void)
 	}
 	errno = save_errno;
 
-	/* Now we still have SYS_str_reasons[NUM_SYS_STR_REASONS] = {0, NULL},
-	 * as required by ERR_load_strings. */
-
-	init = 0;
-
-	CRYPTO_w_unlock(CRYPTO_LOCK_ERR);
+	/*
+	 * Now we still have SYS_str_reasons[NUM_SYS_STR_REASONS] = {0, NULL},
+	 * as required by ERR_load_strings.
+	 */
 }
 #endif
 
-#define err_clear_data(p,i) \
-	do { \
-		if (((p)->err_data[i] != NULL) && \
-		    (p)->err_data_flags[i] & ERR_TXT_MALLOCED) { \
-			free((p)->err_data[i]); \
-			(p)->err_data[i] = NULL; \
-		} \
-		(p)->err_data_flags[i] = 0; \
-	} while(0)
+static void
+err_clear_data(ERR_STATE *s, int i)
+{
+	if ((s->err_data_flags[i] & ERR_TXT_MALLOCED) != 0)
+		free(s->err_data[i]);
 
-#define err_clear(p,i) \
-	do { \
-		(p)->err_flags[i] = 0; \
-		(p)->err_buffer[i] = 0; \
-		err_clear_data(p, i); \
-		(p)->err_file[i] = NULL; \
-		(p)->err_line[i] = -1; \
-	} while(0)
+	s->err_data[i] = NULL;
+	s->err_data_flags[i] = 0;
+}
+
+static void
+err_clear(ERR_STATE *s, int i)
+{
+	s->err_flags[i] = 0;
+	s->err_buffer[i] = 0;
+	s->err_file[i] = NULL;
+	s->err_line[i] = -1;
+
+	err_clear_data(s, i);
+}
 
 static void
 ERR_STATE_free(ERR_STATE *s)
@@ -562,9 +545,9 @@ ERR_STATE_free(ERR_STATE *s)
 	if (s == NULL)
 		return;
 
-	for (i = 0; i < ERR_NUM_ERRORS; i++) {
+	for (i = 0; i < ERR_NUM_ERRORS; i++)
 		err_clear_data(s, i);
-	}
+
 	free(s);
 }
 
@@ -598,8 +581,10 @@ ERR_get_state(void)
 			ERR_STATE_free(ret); /* could not insert it */
 			return (&fallback);
 		}
-		/* If a race occurred in this function and we came second, tmpp
-		 * is the first one that we just replaced. */
+		/*
+		 * If a race occurred in this function and we came second,
+		 * tmpp is the first one that we just replaced.
+		 */
 		if (tmpp)
 			ERR_STATE_free(tmpp);
 	}
@@ -609,9 +594,18 @@ ERR_get_state(void)
 static void
 err_load_strings(int lib, ERR_STRING_DATA *str)
 {
-	while (str->error) {
+	while (str->error != 0) {
 		if (lib)
 			str->error |= ERR_PACK(lib, 0, 0);
+		err_set_item(str);
+		str++;
+	}
+}
+
+static void
+err_load_const_strings(const ERR_STRING_DATA *str)
+{
+	while (str->error != 0) {
 		err_set_item(str);
 		str++;
 	}
@@ -688,10 +682,10 @@ ERR_load_ERR_strings_internal(void)
 {
 	err_init_thread = pthread_self();
 #ifndef OPENSSL_NO_ERR
-	err_load_strings(0, ERR_str_libraries);
-	err_load_strings(0, ERR_str_reasons);
-	err_load_strings(ERR_LIB_SYS, ERR_str_functs);
-	build_SYS_str_reasons();
+	err_load_const_strings(ERR_str_libraries);
+	err_load_const_strings(ERR_str_reasons);
+	err_load_const_strings(ERR_str_functs);
+	err_build_SYS_str_reasons();
 	err_load_strings(ERR_LIB_SYS, SYS_str_reasons);
 #endif
 }
@@ -723,10 +717,7 @@ void
 ERR_load_const_strings(const ERR_STRING_DATA *str)
 {
 	ERR_load_ERR_strings();
-	while (str->error) {
-		err_set_item(str);
-		str++;
-	}
+	err_load_const_strings(str);
 }
 
 void
@@ -770,8 +761,11 @@ ERR_remove_thread_state(const CRYPTO_THREADID *id)
 		CRYPTO_THREADID_cpy(&tmp.tid, id);
 	else
 		CRYPTO_THREADID_current(&tmp.tid);
-	/* err_thread_del_item automatically destroys the LHASH if the number of
-	 * items reaches zero. */
+
+	/*
+	 * err_thread_del_item automatically destroys the LHASH if the number of
+	 * items reaches zero.
+	 */
 	err_thread_del_item(&tmp);
 }
 LCRYPTO_ALIAS(ERR_remove_thread_state);
@@ -827,9 +821,9 @@ ERR_clear_error(void)
 
 	es = ERR_get_state();
 
-	for (i = 0; i < ERR_NUM_ERRORS; i++) {
+	for (i = 0; i < ERR_NUM_ERRORS; i++)
 		err_clear(es, i);
-	}
+
 	es->top = es->bottom = 0;
 }
 LCRYPTO_ALIAS(ERR_clear_error);
@@ -1059,8 +1053,10 @@ ERR_error_string_n(unsigned long e, char *buf, size_t len)
 	if (ret == -1)
 		return;	/* can't happen, and can't do better if it does */
 	if (ret >= len) {
-		/* output may be truncated; make sure we always have 5
-		 * colon-separated fields, i.e. 4 colons ... */
+		/*
+		 * output may be truncated; make sure we always have 5
+		 * colon-separated fields, i.e. 4 colons ...
+		 */
 #define NUM_COLONS 4
 		if (len > NUM_COLONS) /* ... if possible */
 		{
@@ -1083,9 +1079,12 @@ ERR_error_string_n(unsigned long e, char *buf, size_t len)
 }
 LCRYPTO_ALIAS(ERR_error_string_n);
 
-/* BAD for multi-threading: uses a local buffer if ret == NULL */
-/* ERR_error_string_n should be used instead for ret != NULL
- * as ERR_error_string cannot know how large the buffer is */
+/*
+ * ERR_error_string_n should be used instead for ret != NULL
+ * as ERR_error_string cannot know how large the buffer is.
+ *
+ * BAD for multi-threading: uses a local buffer if ret == NULL.
+ */
 char *
 ERR_error_string(unsigned long e, char *ret)
 {

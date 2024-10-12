@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_asn1.c,v 1.57 2024/10/03 05:07:49 tb Exp $ */
+/* $OpenBSD: ec_asn1.c,v 1.68 2024/10/11 18:58:04 tb Exp $ */
 /*
  * Written by Nils Larsch for the OpenSSL project.
  */
@@ -123,6 +123,10 @@ typedef struct ec_parameters_st {
 	ASN1_INTEGER *order;
 	ASN1_INTEGER *cofactor;
 } ECPARAMETERS;
+
+#define ECPK_PARAM_NAMED_CURVE		0
+#define ECPK_PARAM_EXPLICIT		1
+#define ECPK_PARAM_IMPLICITLY_CA	2
 
 typedef struct ecpk_parameters_st {
 	int type;
@@ -555,56 +559,52 @@ EC_PRIVATEKEY_free(EC_PRIVATEKEY *a)
 static int
 ec_asn1_group2fieldid(const EC_GROUP *group, X9_62_FIELDID *field)
 {
-	int ok = 0, nid;
-	BIGNUM *tmp = NULL;
+	BIGNUM *p = NULL;
+	int nid;
+	int ret = 0;
 
 	if (group == NULL || field == NULL)
-		return 0;
-
-	/* clear the old values (if necessary) */
-	if (field->fieldType != NULL)
-		ASN1_OBJECT_free(field->fieldType);
-	if (field->p.other != NULL)
-		ASN1_TYPE_free(field->p.other);
+		goto err;
 
 	nid = EC_METHOD_get_field_type(EC_GROUP_method_of(group));
-	/* set OID for the field */
+	if (nid == NID_X9_62_characteristic_two_field) {
+		ECerror(EC_R_GF2M_NOT_SUPPORTED);
+		goto err;
+	}
+	if (nid != NID_X9_62_prime_field) {
+		ECerror(EC_R_INVALID_FIELD);
+		goto err;
+	}
+
 	if ((field->fieldType = OBJ_nid2obj(nid)) == NULL) {
 		ECerror(ERR_R_OBJ_LIB);
 		goto err;
 	}
-	if (nid == NID_X9_62_prime_field) {
-		if ((tmp = BN_new()) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			goto err;
-		}
-		/* the parameters are specified by the prime number p */
-		if (!EC_GROUP_get_curve(group, tmp, NULL, NULL, NULL)) {
-			ECerror(ERR_R_EC_LIB);
-			goto err;
-		}
-		/* set the prime number */
-		field->p.prime = BN_to_ASN1_INTEGER(tmp, NULL);
-		if (field->p.prime == NULL) {
-			ECerror(ERR_R_ASN1_LIB);
-			goto err;
-		}
-	} else {
-		ECerror(EC_R_GF2M_NOT_SUPPORTED);
+	if ((p = BN_new()) == NULL) {
+		ECerror(ERR_R_MALLOC_FAILURE);
+		goto err;
+	}
+	if (!EC_GROUP_get_curve(group, p, NULL, NULL, NULL)) {
+		ECerror(ERR_R_EC_LIB);
+		goto err;
+	}
+	if ((field->p.prime = BN_to_ASN1_INTEGER(p, NULL)) == NULL) {
+		ECerror(ERR_R_ASN1_LIB);
 		goto err;
 	}
 
-	ok = 1;
+	ret = 1;
 
  err:
-	BN_free(tmp);
-	return (ok);
+	BN_free(p);
+
+	return ret;
 }
 
 static int
 ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 {
-	BIGNUM *tmp_1 = NULL, *tmp_2 = NULL;
+	BIGNUM *a = NULL, *b = NULL;
 	unsigned char *buffer_1 = NULL, *buffer_2 = NULL, *a_buf = NULL,
 	*b_buf = NULL;
 	size_t len_1, len_2;
@@ -614,18 +614,18 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 	if (!group || !curve || !curve->a || !curve->b)
 		return 0;
 
-	if ((tmp_1 = BN_new()) == NULL || (tmp_2 = BN_new()) == NULL) {
+	if ((a = BN_new()) == NULL || (b = BN_new()) == NULL) {
 		ECerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
 
 	/* get a and b */
-	if (!EC_GROUP_get_curve(group, NULL, tmp_1, tmp_2, NULL)) {
+	if (!EC_GROUP_get_curve(group, NULL, a, b, NULL)) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
-	len_1 = (size_t) BN_num_bytes(tmp_1);
-	len_2 = (size_t) BN_num_bytes(tmp_2);
+	len_1 = (size_t) BN_num_bytes(a);
+	len_2 = (size_t) BN_num_bytes(b);
 
 	if (len_1 == 0) {
 		/* len_1 == 0 => a == 0 */
@@ -636,7 +636,7 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 			ECerror(ERR_R_MALLOC_FAILURE);
 			goto err;
 		}
-		if ((len_1 = BN_bn2bin(tmp_1, buffer_1)) == 0) {
+		if ((len_1 = BN_bn2bin(a, buffer_1)) == 0) {
 			ECerror(ERR_R_BN_LIB);
 			goto err;
 		}
@@ -652,7 +652,7 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 			ECerror(ERR_R_MALLOC_FAILURE);
 			goto err;
 		}
-		if ((len_2 = BN_bn2bin(tmp_2, buffer_2)) == 0) {
+		if ((len_2 = BN_bn2bin(b, buffer_2)) == 0) {
 			ECerror(ERR_R_BN_LIB);
 			goto err;
 		}
@@ -691,13 +691,14 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
  err:
 	free(buffer_1);
 	free(buffer_2);
-	BN_free(tmp_1);
-	BN_free(tmp_2);
+	BN_free(a);
+	BN_free(b);
+
 	return (ok);
 }
 
 static ECPARAMETERS *
-ec_asn1_group2parameters(const EC_GROUP *group, ECPARAMETERS *param)
+ec_asn1_group2parameters(const EC_GROUP *group)
 {
 	int ok = 0;
 	size_t len = 0;
@@ -711,13 +712,10 @@ ec_asn1_group2parameters(const EC_GROUP *group, ECPARAMETERS *param)
 		ECerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
-	if (param == NULL) {
-		if ((ret = ECPARAMETERS_new()) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			goto err;
-		}
-	} else
-		ret = param;
+	if ((ret = ECPARAMETERS_new()) == NULL) {
+		ECerror(ERR_R_MALLOC_FAILURE);
+		goto err;
+	}
 
 	/* set the version (always one) */
 	ret->version = (long) 0x1;
@@ -781,8 +779,7 @@ ec_asn1_group2parameters(const EC_GROUP *group, ECPARAMETERS *param)
 
  err:
 	if (!ok) {
-		if (ret && !param)
-			ECPARAMETERS_free(ret);
+		ECPARAMETERS_free(ret);
 		ret = NULL;
 	}
 	BN_free(tmp);
@@ -791,49 +788,39 @@ ec_asn1_group2parameters(const EC_GROUP *group, ECPARAMETERS *param)
 }
 
 ECPKPARAMETERS *
-ec_asn1_group2pkparameters(const EC_GROUP *group, ECPKPARAMETERS *params)
+ec_asn1_group2pkparameters(const EC_GROUP *group)
 {
-	int ok = 1, tmp;
-	ECPKPARAMETERS *ret = params;
+	ECPKPARAMETERS *pkparameters;
+	ECPARAMETERS *parameters;
+	ASN1_OBJECT *aobj;
+	int nid;
 
-	if (ret == NULL) {
-		if ((ret = ECPKPARAMETERS_new()) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			return NULL;
-		}
+	if ((pkparameters = ECPKPARAMETERS_new()) == NULL) {
+		ECerror(ERR_R_MALLOC_FAILURE);
+		goto err;
+	}
+
+	if ((EC_GROUP_get_asn1_flag(group) & OPENSSL_EC_NAMED_CURVE) != 0) {
+		if ((nid = EC_GROUP_get_curve_name(group)) == NID_undef)
+			goto err;
+		if ((aobj = OBJ_nid2obj(nid)) == NULL)
+			goto err;
+		pkparameters->type = ECPK_PARAM_NAMED_CURVE;
+		pkparameters->value.named_curve = aobj;
 	} else {
-		if (ret->type == 0 && ret->value.named_curve)
-			ASN1_OBJECT_free(ret->value.named_curve);
-		else if (ret->type == 1 && ret->value.parameters)
-			ECPARAMETERS_free(ret->value.parameters);
+		if ((parameters = ec_asn1_group2parameters(group)) == NULL)
+			goto err;
+		pkparameters->type = ECPK_PARAM_EXPLICIT;
+		pkparameters->value.parameters = parameters;
+		parameters = NULL;
 	}
 
-	if (EC_GROUP_get_asn1_flag(group)) {
-		/*
-		 * use the asn1 OID to describe the elliptic curve
-		 * parameters
-		 */
-		tmp = EC_GROUP_get_curve_name(group);
-		if (tmp) {
-			ret->type = 0;
-			if ((ret->value.named_curve = OBJ_nid2obj(tmp)) == NULL)
-				ok = 0;
-		} else
-			/* we don't know the group => ERROR */
-			ok = 0;
-	} else {
-		/* use the ECPARAMETERS structure */
-		ret->type = 1;
-		if ((ret->value.parameters = ec_asn1_group2parameters(group,
-		    NULL)) == NULL)
-			ok = 0;
-	}
+	return pkparameters;
 
-	if (!ok) {
-		ECPKPARAMETERS_free(ret);
-		return NULL;
-	}
-	return ret;
+ err:
+	ECPKPARAMETERS_free(pkparameters);
+
+	return NULL;
 }
 
 static EC_GROUP *
@@ -975,36 +962,34 @@ ec_asn1_parameters2group(const ECPARAMETERS *params)
 EC_GROUP *
 ec_asn1_pkparameters2group(const ECPKPARAMETERS *params)
 {
-	EC_GROUP *ret = NULL;
-	int tmp = 0;
+	EC_GROUP *group;
+	int nid;
 
-	if (params == NULL) {
-		ECerror(EC_R_MISSING_PARAMETERS);
-		return NULL;
-	}
-	if (params->type == 0) {/* the curve is given by an OID */
-		tmp = OBJ_obj2nid(params->value.named_curve);
-		if ((ret = EC_GROUP_new_by_curve_name(tmp)) == NULL) {
+	if (params->type == ECPK_PARAM_NAMED_CURVE) {
+		if ((nid = OBJ_obj2nid(params->value.named_curve)) == NID_undef) {
+			ECerror(EC_R_UNKNOWN_GROUP);
+			return NULL;
+		}
+		if ((group = EC_GROUP_new_by_curve_name(nid)) == NULL) {
 			ECerror(EC_R_EC_GROUP_NEW_BY_NAME_FAILURE);
 			return NULL;
 		}
-		EC_GROUP_set_asn1_flag(ret, OPENSSL_EC_NAMED_CURVE);
-	} else if (params->type == 1) {	/* the parameters are given by a
-					 * ECPARAMETERS structure */
-		ret = ec_asn1_parameters2group(params->value.parameters);
-		if (!ret) {
+		EC_GROUP_set_asn1_flag(group, OPENSSL_EC_NAMED_CURVE);
+	} else if (params->type == ECPK_PARAM_EXPLICIT) {
+		group = ec_asn1_parameters2group(params->value.parameters);
+		if (group == NULL) {
 			ECerror(ERR_R_EC_LIB);
 			return NULL;
 		}
-		EC_GROUP_set_asn1_flag(ret, 0x0);
-	} else if (params->type == 2) {	/* implicitlyCA */
+		EC_GROUP_set_asn1_flag(group, 0);
+	} else if (params->type == ECPK_PARAM_IMPLICITLY_CA) {
 		return NULL;
 	} else {
 		ECerror(EC_R_ASN1_ERROR);
 		return NULL;
 	}
 
-	return ret;
+	return group;
 }
 
 EC_GROUP *
@@ -1034,21 +1019,24 @@ d2i_ECPKParameters(EC_GROUP **a, const unsigned char **in, long len)
 LCRYPTO_ALIAS(d2i_ECPKParameters);
 
 int
-i2d_ECPKParameters(const EC_GROUP *a, unsigned char **out)
+i2d_ECPKParameters(const EC_GROUP *group, unsigned char **out_der)
 {
+	ECPKPARAMETERS *parameters;
 	int ret = 0;
-	ECPKPARAMETERS *tmp = ec_asn1_group2pkparameters(a, NULL);
-	if (tmp == NULL) {
+
+	if ((parameters = ec_asn1_group2pkparameters(group)) == NULL) {
 		ECerror(EC_R_GROUP2PKPARAMETERS_FAILURE);
-		return 0;
+		goto err;
 	}
-	if ((ret = i2d_ECPKPARAMETERS(tmp, out)) == 0) {
+	if ((ret = i2d_ECPKPARAMETERS(parameters, out_der)) <= 0) {
 		ECerror(EC_R_I2D_ECPKPARAMETERS_FAILURE);
-		ECPKPARAMETERS_free(tmp);
-		return 0;
+		goto err;
 	}
-	ECPKPARAMETERS_free(tmp);
-	return (ret);
+
+ err:
+	ECPKPARAMETERS_free(parameters);
+
+	return ret;
 }
 LCRYPTO_ALIAS(i2d_ECPKParameters);
 
@@ -1179,11 +1167,13 @@ i2d_ECPrivateKey(EC_KEY *a, unsigned char **out)
 		goto err;
 	}
 	if (!(a->enc_flag & EC_PKEY_NO_PARAMETERS)) {
-		if ((priv_key->parameters = ec_asn1_group2pkparameters(
-			    a->group, priv_key->parameters)) == NULL) {
+		ECPKPARAMETERS *parameters;
+
+		if ((parameters = ec_asn1_group2pkparameters(a->group)) == NULL) {
 			ECerror(ERR_R_EC_LIB);
 			goto err;
 		}
+		priv_key->parameters = parameters;
 	}
 	if (!(a->enc_flag & EC_PKEY_NO_PUBKEY) && a->pub_key != NULL) {
 		priv_key->publicKey = ASN1_BIT_STRING_new();
