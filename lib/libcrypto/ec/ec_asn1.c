@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_asn1.c,v 1.68 2024/10/11 18:58:04 tb Exp $ */
+/* $OpenBSD: ec_asn1.c,v 1.71 2024/10/14 12:50:18 tb Exp $ */
 /*
  * Written by Nils Larsch for the OpenSSL project.
  */
@@ -602,14 +602,40 @@ ec_asn1_group2fieldid(const EC_GROUP *group, X9_62_FIELDID *field)
 }
 
 static int
+ec_asn1_encode_field_element(const EC_GROUP *group, const BIGNUM *bn,
+    ASN1_OCTET_STRING *os)
+{
+	unsigned char *buf;
+	int len;
+	int ret = 0;
+
+	/* Zero-pad field element per SEC 1, section 2.3.5. */
+	len = (EC_GROUP_get_degree(group) + 7) / 8;
+
+	/* One extra byte for historic NUL termination of ASN1_STRINGs. */
+	if ((buf = calloc(1, len + 1)) == NULL)
+		goto err;
+
+	if (BN_bn2binpad(bn, buf, len) != len)
+		goto err;
+
+	ASN1_STRING_set0(os, buf, len);
+	buf = NULL;
+	len = 0;
+
+	ret = 1;
+
+ err:
+	freezero(buf, len);
+
+	return ret;
+}
+
+static int
 ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 {
 	BIGNUM *a = NULL, *b = NULL;
-	unsigned char *buffer_1 = NULL, *buffer_2 = NULL, *a_buf = NULL,
-	*b_buf = NULL;
-	size_t len_1, len_2;
-	unsigned char char_zero = 0;
-	int ok = 0;
+	int ret = 0;
 
 	if (!group || !curve || !curve->a || !curve->b)
 		return 0;
@@ -619,64 +645,30 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 		goto err;
 	}
 
-	/* get a and b */
 	if (!EC_GROUP_get_curve(group, NULL, a, b, NULL)) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
-	len_1 = (size_t) BN_num_bytes(a);
-	len_2 = (size_t) BN_num_bytes(b);
 
-	if (len_1 == 0) {
-		/* len_1 == 0 => a == 0 */
-		a_buf = &char_zero;
-		len_1 = 1;
-	} else {
-		if ((buffer_1 = malloc(len_1)) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			goto err;
-		}
-		if ((len_1 = BN_bn2bin(a, buffer_1)) == 0) {
-			ECerror(ERR_R_BN_LIB);
-			goto err;
-		}
-		a_buf = buffer_1;
+	if (!ec_asn1_encode_field_element(group, a, curve->a)) {
+		ECerror(ERR_R_EC_LIB);
+		goto err;
 	}
-
-	if (len_2 == 0) {
-		/* len_2 == 0 => b == 0 */
-		b_buf = &char_zero;
-		len_2 = 1;
-	} else {
-		if ((buffer_2 = malloc(len_2)) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			goto err;
-		}
-		if ((len_2 = BN_bn2bin(b, buffer_2)) == 0) {
-			ECerror(ERR_R_BN_LIB);
-			goto err;
-		}
-		b_buf = buffer_2;
-	}
-
-	/* set a and b */
-	if (!ASN1_STRING_set(curve->a, a_buf, len_1) ||
-	    !ASN1_STRING_set(curve->b, b_buf, len_2)) {
-		ECerror(ERR_R_ASN1_LIB);
+	if (!ec_asn1_encode_field_element(group, b, curve->b)) {
+		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
 
 	ASN1_BIT_STRING_free(curve->seed);
 	curve->seed = NULL;
 
-	/* set the seed (optional) */
 	if (group->seed != NULL) {
 		if ((curve->seed = ASN1_BIT_STRING_new()) == NULL) {
 			ECerror(ERR_R_MALLOC_FAILURE);
 			goto err;
 		}
-		if (!ASN1_BIT_STRING_set(curve->seed, group->seed,
-			(int) group->seed_len)) {
+		if (!ASN1_BIT_STRING_set(curve->seed,
+		    group->seed, group->seed_len)) {
 			ECerror(ERR_R_ASN1_LIB);
 			goto err;
 		}
@@ -686,15 +678,13 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 		}
 	}
 
-	ok = 1;
+	ret = 1;
 
  err:
-	free(buffer_1);
-	free(buffer_2);
 	BN_free(a);
 	BN_free(b);
 
-	return (ok);
+	return ret;
 }
 
 static ECPARAMETERS *
