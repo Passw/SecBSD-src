@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_asn1_test.c,v 1.10 2024/10/18 10:40:31 tb Exp $ */
+/* $OpenBSD: ec_asn1_test.c,v 1.13 2024/10/18 19:58:43 tb Exp $ */
 /*
  * Copyright (c) 2017, 2021 Joel Sing <jsing@openbsd.org>
  * Copyright (c) 2024 Theo Buehler <tb@openbsd.org>
@@ -117,7 +117,7 @@ compare_data(const char *label, const unsigned char *d1, size_t d1_len,
 		return -1;
 	}
 	if (memcmp(d1, d2, d1_len) != 0) {
-		fprintf(stderr, "FAIL: %sdiffer\n", label);
+		fprintf(stderr, "FAIL: %s differ\n", label);
 		fprintf(stderr, "got:\n");
 		hexdump(d1, d1_len);
 		fprintf(stderr, "want:\n");
@@ -287,10 +287,15 @@ static int
 ec_group_roundtrip_builtin_curve(const EC_builtin_curve *curve)
 {
 	EC_GROUP *group = NULL;
-	int failed = 0;
+	int failed = 1;
 
 	if ((group = EC_GROUP_new_by_curve_name(curve->nid)) == NULL)
 		errx(1, "failed to instantiate curve %d", curve->nid);
+
+	if (!EC_GROUP_check(group, NULL)) {
+		fprintf(stderr, "FAIL: EC_GROUP_check(%d) failed\n", curve->nid);
+		goto err;
+	}
 
 	if (EC_GROUP_get_asn1_flag(group) != OPENSSL_EC_NAMED_CURVE) {
 		fprintf(stderr, "FAIL: ASN.1 flag not set for %d\n", curve->nid);
@@ -302,6 +307,8 @@ ec_group_roundtrip_builtin_curve(const EC_builtin_curve *curve)
 		    curve->nid, EC_GROUP_get_point_conversion_form(group));
 		goto err;
 	}
+
+	failed = 0;
 
 	failed |= ec_group_roundtrip_curve(group, "named", curve->nid);
 
@@ -834,9 +841,9 @@ ec_group_non_builtin_curve(const struct curve *curve, const EC_METHOD *method,
 	}
 
 	ERR_clear_error();
+
 	pder = curve->param;
 	der_len = curve->param_len;
-#if 0
 	if ((new_group = d2i_ECPKParameters(NULL, &pder, der_len)) != NULL) {
 		fprintf(stderr, "FAIL: managed to decode non-builtin parameters %s\n",
 		    curve->descr);
@@ -849,18 +856,6 @@ ec_group_non_builtin_curve(const struct curve *curve, const EC_METHOD *method,
 		    curve->descr, EC_R_UNKNOWN_GROUP, ERR_GET_REASON(error));
 		goto err;
 	}
-#else
-	if ((new_group = d2i_ECPKParameters(NULL, &pder, der_len)) == NULL) {
-		fprintf(stderr, "FAIL: d2i_ECPKParameters(%s)\n", curve->descr);
-		goto err;
-	}
-	if (method == EC_GFp_mont_method() &&
-	    EC_GROUP_cmp(group, new_group, ctx) != 0) {
-		fprintf(stderr, "FAIL: %s Weierstrass groups do not match!\n",
-		    curve->descr);
-		goto err;
-	}
-#endif
 
 	failed = 0;
 
