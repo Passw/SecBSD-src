@@ -1,4 +1,4 @@
-/*	$OpenBSD: bgpctl.c,v 1.307 2024/08/14 19:10:51 claudio Exp $ */
+/*	$OpenBSD: bgpctl.c,v 1.314 2024/12/16 16:10:46 claudio Exp $ */
 
 /*
  * Copyright (c) 2003 Henning Brauer <henning@openbsd.org>
@@ -176,7 +176,9 @@ main(int argc, char *argv[])
 
 	if ((imsgbuf = malloc(sizeof(struct imsgbuf))) == NULL)
 		err(1, NULL);
-	imsg_init(imsgbuf, fd);
+	if (imsgbuf_init(imsgbuf, fd) == -1 ||
+	    imsgbuf_set_maxsize(imsgbuf, MAX_BGPD_IMSGSIZE) == -1)
+		err(1, NULL);
 	done = 0;
 
 	switch (res->action) {
@@ -418,9 +420,8 @@ main(int argc, char *argv[])
 	output->head(res);
 
  again:
-	while (imsgbuf->w.queued)
-		if (msgbuf_write(&imsgbuf->w) <= 0)
-			err(1, "write error");
+	if (imsgbuf_flush(imsgbuf) == -1)
+		err(1, "write error");
 
 	while (!done) {
 		while (!done) {
@@ -436,8 +437,8 @@ main(int argc, char *argv[])
 		if (done)
 			break;
 
-		if ((n = imsg_read(imsgbuf)) == -1)
-			err(1, "imsg_read error");
+		if ((n = imsgbuf_read(imsgbuf)) == -1)
+			err(1, "read error");
 		if (n == 0)
 			errx(1, "pipe closed");
 
@@ -1384,10 +1385,8 @@ network_mrt_dump(struct mrt_rib *mr, struct mrt_peer *mp, void *arg)
 			    mre->attrs[j].attr, mre->attrs[j].attr_len);
 		imsg_compose(imsgbuf, IMSG_NETWORK_DONE, 0, 0, -1, NULL, 0);
 
-		while (imsgbuf->w.queued) {
-			if (msgbuf_write(&imsgbuf->w) <= 0 && errno != EAGAIN)
-				err(1, "write error");
-		}
+		if (imsgbuf_flush(imsgbuf) == -1)
+			err(1, "write error");
 	}
 }
 
@@ -1465,6 +1464,9 @@ print_capability(uint8_t capa_code, struct ibuf *b)
 		break;
 	case CAPA_ENHANCED_RR:
 		printf("enhanced route refresh capability");
+		break;
+	case CAPA_EXT_MSG:
+		printf("extended message capability");
 		break;
 	default:
 		printf("unknown capability %u length %zu",
@@ -1774,7 +1776,7 @@ show_mrt_msg(struct mrt_bgp_msg *mm, void *arg)
 	}
 
 	switch (type) {
-	case OPEN:
+	case MSG_OPEN:
 		printf("%s ", msgtypenames[type]);
 		if (len < MSGSIZE_OPEN_MIN) {
 			printf("bad length: %u bytes\n", len);
@@ -1782,7 +1784,7 @@ show_mrt_msg(struct mrt_bgp_msg *mm, void *arg)
 		}
 		show_mrt_open(b);
 		break;
-	case NOTIFICATION:
+	case MSG_NOTIFICATION:
 		printf("%s ", msgtypenames[type]);
 		if (len < MSGSIZE_NOTIFICATION_MIN) {
 			printf("bad length: %u bytes\n", len);
@@ -1790,7 +1792,7 @@ show_mrt_msg(struct mrt_bgp_msg *mm, void *arg)
 		}
 		show_mrt_notification(b);
 		break;
-	case UPDATE:
+	case MSG_UPDATE:
 		printf("%s ", msgtypenames[type]);
 		if (len < MSGSIZE_UPDATE_MIN) {
 			printf("bad length: %u bytes\n", len);
@@ -1798,7 +1800,7 @@ show_mrt_msg(struct mrt_bgp_msg *mm, void *arg)
 		}
 		show_mrt_update(b, req->flags, mm->add_path);
 		break;
-	case KEEPALIVE:
+	case MSG_KEEPALIVE:
 		printf("%s ", msgtypenames[type]);
 		if (len != MSGSIZE_KEEPALIVE) {
 			printf("bad length: %u bytes\n", len);
@@ -1806,7 +1808,7 @@ show_mrt_msg(struct mrt_bgp_msg *mm, void *arg)
 		}
 		/* nothing */
 		break;
-	case RREFRESH:
+	case MSG_RREFRESH:
 		printf("%s ", msgtypenames[type]);
 		if (len != MSGSIZE_RREFRESH) {
 			printf("bad length: %u bytes\n", len);

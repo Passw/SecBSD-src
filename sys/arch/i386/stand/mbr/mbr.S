@@ -1,4 +1,4 @@
-/*	$OpenBSD: mbr.S,v 1.27 2022/09/02 07:46:03 krw Exp $	*/
+/*	$OpenBSD: mbr.S,v 1.28 2024/11/18 02:32:22 mlarkin Exp $	*/
 
 /*
  * Copyright (c) 1997 Michael Shalayeff and Tobias Weingartner
@@ -99,7 +99,7 @@ start:
 
 	/*
 	 * We don't need to disable and re-enable interrupts around the
-	 * the load of ss and sp.
+	 * load of ss and sp.
 	 *
 	 * From 80386 Programmer's Reference Manual:
 	 * "A MOV into SS inhibits all interrupts until after the execution

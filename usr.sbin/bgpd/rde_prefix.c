@@ -1,4 +1,4 @@
-/*	$OpenBSD: rde_prefix.c,v 1.52 2024/09/10 08:47:51 claudio Exp $ */
+/*	$OpenBSD: rde_prefix.c,v 1.56 2024/12/30 17:14:02 denis Exp $ */
 
 /*
  * Copyright (c) 2003, 2004 Claudio Jeker <claudio@openbsd.org>
@@ -225,8 +225,6 @@ pt_fill(struct bgpd_addr *prefix, int prefixlen)
 		pte_vpn4.prefixlen = prefixlen;
 		pte_vpn4.rd = prefix->rd;
 		pte_vpn4.labellen = prefix->labellen;
-		if (prefix->labellen == 0)
-			fatalx("pt_fill: no MPLS label in VPN addr");
 		memcpy(pte_vpn4.labelstack, prefix->labelstack,
 		    prefix->labellen);
 		return ((struct pt_entry *)&pte_vpn4);
@@ -236,13 +234,11 @@ pt_fill(struct bgpd_addr *prefix, int prefixlen)
 		pte_vpn6.refcnt = UINT32_MAX;
 		pte_vpn6.aid = prefix->aid;
 		if (prefixlen > 128)
-			fatalx("pt_get: bad IPv6 prefixlen");
+			fatalx("pt_fill: bad IPv6 prefixlen");
 		inet6applymask(&pte_vpn6.prefix6, &prefix->v6, prefixlen);
 		pte_vpn6.prefixlen = prefixlen;
 		pte_vpn6.rd = prefix->rd;
 		pte_vpn6.labellen = prefix->labellen;
-		if (prefix->labellen == 0)
-			fatalx("pt_fill: no MPLS label in VPN addr");
 		memcpy(pte_vpn6.labelstack, prefix->labelstack,
 		    prefix->labellen);
 		return ((struct pt_entry *)&pte_vpn6);
@@ -568,13 +564,13 @@ pt_writebuf(struct ibuf *buf, struct pt_entry *pte, int withdraw,
 			goto fail;
 		break;
 	default:
-		goto fail;
+		fatalx("%s: unknown aid %d", __func__, pte->aid);
 	}
 
 	/* keep 2 bytes reserved in the withdraw case for IPv4 encoding */
 	if (withdraw && ibuf_left(buf) < ibuf_size(tmp) + 2)
 		goto fail;
-	if (ibuf_add_buf(buf, tmp) == -1)
+	if (ibuf_add_ibuf(buf, tmp) == -1)
 		goto fail;
 	ibuf_free(tmp);
 	return 0;

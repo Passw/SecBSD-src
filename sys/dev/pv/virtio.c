@@ -1,4 +1,4 @@
-/*	$OpenBSD: virtio.c,v 1.32 2024/09/02 08:26:26 sf Exp $	*/
+/*	$OpenBSD: virtio.c,v 1.36 2024/12/20 22:18:27 sf Exp $	*/
 /*	$NetBSD: virtio.c,v 1.3 2011/11/02 23:05:52 njoly Exp $	*/
 
 /*
@@ -154,6 +154,25 @@ virtio_reset(struct virtio_softc *sc)
 	sc->sc_active_features = 0;
 }
 
+int
+virtio_attach_finish(struct virtio_softc *sc, struct virtio_attach_args *va)
+{
+	int i, ret;
+
+	ret = sc->sc_ops->attach_finish(sc, va);
+	if (ret != 0)
+		return ret;
+
+	sc->sc_ops->setup_intrs(sc);
+	for (i = 0; i < sc->sc_nvqs; i++) {
+		struct virtqueue *vq = &sc->sc_vqs[i];
+
+		virtio_setup_queue(sc, vq, vq->vq_dmamap->dm_segs[0].ds_addr);
+	}
+	virtio_set_status(sc, VIRTIO_CONFIG_DEVICE_STATUS_DRIVER_OK);
+	return 0;
+}
+
 void
 virtio_reinit_start(struct virtio_softc *sc)
 {
@@ -162,6 +181,7 @@ virtio_reinit_start(struct virtio_softc *sc)
 	virtio_set_status(sc, VIRTIO_CONFIG_DEVICE_STATUS_ACK);
 	virtio_set_status(sc, VIRTIO_CONFIG_DEVICE_STATUS_DRIVER);
 	virtio_negotiate_features(sc, NULL);
+	sc->sc_ops->setup_intrs(sc);
 	for (i = 0; i < sc->sc_nvqs; i++) {
 		int n;
 		struct virtqueue *vq = &sc->sc_vqs[i];
@@ -175,7 +195,6 @@ virtio_reinit_start(struct virtio_softc *sc)
 		virtio_init_vq(sc, vq);
 		virtio_setup_queue(sc, vq, vq->vq_dmamap->dm_segs[0].ds_addr);
 	}
-	sc->sc_ops->setup_intrs(sc);
 }
 
 void
@@ -421,7 +440,6 @@ virtio_alloc_vq(struct virtio_softc *sc, struct virtqueue *vq, int index,
 	}
 
 	virtio_init_vq(sc, vq);
-	virtio_setup_queue(sc, vq, vq->vq_dmamap->dm_segs[0].ds_addr);
 
 #if VIRTIO_DEBUG
 	printf("\nallocated %u byte for virtqueue %d for %s, size %d\n",
@@ -848,22 +866,25 @@ virtio_dequeue(struct virtio_softc *sc, struct virtqueue *vq,
  *
  *                 Don't call this if you use statically allocated slots
  *                 and virtio_enqueue_trim().
+ *
+ *                 returns the number of freed slots.
  */
 int
 virtio_dequeue_commit(struct virtqueue *vq, int slot)
 {
 	struct vq_entry *qe = &vq->vq_entries[slot];
 	struct vring_desc *vd = &vq->vq_desc[0];
-	int s = slot;
+	int s = slot, r = 1;
 
 	while (vd[s].flags & VRING_DESC_F_NEXT) {
 		s = vd[s].next;
 		vq_free_entry(vq, qe);
 		qe = &vq->vq_entries[s];
+		r++;
 	}
 	vq_free_entry(vq, qe);
 
-	return 0;
+	return r;
 }
 
 /*

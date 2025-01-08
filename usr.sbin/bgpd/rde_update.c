@@ -1,4 +1,4 @@
-/*	$OpenBSD: rde_update.c,v 1.169 2024/09/25 14:46:51 claudio Exp $ */
+/*	$OpenBSD: rde_update.c,v 1.172 2025/01/07 12:11:45 claudio Exp $ */
 
 /*
  * Copyright (c) 2004 Claudio Jeker <claudio@openbsd.org>
@@ -90,7 +90,14 @@ up_test_update(struct rde_peer *peer, struct prefix *p)
 			return (0);
 	}
 
-	/* well known communities */
+	/*
+	 * With "transparent-as yes" set do not filter based on
+	 * well-known communities. Instead pass them on to the client.
+	 */
+	if (peer->flags & PEERFLAG_TRANS_AS)
+		return (1);
+
+	/* well-known communities */
 	if (community_match(comm, &comm_no_advertise, NULL))
 		return (0);
 	if (peer->conf.ebgp) {
@@ -159,8 +166,8 @@ up_process_prefix(struct rde_peer *peer, struct prefix *new, struct prefix *p)
 
 	/*
 	 * up_test_update() needs to run before the output filters
-	 * else the well known communities won't work properly.
-	 * The output filters would not be able to add well known
+	 * else the well-known communities won't work properly.
+	 * The output filters would not be able to add well-known
 	 * communities.
 	 */
 	if (!up_test_update(peer, new))
@@ -988,11 +995,14 @@ struct ibuf *
 up_dump_withdraws(struct rde_peer *peer, uint8_t aid)
 {
 	struct ibuf *buf;
-	size_t off;
+	size_t off, pkgsize = MAX_PKTSIZE;
 	uint16_t afi, len;
 	uint8_t safi;
 
-	if ((buf = ibuf_dynamic(4, 4096 - MSGSIZE_HEADER)) == NULL)
+	if (peer->capa.ext_msg)
+		pkgsize = MAX_EXT_PKTSIZE;
+
+	if ((buf = ibuf_dynamic(4, pkgsize - MSGSIZE_HEADER)) == NULL)
 		goto fail;
 
 	/* reserve space for the withdrawn routes length field */
@@ -1136,14 +1146,17 @@ up_dump_update(struct rde_peer *peer, uint8_t aid)
 	struct ibuf *buf;
 	struct bgpd_addr addr;
 	struct prefix *p;
-	size_t off;
+	size_t off, pkgsize = MAX_PKTSIZE;
 	uint16_t len;
 
 	p = RB_MIN(prefix_tree, &peer->updates[aid]);
 	if (p == NULL)
 		return NULL;
 
-	if ((buf = ibuf_dynamic(4, 4096 - MSGSIZE_HEADER)) == NULL)
+	if (peer->capa.ext_msg)
+		pkgsize = MAX_EXT_PKTSIZE;
+
+	if ((buf = ibuf_dynamic(4, pkgsize - MSGSIZE_HEADER)) == NULL)
 		goto fail;
 
 	/* withdrawn routes length field is 0 */

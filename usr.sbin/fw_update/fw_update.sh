@@ -1,5 +1,5 @@
 #!/bin/ksh
-#	$OpenBSD: fw_update.sh,v 1.57 2024/10/12 23:56:23 afresh1 Exp $
+#	$OpenBSD: fw_update.sh,v 1.62 2024/11/24 21:27:04 afresh1 Exp $
 #
 # Copyright (c) 2021,2023 Andrew Hewus Fresh <afresh1@openbsd.org>
 #
@@ -51,6 +51,7 @@ unset FTPPID
 unset LOCKPID
 unset FWPKGTMP
 REMOVE_LOCALSRC=false
+DROP_PRIVS=true
 
 status() { echo -n "$*" >&"$STATUS_FD"; }
 warn()   { echo    "$*" >&"$WARN_FD"; }
@@ -121,7 +122,9 @@ fetch() {
 		  2) _flags=-Vm ;;
 	esac
 
-	if [ -x /usr/bin/su ]; then
+	if ! "$DROP_PRIVS"; then
+		/usr/bin/ftp -N error -D 'Get/Verify' $_flags -o- "$_src" > "$_dst"
+	elif [ -x /usr/bin/su ]; then
 		exec /usr/bin/su -s /bin/ksh "$_user" -c \
 		    "/usr/bin/ftp -N error -D 'Get/Verify' $_flags -o- '$_src'" > "$_dst"
 	else
@@ -242,7 +245,7 @@ verify_existing() {
 	( VERBOSE=$_v verify "$@" )
 }
 
-firmware_in_dmesg() {
+devices_in_dmesg() {
 	local IFS
 	local _d _m _dmesgtail _last='' _nl='
 '
@@ -357,7 +360,7 @@ detect_firmware() {
 	local _devices _last='' _d
 
 	set -sA _devices -- $(
-	    firmware_in_dmesg
+	    devices_in_dmesg
 	    for _d in $( installed_firmware '*' '-firmware-' '*' ); do
 		firmware_devicename "$_d"
 	    done
@@ -487,20 +490,21 @@ unregister_firmware() {
 }
 
 usage() {
-	echo "usage: ${0##*/} [-adFnv] [-p path] [driver | file ...]"
+	echo "usage: ${0##*/} [-adFlnv] [-p path] [driver | file ...]"
 	exit 1
 }
 
 ALL=false
-OPT_F=
-while getopts :adFnp:v name
+LIST=false
+while getopts :adFlnp:v name
 do
 	case "$name" in
 	a) ALL=true ;;
 	d) DELETE=true ;;
-	F) OPT_F=true ;;
+	F) INSTALL=false ;;
+	l) LIST=true ;;
 	n) DRYRUN=true ;;
-	p) LOCALSRC="$OPTARG" ;;
+	p) FWURL="$OPTARG" ;;
 	v) ((++VERBOSE)) ;;
 	:)
 	    warn "${0##*/}: option requires an argument -- -$OPTARG"
@@ -514,43 +518,30 @@ do
 done
 shift $((OPTIND - 1))
 
+# When listing, provide a clean output
+"$LIST" && VERBOSE=1 ENABLE_SPINNER=false
+
 # Progress bars, not spinner When VERBOSE > 1
 ((VERBOSE > 1)) && ENABLE_SPINNER=false
 
-if [ "$LOCALSRC" ]; then
-	if [[ $LOCALSRC = @(ftp|http?(s))://* ]]; then
-		FWURL="${LOCALSRC}"
-		LOCALSRC=
-	else
-		LOCALSRC="${LOCALSRC#file:}"
-		! [ -d "$LOCALSRC" ] &&
-		    warn "The path must be a URL or an existing directory" &&
-		    exit 1
-	fi
-fi
-
-# "Download only" means local dir and don't install
-if [ "$OPT_F" ]; then
-	INSTALL=false
-	LOCALSRC="${LOCALSRC:-.}"
-
-	# Always check for latest CFILE and so latest firmware
-	if [ -e "$LOCALSRC/$CFILE" ]; then
-		mv "$LOCALSRC/$CFILE" "$LOCALSRC/$CFILE-OLD"
-		if check_cfile; then
-			rm -f "$LOCALSRC/$CFILE-OLD"
-		else
-			mv "$LOCALSRC/$CFILE-OLD" "$LOCALSRC/$CFILE"
-			warn "Using existing $CFILE"
-		fi
-	fi
-elif [ "$LOCALSRC" ]; then
+if [[ $FWURL != @(ftp|http?(s))://* ]]; then
+	FWURL="${FWURL#file:}"
+	! [ -d "$FWURL" ] &&
+	    warn "The path must be a URL or an existing directory" &&
+	    exit 1
 	DOWNLOAD=false
+	FWURL="file:$FWURL"
 fi
 
 if [ -x /usr/bin/id ] && [ "$(/usr/bin/id -u)" != 0 ]; then
-	warn "need root privileges"
-	exit 1
+	if ! "$INSTALL" || "$LIST"; then
+		# When we aren't in the installer,
+		# allow downloading as the current user.
+		DROP_PRIVS=false
+	else
+		warn "need root privileges"
+		exit 1
+	fi
 fi
 
 set -sA devices -- "$@"
@@ -570,7 +561,7 @@ WARN_FD=4
 status "${0##*/}:"
 
 if "$DELETE"; then
-	[ "$OPT_F" ] && warn "Cannot use -F and -d" && usage
+	! "$INSTALL" && warn "Cannot use -F and -d" && usage
 	lock_db
 
 	# Show the "Uninstall" message when just deleting not upgrading
@@ -597,6 +588,17 @@ if "$DELETE"; then
 		)
 	elif "$ALL"; then
 		set -A installed -- $( installed_firmware '*' '-firmware-' '*' )
+	else
+		set -A installed -- $(
+		    set -- $( devices_in_dmesg )
+		    for f in $( installed_firmware '*' -firmware- '*' ); do
+		        n="$( firmware_devicename "$f" )"
+		        for d; do
+		            [ "$d" = "$n" ] && continue 2
+		        done
+		        echo "$f"
+		    done
+		)
 	fi
 
 	status " delete "
@@ -608,6 +610,8 @@ if "$DELETE"; then
 			comma=,
 			if "$DRYRUN"; then
 				((VERBOSE)) && echo "Delete $fw"
+			elif "$LIST"; then
+				echo "$fw"
 			else
 				delete_firmware "$fw" || {
 					status " ($fw failed)"
@@ -619,8 +623,13 @@ if "$DELETE"; then
 
 	[ "$comma" ] || status none
 
+	# no status when listing
+	"$LIST" && rm -f "$FD_DIR/status"
+
 	exit
 fi
+
+! "$INSTALL" && ! "$LIST" && LOCALSRC="${LOCALSRC:-.}"
 
 if [ ! "$LOCALSRC" ]; then
 	LOCALSRC="$( tmpdir "${DESTDIR}/tmp/${0##*/}" )"
@@ -646,10 +655,18 @@ set -A update ''
 kept=''
 unregister=''
 
+"$LIST" && ! "$INSTALL" &&
+    echo "$FWURL/${CFILE##*/}"
+
 if [ "${devices[*]:-}" ]; then
 	lock_db
 	for f in "${devices[@]}"; do
 		d="$( firmware_devicename "$f" )"
+
+		if "$LIST" && "$INSTALL"; then
+			echo "$d"
+			continue
+		fi
 
 		verify_existing=true
 		if [ "$f" = "$d" ]; then
@@ -679,6 +696,11 @@ if [ "${devices[*]:-}" ]; then
 		else
 			# Don't verify files specified on the command-line
 			verify_existing=false
+		fi
+
+		if "$LIST"; then
+			echo "$FWURL/$f"
+			continue
 		fi
 
 		set -A installed
@@ -736,6 +758,12 @@ if [ "${devices[*]:-}" ]; then
 		fi
 
 	done
+fi
+
+if "$LIST"; then
+	# No status when listing
+	rm -f "$FD_DIR/status"
+	exit
 fi
 
 if "$INSTALL"; then

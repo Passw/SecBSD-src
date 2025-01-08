@@ -1,4 +1,4 @@
-/* $OpenBSD: format.c,v 1.321 2024/10/10 10:41:33 nicm Exp $ */
+/* $OpenBSD: format.c,v 1.324 2024/11/25 08:34:01 nicm Exp $ */
 
 /*
  * Copyright (c) 2011 Nicholas Marriott <nicholas.marriott@gmail.com>
@@ -2490,9 +2490,20 @@ format_cb_window_last_flag(struct format_tree *ft)
 static void *
 format_cb_window_linked(struct format_tree *ft)
 {
+	struct winlink	*wl;
+	struct session	*s;
+	int		 found = 0;
+
 	if (ft->wl != NULL) {
-		if (session_is_linked(ft->wl->session, ft->wl->window))
-			return (xstrdup("1"));
+		RB_FOREACH(s, sessions, &sessions) {
+			RB_FOREACH(wl, winlinks, &s->windows) {
+				if (wl->window == ft->wl->window) {
+					if (found)
+						return (xstrdup("1"));
+					found = 1;
+				}
+			}
+		}
 		return (xstrdup("0"));
 	}
 	return (NULL);
@@ -2502,9 +2513,27 @@ format_cb_window_linked(struct format_tree *ft)
 static void *
 format_cb_window_linked_sessions(struct format_tree *ft)
 {
-	if (ft->wl != NULL)
-		return (format_printf("%u", ft->wl->window->references));
-	return (NULL);
+	struct window		*w;
+	struct session_group	*sg;
+	struct session		*s;
+	u_int			 n = 0;
+
+	if (ft->wl == NULL)
+		return (NULL);
+	w = ft->wl->window;
+
+	RB_FOREACH(sg, session_groups, &session_groups) {
+		s = TAILQ_FIRST(&sg->sessions);
+		if (winlink_find_by_window(&s->windows, w) != NULL)
+			n++;
+	}
+	RB_FOREACH(s, sessions, &sessions) {
+		if (session_group_contains(s) != NULL)
+			continue;
+		if (winlink_find_by_window(&s->windows, w) != NULL)
+			n++;
+	}
+	return (format_printf("%u", n));
 }
 
 /* Callback for window_marked_flag. */
@@ -5188,6 +5217,16 @@ format_defaults_paste_buffer(struct format_tree *ft, struct paste_buffer *pb)
 	ft->pb = pb;
 }
 
+static int
+format_is_word_separator(const char *ws, const struct grid_cell *gc)
+{
+	if (utf8_cstrhas(ws, &gc->data))
+		return (1);
+	if (gc->flags & GRID_FLAG_TAB)
+		return (1);
+	return gc->data.size == 1 && *gc->data.data == ' ';
+}
+
 /* Return word at given coordinates. Caller frees. */
 char *
 format_grid_word(struct grid *gd, u_int x, u_int y)
@@ -5207,8 +5246,7 @@ format_grid_word(struct grid *gd, u_int x, u_int y)
 		grid_get_cell(gd, x, y, &gc);
 		if (gc.flags & GRID_FLAG_PADDING)
 			break;
-		if (utf8_cstrhas(ws, &gc.data) ||
-		    (gc.data.size == 1 && *gc.data.data == ' ')) {
+		if (format_is_word_separator(ws, &gc)) {
 			found = 1;
 			break;
 		}
@@ -5245,8 +5283,7 @@ format_grid_word(struct grid *gd, u_int x, u_int y)
 		grid_get_cell(gd, x, y, &gc);
 		if (gc.flags & GRID_FLAG_PADDING)
 			break;
-		if (utf8_cstrhas(ws, &gc.data) ||
-		    (gc.data.size == 1 && *gc.data.data == ' '))
+		if (format_is_word_separator(ws, &gc))
 			break;
 
 		ud = xreallocarray(ud, size + 2, sizeof *ud);
@@ -5273,10 +5310,13 @@ format_grid_line(struct grid *gd, u_int y)
 	for (x = 0; x < grid_line_length(gd, y); x++) {
 		grid_get_cell(gd, x, y, &gc);
 		if (gc.flags & GRID_FLAG_PADDING)
-			break;
+			continue;
 
 		ud = xreallocarray(ud, size + 2, sizeof *ud);
-		memcpy(&ud[size++], &gc.data, sizeof *ud);
+		if (gc.flags & GRID_FLAG_TAB)
+			utf8_set(&ud[size++], '\t');
+		else
+			memcpy(&ud[size++], &gc.data, sizeof *ud);
 	}
 	if (size != 0) {
 		ud[size].size = 0;

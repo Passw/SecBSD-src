@@ -1,4 +1,4 @@
-/* $OpenBSD: input.c,v 1.230 2024/10/14 20:26:45 nicm Exp $ */
+/* $OpenBSD: input.c,v 1.232 2024/11/11 08:41:05 nicm Exp $ */
 
 /*
  * Copyright (c) 2007 Nicholas Marriott <nicholas.marriott@gmail.com>
@@ -93,7 +93,6 @@ struct input_ctx {
 	size_t			param_len;
 
 #define INPUT_BUF_START 32
-#define INPUT_BUF_LIMIT 1048576
 	u_char		       *input_buf;
 	size_t			input_len;
 	size_t			input_space;
@@ -729,6 +728,9 @@ static const struct input_transition input_state_consume_st_table[] = {
 	{ -1, -1, NULL, NULL }
 };
 
+/* Maximum of bytes allowed to read in a single input. */
+static size_t input_buffer_size = INPUT_BUF_DEFAULT_SIZE;
+
 /* Input table compare. */
 static int
 input_table_compare(const void *key, const void *value)
@@ -1193,7 +1195,7 @@ input_input(struct input_ctx *ictx)
 	available = ictx->input_space;
 	while (ictx->input_len + 1 >= available) {
 		available *= 2;
-		if (available > INPUT_BUF_LIMIT) {
+		if (available > input_buffer_size) {
 			ictx->flags |= INPUT_DISCARD;
 			return (0);
 		}
@@ -1213,6 +1215,10 @@ input_c0_dispatch(struct input_ctx *ictx)
 	struct screen_write_ctx	*sctx = &ictx->ctx;
 	struct window_pane	*wp = ictx->wp;
 	struct screen		*s = sctx->s;
+	struct grid_cell	 gc, first_gc;
+	u_int			 cx = s->cx, line = s->cy + s->grid->hsize;
+	u_int			 width;
+	int			 has_content = 0;
 
 	ictx->utf8started = 0; /* can't be valid UTF-8 */
 
@@ -1234,11 +1240,28 @@ input_c0_dispatch(struct input_ctx *ictx)
 			break;
 
 		/* Find the next tab point, or use the last column if none. */
+		grid_get_cell(s->grid, s->cx, line, &first_gc);
 		do {
-			s->cx++;
-			if (bit_test(s->tabs, s->cx))
+			if (!has_content) {
+				grid_get_cell(s->grid, cx, line, &gc);
+				if (gc.data.size != 1 ||
+				    *gc.data.data != ' ' ||
+				    !grid_cells_look_equal(&gc, &first_gc))
+					has_content = 1;
+			}
+			cx++;
+			if (bit_test(s->tabs, cx))
 				break;
-		} while (s->cx < screen_size_x(s) - 1);
+		} while (cx < screen_size_x(s) - 1);
+
+		width = cx - s->cx;
+		if (has_content || width > sizeof gc.data.data)
+			s->cx = cx;
+		else {
+			grid_get_cell(s->grid, s->cx, line, &gc);
+			grid_set_tab(&gc, width);
+			screen_write_collect_add(sctx, &gc);
+		}
 		break;
 	case '\012':	/* LF */
 	case '\013':	/* VT */
@@ -2995,4 +3018,12 @@ input_reply_clipboard(struct bufferevent *bev, const char *buf, size_t len,
 		bufferevent_write(bev, out, outlen);
 	bufferevent_write(bev, end, strlen(end));
 	free(out);
+}
+
+/* Set input buffer size. */
+void
+input_set_buffer_size(size_t buffer_size)
+{
+	log_debug("%s: %lu -> %lu", __func__, input_buffer_size, buffer_size);
+	input_buffer_size = buffer_size;
 }

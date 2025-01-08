@@ -1,4 +1,4 @@
-/*	$OpenBSD: repo.c,v 1.68 2024/09/27 12:55:03 tb Exp $ */
+/*	$OpenBSD: repo.c,v 1.71 2024/12/19 13:23:38 job Exp $ */
 /*
  * Copyright (c) 2021 Claudio Jeker <claudio@openbsd.org>
  * Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
@@ -80,7 +80,7 @@ struct tarepo {
 	char			*descr;
 	char			*basedir;
 	char			**uri;
-	size_t			 urisz;
+	size_t			 num_uris;
 	size_t			 uriidx;
 	unsigned int		 id;
 	enum repo_state		 state;
@@ -356,14 +356,14 @@ static void
 ta_fetch(struct tarepo *tr)
 {
 	if (!rrdpon) {
-		for (; tr->uriidx < tr->urisz; tr->uriidx++) {
+		for (; tr->uriidx < tr->num_uris; tr->uriidx++) {
 			if (strncasecmp(tr->uri[tr->uriidx],
 			    RSYNC_PROTO, RSYNC_PROTO_LEN) == 0)
 				break;
 		}
 	}
 
-	if (tr->uriidx >= tr->urisz) {
+	if (tr->uriidx >= tr->num_uris) {
 		tr->state = REPO_FAILED;
 		logx("ta/%s: fallback to cache", tr->descr);
 
@@ -426,9 +426,9 @@ ta_get(struct tal *tal)
 	}
 
 	/* steal URI information from TAL */
-	tr->urisz = tal->urisz;
+	tr->num_uris = tal->num_uris;
 	tr->uri = tal->uri;
-	tal->urisz = 0;
+	tal->num_uris = 0;
 	tal->uri = NULL;
 
 	ta_fetch(tr);
@@ -1150,7 +1150,7 @@ ta_lookup(int id, struct tal *tal)
 {
 	struct repo	*rp;
 
-	if (tal->urisz == 0)
+	if (tal->num_uris == 0)
 		errx(1, "TAL %s has no URI", tal->descr);
 
 	/* Look up in repository table. (Lookup should actually fail here) */
@@ -1264,6 +1264,20 @@ repo_byid(unsigned int id)
 	return NULL;
 }
 
+static struct repo *
+repo_rsync_bypath(const char *path)
+{
+	struct repo	*rp;
+
+	SLIST_FOREACH(rp, &repos, entry) {
+		if (rp->rsync == NULL)
+			continue;
+		if (strcmp(rp->basedir, path) == 0)
+			return rp;
+	}
+	return NULL;
+}
+
 /*
  * Find repository by base path.
  */
@@ -1358,7 +1372,7 @@ repo_proto(const struct repo *rp)
 
 	if (rp->ta != NULL) {
 		const struct tarepo *tr = rp->ta;
-		if (tr->uriidx < tr->urisz &&
+		if (tr->uriidx < tr->num_uris &&
 		    strncasecmp(tr->uri[tr->uriidx], RSYNC_PROTO,
 		    RSYNC_PROTO_LEN) == 0)
 			return "rsync";
@@ -1500,6 +1514,8 @@ repo_stat_inc(struct repo *rp, int talid, enum rtype type, enum stype subtype)
 			rp->stats[talid].mfts++;
 		if (subtype == STYPE_FAIL)
 			rp->stats[talid].mfts_fail++;
+		if (subtype == STYPE_SEQNUM_GAP)
+			rp->stats[talid].mfts_gap++;
 		break;
 	case RTYPE_ROA:
 		switch (subtype) {
@@ -1890,7 +1906,8 @@ repo_cleanup_entry(FTSENT *e, struct filepath_tree *tree, int cachefd)
 		}
 		if (e->fts_level == 3 && fts_state.type == RSYNC_DIR) {
 			/* .rsync/rpki.example.org/repository */
-			fts_state.rp = repo_bypath(path + strlen(".rsync/"));
+			fts_state.rp = repo_rsync_bypath(path +
+			    strlen(".rsync/"));
 		}
 		break;
 	case FTS_DP:

@@ -1,4 +1,4 @@
-/*	$OpenBSD: tcp_usrreq.c,v 1.231 2024/04/12 16:07:09 bluhm Exp $	*/
+/*	$OpenBSD: tcp_usrreq.c,v 1.238 2025/01/05 12:23:38 bluhm Exp $	*/
 /*	$NetBSD: tcp_usrreq.c,v 1.20 1996/02/13 23:44:16 christos Exp $	*/
 
 /*
@@ -102,15 +102,20 @@
 #include <netinet6/in6_var.h>
 #endif
 
+/*
+ * Locks used to protect global variables in this file:
+ *	I	immutable after creation
+ */
+
 #ifndef TCP_SENDSPACE
 #define	TCP_SENDSPACE	1024*16
 #endif
-u_int	tcp_sendspace = TCP_SENDSPACE;
+u_int	tcp_sendspace = TCP_SENDSPACE;		/* [I] */
 #ifndef TCP_RECVSPACE
 #define	TCP_RECVSPACE	1024*16
 #endif
-u_int	tcp_recvspace = TCP_RECVSPACE;
-u_int	tcp_autorcvbuf_inc = 16 * 1024;
+u_int	tcp_recvspace = TCP_RECVSPACE;		/* [I] */
+u_int	tcp_autorcvbuf_inc = 16 * 1024;		/* [I] */
 
 const struct pr_usrreqs tcp_usrreqs = {
 	.pru_attach	= tcp_attach,
@@ -193,8 +198,10 @@ tcp_sogetpcb(struct socket *so, struct inpcb **rinp, struct tcpcb **rtp)
 	 * structure will point at a subsidiary (struct tcpcb).
 	 */
 	if ((inp = sotoinpcb(so)) == NULL || (tp = intotcpcb(inp)) == NULL) {
-		if (so->so_error)
-			return so->so_error;
+		int error;
+
+		if ((error = READ_ONCE(so->so_error)))
+			return error;
 		return EINVAL;
 	}
 
@@ -291,14 +298,18 @@ tcp_fill_info(struct tcpcb *tp, struct socket *so, struct mbuf *m)
 	ti->tcpi_rfbuf_cnt = tp->rfbuf_cnt;
 	ti->tcpi_rfbuf_ts = (now - tp->rfbuf_ts) * t;
 
+	mtx_enter(&so->so_rcv.sb_mtx);
 	ti->tcpi_so_rcv_sb_cc = so->so_rcv.sb_cc;
 	ti->tcpi_so_rcv_sb_hiwat = so->so_rcv.sb_hiwat;
 	ti->tcpi_so_rcv_sb_lowat = so->so_rcv.sb_lowat;
 	ti->tcpi_so_rcv_sb_wat = so->so_rcv.sb_wat;
+	mtx_leave(&so->so_rcv.sb_mtx);
+	mtx_enter(&so->so_snd.sb_mtx);
 	ti->tcpi_so_snd_sb_cc = so->so_snd.sb_cc;
 	ti->tcpi_so_snd_sb_hiwat = so->so_snd.sb_hiwat;
 	ti->tcpi_so_snd_sb_lowat = so->so_snd.sb_lowat;
 	ti->tcpi_so_snd_sb_wat = so->so_snd.sb_wat;
+	mtx_leave(&so->so_snd.sb_mtx);
 
 	return 0;
 }
@@ -835,7 +846,9 @@ tcp_send(struct socket *so, struct mbuf *m, struct mbuf *nam,
 	if (so->so_options & SO_DEBUG)
 		ostate = tp->t_state;
 
+	mtx_enter(&so->so_snd.sb_mtx);
 	sbappendstream(so, &so->so_snd, m);
+	mtx_leave(&so->so_snd.sb_mtx);
 	m = NULL;
 
 	error = tcp_output(tp);
@@ -888,7 +901,9 @@ tcp_sense(struct socket *so, struct stat *ub)
 	if ((error = tcp_sogetpcb(so, &inp, &tp)))
 		return (error);
 
+	mtx_enter(&so->so_snd.sb_mtx);
 	ub->st_blksize = so->so_snd.sb_hiwat;
+	mtx_leave(&so->so_snd.sb_mtx);
 
 	if (so->so_options & SO_DEBUG)
 		tcp_trace(TA_USER, tp->t_state, tp, tp, NULL, PRU_SENSE, 0);
@@ -963,7 +978,9 @@ tcp_sendoob(struct socket *so, struct mbuf *m, struct mbuf *nam,
 	 * of data past the urgent section.
 	 * Otherwise, snd_up should be one lower.
 	 */
+	mtx_enter(&so->so_snd.sb_mtx);
 	sbappendstream(so, &so->so_snd, m);
+	mtx_leave(&so->so_snd.sb_mtx);
 	m = NULL;
 	tp->snd_up = tp->snd_una + so->so_snd.sb_cc;
 	tp->t_force = 1;
@@ -1039,7 +1056,9 @@ tcp_dodisconnect(struct tcpcb *tp)
 		tp = tcp_drop(tp, 0);
 	else {
 		soisdisconnecting(so);
+		mtx_enter(&so->so_rcv.sb_mtx);
 		sbflush(so, &so->so_rcv);
+		mtx_leave(&so->so_rcv.sb_mtx);
 		tp = tcp_usrclosed(tp);
 		if (tp)
 			(void) tcp_output(tp);
@@ -1332,7 +1351,7 @@ tcp_sysctl_tcpstat(void *oldp, size_t *oldlenp, void *newp)
 	set = &tcp_syn_cache[tcp_syn_cache_active];
 	tcpstat.tcps_sc_hash_size = set->scs_size;
 	tcpstat.tcps_sc_entry_count = set->scs_count;
-	tcpstat.tcps_sc_entry_limit = tcp_syn_cache_limit;
+	tcpstat.tcps_sc_entry_limit = atomic_load_int(&tcp_syn_cache_limit);
 	tcpstat.tcps_sc_bucket_maxlen = 0;
 	for (i = 0; i < set->scs_size; i++) {
 		if (tcpstat.tcps_sc_bucket_maxlen <
@@ -1340,7 +1359,7 @@ tcp_sysctl_tcpstat(void *oldp, size_t *oldlenp, void *newp)
 			tcpstat.tcps_sc_bucket_maxlen =
 				set->scs_buckethead[i].sch_length;
 	}
-	tcpstat.tcps_sc_bucket_limit = tcp_syn_bucket_limit;
+	tcpstat.tcps_sc_bucket_limit = atomic_load_int(&tcp_syn_bucket_limit);
 	tcpstat.tcps_sc_uses_left = set->scs_use;
 	mtx_leave(&syn_cache_mtx);
 
@@ -1355,7 +1374,7 @@ int
 tcp_sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, void *newp,
     size_t newlen)
 {
-	int error, nval;
+	int error, oval, nval;
 
 	/* All sysctl names at this level are terminal. */
 	if (namelen != 1)
@@ -1448,30 +1467,29 @@ tcp_sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, void *newp,
 		return (tcp_sysctl_tcpstat(oldp, oldlenp, newp));
 
 	case TCPCTL_SYN_USE_LIMIT:
-		NET_LOCK();
+		oval = nval = atomic_load_int(&tcp_syn_use_limit);
 		error = sysctl_int_bounded(oldp, oldlenp, newp, newlen,
-		    &tcp_syn_use_limit, 0, INT_MAX);
-		if (!error && newp != NULL) {
+		    &nval, 0, INT_MAX);
+		if (!error && oval != nval) {
 			/*
 			 * Global tcp_syn_use_limit is used when reseeding a
 			 * new cache.  Also update the value in active cache.
 			 */
 			mtx_enter(&syn_cache_mtx);
-			if (tcp_syn_cache[0].scs_use > tcp_syn_use_limit)
-				tcp_syn_cache[0].scs_use = tcp_syn_use_limit;
-			if (tcp_syn_cache[1].scs_use > tcp_syn_use_limit)
-				tcp_syn_cache[1].scs_use = tcp_syn_use_limit;
+			if (tcp_syn_cache[0].scs_use > nval)
+				tcp_syn_cache[0].scs_use = nval;
+			if (tcp_syn_cache[1].scs_use > nval)
+				tcp_syn_cache[1].scs_use = nval;
+			tcp_syn_use_limit = nval;
 			mtx_leave(&syn_cache_mtx);
 		}
-		NET_UNLOCK();
 		return (error);
 
 	case TCPCTL_SYN_HASH_SIZE:
-		NET_LOCK();
-		nval = tcp_syn_hash_size;
+		oval = nval = atomic_load_int(&tcp_syn_hash_size);
 		error = sysctl_int_bounded(oldp, oldlenp, newp, newlen,
 		    &nval, 1, 100000);
-		if (!error && nval != tcp_syn_hash_size) {
+		if (!error && oval != nval) {
 			/*
 			 * If global hash size has been changed,
 			 * switch sets as soon as possible.  Then
@@ -1485,14 +1503,11 @@ tcp_sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, void *newp,
 			tcp_syn_hash_size = nval;
 			mtx_leave(&syn_cache_mtx);
 		}
-		NET_UNLOCK();
 		return (error);
 
 	default:
-		NET_LOCK();
 		error = sysctl_bounded_arr(tcpctl_vars, nitems(tcpctl_vars),
 		    name, namelen, oldp, oldlenp, newp, newlen);
-		NET_UNLOCK();
 		return (error);
 	}
 	/* NOTREACHED */
@@ -1510,22 +1525,27 @@ void
 tcp_update_sndspace(struct tcpcb *tp)
 {
 	struct socket *so = tp->t_inpcb->inp_socket;
-	u_long nmax = so->so_snd.sb_hiwat;
+	u_long nmax;
+
+	mtx_enter(&so->so_snd.sb_mtx);
+
+	nmax = so->so_snd.sb_hiwat;
 
 	if (sbchecklowmem()) {
 		/* low on memory try to get rid of some */
 		if (tcp_sendspace < nmax)
 			nmax = tcp_sendspace;
-	} else if (so->so_snd.sb_wat != tcp_sendspace)
+	} else if (so->so_snd.sb_wat != tcp_sendspace) {
 		/* user requested buffer size, auto-scaling disabled */
 		nmax = so->so_snd.sb_wat;
-	else
+	} else {
 		/* automatic buffer scaling */
 		nmax = MIN(sb_max, so->so_snd.sb_wat + tp->snd_max -
 		    tp->snd_una);
+	}
 
 	/* a writable socket must be preserved because of poll(2) semantics */
-	if (sbspace(so, &so->so_snd) >= so->so_snd.sb_lowat) {
+	if (sbspace_locked(so, &so->so_snd) >= so->so_snd.sb_lowat) {
 		if (nmax < so->so_snd.sb_cc + so->so_snd.sb_lowat)
 			nmax = so->so_snd.sb_cc + so->so_snd.sb_lowat;
 		/* keep in sync with sbreserve() calculation */
@@ -1538,6 +1558,8 @@ tcp_update_sndspace(struct tcpcb *tp)
 
 	if (nmax != so->so_snd.sb_hiwat)
 		sbreserve(so, &so->so_snd, nmax);
+
+	mtx_leave(&so->so_snd.sb_mtx);
 }
 
 /*
@@ -1550,16 +1572,20 @@ void
 tcp_update_rcvspace(struct tcpcb *tp)
 {
 	struct socket *so = tp->t_inpcb->inp_socket;
-	u_long nmax = so->so_rcv.sb_hiwat;
+	u_long nmax;
+
+	mtx_enter(&so->so_rcv.sb_mtx);
+
+	nmax = so->so_rcv.sb_hiwat;
 
 	if (sbchecklowmem()) {
 		/* low on memory try to get rid of some */
 		if (tcp_recvspace < nmax)
 			nmax = tcp_recvspace;
-	} else if (so->so_rcv.sb_wat != tcp_recvspace)
+	} else if (so->so_rcv.sb_wat != tcp_recvspace) {
 		/* user requested buffer size, auto-scaling disabled */
 		nmax = so->so_rcv.sb_wat;
-	else {
+	} else {
 		/* automatic buffer scaling */
 		if (tp->rfbuf_cnt > so->so_rcv.sb_hiwat / 8 * 7)
 			nmax = MIN(sb_max, so->so_rcv.sb_hiwat +
@@ -1567,14 +1593,17 @@ tcp_update_rcvspace(struct tcpcb *tp)
 	}
 
 	/* a readable socket must be preserved because of poll(2) semantics */
+	mtx_enter(&so->so_snd.sb_mtx);
 	if (so->so_rcv.sb_cc >= so->so_rcv.sb_lowat &&
 	    nmax < so->so_snd.sb_lowat)
 		nmax = so->so_snd.sb_lowat;
+	mtx_leave(&so->so_snd.sb_mtx);
 
-	if (nmax == so->so_rcv.sb_hiwat)
-		return;
+	if (nmax != so->so_rcv.sb_hiwat) {
+		/* round to MSS boundary */
+		nmax = roundup(nmax, tp->t_maxseg);
+		sbreserve(so, &so->so_rcv, nmax);
+	}
 
-	/* round to MSS boundary */
-	nmax = roundup(nmax, tp->t_maxseg);
-	sbreserve(so, &so->so_rcv, nmax);
+	mtx_leave(&so->so_rcv.sb_mtx);
 }

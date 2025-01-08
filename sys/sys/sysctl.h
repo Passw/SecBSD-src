@@ -1,4 +1,4 @@
-/*	$OpenBSD: sysctl.h,v 1.238 2024/09/30 12:32:26 claudio Exp $	*/
+/*	$OpenBSD: sysctl.h,v 1.240 2024/11/04 11:49:19 jsg Exp $	*/
 /*	$NetBSD: sysctl.h,v 1.16 1996/04/09 20:55:36 cgd Exp $	*/
 
 /*
@@ -946,7 +946,7 @@ struct kinfo_file {
 #define	HW_POWER		26	/* int: machine has wall-power */
 #define	HW_BATTERY		27	/* node: battery */
 #define	HW_UCOMNAMES		28	/* strings: ucom names */
-#define	HW_MAXID		30	/* number of valid hw ids */
+#define	HW_MAXID		29	/* number of valid hw ids */
 
 #define	CTL_HW_NAMES { \
 	{ 0, 0 }, \
@@ -1074,7 +1074,6 @@ struct mbuf_queue;
 int sysctl_mq(int *, u_int, void *, size_t *, void *, size_t,
     struct mbuf_queue *);
 struct rtentry;
-struct walkarg;
 int sysctl_dumpentry(struct rtentry *, void *, unsigned int);
 int sysctl_rtable(int *, u_int, void *, size_t *, void *, size_t);
 int sysctl_clockrate(char *, size_t *, void *);

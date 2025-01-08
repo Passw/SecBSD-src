@@ -1,4 +1,4 @@
-/*	$OpenBSD: sys_process.c,v 1.102 2024/10/08 12:02:24 claudio Exp $	*/
+/*	$OpenBSD: sys_process.c,v 1.105 2024/12/15 18:25:12 mvs Exp $	*/
 /*	$NetBSD: sys_process.c,v 1.55 1996/05/15 06:17:47 tls Exp $	*/
 
 /*-
@@ -70,6 +70,11 @@
 
 #ifdef PTRACE
 
+/*
+ * Locks used to protect data:
+ *	a	atomic
+ */
+
 static inline int	process_checktracestate(struct process *_curpr,
 			    struct process *_tr, struct proc *_t);
 static inline struct process *process_tprfind(pid_t _tpid, struct proc **_tp);
@@ -78,7 +83,7 @@ int	ptrace_ctrl(struct proc *, int, pid_t, caddr_t, int);
 int	ptrace_ustate(struct proc *, int, pid_t, void *, int, register_t *);
 int	ptrace_kstate(struct proc *, int, pid_t, void *);
 
-int	global_ptrace;	/* permit tracing of not children */
+int	global_ptrace;	/* [a] permit tracing of not children */
 
 
 /*
@@ -205,6 +210,24 @@ sys_ptrace(struct proc *p, void *v, register_t *retval)
 	case PT_PACMASK:
 		mode = OUT;
 		size = sizeof u.u_pacmask;
+		break;
+#endif
+#ifdef PT_GETXSTATE_INFO
+	case PT_GETXSTATE_INFO:
+		mode = OUT_ALLOC;
+		size = sizeof(struct ptrace_xstate_info);
+		break;
+#endif
+#ifdef PT_GETXSTATE
+	case PT_GETXSTATE:
+		mode = OUT_ALLOC;
+		size = fpu_save_len;
+		break;
+#endif
+#ifdef PT_SETXSTATE
+	case PT_SETXSTATE:
+		mode = IN_ALLOC;
+		size = fpu_save_len;
 		break;
 #endif
 	default:
@@ -393,8 +416,8 @@ ptrace_ctrl(struct proc *p, int req, pid_t pid, caddr_t addr, int data)
 		/*
 		 * 	(5.5) it's not a child of the tracing process.
 		 */
-		if (global_ptrace == 0 && !inferior(tr, p->p_p) &&
-		    (error = suser(p)) != 0)
+		if (atomic_load_int(&global_ptrace) == 0 &&
+		    !inferior(tr, p->p_p) && (error = suser(p)) != 0)
 			goto fail;
 
 		/*
@@ -759,6 +782,18 @@ ptrace_ustate(struct proc *p, int req, pid_t pid, void *addr, int data,
 		((register_t *)addr)[0] = process_get_pacmask(t);
 		((register_t *)addr)[1] = process_get_pacmask(t);
 		return 0;
+#endif
+#ifdef PT_GETXSTATE_INFO
+	case PT_GETXSTATE_INFO:
+		return process_read_xstate_info(t, addr);
+#endif
+#ifdef PT_GETXSTATE
+	case PT_GETXSTATE:
+		return process_read_xstate(t, addr);
+#endif
+#ifdef PT_SETXSTATE
+	case PT_SETXSTATE:
+		return process_write_xstate(t, addr);
 #endif
 	default:
 		KASSERTMSG(0, "%s: unhandled request %d", __func__, req);

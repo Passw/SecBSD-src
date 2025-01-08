@@ -1,4 +1,4 @@
-/*	$OpenBSD: output.c,v 1.56 2024/10/01 18:33:16 claudio Exp $ */
+/*	$OpenBSD: output.c,v 1.58 2024/12/13 19:22:01 claudio Exp $ */
 
 /*
  * Copyright (c) 2003 Henning Brauer <henning@openbsd.org>
@@ -182,9 +182,11 @@ show_neighbor_capa_restart(struct capabilities *capa)
 	int	comma;
 	uint8_t	i;
 
-	printf("    Graceful Restart");
+	printf("    Graceful Restart: ");
 	if (capa->grestart.timeout)
-		printf(": Timeout: %d, ", capa->grestart.timeout);
+		printf("timeout: %d, ", capa->grestart.timeout);
+	if (capa->grestart.grnotification)
+		printf("graceful notification, ");
 	for (i = AID_MIN, comma = 0; i < AID_MAX; i++)
 		if (capa->grestart.flags[i] & CAPA_GR_PRESENT) {
 			if (!comma &&
@@ -342,6 +344,8 @@ show_neighbor_full(struct peer *p, struct parse_result *res)
 			printf("    Route Refresh\n");
 		if (p->capa.peer.enhanced_rr)
 			printf("    Enhanced Route Refresh\n");
+		if (p->capa.peer.ext_msg)
+			printf("    Extended message\n");
 		if (p->capa.peer.grestart.restart)
 			show_neighbor_capa_restart(&p->capa.peer);
 		if (hascapaap)
@@ -372,6 +376,8 @@ show_neighbor_full(struct peer *p, struct parse_result *res)
 			printf("    Route Refresh\n");
 		if (p->capa.neg.enhanced_rr)
 			printf("    Enhanced Route Refresh\n");
+		if (p->capa.neg.ext_msg)
+			printf("    Extended message\n");
 		if (p->capa.neg.grestart.restart)
 			show_neighbor_capa_restart(&p->capa.neg);
 		if (hascapaap)

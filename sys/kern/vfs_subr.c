@@ -1,4 +1,4 @@
-/*	$OpenBSD: vfs_subr.c,v 1.324 2024/10/18 05:52:32 miod Exp $	*/
+/*	$OpenBSD: vfs_subr.c,v 1.327 2025/01/02 10:07:18 dlg Exp $	*/
 /*	$NetBSD: vfs_subr.c,v 1.53 1996/04/22 01:39:13 christos Exp $	*/
 
 /*
@@ -72,6 +72,11 @@
 
 #include "softraid.h"
 
+/*
+ * Locks used to protect data:
+ *	a	atomic
+ */
+
 void sr_quiesce(void);
 
 enum vtype iftovt_tab[16] = {
@@ -84,8 +89,8 @@ int	vttoif_tab[9] = {
 	S_IFSOCK, S_IFIFO, S_IFMT,
 };
 
-int prtactive = 0;		/* 1 => print out reclaim of active vnodes */
-int suid_clear = 1;		/* 1 => clear SUID / SGID on owner change */
+int prtactive = 0;	/* 1 => print out reclaim of active vnodes */
+int suid_clear = 1;	/* [a] 1 => clear SUID / SGID on owner change */
 
 /*
  * Insq/Remq for the vnode usage lists.
@@ -176,6 +181,7 @@ vfs_mount_alloc(struct vnode *vp, struct vfsconf *vfsp)
 	struct mount *mp;
 
 	mp = malloc(sizeof(*mp), M_MOUNT, M_WAITOK|M_ZERO);
+	refcnt_init(&mp->mnt_refs);
 	rw_init_flags(&mp->mnt_lock, "vfslock", RWL_IS_VNODE);
 	(void)vfs_busy(mp, VB_READ|VB_NOWAIT);
 
@@ -191,14 +197,29 @@ vfs_mount_alloc(struct vnode *vp, struct vfsconf *vfsp)
 	return (mp);
 }
 
+struct mount *
+vfs_mount_take(struct mount *mp)
+{
+	refcnt_take(&mp->mnt_refs);
+	return (mp);
+}
+
+static void
+vfs_mount_rele(struct mount *mp)
+{
+	if (refcnt_rele(&mp->mnt_refs))
+		free(mp, M_MOUNT, sizeof(*mp));
+}
+
 /*
  * Release a mount point.
  */
 void
 vfs_mount_free(struct mount *mp)
 {
+	SET(mp->mnt_flag, MNT_UNMOUNT);
 	atomic_dec_int(&mp->mnt_vfc->vfc_refcount);
-	free(mp, M_MOUNT, sizeof(*mp));
+	vfs_mount_rele(mp);
 }
 
 /*
@@ -211,27 +232,27 @@ vfs_mount_free(struct mount *mp)
 int
 vfs_busy(struct mount *mp, int flags)
 {
-	int rwflags = 0;
+	int rwflags = ISSET(flags, VB_WRITE) ? RW_WRITE : RW_READ;
+	int error = 0;
 
-	if (flags & VB_WRITE)
-		rwflags |= RW_WRITE;
-	else
-		rwflags |= RW_READ;
-
-	if (flags & VB_WAIT)
-		rwflags |= RW_SLEEPFAIL;
-	else
+	if (!ISSET(flags, VB_WAIT))
 		rwflags |= RW_NOSLEEP;
 
 #ifdef WITNESS
-	if (flags & VB_DUPOK)
+	if (ISSET(flags, VB_DUPOK))
 		rwflags |= RW_DUPOK;
 #endif
 
-	if (rw_enter(&mp->mnt_lock, rwflags))
-		return (EBUSY);
+	vfs_mount_take(mp);
+	if (rw_enter(&mp->mnt_lock, rwflags) != 0)
+		error = EBUSY;
+	else if (ISSET(mp->mnt_flag, MNT_UNMOUNT)) {
+		rw_exit(&mp->mnt_lock);
+		error = EBUSY;
+	}
+	vfs_mount_rele(mp);
 
-	return (0);
+	return (error);
 }
 
 /*

@@ -1,4 +1,4 @@
-/*	$OpenBSD: socketvar.h,v 1.134 2024/09/09 07:38:45 mvs Exp $	*/
+/*	$OpenBSD: socketvar.h,v 1.138 2025/01/03 12:56:15 mvs Exp $	*/
 /*	$NetBSD: socketvar.h,v 1.18 1996/02/09 18:25:38 christos Exp $	*/
 
 /*-
@@ -84,7 +84,7 @@ struct sosplice {
  * Variables for socket buffering.
  */
 struct sockbuf {
-	struct rwlock sb_lock; 
+	struct rwlock sb_lock;
 	struct mutex  sb_mtx;
 /* The following fields are all zeroed on flush. */
 #define	sb_startzero	sb_cc
@@ -209,16 +209,13 @@ struct socket {
 void	soassertlocked(struct socket *);
 void	soassertlocked_readonly(struct socket *);
 
-static inline void
+static inline struct socket *
 soref(struct socket *so)
 {
+	if (so == NULL)
+		return NULL;
 	refcnt_take(&so->so_refcnt);
-}
-
-static inline void
-sorele(struct socket *so)
-{
-	refcnt_rele_wake(&so->so_refcnt);
+	return so;
 }
 
 /*
@@ -288,7 +285,7 @@ sbspace(struct socket *so, struct sockbuf *sb)
 	sb_mtx_lock(sb);
 	ret = sbspace_locked(so, sb);
 	sb_mtx_unlock(sb);
-	
+
 	return ret;
 }
 
@@ -394,7 +391,7 @@ int	soo_read(struct file *, struct uio *, int);
 int	soo_write(struct file *, struct uio *, int);
 int	soo_ioctl(struct file *, u_long, caddr_t, struct proc *);
 int	soo_kqfilter(struct file *, struct knote *);
-int 	soo_close(struct file *, struct proc *);
+int	soo_close(struct file *, struct proc *);
 int	soo_stat(struct file *, struct stat *, struct proc *);
 void	sbappend(struct socket *, struct sockbuf *, struct mbuf *);
 void	sbappendstream(struct socket *, struct sockbuf *, struct mbuf *);
@@ -428,6 +425,7 @@ int	socreate(int, struct socket **, int, int);
 int	sodisconnect(struct socket *);
 struct socket *soalloc(const struct protosw *, int);
 void	sofree(struct socket *, int);
+void	sorele(struct socket *);
 int	sogetopt(struct socket *, int, int, struct mbuf *);
 void	sohasoutofband(struct socket *);
 void	soisconnected(struct socket *);

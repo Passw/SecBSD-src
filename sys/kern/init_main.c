@@ -1,4 +1,4 @@
-/*	$OpenBSD: init_main.c,v 1.326 2024/04/02 08:39:16 deraadt Exp $	*/
+/*	$OpenBSD: init_main.c,v 1.328 2025/01/01 07:44:54 jsg Exp $	*/
 /*	$NetBSD: init_main.c,v 1.84.4.1 1996/06/02 09:08:06 mrg Exp $	*/
 
 /*
@@ -107,7 +107,7 @@ const char	copyright[] =
 "Copyright (c) 1982, 1986, 1989, 1991, 1993\n"
 "\tThe Regents of the University of California.  All rights reserved.\n"
 "Copyright (c) 1995-2024 OpenBSD. All rights reserved.  https://www.OpenBSD.org\n"
-"Copyright (c) 2018-2024 SecBSD. All rights reserved.  https://secbsd.org\n";
+"Copyright (c) 2018-2025 SecBSD. All rights reserved.  https://secbsd.org\n";
 
 /* Components of the first process -- never freed. */
 struct	session session0;
@@ -141,6 +141,7 @@ void	db_ctf_init(void);
 void	prof_init(void);
 void	init_exec(void);
 void	futex_init(void);
+void	tslp_init(void);
 void	taskq_init(void);
 void	timeout_proc_init(void);
 void	pool_gc_pages(void *);
@@ -251,6 +252,7 @@ main(void *framep)
 	 * Initialize futexes.
 	 */
 	futex_init();
+	tslp_init();
 
 	/* Create credentials. */
 	p->p_ucred = crget();

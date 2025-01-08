@@ -1,4 +1,4 @@
-/*	$OpenBSD: uipc_socket2.c,v 1.158 2024/07/12 19:50:35 bluhm Exp $	*/
+/*	$OpenBSD: uipc_socket2.c,v 1.164 2025/01/05 12:36:48 bluhm Exp $	*/
 /*	$NetBSD: uipc_socket2.c,v 1.11 1996/02/04 02:17:55 christos Exp $	*/
 
 /*
@@ -47,7 +47,7 @@
  * Primitive routines for operating on sockets and socket buffers
  */
 
-u_long	sb_max = SB_MAX;		/* patchable */
+u_long sb_max = SB_MAX;		/* [I] patchable */
 
 extern struct pool mclpools[];
 extern struct pool mbpool;
@@ -103,7 +103,6 @@ soisconnected(struct socket *so)
 		int persocket = solock_persocket(so);
 
 		if (persocket) {
-			soref(so);
 			soref(head);
 
 			sounlock(so);
@@ -113,13 +112,9 @@ soisconnected(struct socket *so)
 			if (so->so_onq != &head->so_q0) {
 				sounlock(head);
 				sorele(head);
-				sorele(so);
-
 				return;
 			}
 
-			sorele(head);
-			sorele(so);
 		}
 
 		soqremque(so, 0);
@@ -127,8 +122,10 @@ soisconnected(struct socket *so)
 		sorwakeup(head);
 		wakeup_one(&head->so_timeo);
 
-		if (persocket)
+		if (persocket) {
 			sounlock(head);
+			sorele(head);
+		}
 	} else {
 		wakeup(&so->so_timeo);
 		sorwakeup(so);
@@ -365,11 +362,8 @@ solock_shared(struct socket *so)
 	switch (so->so_proto->pr_domain->dom_family) {
 	case PF_INET:
 	case PF_INET6:
-		if (ISSET(so->so_proto->pr_flags, PR_MPSOCKET)) {
-			NET_LOCK_SHARED();
-			rw_enter_write(&so->so_lock);
-		} else
-			NET_LOCK();
+		NET_LOCK_SHARED();
+		rw_enter_write(&so->so_lock);
 		break;
 	default:
 		rw_enter_write(&so->so_lock);
@@ -425,11 +419,8 @@ sounlock_shared(struct socket *so)
 	switch (so->so_proto->pr_domain->dom_family) {
 	case PF_INET:
 	case PF_INET6:
-		if (ISSET(so->so_proto->pr_flags, PR_MPSOCKET)) {
-			rw_exit_write(&so->so_lock);
-			NET_UNLOCK_SHARED();
-		} else
-			NET_UNLOCK();
+		rw_exit_write(&so->so_lock);
+		NET_UNLOCK_SHARED();
 		break;
 	default:
 		rw_exit_write(&so->so_lock);
@@ -481,15 +472,11 @@ sosleep_nsec(struct socket *so, void *ident, int prio, const char *wmesg,
 	switch (so->so_proto->pr_domain->dom_family) {
 	case PF_INET:
 	case PF_INET6:
-		if (ISSET(so->so_proto->pr_flags, PR_MPSOCKET) &&
-		    rw_status(&netlock) == RW_READ) {
+		if (rw_status(&netlock) == RW_READ)
 			rw_exit_write(&so->so_lock);
-		}
 		ret = rwsleep_nsec(ident, &netlock, prio, wmesg, nsecs);
-		if (ISSET(so->so_proto->pr_flags, PR_MPSOCKET) &&
-		    rw_status(&netlock) == RW_READ) {
+		if (rw_status(&netlock) == RW_READ)
 			rw_enter_write(&so->so_lock);
-		}
 		break;
 	default:
 		ret = rwsleep_nsec(ident, &so->so_lock, prio, wmesg, nsecs);
@@ -684,14 +671,20 @@ int
 sbchecklowmem(void)
 {
 	static int sblowmem;
-	unsigned int used = m_pool_used();
+	unsigned int used;
 
+	/*
+	 * m_pool_used() is thread safe.  Global variable sblowmem is updated
+	 * by multiple CPUs, but most times with the same value.  And even
+	 * if the value is not correct for a short time, it does not matter.
+	 */
+	used = m_pool_used();
 	if (used < 60)
-		sblowmem = 0;
+		atomic_store_int(&sblowmem, 0);
 	else if (used > 80)
-		sblowmem = 1;
+		atomic_store_int(&sblowmem, 1);
 
-	return (sblowmem);
+	return (atomic_load_int(&sblowmem));
 }
 
 /*
@@ -833,8 +826,7 @@ sbappend(struct socket *so, struct sockbuf *sb, struct mbuf *m)
 void
 sbappendstream(struct socket *so, struct sockbuf *sb, struct mbuf *m)
 {
-	KASSERT(sb == &so->so_rcv || sb == &so->so_snd);
-	soassertlocked(so);
+	sbmtxassertlocked(so, sb);
 	KDASSERT(m->m_nextpkt == NULL);
 	KASSERT(sb->sb_mb == sb->sb_lastrecord);
 

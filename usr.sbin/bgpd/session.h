@@ -1,4 +1,4 @@
-/*	$OpenBSD: session.h,v 1.174 2024/10/01 11:49:24 claudio Exp $ */
+/*	$OpenBSD: session.h,v 1.184 2024/12/16 16:10:10 claudio Exp $ */
 
 /*
  * Copyright (c) 2003, 2004 Henning Brauer <henning@openbsd.org>
@@ -25,8 +25,9 @@
 #define	INTERVAL_HOLD_INITIAL		240
 #define	INTERVAL_HOLD			90
 #define	INTERVAL_IDLE_HOLD_INITIAL	30
-#define	INTERVAL_HOLD_CLONED		3600
 #define	INTERVAL_HOLD_DEMOTED		60
+#define	INTERVAL_STALE			180
+#define	INTERVAL_SESSION_DOWN		3600
 #define	MAX_IDLE_HOLD			3600
 #define	MSGSIZE_HEADER			19
 #define	MSGSIZE_HEADER_MARKER		16
@@ -64,15 +65,16 @@ enum session_events {
 	EVNT_RCVD_OPEN,
 	EVNT_RCVD_KEEPALIVE,
 	EVNT_RCVD_UPDATE,
-	EVNT_RCVD_NOTIFICATION
+	EVNT_RCVD_NOTIFICATION,
+	EVNT_RCVD_GRACE_NOTIFICATION,
 };
 
 enum msg_type {
-	OPEN = 1,
-	UPDATE,
-	NOTIFICATION,
-	KEEPALIVE,
-	RREFRESH
+	MSG_OPEN = 1,
+	MSG_UPDATE,
+	MSG_NOTIFICATION,
+	MSG_KEEPALIVE,
+	MSG_RREFRESH
 };
 
 enum suberr_header {
@@ -104,12 +106,6 @@ enum opt_params {
 	OPT_PARAM_AUTH,
 	OPT_PARAM_CAPABILITIES,
 	OPT_PARAM_EXT_LEN=255,
-};
-
-struct bgp_msg {
-	struct ibuf	*buf;
-	enum msg_type	 type;
-	uint16_t	 len;
 };
 
 struct bgpd_sysdep {
@@ -182,6 +178,7 @@ enum Timer {
 	Timer_IdleHoldReset,
 	Timer_CarpUndemote,
 	Timer_RestartTimeout,
+	Timer_SessionDown,
 	Timer_Rtr_Refresh,
 	Timer_Rtr_Retry,
 	Timer_Rtr_Expire,
@@ -212,8 +209,7 @@ struct peer {
 	struct bgpd_addr	 local_alt;
 	struct bgpd_addr	 remote;
 	struct timer_head	 timers;
-	struct msgbuf		 wbuf;
-	struct ibuf_read	*rbuf;
+	struct msgbuf		*wbuf;
 	struct peer		*template;
 	int			 fd;
 	int			 lasterr;
@@ -234,6 +230,7 @@ struct peer {
 	uint8_t			 passive;
 	uint8_t			 throttled;
 	uint8_t			 rpending;
+	uint8_t			 rdesession;
 };
 
 extern time_t		 pauseaccept;
@@ -273,8 +270,8 @@ void	 log_conn_attempt(const struct peer *, struct sockaddr *,
 	    socklen_t);
 
 /* mrt.c */
-void	 mrt_dump_bgp_msg(struct mrt *, void *, uint16_t,
-	    struct peer *, enum msg_type);
+void	 mrt_dump_bgp_msg(struct mrt *, struct ibuf *, struct peer *,
+	    enum msg_type);
 void	 mrt_dump_state(struct mrt *, uint16_t, uint16_t,
 	    struct peer *);
 void	 mrt_done(struct mrt *);
@@ -331,7 +328,7 @@ void	rtr_recalc(void);
 RB_PROTOTYPE(peer_head, peer, entry, peer_compare);
 
 void		 session_main(int, int);
-void		 bgp_fsm(struct peer *, enum session_events);
+void		 bgp_fsm(struct peer *, enum session_events, struct ibuf *);
 int		 session_neighbor_rrefresh(struct peer *p);
 struct peer	*getpeerbydesc(struct bgpd_config *, const char *);
 struct peer	*getpeerbyip(struct bgpd_config *, struct sockaddr *);

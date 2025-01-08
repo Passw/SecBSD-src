@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_asn1.c,v 1.75 2024/10/18 17:27:07 tb Exp $ */
+/* $OpenBSD: ec_asn1.c,v 1.109 2024/12/06 05:13:35 tb Exp $ */
 /*
  * Written by Nils Larsch for the OpenSSL project.
  */
@@ -56,10 +56,16 @@
  *
  */
 
+#include <limits.h>
+#include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <openssl/opensslconf.h>
 
+#include <openssl/asn1.h>
+#include <openssl/bn.h>
+#include <openssl/ec.h>
 #include <openssl/err.h>
 #include <openssl/asn1t.h>
 #include <openssl/objects.h>
@@ -557,6 +563,92 @@ EC_PRIVATEKEY_free(EC_PRIVATEKEY *a)
 }
 
 static int
+ec_point_from_asn1_string(const EC_GROUP *group, const ASN1_STRING *astr,
+    EC_POINT **out_point, uint8_t *out_form)
+{
+	return ec_point_from_octets(group, astr->data, astr->length,
+	    out_point, out_form, NULL);
+}
+
+static int
+ec_point_from_asn1_bit_string(const EC_GROUP *group, const ASN1_BIT_STRING *abs,
+    EC_POINT **out_point, uint8_t *out_form)
+{
+	/*
+	 * Per SEC 1, C.3, the bit string representing the public key comes from
+	 * an octet string, therefore the unused bits octet must be 0x00.
+	 * XXX - move this check to a helper in a_bitstr.c?
+	 */
+	if ((abs->flags & ASN1_STRING_FLAG_BITS_LEFT) != 0 &&
+	    (abs->flags & 0x07) != 0)
+		return 0;
+
+	return ec_point_from_asn1_string(group, abs, out_point, out_form);
+}
+
+static int
+ec_point_from_asn1_octet_string(const EC_GROUP *group, const ASN1_OCTET_STRING *aos,
+    EC_POINT **out_point, uint8_t *out_form)
+{
+	return ec_point_from_asn1_string(group, aos, out_point, out_form);
+}
+
+static int
+ec_point_to_asn1_string_type(const EC_GROUP *group, const EC_POINT *point,
+    int form, int type, ASN1_STRING **out_astr)
+{
+	ASN1_STRING *astr = NULL;
+	unsigned char *buf = NULL;
+	size_t len = 0;
+	int ret = 0;
+
+	if (*out_astr != NULL && ASN1_STRING_type(*out_astr) != type)
+		goto err;
+
+	if (!ec_point_to_octets(group, point, form, &buf, &len, NULL))
+		goto err;
+
+	if ((astr = *out_astr) == NULL)
+		astr = ASN1_STRING_type_new(type);
+	if (astr == NULL)
+		goto err;
+
+	ASN1_STRING_set0(astr, buf, len);
+	buf = NULL;
+	len = 0;
+
+	*out_astr = astr;
+	astr = NULL;
+
+	ret = 1;
+
+ err:
+	ASN1_STRING_free(astr);
+	freezero(buf, len);
+
+	return ret;
+}
+
+static int
+ec_point_to_asn1_bit_string(const EC_GROUP *group, const EC_POINT *point,
+    int form, ASN1_BIT_STRING **out_abs)
+{
+	if (!ec_point_to_asn1_string_type(group, point, form,
+	    V_ASN1_BIT_STRING, out_abs))
+		return 0;
+
+	return asn1_abs_set_unused_bits(*out_abs, 0);
+}
+
+static int
+ec_point_to_asn1_octet_string(const EC_GROUP *group, const EC_POINT *point,
+    int form, ASN1_OCTET_STRING **out_aos)
+{
+	return ec_point_to_asn1_string_type(group, point, form,
+	    V_ASN1_OCTET_STRING, out_aos);
+}
+
+static int
 ec_asn1_group2fieldid(const EC_GROUP *group, X9_62_FIELDID *field)
 {
 	BIGNUM *p = NULL;
@@ -566,7 +658,7 @@ ec_asn1_group2fieldid(const EC_GROUP *group, X9_62_FIELDID *field)
 	if (group == NULL || field == NULL)
 		goto err;
 
-	nid = EC_METHOD_get_field_type(EC_GROUP_method_of(group));
+	nid = ec_group_get_field_type(group);
 	if (nid == NID_X9_62_characteristic_two_field) {
 		ECerror(EC_R_GF2M_NOT_SUPPORTED);
 		goto err;
@@ -602,15 +694,11 @@ ec_asn1_group2fieldid(const EC_GROUP *group, X9_62_FIELDID *field)
 }
 
 static int
-ec_asn1_encode_field_element(const EC_GROUP *group, const BIGNUM *bn,
+ec_asn1_encode_bn(const EC_GROUP *group, const BIGNUM *bn, int len,
     ASN1_OCTET_STRING *os)
 {
 	unsigned char *buf;
-	int len;
 	int ret = 0;
-
-	/* Zero-pad field element per SEC 1, section 2.3.5. */
-	len = (EC_GROUP_get_degree(group) + 7) / 8;
 
 	/* One extra byte for historic NUL termination of ASN1_STRINGs. */
 	if ((buf = calloc(1, len + 1)) == NULL)
@@ -629,6 +717,32 @@ ec_asn1_encode_field_element(const EC_GROUP *group, const BIGNUM *bn,
 	freezero(buf, len);
 
 	return ret;
+}
+
+static int
+ec_asn1_encode_field_element(const EC_GROUP *group, const BIGNUM *bn,
+    ASN1_OCTET_STRING *os)
+{
+	int len;
+
+	/* Zero-pad field element to byte length of p per SEC 1, 2.3.5. */
+	len = (EC_GROUP_get_degree(group) + 7) / 8;
+	return ec_asn1_encode_bn(group, bn, len, os);
+}
+
+static int
+ec_asn1_encode_private_key(const EC_GROUP *group, const BIGNUM *bn,
+    ASN1_OCTET_STRING *os)
+{
+	const BIGNUM *order;
+
+	if ((order = EC_GROUP_get0_order(group)) == NULL) {
+		ECerror(EC_R_INVALID_GROUP_ORDER);
+		return 0;
+	}
+
+	/* Zero-pad private key to byte length of order per SEC 1, C.4. */
+	return ec_asn1_encode_bn(group, bn, BN_num_bytes(order), os);
 }
 
 static int
@@ -692,60 +806,37 @@ ec_asn1_group2curve(const EC_GROUP *group, X9_62_CURVE *curve)
 static ECPARAMETERS *
 ec_asn1_group2parameters(const EC_GROUP *group)
 {
-	int ok = 0;
-	size_t len = 0;
-	ECPARAMETERS *ret = NULL;
+	ECPARAMETERS *parameters = NULL;
+	const EC_POINT *generator = NULL;
 	const BIGNUM *order, *cofactor;
-	unsigned char *buffer = NULL;
-	const EC_POINT *point = NULL;
-	point_conversion_form_t form;
+	uint8_t form;
 
-	if ((ret = ECPARAMETERS_new()) == NULL) {
+	if ((parameters = ECPARAMETERS_new()) == NULL) {
 		ECerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
 
-	/* set the version (always one) */
-	ret->version = (long) 0x1;
+	parameters->version = 0x1;
 
-	/* set the fieldID */
-	if (!ec_asn1_group2fieldid(group, ret->fieldID)) {
+	if (!ec_asn1_group2fieldid(group, parameters->fieldID)) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
-	/* set the curve */
-	if (!ec_asn1_group2curve(group, ret->curve)) {
+
+	if (!ec_asn1_group2curve(group, parameters->curve)) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
-	/* set the base point */
-	if ((point = EC_GROUP_get0_generator(group)) == NULL) {
+
+	if ((generator = EC_GROUP_get0_generator(group)) == NULL) {
 		ECerror(EC_R_UNDEFINED_GENERATOR);
 		goto err;
 	}
-	form = EC_GROUP_get_point_conversion_form(group);
 
-	len = EC_POINT_point2oct(group, point, form, NULL, len, NULL);
-	if (len == 0) {
-		ECerror(ERR_R_EC_LIB);
+	form = EC_GROUP_get_point_conversion_form(group);
+	if (!ec_point_to_asn1_octet_string(group, generator, form, &parameters->base))
 		goto err;
-	}
-	if ((buffer = malloc(len)) == NULL) {
-		ECerror(ERR_R_MALLOC_FAILURE);
-		goto err;
-	}
-	if (!EC_POINT_point2oct(group, point, form, buffer, len, NULL)) {
-		ECerror(ERR_R_EC_LIB);
-		goto err;
-	}
-	if (ret->base == NULL && (ret->base = ASN1_OCTET_STRING_new()) == NULL) {
-		ECerror(ERR_R_MALLOC_FAILURE);
-		goto err;
-	}
-	if (!ASN1_OCTET_STRING_set(ret->base, buffer, len)) {
-		ECerror(ERR_R_ASN1_LIB);
-		goto err;
-	}
+
 	if ((order = EC_GROUP_get0_order(group)) == NULL) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
@@ -754,35 +845,35 @@ ec_asn1_group2parameters(const EC_GROUP *group)
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
-	ASN1_INTEGER_free(ret->order);
-	if ((ret->order = BN_to_ASN1_INTEGER(order, NULL)) == NULL) {
+	ASN1_INTEGER_free(parameters->order);
+	if ((parameters->order = BN_to_ASN1_INTEGER(order, NULL)) == NULL) {
 		ECerror(ERR_R_ASN1_LIB);
 		goto err;
 	}
-	ASN1_INTEGER_free(ret->cofactor);
-	ret->cofactor = NULL;
+
+	ASN1_INTEGER_free(parameters->cofactor);
+	parameters->cofactor = NULL;
 	if ((cofactor = EC_GROUP_get0_cofactor(group)) == NULL) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
 	if (!BN_is_zero(cofactor)) {
-		if ((ret->cofactor = BN_to_ASN1_INTEGER(cofactor, NULL)) == NULL) {
+		if ((parameters->cofactor = BN_to_ASN1_INTEGER(cofactor,
+		    NULL)) == NULL) {
 			ECerror(ERR_R_ASN1_LIB);
 			goto err;
 		}
 	}
-	ok = 1;
+
+	return parameters;
 
  err:
-	if (!ok) {
-		ECPARAMETERS_free(ret);
-		ret = NULL;
-	}
-	free(buffer);
-	return (ret);
+	ECPARAMETERS_free(parameters);
+
+	return NULL;
 }
 
-ECPKPARAMETERS *
+static ECPKPARAMETERS *
 ec_asn1_group2pkparameters(const EC_GROUP *group)
 {
 	ECPKPARAMETERS *pkparameters;
@@ -900,19 +991,16 @@ ec_asn1_parameters_curve2group(const X9_62_CURVE *curve,
 static int
 ec_asn1_set_group_parameters(const ECPARAMETERS *params, EC_GROUP *group)
 {
-	EC_POINT *generator;
+	EC_POINT *generator = NULL;
 	BIGNUM *order = NULL, *cofactor = NULL;
 	const ASN1_BIT_STRING *seed;
-	point_conversion_form_t form;
+	uint8_t form;
 	int ret = 0;
 
-	if ((generator = EC_POINT_new(group)) == NULL)
+	if (!ec_point_from_asn1_octet_string(group, params->base, &generator, &form))
 		goto err;
-	if (!EC_POINT_oct2point(group, generator,
-	    params->base->data, params->base->length, NULL)) {
-		ECerror(ERR_R_EC_LIB);
-		goto err;
-	}
+	EC_GROUP_set_point_conversion_form(group, form);
+
 	if ((order = ASN1_INTEGER_to_BN(params->order, NULL)) == NULL) {
 		ECerror(ERR_R_ASN1_LIB);
 		goto err;
@@ -937,10 +1025,6 @@ ec_asn1_set_group_parameters(const ECPARAMETERS *params, EC_GROUP *group)
 			goto err;
 		}
 	}
-
-	/* oct2point has ensured that to be compressed, uncompressed, or hybrid. */
-	form = params->base->data[0] & ~1U;
-	EC_GROUP_set_point_conversion_form(group, form);
 
 	ret = 1;
 
@@ -985,6 +1069,7 @@ static EC_GROUP *
 ec_asn1_parameters2group(const ECPARAMETERS *params)
 {
 	EC_GROUP *group = NULL;
+	int nid = NID_undef;
 
 	if (params == NULL) {
 		ECerror(EC_R_ASN1_ERROR);
@@ -993,8 +1078,9 @@ ec_asn1_parameters2group(const ECPARAMETERS *params)
 
 	if (!ec_asn1_parameters_extract_prime_group(params, &group))
 		goto err;
-	if (!ec_group_is_builtin_curve(group))
+	if (!ec_group_is_builtin_curve(group, &nid))
 		goto err;
+	EC_GROUP_set_curve_name(group, nid);
 
 	return group;
 
@@ -1004,7 +1090,7 @@ ec_asn1_parameters2group(const ECPARAMETERS *params)
 	return NULL;
 }
 
-EC_GROUP *
+static EC_GROUP *
 ec_asn1_pkparameters2group(const ECPKPARAMETERS *params)
 {
 	EC_GROUP *group;
@@ -1026,7 +1112,7 @@ ec_asn1_pkparameters2group(const ECPKPARAMETERS *params)
 			ECerror(ERR_R_EC_LIB);
 			return NULL;
 		}
-		EC_GROUP_set_asn1_flag(group, 0);
+		EC_GROUP_set_asn1_flag(group, OPENSSL_EC_EXPLICIT_CURVE);
 	} else if (params->type == ECPK_PARAM_IMPLICITLY_CA) {
 		return NULL;
 	} else {
@@ -1059,7 +1145,8 @@ d2i_ECPKParameters(EC_GROUP **a, const unsigned char **in, long len)
 
  err:
 	ECPKPARAMETERS_free(params);
-	return (group);
+
+	return group;
 }
 LCRYPTO_ALIAS(d2i_ECPKParameters);
 
@@ -1085,289 +1172,322 @@ i2d_ECPKParameters(const EC_GROUP *group, unsigned char **out_der)
 }
 LCRYPTO_ALIAS(i2d_ECPKParameters);
 
-EC_KEY *
-d2i_ECPrivateKey(EC_KEY **a, const unsigned char **in, long len)
+static int
+ec_key_set_group_from_parameters(EC_KEY *ec_key, const ECPKPARAMETERS *params)
 {
-	EC_KEY *ret = NULL;
-	EC_PRIVATEKEY *priv_key = NULL;
+	EC_GROUP *group = NULL;
+	int ret = 0;
 
-	if ((priv_key = d2i_EC_PRIVATEKEY(NULL, in, len)) == NULL) {
-		ECerror(ERR_R_EC_LIB);
-		return NULL;
-	}
-	if (a == NULL || *a == NULL) {
-		if ((ret = EC_KEY_new()) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
+	/* Use group in parameters, if any. Fall back to existing group. */
+	if (params != NULL) {
+		if ((group = ec_asn1_pkparameters2group(params)) == NULL)
 			goto err;
-		}
-	} else
-		ret = *a;
-
-	if (priv_key->parameters) {
-		EC_GROUP_free(ret->group);
-		ret->group = ec_asn1_pkparameters2group(priv_key->parameters);
+		if (!EC_KEY_set_group(ec_key, group))
+			goto err;
 	}
-	if (ret->group == NULL) {
-		ECerror(ERR_R_EC_LIB);
+	if (ec_key->group == NULL)
 		goto err;
-	}
-	ret->version = priv_key->version;
 
-	if (priv_key->privateKey) {
-		ret->priv_key = BN_bin2bn(
-		    ASN1_STRING_data(priv_key->privateKey),
-		    ASN1_STRING_length(priv_key->privateKey),
-		    ret->priv_key);
-		if (ret->priv_key == NULL) {
-			ECerror(ERR_R_BN_LIB);
-			goto err;
-		}
-	} else {
+	ret = 1;
+
+ err:
+	EC_GROUP_free(group);
+
+	return ret;
+}
+
+static int
+ec_key_set_private_key(EC_KEY *ec_key, const ASN1_OCTET_STRING *aos)
+{
+	BIGNUM *priv_key = NULL;
+	int ret = 0;
+
+	if (aos == NULL) {
 		ECerror(EC_R_MISSING_PRIVATE_KEY);
 		goto err;
 	}
 
-	if (ret->pub_key)
-		EC_POINT_free(ret->pub_key);
-	ret->pub_key = EC_POINT_new(ret->group);
-	if (ret->pub_key == NULL) {
+	/*
+	 * XXX - Sec 1, C.4 requires that this octet string be padded to the
+	 * byte length of the group's order. This can't be enforced because
+	 * i2d_ECPrivateKey() used to produce a semi-compatible ad hoc format.
+	 */
+	if ((priv_key = BN_bin2bn(aos->data, aos->length, NULL)) == NULL)
+		goto err;
+	if (!EC_KEY_set_private_key(ec_key, priv_key))
+		goto err;
+
+	ret = 1;
+
+ err:
+	BN_free(priv_key);
+
+	return ret;
+}
+
+static int
+ec_key_set_public_key(EC_KEY *ec_key, const ASN1_BIT_STRING *abs)
+{
+	EC_POINT *pub_key = NULL;
+	uint8_t form;
+	int ret = 0;
+
+	if (abs == NULL) {
+		ec_key->enc_flag |= EC_PKEY_NO_PUBKEY;
+		return eckey_compute_pubkey(ec_key);
+	}
+
+	/* XXX - SEC 1, 2.3.4 does not allow hybrid encoding. */
+	if (!ec_point_from_asn1_bit_string(ec_key->group, abs, &pub_key, &form))
+		goto err;
+	if (!EC_KEY_set_public_key(ec_key, pub_key))
+		goto err;
+	EC_KEY_set_conv_form(ec_key, form);
+
+	ret = 1;
+
+ err:
+	EC_POINT_free(pub_key);
+
+	return ret;
+}
+
+EC_KEY *
+d2i_ECPrivateKey(EC_KEY **out_ec_key, const unsigned char **in, long len)
+{
+	EC_KEY *ec_key = NULL;
+	EC_PRIVATEKEY *ec_privatekey = NULL;
+
+	if (out_ec_key == NULL || (ec_key = *out_ec_key) == NULL)
+		ec_key = EC_KEY_new();
+	if (ec_key == NULL)
+		goto err;
+
+	if ((ec_privatekey = d2i_EC_PRIVATEKEY(NULL, in, len)) == NULL) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
 
-	if (priv_key->publicKey) {
-		const unsigned char *pub_oct;
-		size_t pub_oct_len;
+	ec_key->version = ec_privatekey->version;
+	if (!ec_key_set_group_from_parameters(ec_key, ec_privatekey->parameters))
+		goto err;
+	if (!ec_key_set_private_key(ec_key, ec_privatekey->privateKey))
+		goto err;
+	if (!ec_key_set_public_key(ec_key, ec_privatekey->publicKey))
+		goto err;
 
-		pub_oct = ASN1_STRING_data(priv_key->publicKey);
-		pub_oct_len = ASN1_STRING_length(priv_key->publicKey);
-		if (pub_oct == NULL || pub_oct_len <= 0) {
-			ECerror(EC_R_BUFFER_TOO_SMALL);
-			goto err;
-		}
+	EC_PRIVATEKEY_free(ec_privatekey);
+	ec_privatekey = NULL;
 
-		/* save the point conversion form */
-		ret->conv_form = (point_conversion_form_t) (pub_oct[0] & ~0x01);
-		if (!EC_POINT_oct2point(ret->group, ret->pub_key,
-			pub_oct, pub_oct_len, NULL)) {
-			ECerror(ERR_R_EC_LIB);
-			goto err;
-		}
-	} else {
-		if (!EC_POINT_mul(ret->group, ret->pub_key, ret->priv_key,
-			NULL, NULL, NULL)) {
-			ECerror(ERR_R_EC_LIB);
-			goto err;
-		}
-		/* Remember the original private-key-only encoding. */
-		ret->enc_flag |= EC_PKEY_NO_PUBKEY;
-	}
+	if (out_ec_key != NULL)
+		*out_ec_key = ec_key;
 
-	EC_PRIVATEKEY_free(priv_key);
-	if (a != NULL)
-		*a = ret;
-	return (ret);
+	return ec_key;
 
  err:
-	if (a == NULL || *a != ret)
-		EC_KEY_free(ret);
-	if (priv_key)
-		EC_PRIVATEKEY_free(priv_key);
+	if (out_ec_key == NULL || *out_ec_key != ec_key)
+		EC_KEY_free(ec_key);
+	EC_PRIVATEKEY_free(ec_privatekey);
 
-	return (NULL);
+	return NULL;
 }
 LCRYPTO_ALIAS(d2i_ECPrivateKey);
 
 int
-i2d_ECPrivateKey(EC_KEY *a, unsigned char **out)
+i2d_ECPrivateKey(EC_KEY *ec_key, unsigned char **out)
 {
-	int ret = 0, ok = 0;
-	unsigned char *buffer = NULL;
-	size_t buf_len = 0, tmp_len;
-	EC_PRIVATEKEY *priv_key = NULL;
+	EC_PRIVATEKEY *ec_privatekey = NULL;
+	const EC_GROUP *group;
+	const BIGNUM *private_key;
+	const EC_POINT *public_key = NULL;
+	int ret = 0;
 
-	if (a == NULL || a->group == NULL || a->priv_key == NULL ||
-	    (!(a->enc_flag & EC_PKEY_NO_PUBKEY) && a->pub_key == NULL)) {
+	if (ec_key == NULL) {
 		ECerror(ERR_R_PASSED_NULL_PARAMETER);
 		goto err;
 	}
-	if ((priv_key = EC_PRIVATEKEY_new()) == NULL) {
-		ECerror(ERR_R_MALLOC_FAILURE);
+	if ((group = EC_KEY_get0_group(ec_key)) == NULL) {
+		ECerror(EC_R_MISSING_PARAMETERS);
 		goto err;
 	}
-	priv_key->version = a->version;
+	if ((private_key = EC_KEY_get0_private_key(ec_key)) == NULL) {
+		ECerror(EC_R_KEYS_NOT_SET);
+		goto err;
+	}
+	if ((ec_key->enc_flag & EC_PKEY_NO_PUBKEY) == 0) {
+		if ((public_key = EC_KEY_get0_public_key(ec_key)) == NULL) {
+			ECerror(EC_R_KEYS_NOT_SET);
+			goto err;
+		}
+	}
 
-	buf_len = (size_t) BN_num_bytes(a->priv_key);
-	buffer = malloc(buf_len);
-	if (buffer == NULL) {
+	if ((ec_privatekey = EC_PRIVATEKEY_new()) == NULL) {
 		ECerror(ERR_R_MALLOC_FAILURE);
 		goto err;
 	}
-	if (!BN_bn2bin(a->priv_key, buffer)) {
-		ECerror(ERR_R_BN_LIB);
+	ec_privatekey->version = ec_key->version;
+
+	if (!ec_asn1_encode_private_key(group, private_key, ec_privatekey->privateKey))
 		goto err;
-	}
-	if (!ASN1_STRING_set(priv_key->privateKey, buffer, buf_len)) {
-		ECerror(ERR_R_ASN1_LIB);
-		goto err;
-	}
-	if (!(a->enc_flag & EC_PKEY_NO_PARAMETERS)) {
+	if ((ec_key->enc_flag & EC_PKEY_NO_PARAMETERS) == 0) {
 		ECPKPARAMETERS *parameters;
 
-		if ((parameters = ec_asn1_group2pkparameters(a->group)) == NULL) {
+		if ((parameters = ec_asn1_group2pkparameters(group)) == NULL) {
 			ECerror(ERR_R_EC_LIB);
 			goto err;
 		}
-		priv_key->parameters = parameters;
+		ec_privatekey->parameters = parameters;
 	}
-	if (!(a->enc_flag & EC_PKEY_NO_PUBKEY) && a->pub_key != NULL) {
-		priv_key->publicKey = ASN1_BIT_STRING_new();
-		if (priv_key->publicKey == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			goto err;
-		}
-		tmp_len = EC_POINT_point2oct(a->group, a->pub_key,
-		    a->conv_form, NULL, 0, NULL);
+	if (public_key != NULL) {
+		uint8_t form;
 
-		if (tmp_len > buf_len) {
-			unsigned char *tmp_buffer = realloc(buffer, tmp_len);
-			if (!tmp_buffer) {
-				ECerror(ERR_R_MALLOC_FAILURE);
-				goto err;
-			}
-			buffer = tmp_buffer;
-			buf_len = tmp_len;
-		}
-		if (!EC_POINT_point2oct(a->group, a->pub_key,
-			a->conv_form, buffer, buf_len, NULL)) {
-			ECerror(ERR_R_EC_LIB);
+		form = EC_KEY_get_conv_form(ec_key);
+		if (!ec_point_to_asn1_bit_string(group, public_key, form,
+		    &ec_privatekey->publicKey))
 			goto err;
-		}
-		if (!ASN1_STRING_set(priv_key->publicKey, buffer, buf_len)) {
-			ECerror(ERR_R_ASN1_LIB);
-			goto err;
-		}
-		if (!asn1_abs_set_unused_bits(priv_key->publicKey, 0)) {
-			ECerror(ERR_R_ASN1_LIB);
-			goto err;
-		}
 	}
-	if ((ret = i2d_EC_PRIVATEKEY(priv_key, out)) == 0) {
+
+	if ((ret = i2d_EC_PRIVATEKEY(ec_privatekey, out)) <= 0) {
 		ECerror(ERR_R_EC_LIB);
 		goto err;
 	}
-	ok = 1;
+
  err:
-	free(buffer);
-	if (priv_key)
-		EC_PRIVATEKEY_free(priv_key);
-	return (ok ? ret : 0);
+	EC_PRIVATEKEY_free(ec_privatekey);
+
+	return ret;
 }
 LCRYPTO_ALIAS(i2d_ECPrivateKey);
 
 int
-i2d_ECParameters(EC_KEY *a, unsigned char **out)
+i2d_ECParameters(EC_KEY *ec_key, unsigned char **out)
 {
-	if (a == NULL) {
+	if (ec_key == NULL) {
 		ECerror(ERR_R_PASSED_NULL_PARAMETER);
 		return 0;
 	}
-	return i2d_ECPKParameters(a->group, out);
+	return i2d_ECPKParameters(ec_key->group, out);
 }
 LCRYPTO_ALIAS(i2d_ECParameters);
 
 EC_KEY *
-d2i_ECParameters(EC_KEY **a, const unsigned char **in, long len)
+d2i_ECParameters(EC_KEY **out_ec_key, const unsigned char **in, long len)
 {
-	EC_KEY *ret;
+	EC_KEY *ec_key = NULL;
 
 	if (in == NULL || *in == NULL) {
 		ECerror(ERR_R_PASSED_NULL_PARAMETER);
-		return NULL;
+		goto err;
 	}
-	if (a == NULL || *a == NULL) {
-		if ((ret = EC_KEY_new()) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			return NULL;
-		}
-	} else
-		ret = *a;
+	if (out_ec_key == NULL || (ec_key = *out_ec_key) == NULL)
+		ec_key = EC_KEY_new();
+	if (ec_key == NULL) {
+		ECerror(ERR_R_MALLOC_FAILURE);
+		goto err;
+	}
 
-	if (!d2i_ECPKParameters(&ret->group, in, len)) {
+	if (!d2i_ECPKParameters(&ec_key->group, in, len)) {
 		ECerror(ERR_R_EC_LIB);
-		if (a == NULL || *a != ret)
-			EC_KEY_free(ret);
-		return NULL;
+		goto err;
 	}
 
-	if (a != NULL)
-		*a = ret;
-	return ret;
+	if (out_ec_key != NULL)
+		*out_ec_key = ec_key;
+
+	return ec_key;
+
+ err:
+	if (out_ec_key == NULL || *out_ec_key != ec_key)
+		EC_KEY_free(ec_key);
+
+	return NULL;
 }
 LCRYPTO_ALIAS(d2i_ECParameters);
 
 EC_KEY *
-o2i_ECPublicKey(EC_KEY **a, const unsigned char **in, long len)
+ECParameters_dup(EC_KEY *key)
 {
-	EC_KEY *ret = NULL;
+	const unsigned char *p;
+	unsigned char *der = NULL;
+	EC_KEY *dup = NULL;
+	int len;
 
-	if (a == NULL || (*a) == NULL || (*a)->group == NULL) {
-		/* An EC_GROUP structure is necessary to set the public key. */
+	if (key == NULL)
+		return NULL;
+
+	if ((len = i2d_ECParameters(key, &der)) <= 0)
+		return NULL;
+
+	p = der;
+	dup = d2i_ECParameters(NULL, &p, len);
+	freezero(der, len);
+
+	return dup;
+}
+LCRYPTO_ALIAS(ECParameters_dup);
+
+EC_KEY *
+o2i_ECPublicKey(EC_KEY **in_ec_key, const unsigned char **in, long len)
+{
+	EC_KEY *ec_key = NULL;
+	const EC_GROUP *group;
+	uint8_t form;
+
+	if (in_ec_key == NULL || (ec_key = *in_ec_key) == NULL) {
 		ECerror(ERR_R_PASSED_NULL_PARAMETER);
-		return 0;
+		return NULL;
 	}
-	ret = *a;
-	if (ret->pub_key == NULL &&
-	    (ret->pub_key = EC_POINT_new(ret->group)) == NULL) {
-		ECerror(ERR_R_MALLOC_FAILURE);
-		return 0;
+	if ((group = ec_key->group) == NULL) {
+		ECerror(ERR_R_PASSED_NULL_PARAMETER);
+		return NULL;
 	}
-	if (!EC_POINT_oct2point(ret->group, ret->pub_key, *in, len, NULL)) {
-		ECerror(ERR_R_EC_LIB);
-		return 0;
+	if (len < 0) {
+		ECerror(EC_R_INVALID_ARGUMENT);
+		return NULL;
 	}
-	/* save the point conversion form */
-	ret->conv_form = (point_conversion_form_t) (*in[0] & ~0x01);
+
+	if (!ec_point_from_octets(group, *in, len, &ec_key->pub_key, &form, NULL))
+		return NULL;
+	EC_KEY_set_conv_form(ec_key, form);
+
 	*in += len;
-	return ret;
+
+	return ec_key;
 }
 LCRYPTO_ALIAS(o2i_ECPublicKey);
 
 int
-i2o_ECPublicKey(const EC_KEY *a, unsigned char **out)
+i2o_ECPublicKey(const EC_KEY *ec_key, unsigned char **out)
 {
+	unsigned char *buf = NULL;
 	size_t buf_len = 0;
-	int new_buffer = 0;
+	int ret = 0;
 
-	if (a == NULL) {
+	if (ec_key == NULL) {
 		ECerror(ERR_R_PASSED_NULL_PARAMETER);
-		return 0;
+		goto err;
 	}
-	buf_len = EC_POINT_point2oct(a->group, a->pub_key,
-	    a->conv_form, NULL, 0, NULL);
 
-	if (out == NULL || buf_len == 0)
-		/* out == NULL => just return the length of the octet string */
-		return buf_len;
+	if (!ec_point_to_octets(ec_key->group, ec_key->pub_key,
+	    ec_key->conv_form, &buf, &buf_len, NULL))
+		goto err;
+	if (buf_len > INT_MAX)
+		goto err;
 
-	if (*out == NULL) {
-		if ((*out = malloc(buf_len)) == NULL) {
-			ECerror(ERR_R_MALLOC_FAILURE);
-			return 0;
-		}
-		new_buffer = 1;
-	}
-	if (!EC_POINT_point2oct(a->group, a->pub_key, a->conv_form,
-		*out, buf_len, NULL)) {
-		ECerror(ERR_R_EC_LIB);
-		if (new_buffer) {
-			free(*out);
-			*out = NULL;
-		}
-		return 0;
-	}
-	if (!new_buffer)
+	if (out != NULL && *out != NULL) {
+		/* Muppet's answer to the Jackass show. */
+		memcpy(*out, buf, buf_len);
 		*out += buf_len;
-	return buf_len;
+	} else if (out != NULL) {
+		*out = buf;
+		buf = NULL;
+	}
+
+	ret = buf_len;
+
+ err:
+	freezero(buf, buf_len);
+
+	return ret;
 }
 LCRYPTO_ALIAS(i2o_ECPublicKey);

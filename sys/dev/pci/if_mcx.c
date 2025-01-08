@@ -1,4 +1,4 @@
-/*	$OpenBSD: if_mcx.c,v 1.116 2024/10/04 06:37:22 jmatthew Exp $ */
+/*	$OpenBSD: if_mcx.c,v 1.118 2024/12/20 03:31:09 jmatthew Exp $ */
 
 /*
  * Copyright (c) 2017 David Gwynne <dlg@openbsd.org>
@@ -918,7 +918,6 @@ struct mcx_cap_device {
 					0x08000000
 #define MCX_CAP_DEVICE_DC_CONNECT_CP	0x00040000
 #define MCX_CAP_DEVICE_DC_CNAK_DRACE	0x00020000
-#define MCX_CAP_DEVICE_DRAIN_SIGERR	0x00010000
 #define MCX_CAP_DEVICE_DRAIN_SIGERR	0x00010000
 #define MCX_CAP_DEVICE_CMDIF_CHECKSUM	0x0000c000
 #define MCX_CAP_DEVICE_SIGERR_QCE	0x00002000
@@ -8279,7 +8278,7 @@ mcx_dmamem_alloc(struct mcx_softc *sc, struct mcx_dmamem *mxm,
 		return (1);
 	if (bus_dmamem_alloc(sc->sc_dmat, mxm->mxm_size,
 	    align, 0, &mxm->mxm_seg, 1, &mxm->mxm_nsegs,
-	    BUS_DMA_WAITOK | BUS_DMA_ZERO) != 0)
+	    BUS_DMA_WAITOK | BUS_DMA_ZERO | BUS_DMA_64BIT) != 0)
 		goto destroy;
 	if (bus_dmamem_map(sc->sc_dmat, &mxm->mxm_seg, mxm->mxm_nsegs,
 	    mxm->mxm_size, &mxm->mxm_kva, BUS_DMA_WAITOK) != 0)
@@ -8327,7 +8326,8 @@ mcx_hwmem_alloc(struct mcx_softc *sc, struct mcx_hwmem *mhm, unsigned int pages)
 	seglen = sizeof(*segs) * pages;
 
 	if (bus_dmamem_alloc(sc->sc_dmat, len, MCX_PAGE_SIZE, 0,
-	    segs, pages, &mhm->mhm_seg_count, BUS_DMA_NOWAIT) != 0)
+	    segs, pages, &mhm->mhm_seg_count,
+            BUS_DMA_NOWAIT|BUS_DMA_64BIT) != 0)
 		goto free_segs;
 
 	if (mhm->mhm_seg_count < pages) {
@@ -8350,7 +8350,7 @@ mcx_hwmem_alloc(struct mcx_softc *sc, struct mcx_hwmem *mhm, unsigned int pages)
 		mhm->mhm_segs = segs;
 
 	if (bus_dmamap_create(sc->sc_dmat, len, pages, MCX_PAGE_SIZE,
-	    MCX_PAGE_SIZE, BUS_DMA_NOWAIT|BUS_DMA_ALLOCNOW /*|BUS_DMA_64BIT*/,
+	    MCX_PAGE_SIZE, BUS_DMA_NOWAIT|BUS_DMA_ALLOCNOW|BUS_DMA_64BIT,
 	    &mhm->mhm_map) != 0)
 		goto free_dmamem;
 

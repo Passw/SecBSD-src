@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.294 2024/09/02 08:04:32 tb Exp $
+# $OpenBSD: Makefile,v 1.305 2024/12/27 15:30:17 schwarze Exp $
 
 .include <bsd.own.mk>
 
@@ -178,17 +178,14 @@ MAN=	\
 	EVP_PKEY_CTX_set_hkdf_md.3 \
 	EVP_PKEY_CTX_set_tls1_prf_md.3 \
 	EVP_PKEY_asn1_get_count.3 \
-	EVP_PKEY_asn1_new.3 \
-	EVP_PKEY_check.3 \
 	EVP_PKEY_cmp.3 \
 	EVP_PKEY_decrypt.3 \
 	EVP_PKEY_derive.3 \
 	EVP_PKEY_encrypt.3 \
 	EVP_PKEY_get_default_digest_nid.3 \
 	EVP_PKEY_keygen.3 \
-	EVP_PKEY_meth_get0_info.3 \
-	EVP_PKEY_meth_new.3 \
 	EVP_PKEY_new.3 \
+	EVP_PKEY_new_CMAC_key.3 \
 	EVP_PKEY_print_private.3 \
 	EVP_PKEY_set1_RSA.3 \
 	EVP_PKEY_sign.3 \
@@ -199,9 +196,12 @@ MAN=	\
 	EVP_SignInit.3 \
 	EVP_VerifyInit.3 \
 	EVP_aes_128_cbc.3 \
+	EVP_aes_128_ccm.3 \
+	EVP_aes_128_gcm.3 \
 	EVP_camellia_128_cbc.3 \
 	EVP_chacha20.3 \
 	EVP_des_cbc.3 \
+	EVP_rc2_cbc.3 \
 	EVP_rc4.3 \
 	EVP_sha1.3 \
 	EVP_sha3_224.3 \
@@ -267,6 +267,7 @@ MAN=	\
 	RAND_bytes.3 \
 	RAND_load_file.3 \
 	RAND_set_rand_method.3 \
+	RC2_encrypt.3 \
 	RC4.3 \
 	RIPEMD160.3 \
 	RSA_PSS_PARAMS_new.3 \
@@ -306,6 +307,7 @@ MAN=	\
 	X509V3_EXT_print.3 \
 	X509V3_extensions_print.3 \
 	X509V3_get_d2i.3 \
+	X509V3_parse_list.3 \
 	X509_ALGOR_dup.3 \
 	X509_ATTRIBUTE_get0_object.3 \
 	X509_ATTRIBUTE_new.3 \
@@ -381,9 +383,9 @@ MAN=	\
 	X509v3_addr_subset.3 \
 	X509v3_addr_validate_path.3 \
 	X509v3_asid_add_id_or_range.3 \
-	X509v3_asid_add_id_or_range.3 \
 	X509v3_get_ext_by_NID.3 \
 	a2d_ASN1_OBJECT.3 \
+	a2i_ipadd.3 \
 	crypto.3 \
 	d2i_ASN1_NULL.3 \
 	d2i_ASN1_OBJECT.3 \
@@ -425,6 +427,7 @@ MAN=	\
 	lh_new.3 \
 	openssl.cnf.5 \
 	s2i_ASN1_INTEGER.3 \
+	v2i_ASN1_BIT_STRING.3 \
 	x509v3.cnf.5
 
 all clean cleandir depend includes obj tags:

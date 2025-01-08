@@ -1,4 +1,4 @@
-.\"	$OpenBSD: rpki-client.8,v 1.112 2024/10/07 14:21:51 tb Exp $
+.\"	$OpenBSD: rpki-client.8,v 1.119 2025/01/03 10:32:21 job Exp $
 .\"
 .\" Copyright (c) 2019 Kristaps Dzonsons <kristaps@bsd.lv>
 .\"
@@ -14,7 +14,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd $Mdocdate: October 7 2024 $
+.Dd $Mdocdate: January 3 2025 $
 .Dt RPKI-CLIENT 8
 .Os
 .Sh NAME
@@ -22,14 +22,13 @@
 .Nd RPKI validator to support BGP routing security
 .Sh SYNOPSIS
 .Nm
-.Op Fl ABcjmnoRVvx
+.Op Fl 0ABcjmnoRVvx
 .Op Fl b Ar sourceaddr
 .Op Fl d Ar cachedir
 .Op Fl e Ar rsync_prog
 .Op Fl H Ar fqdn
 .Op Fl S Ar skiplist
 .Op Fl s Ar timeout
-.Op Fl T Ar table
 .Op Fl t Ar tal
 .Op Ar outputdir
 .Nm
@@ -63,17 +62,25 @@ in various formats.
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
+.It Fl 0
+Include hazardous AS0 TALs in the output files.
+AS0 TALs are not recommended for automatic filtering of BGP routes.
+The default is not to include them.
 .It Fl A
-Exclude the ASPA-set from the output files that support it (JSON and
+Exclude the ASPA-set from the output files that support it (BIRD, JSON, and
 OpenBGPD).
 .It Fl B
-Create output in the files
-.Pa bird1v4 ,
-.Pa bird1v6 ,
-and
+Create output in the file
 .Pa bird
-(for bird2)
-in the output directory which is suitable for the BIRD internet routing daemon.
+in the output directory suitable for BIRD internet routing daemon version
+2.16 and up.
+For compatibility with earlier versions, use
+.Fl A .
+The validated payload table names are
+.Em ROAS4 ,
+.Em ROAS6 ,
+and
+.Em ASPAS .
 .It Fl b Ar sourceaddr
 Tell the HTTP and rsync clients to use
 .Ar sourceaddr
@@ -200,12 +207,6 @@ Individual RSYNC/RRDP repositories are timed out after one fourth of
 .Em timeout .
 All network synchronisation tasks are aborted after seven eights of
 .Em timeout .
-.It Fl T Ar table
-For BIRD output generated with the
-.Fl B
-option use
-.Ar table
-as roa table name instead of the default 'ROAS'.
 .It Fl t Ar tal
 Specify a
 .Em Trust Anchor Location Pq TAL
@@ -332,7 +333,7 @@ agreement regarding ARIN service restrictions.
 .Re
 .Pp
 .Rs
-.%T Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile
+.%T Internet X.509 Public Key Infrastructure Certificate and CRL Profile
 .%R RFC 5280
 .Re
 .Pp
@@ -422,9 +423,18 @@ agreement regarding ARIN service restrictions.
 .Re
 .Pp
 .Rs
-.%T RPKI Signed Object for Trust Anchor Key
-.%U https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-signed-tal
-.%D Oct, 2022
+.%T Same-Origin Policy for the RRDP
+.%R RFC 9674
+.Re
+.Pp
+.Rs
+.%T A Profile for RPKI Trust Anchor Keys
+.%R RFC 9691
+.Re
+.Pp
+.Rs
+.%T Detecting RRDP Session Desynchronization
+.%R RFC 9697
 .Re
 .Pp
 .Rs
@@ -437,12 +447,6 @@ agreement regarding ARIN service restrictions.
 .%T Constraining RPKI Trust Anchors
 .%U https://datatracker.ietf.org/doc/html/draft-snijders-constraining-rpki-trust-anchors
 .%D September, 2023
-.Re
-.Pp
-.Rs
-.%T Detecting RRDP Session Desynchronization
-.%U https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-rrdp-desynchronization-00
-.%D April, 2024
 .Re
 .Pp
 .Rs
@@ -464,14 +468,8 @@ agreement regarding ARIN service restrictions.
 .Re
 .Pp
 .Rs
-.%T Same-Origin Policy for RRDP
-.%U https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-rrdp-same-origin
-.%D June, 2024
-.Re
-.Pp
-.Rs
 .%T Tiebreaking RPKI Trust Anchors
-.%U https://datatracker.ietf.org/doc/html/draft-spaghetti-sidrops-rpki-ta-tiebreaker
+.%U https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-rpki-ta-tiebreaker
 .%D June, 2024
 .Re
 .Sh HISTORY

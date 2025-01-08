@@ -1,4 +1,4 @@
-/*	$OpenBSD: bgpd.h,v 1.498 2024/10/08 12:28:09 claudio Exp $ */
+/*	$OpenBSD: bgpd.h,v 1.507 2025/01/07 17:43:31 denis Exp $ */
 
 /*
  * Copyright (c) 2003, 2004 Henning Brauer <henning@openbsd.org>
@@ -49,13 +49,14 @@
 #define	SET_NAME_LEN			128
 
 #define	MAX_PKTSIZE			4096
-#define	MIN_HOLDTIME			3
-#define	READ_BUF_SIZE			65535
-#define	MAX_SOCK_BUF			(4 * READ_BUF_SIZE)
+#define	MAX_EXT_PKTSIZE			65535
+#define	MAX_BGPD_IMSGSIZE		(128 * 1024)
+#define	MAX_SOCK_BUF			(4 * IBUF_READ_SIZE)
 #define	RT_BUF_SIZE			16384
 #define	MAX_RTSOCK_BUF			(2 * 1024 * 1024)
 #define	MAX_COMM_MATCH			3
 #define	MAX_ASPA_SPAS_COUNT		10000
+#define	MIN_HOLDTIME			3
 
 #define	BGPD_OPT_VERBOSE		0x0001
 #define	BGPD_OPT_VERBOSE2		0x0002
@@ -130,6 +131,7 @@
  * IMSG_XON message will be sent and the RDE will produce more messages again.
  */
 #define RDE_RUNNER_ROUNDS	100
+#define RDE_REAPER_ROUNDS	5000
 #define SESS_MSG_HIGH_MARK	2000
 #define SESS_MSG_LOW_MARK	500
 #define CTL_MSG_HIGH_MARK	500
@@ -154,12 +156,14 @@ enum reconf_action {
 #define	AFI_UNSPEC	0
 #define	AFI_IPv4	1
 #define	AFI_IPv6	2
+#define	AFI_L2VPN	25
 
 /* Subsequent Address Family Identifier as per RFC 4760 */
 #define	SAFI_NONE		0
 #define	SAFI_UNICAST		1
 #define	SAFI_MULTICAST		2
 #define	SAFI_MPLS		4
+#define	SAFI_EVPN		70	/* RFC 7432 */
 #define	SAFI_MPLSVPN		128
 #define	SAFI_FLOWSPEC		133
 #define	SAFI_VPNFLOWSPEC	134
@@ -180,7 +184,8 @@ extern const struct aid aid_vals[];
 #define	AID_VPN_IPv6	4
 #define	AID_FLOWSPECv4	5
 #define	AID_FLOWSPECv6	6
-#define	AID_MAX		7
+#define	AID_EVPN	7
+#define	AID_MAX		8
 #define	AID_MIN		1	/* skip AID_UNSPEC since that is a dummy */
 
 #define AID_VALS	{					\
@@ -192,6 +197,7 @@ extern const struct aid aid_vals[];
 	{ AFI_IPv6, AF_INET6, SAFI_MPLSVPN, "IPv6 vpn" },	\
 	{ AFI_IPv4, AF_INET, SAFI_FLOWSPEC, "IPv4 flowspec" },	\
 	{ AFI_IPv6, AF_INET6, SAFI_FLOWSPEC, "IPv6 flowspec" },	\
+	{ AFI_L2VPN, AF_UNSPEC, SAFI_EVPN, "evpn" },		\
 }
 
 #define BGP_MPLS_BOS	0x01
@@ -317,6 +323,7 @@ struct bgpd_config {
 	uint16_t				 holdtime;
 	uint16_t				 min_holdtime;
 	uint16_t				 connectretry;
+	uint16_t				 staletime;
 	uint8_t					 fib_priority;
 	uint8_t					 filtered_in_locrib;
 };
@@ -404,6 +411,7 @@ struct capabilities {
 		int16_t	timeout;	/* graceful restart timeout */
 		int8_t	flags[AID_MAX];	/* graceful restart per AID flags */
 		int8_t	restart;	/* graceful restart, RFC 4724 */
+		int8_t	grnotification;	/* graceful notification, RFC 8538 */
 	}	grestart;
 	int8_t	mp[AID_MAX];		/* multiprotocol extensions, RFC 4760 */
 	int8_t	add_path[AID_MAX];	/* ADD_PATH, RFC 7911 */
@@ -411,12 +419,14 @@ struct capabilities {
 	int8_t	as4byte;		/* 4-byte ASnum, RFC 4893 */
 	int8_t	enhanced_rr;		/* enhanced route refresh, RFC 7313 */
 	int8_t	policy;			/* Open Policy, RFC 9234, 2 = enforce */
+	int8_t	ext_msg;		/* Extended Msg, RFC8654 */
 };
 
 enum capa_codes {
 	CAPA_NONE = 0,
 	CAPA_MP = 1,
 	CAPA_REFRESH = 2,
+	CAPA_EXT_MSG = 6,
 	CAPA_ROLE = 9,
 	CAPA_RESTART = 64,
 	CAPA_AS4BYTE = 65,
@@ -431,6 +441,7 @@ enum capa_codes {
 #define	CAPA_GR_RESTARTING	0x08
 #define	CAPA_GR_TIMEMASK	0x0fff
 #define	CAPA_GR_R_FLAG		0x8000
+#define	CAPA_GR_N_FLAG		0x4000
 #define	CAPA_GR_F_FLAG		0x80
 
 /* flags for RFC 7911 - enhanced router refresh */
@@ -474,6 +485,7 @@ struct peer_config {
 	uint16_t		 max_out_prefix_restart;
 	uint16_t		 holdtime;
 	uint16_t		 min_holdtime;
+	uint16_t		 staletime;
 	uint16_t		 local_short_as;
 	uint16_t		 remote_port;
 	uint8_t			 template;
@@ -679,6 +691,7 @@ enum imsg_type {
 	IMSG_SESSION_ADD,
 	IMSG_SESSION_UP,
 	IMSG_SESSION_DOWN,
+	IMSG_SESSION_DELETE,
 	IMSG_SESSION_STALE,
 	IMSG_SESSION_NOGRACE,
 	IMSG_SESSION_FLUSH,
@@ -1125,6 +1138,7 @@ struct ext_comm_pairs {
 	{ EXT_COMMUNITY_TRANS_IPV4, 0x0b, "vrfri" },		\
 								\
 	{ EXT_COMMUNITY_TRANS_OPAQUE, 0x06, "ort" },		\
+	{ EXT_COMMUNITY_TRANS_OPAQUE, 0x0c, "encap" },		\
 	{ EXT_COMMUNITY_TRANS_OPAQUE, 0x0d, "defgw" },		\
 								\
 	{ EXT_COMMUNITY_NON_TRANS_OPAQUE, EXT_COMMUNITY_SUBTYPE_OVS, "ovs" }, \
@@ -1395,10 +1409,11 @@ enum mrt_state {
 
 struct mrt {
 	char			rib[PEER_DESCR_LEN];
-	struct msgbuf		wbuf;
 	LIST_ENTRY(mrt)		entry;
+	struct msgbuf		*wbuf;
 	uint32_t		peer_id;
 	uint32_t		group_id;
+	int			fd;
 	enum mrt_type		type;
 	enum mrt_state		state;
 	uint16_t		seqnum;
@@ -1656,7 +1671,8 @@ static const char * const eventnames[] = {
 	"OPEN message received",
 	"KEEPALIVE message received",
 	"UPDATE message received",
-	"NOTIFICATION received"
+	"NOTIFICATION received",
+	"graceful NOTIFICATION received",
 };
 
 static const char * const errnames[] = {
@@ -1757,6 +1773,7 @@ static const char * const timernames[] = {
 	"IdleHoldResetTimer",
 	"CarpUndemoteTimer",
 	"RestartTimer",
+	"SessionDownTimer",
 	"RTR RefreshTimer",
 	"RTR RetryTimer",
 	"RTR ExpireTimer",

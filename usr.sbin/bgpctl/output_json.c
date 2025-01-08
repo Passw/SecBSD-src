@@ -1,4 +1,4 @@
-/*	$OpenBSD: output_json.c,v 1.48 2024/10/01 18:33:16 claudio Exp $ */
+/*	$OpenBSD: output_json.c,v 1.50 2024/12/13 19:22:01 claudio Exp $ */
 
 /*
  * Copyright (c) 2020 Claudio Jeker <claudio@openbsd.org>
@@ -57,6 +57,7 @@ json_neighbor_capabilities(struct capabilities *capa)
 	json_do_bool("as4byte", capa->as4byte);
 	json_do_bool("refresh", capa->refresh);
 	json_do_bool("enhanced_refresh", capa->enhanced_rr);
+	json_do_bool("extended_message", capa->ext_msg);
 
 	if (hascapamp) {
 		json_do_array("multiprotocol");
@@ -81,6 +82,8 @@ json_neighbor_capabilities(struct capabilities *capa)
 
 		if (capa->grestart.timeout)
 			json_do_uint("timeout", capa->grestart.timeout);
+		if (capa->grestart.grnotification)
+			json_do_bool("graceful_notification", 1);
 
 		if (present) {
 			json_do_array("protocols");

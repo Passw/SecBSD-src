@@ -1,4 +1,4 @@
-/* $OpenBSD: tty-keys.c,v 1.182 2024/10/04 14:55:17 nicm Exp $ */
+/* $OpenBSD: tty-keys.c,v 1.185 2025/01/02 10:34:45 nicm Exp $ */
 
 /*
  * Copyright (c) 2007 Nicholas Marriott <nicholas.marriott@gmail.com>
@@ -886,6 +886,17 @@ first_key:
 		key = ' ' | KEYC_CTRL | (key & KEYC_META);
 
 	/*
+	 * Check for backspace key using termios VERASE - the terminfo
+	 * kbs entry is extremely unreliable, so cannot be safely
+	 * used. termios should have a better idea.
+	 */
+	bspace = tty->tio.c_cc[VERASE];
+	if (bspace != _POSIX_VDISABLE && key == bspace) {
+		log_debug("%s: key %#llx is backspace", c->name, key);
+		key = KEYC_BSPACE;
+	}
+
+	/*
 	 * Fix up all C0 control codes that don't have a dedicated key into
 	 * corresponding Ctrl keys. Convert characters in the A-Z range into
 	 * lowercase, so ^A becomes a|CTRL.
@@ -934,15 +945,6 @@ partial_key:
 
 complete_key:
 	log_debug("%s: complete key %.*s %#llx", c->name, (int)size, buf, key);
-
-	/*
-	 * Check for backspace key using termios VERASE - the terminfo
-	 * kbs entry is extremely unreliable, so cannot be safely
-	 * used. termios should have a better idea.
-	 */
-	bspace = tty->tio.c_cc[VERASE];
-	if (bspace != _POSIX_VDISABLE && (key & KEYC_MASK_KEY) == bspace)
-		key = (key & KEYC_MASK_MODIFIERS)|KEYC_BSPACE;
 
 	/* Remove key timer. */
 	if (event_initialized(&tty->key_timer))
@@ -1592,6 +1594,8 @@ tty_keys_extended_device_attributes(struct tty *tty, const char *buf,
 		tty_default_features(features, "XTerm", 0);
 	else if (strncmp(tmp, "mintty ", 7) == 0)
 		tty_default_features(features, "mintty", 0);
+	else if (strncmp(tmp, "foot(", 5) == 0)
+		tty_default_features(features, "foot", 0);
 	log_debug("%s: received extended DA %.*s", c->name, (int)*size, buf);
 
 	free(c->term_type);

@@ -739,7 +739,7 @@
 ./usr/lib/libelf.so.3.0
 ./usr/lib/libevent.so.4.1
 ./usr/lib/libexecinfo.so.3.0
-./usr/lib/libexpat.so.14.1
+./usr/lib/libexpat.so.15.0
 ./usr/lib/libfido2.so.7.0
 ./usr/lib/libform.so.7.0
 ./usr/lib/libformw.so.7.0
@@ -765,9 +765,9 @@
 ./usr/lib/libssl.so.58.0
 ./usr/lib/libtermcap.so.15.0
 ./usr/lib/libtermlib.so.15.0
-./usr/lib/libtls.so.31.0
+./usr/lib/libtls.so.31.1
 ./usr/lib/libusbhid.so.7.1
-./usr/lib/libutil.so.18.0
+./usr/lib/libutil.so.20.0
 ./usr/lib/libz.so.7.1
 ./usr/lib/locate
 ./usr/lib/locate/src.db

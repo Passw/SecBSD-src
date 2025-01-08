@@ -1,4 +1,4 @@
-/* $OpenBSD: options-table.c,v 1.182 2024/10/07 12:58:36 nicm Exp $ */
+/* $OpenBSD: options-table.c,v 1.188 2025/01/01 15:17:36 nicm Exp $ */
 
 /*
  * Copyright (c) 2011 Nicholas Marriott <nicholas.marriott@gmail.com>
@@ -63,6 +63,12 @@ static const char *options_table_visual_bell_list[] = {
 static const char *options_table_cursor_style_list[] = {
 	"default", "blinking-block", "block", "blinking-underline", "underline",
 	"blinking-bar", "bar", NULL
+};
+static const char *options_table_pane_scrollbars_list[] = {
+	"off", "modal", "on", NULL
+};
+static const char *options_table_pane_scrollbars_position_list[] = {
+	"right", "left", NULL
 };
 static const char *options_table_pane_status_list[] = {
 	"off", "top", "bottom", NULL
@@ -248,6 +254,15 @@ const struct options_table_entry options_table[] = {
 		  "Each entry is an alias and a command separated by '='."
 	},
 
+	{ .name = "codepoint-widths",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_SERVER,
+	  .flags = OPTIONS_TABLE_IS_ARRAY,
+	  .default_str = "",
+	  .separator = ",",
+	  .text = "Array of override widths for Unicode codepoints."
+	},
+
 	{ .name = "copy-command",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_SERVER,
@@ -340,6 +355,15 @@ const struct options_table_entry options_table[] = {
 	  .default_str = "",
 	  .text = "Location of the command prompt history file. "
 		  "Empty does not write a history file."
+	},
+
+	{ .name = "input-buffer-size",
+	  .type = OPTIONS_TABLE_NUMBER,
+	  .scope = OPTIONS_TABLE_SERVER,
+	  .minimum = INPUT_BUF_DEFAULT_SIZE,
+	  .maximum = UINT_MAX,
+	  .default_num = INPUT_BUF_DEFAULT_SIZE,
+	  .text = "Number of byte accpted in a single input before dropping."
 	},
 
 	{ .name = "menu-style",
@@ -577,7 +601,7 @@ const struct options_table_entry options_table[] = {
 	  .type = OPTIONS_TABLE_NUMBER,
 	  .scope = OPTIONS_TABLE_SESSION,
 	  .minimum = 0,
-	  .maximum = 10000,
+	  .maximum = 2000000,
 	  .default_num = 0,
 	  .unit = "milliseconds",
 	  .text = "Time to wait for a key binding to repeat the first time the "
@@ -672,7 +696,7 @@ const struct options_table_entry options_table[] = {
 	  .type = OPTIONS_TABLE_NUMBER,
 	  .scope = OPTIONS_TABLE_SESSION,
 	  .minimum = 0,
-	  .maximum = 10000,
+	  .maximum = 2000000,
 	  .default_num = 500,
 	  .unit = "milliseconds",
 	  .text = "Time to wait for a key binding to repeat, if it is bound "
@@ -1011,6 +1035,24 @@ const struct options_table_entry options_table[] = {
 	  .text = "Format of the position indicator in copy mode."
 	},
 
+	{ .name = "copy-mode-position-style",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_WINDOW,
+	  .default_str = "#{mode-style}",
+	  .flags = OPTIONS_TABLE_IS_STYLE,
+	  .separator = ",",
+	  .text = "Style of position indicator in copy mode."
+	},
+
+	{ .name = "copy-mode-selection-style",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_WINDOW,
+	  .default_str = "#{mode-style}",
+	  .flags = OPTIONS_TABLE_IS_STYLE,
+	  .separator = ",",
+	  .text = "Style of selection in copy mode."
+	},
+
 	{ .name = "fill-character",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_WINDOW,
@@ -1161,7 +1203,32 @@ const struct options_table_entry options_table[] = {
 	  .text = "The default colour palette for colours zero to 255."
 	},
 
-	{ .name = "popup-style",
+	{ .name = "pane-scrollbars",
+	  .type = OPTIONS_TABLE_CHOICE,
+	  .scope = OPTIONS_TABLE_WINDOW,
+	  .choices = options_table_pane_scrollbars_list,
+	  .default_num = PANE_SCROLLBARS_OFF,
+	  .text = "Pane scrollbar state."
+	},
+
+	{ .name = "pane-scrollbars-style",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_WINDOW|OPTIONS_TABLE_PANE,
+	  .default_str = "bg=black,fg=white,width=1,pad=0",
+	  .flags = OPTIONS_TABLE_IS_STYLE,
+	  .separator = ",",
+	  .text = "Style of the pane scrollbar."
+	},
+
+	{ .name = "pane-scrollbars-position",
+	  .type = OPTIONS_TABLE_CHOICE,
+	  .scope = OPTIONS_TABLE_WINDOW,
+	  .choices = options_table_pane_scrollbars_position_list,
+	  .default_num = PANE_SCROLLBARS_RIGHT,
+	  .text = "Pane scrollbar position."
+	},
+
+        { .name = "popup-style",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_WINDOW,
 	  .default_str = "default",

@@ -115,13 +115,13 @@ unlock_resv:
 unlock_mclk:
 	switch (ret) {
 	case VM_FAULT_NOPAGE:
-		ret = VM_PAGER_OK;
+		ret = 0;
 		break;
 	case VM_FAULT_RETRY:
-		ret = VM_PAGER_REFAULT;
+		ret = ERESTART;
 		break;
 	default:
-		ret = VM_PAGER_BAD;
+		ret = EACCES;
 		break;
 	}
 	up_read(&rdev->pm.mclk_lock);
@@ -991,7 +991,7 @@ DEFINE_SHOW_ATTRIBUTE(radeon_debugfs_gem_info);
 void radeon_gem_debugfs_init(struct radeon_device *rdev)
 {
 #if defined(CONFIG_DEBUG_FS)
-	struct dentry *root = rdev->ddev->primary->debugfs_root;
+	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
 
 	debugfs_create_file("radeon_gem_info", 0444, root, rdev,
 			    &radeon_debugfs_gem_info_fops);

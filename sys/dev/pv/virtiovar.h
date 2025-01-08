@@ -1,4 +1,4 @@
-/*	$OpenBSD: virtiovar.h,v 1.22 2024/09/02 08:26:26 sf Exp $	*/
+/*	$OpenBSD: virtiovar.h,v 1.26 2024/12/20 22:18:27 sf Exp $	*/
 /*	$NetBSD: virtiovar.h,v 1.1 2011/10/30 12:12:21 hannken Exp $	*/
 
 /*
@@ -161,7 +161,9 @@ struct virtio_ops {
 	int		(*get_status)(struct virtio_softc *);
 	void		(*set_status)(struct virtio_softc *, int);
 	int		(*neg_features)(struct virtio_softc *, const struct virtio_feature_name *);
+	int		(*attach_finish)(struct virtio_softc *, struct virtio_attach_args *);
 	int		(*poll_intr)(void *);
+	void		(*intr_barrier)(struct virtio_softc *);
 };
 
 #define VIRTIO_CHILD_ERROR	((void*)1)
@@ -203,6 +205,7 @@ struct virtio_softc {
 #define	virtio_poll_intr(sc)			(sc)->sc_ops->poll_intr(sc)
 #define	virtio_get_status(sc)			(sc)->sc_ops->get_status(sc)
 #define	virtio_set_status(sc, i)		(sc)->sc_ops->set_status(sc, i)
+#define	virtio_intr_barrier(sc)			(sc)->sc_ops->intr_barrier(sc)
 
 /* only for transport drivers */
 #define	virtio_device_reset(sc)			virtio_set_status((sc), 0)
@@ -218,6 +221,7 @@ virtio_has_feature(struct virtio_softc *sc, uint64_t fbit)
 int virtio_alloc_vq(struct virtio_softc*, struct virtqueue*, int, int,
 		    const char*);
 int virtio_free_vq(struct virtio_softc*, struct virtqueue*);
+int virtio_attach_finish(struct virtio_softc *, struct virtio_attach_args *);
 void virtio_reset(struct virtio_softc *);
 void virtio_reinit_start(struct virtio_softc *);
 void virtio_reinit_end(struct virtio_softc *);
