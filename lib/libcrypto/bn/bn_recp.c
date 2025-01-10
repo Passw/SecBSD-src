@@ -1,4 +1,4 @@
-/* $OpenBSD: bn_recp.c,v 1.21 2025/01/06 13:47:37 tb Exp $ */
+/* $OpenBSD: bn_recp.c,v 1.25 2025/01/08 20:21:28 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -65,8 +65,8 @@
 void
 BN_RECP_CTX_init(BN_RECP_CTX *recp)
 {
-	BN_init(&(recp->N));
-	BN_init(&(recp->Nr));
+	BN_init(&recp->N);
+	BN_init(&recp->Nr);
 	recp->num_bits = 0;
 	recp->flags = 0;
 }
@@ -77,11 +77,11 @@ BN_RECP_CTX_new(void)
 	BN_RECP_CTX *ret;
 
 	if ((ret = malloc(sizeof(BN_RECP_CTX))) == NULL)
-		return (NULL);
+		return NULL;
 
 	BN_RECP_CTX_init(ret);
 	ret->flags = BN_FLG_MALLOCED;
-	return (ret);
+	return ret;
 }
 
 void
@@ -90,8 +90,8 @@ BN_RECP_CTX_free(BN_RECP_CTX *recp)
 	if (recp == NULL)
 		return;
 
-	BN_free(&(recp->N));
-	BN_free(&(recp->Nr));
+	BN_free(&recp->N);
+	BN_free(&recp->Nr);
 	if (recp->flags & BN_FLG_MALLOCED)
 		free(recp);
 }
@@ -99,12 +99,14 @@ BN_RECP_CTX_free(BN_RECP_CTX *recp)
 int
 BN_RECP_CTX_set(BN_RECP_CTX *recp, const BIGNUM *d, BN_CTX *ctx)
 {
-	if (!bn_copy(&(recp->N), d))
+	if (!bn_copy(&recp->N, d))
 		return 0;
-	BN_zero(&(recp->Nr));
-	recp->num_bits = BN_num_bits(d);
+	recp->num_bits = BN_num_bits(&recp->N);
+
+	BN_zero(&recp->Nr);
 	recp->shift = 0;
-	return (1);
+
+	return 1;
 }
 
 /* len is the expected size of the result
@@ -125,14 +127,14 @@ BN_reciprocal(BIGNUM *r, const BIGNUM *m, int len, BN_CTX *ctx)
 	if (!BN_set_bit(t, len))
 		goto err;
 
-	if (!BN_div_ct(r, NULL, t,m, ctx))
+	if (!BN_div_ct(r, NULL, t, m, ctx))
 		goto err;
 
 	ret = len;
 
 err:
 	BN_CTX_end(ctx);
-	return (ret);
+	return ret;
 }
 
 int
@@ -156,14 +158,14 @@ BN_div_recp(BIGNUM *dv, BIGNUM *rem, const BIGNUM *m, BN_RECP_CTX *recp,
 	if (a == NULL || b == NULL || d == NULL || r == NULL)
 		goto err;
 
-	if (BN_ucmp(m, &(recp->N)) < 0) {
+	if (BN_ucmp(m, &recp->N) < 0) {
 		BN_zero(d);
 		if (!bn_copy(r, m)) {
 			BN_CTX_end(ctx);
 			return 0;
 		}
 		BN_CTX_end(ctx);
-		return (1);
+		return 1;
 	}
 
 	/* We want the remainder
@@ -180,7 +182,7 @@ BN_div_recp(BIGNUM *dv, BIGNUM *rem, const BIGNUM *m, BN_RECP_CTX *recp,
 
 	/* Nr := round(2^i / N) */
 	if (i != recp->shift)
-		recp->shift = BN_reciprocal(&(recp->Nr), &(recp->N), i, ctx);
+		recp->shift = BN_reciprocal(&recp->Nr, &recp->N, i, ctx);
 
 	/* BN_reciprocal returns i, or -1 for an error */
 	if (recp->shift == -1)
@@ -193,13 +195,13 @@ BN_div_recp(BIGNUM *dv, BIGNUM *rem, const BIGNUM *m, BN_RECP_CTX *recp,
 	 */
 	if (!BN_rshift(a, m, recp->num_bits))
 		goto err;
-	if (!BN_mul(b, a,&(recp->Nr), ctx))
+	if (!BN_mul(b, a, &recp->Nr, ctx))
 		goto err;
 	if (!BN_rshift(d, b, i - recp->num_bits))
 		goto err;
 	d->neg = 0;
 
-	if (!BN_mul(b, &(recp->N), d, ctx))
+	if (!BN_mul(b, &recp->N, d, ctx))
 		goto err;
 	if (!BN_usub(r, m, b))
 		goto err;
@@ -207,12 +209,12 @@ BN_div_recp(BIGNUM *dv, BIGNUM *rem, const BIGNUM *m, BN_RECP_CTX *recp,
 
 #if 1
 	j = 0;
-	while (BN_ucmp(r, &(recp->N)) >= 0) {
+	while (BN_ucmp(r, &recp->N) >= 0) {
 		if (j++ > 2) {
 			BNerror(BN_R_BAD_RECIPROCAL);
 			goto err;
 		}
-		if (!BN_usub(r, r, &(recp->N)))
+		if (!BN_usub(r, r, &recp->N))
 			goto err;
 		if (!BN_add_word(d, 1))
 			goto err;
@@ -226,9 +228,8 @@ BN_div_recp(BIGNUM *dv, BIGNUM *rem, const BIGNUM *m, BN_RECP_CTX *recp,
 
 err:
 	BN_CTX_end(ctx);
-	return (ret);
+	return ret;
 }
-
 
 int
 BN_mod_mul_reciprocal(BIGNUM *r, const BIGNUM *x, const BIGNUM *y,
@@ -257,5 +258,5 @@ BN_mod_mul_reciprocal(BIGNUM *r, const BIGNUM *x, const BIGNUM *y,
 
 err:
 	BN_CTX_end(ctx);
-	return (ret);
+	return ret;
 }
