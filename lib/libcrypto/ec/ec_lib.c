@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_lib.c,v 1.105 2025/01/09 11:35:46 tb Exp $ */
+/* $OpenBSD: ec_lib.c,v 1.111 2025/01/11 15:26:07 tb Exp $ */
 /*
  * Originally written by Bodo Moeller for the OpenSSL project.
  */
@@ -1026,8 +1026,9 @@ LCRYPTO_ALIAS(EC_POINT_get_affine_coordinates_GFp);
 
 int
 EC_POINT_set_compressed_coordinates(const EC_GROUP *group, EC_POINT *point,
-    const BIGNUM *x, int y_bit, BN_CTX *ctx_in)
+    const BIGNUM *in_x, int y_bit, BN_CTX *ctx_in)
 {
+	BIGNUM *p, *a, *b, *w, *x, *y;
 	BN_CTX *ctx;
 	int ret = 0;
 
@@ -1036,18 +1037,90 @@ EC_POINT_set_compressed_coordinates(const EC_GROUP *group, EC_POINT *point,
 	if (ctx == NULL)
 		goto err;
 
-	if (group->meth->point_set_compressed_coordinates == NULL) {
-		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+	y_bit = (y_bit != 0);
+
+	BN_CTX_start(ctx);
+
+	if ((p = BN_CTX_get(ctx)) == NULL)
+		goto err;
+	if ((a = BN_CTX_get(ctx)) == NULL)
+		goto err;
+	if ((b = BN_CTX_get(ctx)) == NULL)
+		goto err;
+	if ((w = BN_CTX_get(ctx)) == NULL)
+		goto err;
+	if ((x = BN_CTX_get(ctx)) == NULL)
+		goto err;
+	if ((y = BN_CTX_get(ctx)) == NULL)
+		goto err;
+
+	/*
+	 * Weierstrass equation: y^2 = x^3 + ax + b, so y is one of the
+	 * square roots of x^3 + ax + b. The y-bit indicates which one.
+	 */
+
+	if (!EC_GROUP_get_curve(group, p, a, b, ctx))
+		goto err;
+
+	/* XXX - should we not insist on 0 <= x < p instead? */
+	if (!BN_nnmod(x, in_x, p, ctx))
+		goto err;
+
+	/* y = x^3 */
+	if (!BN_mod_sqr(y, x, p, ctx))
+		goto err;
+	if (!BN_mod_mul(y, y, x, p, ctx))
+		goto err;
+
+	/* y += ax */
+	if (group->a_is_minus3) {
+		if (!BN_mod_lshift1_quick(w, x, p))
+			goto err;
+		if (!BN_mod_add_quick(w, w, x, p))
+			goto err;
+		if (!BN_mod_sub_quick(y, y, w, p))
+			goto err;
+	} else {
+		if (!BN_mod_mul(w, a, x, p, ctx))
+			goto err;
+		if (!BN_mod_add_quick(y, y, w, p))
+			goto err;
+	}
+
+	/* y += b */
+	if (!BN_mod_add_quick(y, y, b, p))
+		goto err;
+
+	if (!BN_mod_sqrt(y, y, p, ctx)) {
+		ECerror(EC_R_INVALID_COMPRESSED_POINT);
 		goto err;
 	}
-	if (group->meth != point->meth) {
-		ECerror(EC_R_INCOMPATIBLE_OBJECTS);
+
+	if (y_bit == BN_is_odd(y))
+		goto done;
+
+	if (BN_is_zero(y)) {
+		ECerror(EC_R_INVALID_COMPRESSION_BIT);
 		goto err;
 	}
-	ret = group->meth->point_set_compressed_coordinates(group, point,
-	    x, y_bit, ctx);
+	if (!BN_usub(y, p, y))
+		goto err;
+
+	if (y_bit != BN_is_odd(y)) {
+		/* Can only happen if p is even and should not be reachable. */
+		ECerror(ERR_R_INTERNAL_ERROR);
+		goto err;
+	}
+
+ done:
+	if (!EC_POINT_set_affine_coordinates(group, point, x, y, ctx))
+		goto err;
+
+	ret = 1;
 
  err:
+	BN_CTX_end(ctx);
+
 	if (ctx != ctx_in)
 		BN_CTX_free(ctx);
 
@@ -1177,7 +1250,7 @@ EC_POINT_is_on_curve(const EC_GROUP *group, const EC_POINT *point,
 	if (ctx == NULL)
 		goto err;
 
-	if (group->meth->is_on_curve == NULL) {
+	if (group->meth->point_is_on_curve == NULL) {
 		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
 		goto err;
 	}
@@ -1185,7 +1258,7 @@ EC_POINT_is_on_curve(const EC_GROUP *group, const EC_POINT *point,
 		ECerror(EC_R_INCOMPATIBLE_OBJECTS);
 		goto err;
 	}
-	ret = group->meth->is_on_curve(group, point, ctx);
+	ret = group->meth->point_is_on_curve(group, point, ctx);
 
  err:
 	if (ctx != ctx_in)
@@ -1229,6 +1302,7 @@ int
 EC_POINT_make_affine(const EC_GROUP *group, EC_POINT *point, BN_CTX *ctx_in)
 {
 	BN_CTX *ctx;
+	BIGNUM *x, *y;
 	int ret = 0;
 
 	if ((ctx = ctx_in) == NULL)
@@ -1236,98 +1310,29 @@ EC_POINT_make_affine(const EC_GROUP *group, EC_POINT *point, BN_CTX *ctx_in)
 	if (ctx == NULL)
 		goto err;
 
-	if (group->meth->make_affine == NULL) {
-		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+	BN_CTX_start(ctx);
+
+	if ((x = BN_CTX_get(ctx)) == NULL)
 		goto err;
-	}
-	if (group->meth != point->meth) {
-		ECerror(EC_R_INCOMPATIBLE_OBJECTS);
+	if ((y = BN_CTX_get(ctx)) == NULL)
 		goto err;
-	}
-	ret = group->meth->make_affine(group, point, ctx);
+
+	if (!EC_POINT_get_affine_coordinates(group, point, x, y, ctx))
+		goto err;
+	if (!EC_POINT_set_affine_coordinates(group, point, x, y, ctx))
+		goto err;
+
+	ret = 1;
 
  err:
+	BN_CTX_end(ctx);
+
 	if (ctx != ctx_in)
 		BN_CTX_free(ctx);
 
 	return ret;
 }
 LCRYPTO_ALIAS(EC_POINT_make_affine);
-
-int
-EC_POINTs_make_affine(const EC_GROUP *group, size_t num, EC_POINT *points[],
-    BN_CTX *ctx_in)
-{
-	BN_CTX *ctx;
-	size_t i;
-	int ret = 0;
-
-	if ((ctx = ctx_in) == NULL)
-		ctx = BN_CTX_new();
-	if (ctx == NULL)
-		goto err;
-
-	if (group->meth->points_make_affine == NULL) {
-		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
-		goto err;
-	}
-	for (i = 0; i < num; i++) {
-		if (group->meth != points[i]->meth) {
-			ECerror(EC_R_INCOMPATIBLE_OBJECTS);
-			goto err;
-		}
-	}
-	ret = group->meth->points_make_affine(group, num, points, ctx);
-
- err:
-	if (ctx != ctx_in)
-		BN_CTX_free(ctx);
-
-	return ret;
-}
-LCRYPTO_ALIAS(EC_POINTs_make_affine);
-
-int
-EC_POINTs_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *scalar,
-    size_t num, const EC_POINT *points[], const BIGNUM *scalars[],
-    BN_CTX *ctx_in)
-{
-	BN_CTX *ctx;
-	int ret = 0;
-
-	if ((ctx = ctx_in) == NULL)
-		ctx = BN_CTX_new();
-	if (ctx == NULL)
-		goto err;
-
-	/* Only num == 0 and num == 1 is supported. */
-	if (group->meth->mul_generator_ct == NULL ||
-	    group->meth->mul_single_ct == NULL ||
-	    group->meth->mul_double_nonct == NULL ||
-	    num > 1) {
-		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
-		goto err;
-	}
-
-	if (num == 1 && points != NULL && scalars != NULL) {
-		/* Either bP or aG + bP, this is sane. */
-		ret = EC_POINT_mul(group, r, scalar, points[0], scalars[0], ctx);
-	} else if (scalar != NULL && points == NULL && scalars == NULL) {
-		/* aG, this is sane */
-		ret = EC_POINT_mul(group, r, scalar, NULL, NULL, ctx);
-	} else {
-		/* anything else is an error */
-		ECerror(ERR_R_EC_LIB);
-		goto err;
-	}
-
- err:
-	if (ctx != ctx_in)
-		BN_CTX_free(ctx);
-
-	return ret;
-}
-LCRYPTO_ALIAS(EC_POINTs_mul);
 
 int
 EC_POINT_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
@@ -1426,3 +1431,22 @@ EC_POINT_get_Jprojective_coordinates_GFp(const EC_GROUP *group,
 	return 0;
 }
 LCRYPTO_ALIAS(EC_POINT_get_Jprojective_coordinates_GFp);
+
+int
+EC_POINTs_make_affine(const EC_GROUP *group, size_t num, EC_POINT *points[],
+    BN_CTX *ctx_in)
+{
+	ECerror(ERR_R_DISABLED);
+	return 0;
+}
+LCRYPTO_ALIAS(EC_POINTs_make_affine);
+
+int
+EC_POINTs_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *scalar,
+    size_t num, const EC_POINT *points[], const BIGNUM *scalars[],
+    BN_CTX *ctx_in)
+{
+	ECerror(ERR_R_DISABLED);
+	return 0;
+}
+LCRYPTO_ALIAS(EC_POINTs_mul);

@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_local.h,v 1.54 2025/01/07 08:52:17 tb Exp $ */
+/* $OpenBSD: ec_local.h,v 1.62 2025/01/11 20:57:03 tb Exp $ */
 /*
  * Originally written by Bodo Moeller for the OpenSSL project.
  */
@@ -79,12 +79,6 @@
 
 __BEGIN_HIDDEN_DECLS
 
-#if defined(__SUNPRO_C)
-# if __SUNPRO_C >= 0x520
-# pragma error_messages (off,E_ARRAY_OF_INCOMPLETE_NONAME,E_ARRAY_OF_INCOMPLETE)
-# endif
-#endif
-
 struct ec_method_st {
 	int field_type;
 
@@ -93,25 +87,23 @@ struct ec_method_st {
 	int (*group_get_curve)(const EC_GROUP *, BIGNUM *p, BIGNUM *a,
 	    BIGNUM *b, BN_CTX *);
 
+	int (*point_is_on_curve)(const EC_GROUP *, const EC_POINT *, BN_CTX *);
+	int (*point_cmp)(const EC_GROUP *, const EC_POINT *a, const EC_POINT *b,
+	    BN_CTX *);
+
 	int (*point_set_affine_coordinates)(const EC_GROUP *, EC_POINT *,
 	    const BIGNUM *x, const BIGNUM *y, BN_CTX *);
 	int (*point_get_affine_coordinates)(const EC_GROUP *, const EC_POINT *,
 	    BIGNUM *x, BIGNUM *y, BN_CTX *);
-	int (*point_set_compressed_coordinates)(const EC_GROUP *, EC_POINT *,
-	    const BIGNUM *x, int y_bit, BN_CTX *);
+
+	/* Only used by the wNAF code. */
+	int (*points_make_affine)(const EC_GROUP *, size_t num, EC_POINT **,
+	    BN_CTX *);
 
 	int (*add)(const EC_GROUP *, EC_POINT *r, const EC_POINT *a,
 	    const EC_POINT *b, BN_CTX *);
 	int (*dbl)(const EC_GROUP *, EC_POINT *r, const EC_POINT *a, BN_CTX *);
 	int (*invert)(const EC_GROUP *, EC_POINT *, BN_CTX *);
-
-	int (*is_on_curve)(const EC_GROUP *, const EC_POINT *, BN_CTX *);
-	int (*point_cmp)(const EC_GROUP *, const EC_POINT *a, const EC_POINT *b,
-	    BN_CTX *);
-
-	int (*make_affine)(const EC_GROUP *, EC_POINT *, BN_CTX *);
-	int (*points_make_affine)(const EC_GROUP *, size_t num, EC_POINT *[],
-	    BN_CTX *);
 
 	int (*mul_generator_ct)(const EC_GROUP *, EC_POINT *r,
 	    const BIGNUM *scalar, BN_CTX *);
@@ -139,10 +131,6 @@ struct ec_method_st {
 } /* EC_METHOD */;
 
 struct ec_group_st {
-	/*
-	 * Methods and members exposed via the public API.
-	 */
-
 	const EC_METHOD *meth;
 
 	EC_POINT *generator;	/* Optional */
@@ -231,8 +219,6 @@ struct ec_key_method_st {
 	    const ECDSA_SIG *sig, EC_KEY *eckey);
 } /* EC_KEY_METHOD */;
 
-#define EC_KEY_METHOD_DYNAMIC   1
-
 struct ec_key_st {
 	const EC_KEY_METHOD *meth;
 
@@ -253,7 +239,6 @@ struct ec_key_st {
 } /* EC_KEY */;
 
 int eckey_compute_pubkey(EC_KEY *eckey);
-int ec_key_gen(EC_KEY *eckey);
 int ecdh_compute_key(unsigned char **out, size_t *out_len,
     const EC_POINT *pub_key, const EC_KEY *ecdh);
 int ecdsa_verify(int type, const unsigned char *dgst, int dgst_len,
