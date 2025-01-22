@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_lib.c,v 1.111 2025/01/11 15:26:07 tb Exp $ */
+/* $OpenBSD: ec_lib.c,v 1.113 2025/01/22 09:56:58 jsing Exp $ */
 /*
  * Originally written by Bodo Moeller for the OpenSSL project.
  */
@@ -667,6 +667,7 @@ EC_GROUP_check(const EC_GROUP *group, BN_CTX *ctx_in)
 {
 	BN_CTX *ctx;
 	EC_POINT *point = NULL;
+	const EC_POINT *generator;
 	const BIGNUM *order;
 	int ret = 0;
 
@@ -680,11 +681,11 @@ EC_GROUP_check(const EC_GROUP *group, BN_CTX *ctx_in)
 		goto err;
 	}
 
-	if (group->generator == NULL) {
+	if ((generator = EC_GROUP_get0_generator(group)) == NULL) {
 		ECerror(EC_R_UNDEFINED_GENERATOR);
 		goto err;
 	}
-	if (EC_POINT_is_on_curve(group, group->generator, ctx) <= 0) {
+	if (EC_POINT_is_on_curve(group, generator, ctx) <= 0) {
 		ECerror(EC_R_POINT_IS_NOT_ON_CURVE);
 		goto err;
 	}
@@ -1346,8 +1347,7 @@ EC_POINT_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
 	if (ctx == NULL)
 		goto err;
 
-	if (group->meth->mul_generator_ct == NULL ||
-	    group->meth->mul_single_ct == NULL ||
+	if (group->meth->mul_single_ct == NULL ||
 	    group->meth->mul_double_nonct == NULL) {
 		ECerror(ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
 		goto err;
@@ -1362,7 +1362,8 @@ EC_POINT_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
 		 * secret. This is why we ignore if BN_FLG_CONSTTIME is actually
 		 * set and we always call the constant time version.
 		 */
-		ret = group->meth->mul_generator_ct(group, r, g_scalar, ctx);
+		ret = group->meth->mul_single_ct(group, r, g_scalar,
+		    group->generator, ctx);
 	} else if (g_scalar == NULL && point != NULL && p_scalar != NULL) {
 		/*
 		 * In this case we want to compute p_scalar * GenericPoint:
