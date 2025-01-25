@@ -1624,7 +1624,7 @@ install_files() {
 		_tmpfs_list _tmpsrc _cfile=/tmp/SHA256 _fsrc _unver _t _issue
 	local _srclocal=false _unpriv=unpriv
 
-	# Fetch sets from local sources (disk, cdrom, nfs) as root.
+	# Fetch sets from local sources (disk, cdrom) as root.
 	[[ $_src == file://* ]] && _srclocal=true _unpriv=
 
 	# Based on the file list in $_files, create two lists for select_sets().
@@ -2067,27 +2067,6 @@ install_disk() {
 		# Ensure the device file exists and mount the fs on /mnt2.
 		make_dev $resp && mount_mnt2 $resp || return
 	fi
-
-	install_mounted_fs
-}
-
-# Ask for the nfs share details, mount it and start the set installation.
-install_nfs() {
-	local _tcp
-
-	# Get the IP address of the server.
-	ask_until "Server IP address or hostname?" "$NFS_ADDR"
-	NFS_ADDR=$resp
-
-	# Get the server path to mount.
-	ask_until "Filesystem on server to mount?" "$NFS_PATH"
-	NFS_PATH=$resp
-
-	# Determine use of TCP.
-	ask_yn "Use TCP transport? (requires TCP-capable NFS server)" && _tcp=-T
-
-	# Mount the server.
-	mount_nfs $_tcp -o ro -R 5 $NFS_ADDR:$NFS_PATH /mnt2 || return
 
 	install_mounted_fs
 }
@@ -2670,8 +2649,7 @@ start_cgiinfo() {
 # 1) can't be mounted (no mount_* command is found),
 # 2) have 'xx' in the option field (usually /altroot),
 # 3) have 'noauto' in the option field,
-# 4) are nfs (since name resolution may not be present),
-# 5) are on a vnd device.
+# 4) are on a vnd device.
 #
 # In addition,
 #
@@ -2686,7 +2664,6 @@ munge_fstab() {
 	while read _dev _mp _fstype _opt _rest; do
 		# Drop irrelevant lines and filesystems.
 		[[ $_dev == @(/dev/vnd*|\#*) ||
-			$_fstype == nfs ||
 			! -f /sbin/mount_$_fstype ||
 			$_opt == *noauto* ||
 			$_opt == *xx* ]] && continue
@@ -2796,16 +2773,13 @@ install_sets() {
 	# Set default location to the first cdrom device if any are found.
 	[[ -n $_cddevs ]] && : ${_d:=cd0}
 
-	# Add NFS to set locations if the boot kernel supports it.
-	[[ -x /sbin/mount_nfs ]] && _locs="$_locs nfs"
-
 	# In case none of the above applied, set HTTP as default location.
 	: ${_d:=http}
 
 	# If the default location set so far is not one of the cdrom devices or
 	# is not in the list of valid locations, set a sane default.
 	if ! isin "$_d" $_cddevs $_locs; then
-		for _src in http $_cddevs nfs disk; do
+		for _src in http $_cddevs disk; do
 			isin "$_src" $_cddevs $_locs && _d=$_src && break
 		done
 	fi
@@ -2830,8 +2804,6 @@ install_sets() {
 		[dD]*)	install_disk && INSTALL_METHOD=disk
 			;;
 		[hH]*)	isin http $_locs && install_http && INSTALL_METHOD=http
-			;;
-		[nN]*)	isin nfs $_locs && install_nfs && INSTALL_METHOD=nfs
 			;;
 		*)	$AI && err_exit "'$resp' is not a valid choice."
 			;;
