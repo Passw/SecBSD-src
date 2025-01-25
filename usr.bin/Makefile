@@ -18,7 +18,7 @@ SUBDIR= apply arch at aucat audioctl awk banner \
 	m4 mail make mandoc mesg mg \
 	midicat mixerctl mkdep mklocale mktemp nc netstat \
 	newsyslog \
-	nfsstat nice nm nl nohup openssl pagesize passwd paste patch pctr \
+	nice nm nl nohup openssl pagesize passwd paste patch pctr \
 	pkg-config pkill \
 	pr printenv printf quota radioctl rcs rdist rdistd \
 	readlink realpath renice rev rpcgen rpcinfo rs rsync rup rusers rwall \

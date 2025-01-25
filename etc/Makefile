@@ -61,7 +61,7 @@ EXAMPLES_600=bgpd.conf doas.conf dvmrpd.conf eigrpd.conf hostapd.conf \
 RCDAEMONS=amd apmd bgpd bgplgd bootparamd cron dhcpd dhcpleased dhcp6leased \
 	dhcrelay dhcrelay6 dvmrpd eigrpd ftpd ftpproxy ftpproxy6 hostapd \
 	hotplugd httpd identd ifstated iked inetd isakmpd iscsid ldapd \
-	ldattach ldomd ldpd lockd lpd mopd mountd mrouted nfsd npppd nsd ntpd \
+	ldattach ldomd ldpd lockd lpd mopd mrouted npppd nsd ntpd \
 	ospf6d ospfd pflogd portmap rad radiusd rarpd rbootd relayd resolvd \
 	ripd route6d sasyncd sensorsd slowcgi slaacd smtpd sndiod snmpd spamd \
 	spamlogd sshd statd syslogd tftpd tftpproxy unbound \

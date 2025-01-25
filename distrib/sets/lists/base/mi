@@ -247,9 +247,7 @@
 ./etc/rc.d/lockd
 ./etc/rc.d/lpd
 ./etc/rc.d/mopd
-./etc/rc.d/mountd
 ./etc/rc.d/mrouted
-./etc/rc.d/nfsd
 ./etc/rc.d/npppd
 ./etc/rc.d/nsd
 ./etc/rc.d/ntpd
@@ -367,13 +365,11 @@
 ./sbin/mount_tmpfs
 ./sbin/mount_udf
 ./sbin/mount_vnd
-./sbin/mountd
 ./sbin/ncheck
 ./sbin/ncheck_ffs
 ./sbin/newfs
 ./sbin/newfs_ext2fs
 ./sbin/newfs_msdos
-./sbin/nfsd
 ./sbin/nologin
 ./sbin/pfctl
 ./sbin/pflogd
@@ -560,7 +556,6 @@
 ./usr/bin/netstat
 ./usr/bin/newaliases
 ./usr/bin/newsyslog
-./usr/bin/nfsstat
 ./usr/bin/nice
 ./usr/bin/nl
 ./usr/bin/nm
