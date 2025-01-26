@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_local.h,v 1.63 2025/01/22 09:56:58 jsing Exp $ */
+/* $OpenBSD: ec_local.h,v 1.65 2025/01/25 13:15:21 tb Exp $ */
 /*
  * Originally written by Bodo Moeller for the OpenSSL project.
  */
@@ -80,8 +80,6 @@
 __BEGIN_HIDDEN_DECLS
 
 struct ec_method_st {
-	int field_type;
-
 	int (*group_set_curve)(EC_GROUP *, const BIGNUM *p, const BIGNUM *a,
 	    const BIGNUM *b, BN_CTX *);
 	int (*group_get_curve)(const EC_GROUP *, BIGNUM *p, BIGNUM *a,
@@ -177,7 +175,6 @@ int ec_wnaf_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *m,
     const EC_POINT *point, const BIGNUM *n, BN_CTX *ctx);
 
 int ec_group_is_builtin_curve(const EC_GROUP *group, int *out_nid);
-int ec_group_get_field_type(const EC_GROUP *group);
 
 /*
  * Wrappers around the unergonomic EC_POINT_{oct2point,point2oct}().

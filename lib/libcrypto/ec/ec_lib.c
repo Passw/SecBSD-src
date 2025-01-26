@@ -1,4 +1,4 @@
-/* $OpenBSD: ec_lib.c,v 1.113 2025/01/22 09:56:58 jsing Exp $ */
+/* $OpenBSD: ec_lib.c,v 1.116 2025/01/25 13:13:57 tb Exp $ */
 /*
  * Originally written by Bodo Moeller for the OpenSSL project.
  */
@@ -221,29 +221,6 @@ EC_GROUP_dup(const EC_GROUP *in_group)
 	return NULL;
 }
 LCRYPTO_ALIAS(EC_GROUP_dup);
-
-const EC_METHOD *
-EC_GROUP_method_of(const EC_GROUP *group)
-{
-	return group->meth;
-}
-LCRYPTO_ALIAS(EC_GROUP_method_of);
-
-int
-EC_METHOD_get_field_type(const EC_METHOD *meth)
-{
-	return meth->field_type;
-}
-LCRYPTO_ALIAS(EC_METHOD_get_field_type);
-
-int
-ec_group_get_field_type(const EC_GROUP *group)
-{
-	if (group == NULL || group->meth == NULL)
-		return NID_undef;
-
-	return group->meth->field_type;
-}
 
 /*
  * If there is a user-provided cofactor, sanity check and use it. Otherwise
@@ -738,8 +715,6 @@ EC_GROUP_cmp(const EC_GROUP *group1, const EC_GROUP *group2, BN_CTX *ctx_in)
 
 	BN_CTX_start(ctx);
 
-	if (ec_group_get_field_type(group1) != ec_group_get_field_type(group2))
-		goto distinct;
 	if ((nid1 = EC_GROUP_get_curve_name(group1)) != NID_undef &&
 	    (nid2 = EC_GROUP_get_curve_name(group2)) != NID_undef) {
 		if (nid1 != nid2)
@@ -913,13 +888,6 @@ EC_POINT_dup(const EC_POINT *in_point, const EC_GROUP *group)
 	return NULL;
 }
 LCRYPTO_ALIAS(EC_POINT_dup);
-
-const EC_METHOD *
-EC_POINT_method_of(const EC_POINT *point)
-{
-	return point->meth;
-}
-LCRYPTO_ALIAS(EC_POINT_method_of);
 
 int
 EC_POINT_set_to_infinity(const EC_GROUP *group, EC_POINT *point)
@@ -1397,20 +1365,6 @@ EC_POINT_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
 }
 LCRYPTO_ALIAS(EC_POINT_mul);
 
-int
-EC_GROUP_precompute_mult(EC_GROUP *group, BN_CTX *ctx_in)
-{
-	return 1;
-}
-LCRYPTO_ALIAS(EC_GROUP_precompute_mult);
-
-int
-EC_GROUP_have_precompute_mult(const EC_GROUP *group)
-{
-	return 0;
-}
-LCRYPTO_ALIAS(EC_GROUP_have_precompute_mult);
-
 /*
  * XXX - remove everything below in the next bump
  */
@@ -1451,3 +1405,43 @@ EC_POINTs_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *scalar,
 	return 0;
 }
 LCRYPTO_ALIAS(EC_POINTs_mul);
+
+const EC_METHOD *
+EC_GROUP_method_of(const EC_GROUP *group)
+{
+	ECerror(ERR_R_DISABLED);
+	return NULL;
+}
+LCRYPTO_ALIAS(EC_GROUP_method_of);
+
+int
+EC_METHOD_get_field_type(const EC_METHOD *meth)
+{
+	ECerror(ERR_R_DISABLED);
+	return NID_undef;
+}
+LCRYPTO_ALIAS(EC_METHOD_get_field_type);
+
+const EC_METHOD *
+EC_POINT_method_of(const EC_POINT *point)
+{
+	ECerror(ERR_R_DISABLED);
+	return NULL;
+}
+LCRYPTO_ALIAS(EC_POINT_method_of);
+
+int
+EC_GROUP_precompute_mult(EC_GROUP *group, BN_CTX *ctx_in)
+{
+	ECerror(ERR_R_DISABLED);
+	return 0;
+}
+LCRYPTO_ALIAS(EC_GROUP_precompute_mult);
+
+int
+EC_GROUP_have_precompute_mult(const EC_GROUP *group)
+{
+	ECerror(ERR_R_DISABLED);
+	return 0;
+}
+LCRYPTO_ALIAS(EC_GROUP_have_precompute_mult);
