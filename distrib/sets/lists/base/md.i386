@@ -53,6 +53,7 @@
 ./usr/libdata/perl5/i386-secbsd/CORE/iperlsys.h
 ./usr/libdata/perl5/i386-secbsd/CORE/keywords.h
 ./usr/libdata/perl5/i386-secbsd/CORE/l1_char_class_tab.h
+./usr/libdata/perl5/i386-secbsd/CORE/locale_table.h
 ./usr/libdata/perl5/i386-secbsd/CORE/malloc_ctl.h
 ./usr/libdata/perl5/i386-secbsd/CORE/metaconfig.h
 ./usr/libdata/perl5/i386-secbsd/CORE/mg.h
@@ -102,7 +103,6 @@
 ./usr/libdata/perl5/i386-secbsd/CORE/thread.h
 ./usr/libdata/perl5/i386-secbsd/CORE/time64.h
 ./usr/libdata/perl5/i386-secbsd/CORE/time64_config.h
-./usr/libdata/perl5/i386-secbsd/CORE/uconfig.h
 ./usr/libdata/perl5/i386-secbsd/CORE/uni_keywords.h
 ./usr/libdata/perl5/i386-secbsd/CORE/unicode_constants.h
 ./usr/libdata/perl5/i386-secbsd/CORE/unixish.h
@@ -264,7 +264,6 @@
 ./usr/libdata/perl5/i386-secbsd/PerlIO
 ./usr/libdata/perl5/i386-secbsd/PerlIO/encoding.pm
 ./usr/libdata/perl5/i386-secbsd/PerlIO/mmap.pm
-./usr/libdata/perl5/i386-secbsd/PerlIO/scalar.pm
 ./usr/libdata/perl5/i386-secbsd/PerlIO/via.pm
 ./usr/libdata/perl5/i386-secbsd/SDBM_File.pm
 ./usr/libdata/perl5/i386-secbsd/Scalar
@@ -382,8 +381,6 @@
 ./usr/libdata/perl5/i386-secbsd/auto/PerlIO/encoding/encoding.so
 ./usr/libdata/perl5/i386-secbsd/auto/PerlIO/mmap
 ./usr/libdata/perl5/i386-secbsd/auto/PerlIO/mmap/mmap.so
-./usr/libdata/perl5/i386-secbsd/auto/PerlIO/scalar
-./usr/libdata/perl5/i386-secbsd/auto/PerlIO/scalar/scalar.so
 ./usr/libdata/perl5/i386-secbsd/auto/PerlIO/via
 ./usr/libdata/perl5/i386-secbsd/auto/PerlIO/via/via.so
 ./usr/libdata/perl5/i386-secbsd/auto/SDBM_File
