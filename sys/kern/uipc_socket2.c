@@ -1,4 +1,4 @@
-/*	$OpenBSD: uipc_socket2.c,v 1.172 2025/01/30 14:40:50 mvs Exp $	*/
+/*	$OpenBSD: uipc_socket2.c,v 1.176 2025/01/31 13:49:18 mvs Exp $	*/
 /*	$NetBSD: uipc_socket2.c,v 1.11 1996/02/04 02:17:55 christos Exp $	*/
 
 /*
@@ -373,16 +373,22 @@ solock_persocket(struct socket *so)
 void
 solock_pair(struct socket *so1, struct socket *so2)
 {
-	KASSERT(so1 != so2);
 	KASSERT(so1->so_type == so2->so_type);
-	KASSERT(solock_persocket(so1));
 
-	if (so1 < so2) {
-		solock(so1);
-		solock(so2);
+	switch (so1->so_proto->pr_domain->dom_family) {
+	case PF_INET:
+	case PF_INET6:
+		NET_LOCK_SHARED();
+		break;
+	}
+	if (so1 == so2) {
+		rw_enter_write(&so1->so_lock);
+	} else if (so1 < so2) {
+		rw_enter_write(&so1->so_lock);
+		rw_enter_write(&so2->so_lock);
 	} else {
-		solock(so2);
-		solock(so1);
+		rw_enter_write(&so2->so_lock);
+		rw_enter_write(&so1->so_lock);
 	}
 }
 
@@ -416,6 +422,26 @@ void
 sounlock_nonet(struct socket *so)
 {
 	rw_exit_write(&so->so_lock);
+}
+
+void
+sounlock_pair(struct socket *so1, struct socket *so2)
+{
+	if (so1 == so2)
+		rw_exit_write(&so1->so_lock);
+	else if (so1 < so2) {
+		rw_exit_write(&so2->so_lock);
+		rw_exit_write(&so1->so_lock);
+	} else {
+		rw_exit_write(&so1->so_lock);
+		rw_exit_write(&so2->so_lock);
+	}
+	switch (so1->so_proto->pr_domain->dom_family) {
+	case PF_INET:
+	case PF_INET6:
+		NET_UNLOCK_SHARED();
+		break;
+	}
 }
 
 void
@@ -789,7 +815,7 @@ sbappend(struct socket *so, struct sockbuf *sb, struct mbuf *m)
 		 */
 		sb->sb_lastrecord = m;
 	}
-	sbcompress(so, sb, m, n);
+	sbcompress(sb, m, n);
 	SBLASTRECORDCHK(sb, "sbappend 2");
 }
 
@@ -807,7 +833,7 @@ sbappendstream(struct socket *so, struct sockbuf *sb, struct mbuf *m)
 
 	SBLASTMBUFCHK(sb, __func__);
 
-	sbcompress(so, sb, m, sb->sb_mbtail);
+	sbcompress(sb, m, sb->sb_mbtail);
 
 	sb->sb_lastrecord = sb->sb_mb;
 	SBLASTRECORDCHK(sb, __func__);
@@ -865,7 +891,7 @@ sbappendrecord(struct socket *so, struct sockbuf *sb, struct mbuf *m0)
 		m0->m_flags &= ~M_EOR;
 		m->m_flags |= M_EOR;
 	}
-	sbcompress(so, sb, m, m0);
+	sbcompress(sb, m, m0);
 	SBLASTRECORDCHK(sb, "sbappendrecord 2");
 }
 
@@ -977,8 +1003,7 @@ sbappendcontrol(struct socket *so, struct sockbuf *sb, struct mbuf *m0,
  * is null, the buffer is presumed empty.
  */
 void
-sbcompress(struct socket *so, struct sockbuf *sb, struct mbuf *m,
-    struct mbuf *n)
+sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *n)
 {
 	int eor = 0;
 	struct mbuf *o;
@@ -1040,7 +1065,7 @@ sbflush(struct socket *so, struct sockbuf *sb)
 	rw_assert_unlocked(&sb->sb_lock);
 
 	while (sb->sb_mbcnt)
-		sbdrop(so, sb, (int)sb->sb_cc);
+		sbdrop(sb, (int)sb->sb_cc);
 
 	KASSERT(sb->sb_cc == 0);
 	KASSERT(sb->sb_datacc == 0);
@@ -1053,7 +1078,7 @@ sbflush(struct socket *so, struct sockbuf *sb)
  * Drop data from (the front of) a sockbuf.
  */
 void
-sbdrop(struct socket *so, struct sockbuf *sb, int len)
+sbdrop(struct sockbuf *sb, int len)
 {
 	struct mbuf *m, *mn;
 	struct mbuf *next;
@@ -1110,7 +1135,7 @@ sbdrop(struct socket *so, struct sockbuf *sb, int len)
  * and move the next record to the front.
  */
 void
-sbdroprecord(struct socket *so, struct sockbuf *sb)
+sbdroprecord(struct sockbuf *sb)
 {
 	struct mbuf *m, *mn;
 

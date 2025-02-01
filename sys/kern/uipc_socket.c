@@ -1,4 +1,4 @@
-/*	$OpenBSD: uipc_socket.c,v 1.367 2025/01/30 14:40:50 mvs Exp $	*/
+/*	$OpenBSD: uipc_socket.c,v 1.369 2025/01/31 13:49:18 mvs Exp $	*/
 /*	$NetBSD: uipc_socket.c,v 1.21 1996/02/04 02:17:52 christos Exp $	*/
 
 /*
@@ -537,18 +537,12 @@ soconnect(struct socket *so, struct mbuf *nam)
 int
 soconnect2(struct socket *so1, struct socket *so2)
 {
-	int persocket, error;
+	int error;
 
-	if ((persocket = solock_persocket(so1)))
-		solock_pair(so1, so2);
-	else
-		solock(so1);
-
+	solock_pair(so1, so2);
 	error = pru_connect2(so1, so2);
+	sounlock_pair(so1, so2);
 
-	if (persocket)
-		sounlock(so2);
-	sounlock(so1);
 	return (error);
 }
 
@@ -1194,7 +1188,7 @@ dontblock:
 	if (m && pr->pr_flags & PR_ATOMIC) {
 		flags |= MSG_TRUNC;
 		if ((flags & MSG_PEEK) == 0)
-			(void) sbdroprecord(so, &so->so_rcv);
+			sbdroprecord(&so->so_rcv);
 	}
 	if ((flags & MSG_PEEK) == 0) {
 		if (m == NULL) {
@@ -1300,38 +1294,6 @@ sorflush(struct socket *so)
 #define so_idleto	so_sp->ssp_idleto
 #define so_splicetask	so_sp->ssp_task
 
-void
-sosplice_solock_pair(struct socket *so1, struct socket *so2)
-{
-	NET_LOCK_SHARED();
-
-	if (so1 == so2)
-		rw_enter_write(&so1->so_lock);
-	else if (so1 < so2) {
-		rw_enter_write(&so1->so_lock);
-		rw_enter_write(&so2->so_lock);
-	} else {
-		rw_enter_write(&so2->so_lock);
-		rw_enter_write(&so1->so_lock);
-	}
-}
-
-void
-sosplice_sounlock_pair(struct socket *so1, struct socket *so2)
-{
-	if (so1 == so2)
-		rw_exit_write(&so1->so_lock);
-	else if (so1 < so2) {
-		rw_exit_write(&so2->so_lock);
-		rw_exit_write(&so1->so_lock);
-	} else {
-		rw_exit_write(&so1->so_lock);
-		rw_exit_write(&so2->so_lock);
-	}
-
-	NET_UNLOCK_SHARED();
-}
-
 int
 sosplice(struct socket *so, int fd, off_t max, struct timeval *tv)
 {
@@ -1397,7 +1359,7 @@ sosplice(struct socket *so, int fd, off_t max, struct timeval *tv)
 		sbunlock(&so->so_rcv);
 		goto frele;
 	}
-	sosplice_solock_pair(so, sosp);
+	solock_pair(so, sosp);
 
 	if ((so->so_options & SO_ACCEPTCONN) ||
 	    (sosp->so_options & SO_ACCEPTCONN)) {
@@ -1458,7 +1420,7 @@ sosplice(struct socket *so, int fd, off_t max, struct timeval *tv)
 	mtx_leave(&sosp->so_snd.sb_mtx);
 	mtx_leave(&so->so_rcv.sb_mtx);
 
-	sosplice_sounlock_pair(so, sosp);
+	sounlock_pair(so, sosp);
 	sbunlock(&sosp->so_snd);
 
 	if (somove(so, M_WAIT)) {
@@ -1475,7 +1437,7 @@ sosplice(struct socket *so, int fd, off_t max, struct timeval *tv)
 	return (0);
 
  release:
-	sosplice_sounlock_pair(so, sosp);
+	sounlock_pair(so, sosp);
 	sbunlock(&sosp->so_snd);
 	sbunlock(&so->so_rcv);
  frele:
@@ -1641,7 +1603,7 @@ somove(struct socket *so, int wait)
 	while (m && m->m_type == MT_CONTROL)
 		m = m->m_next;
 	if (m == NULL) {
-		sbdroprecord(so, &so->so_rcv);
+		sbdroprecord(&so->so_rcv);
 		if (so->so_proto->pr_flags & PR_WANTRCVD) {
 			mtx_leave(&sosp->so_snd.sb_mtx);
 			mtx_leave(&so->so_rcv.sb_mtx);
