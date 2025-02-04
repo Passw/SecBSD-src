@@ -1,4 +1,4 @@
-/*	$OpenBSD: cpu.c,v 1.135 2025/01/25 12:29:35 kettenis Exp $	*/
+/*	$OpenBSD: cpu.c,v 1.137 2025/02/02 13:36:09 kettenis Exp $	*/
 
 /*
  * Copyright (c) 2016 Dale Rahn <drahn@dalerahn.com>
@@ -673,7 +673,10 @@ cpu_identify(struct cpu_info *ci)
 		printf("\n%s: mismatched ID_AA64MMFR0_EL1",
 		    ci->ci_dev->dv_xname);
 	}
-	if (READ_SPECIALREG(id_aa64mmfr1_el1) != cpu_id_aa64mmfr1) {
+	id = READ_SPECIALREG(id_aa64mmfr1_el1);
+	/* Allow SpecSEI to be different. */
+	id &= ~ID_AA64MMFR1_SPECSEI_MASK;
+	if (id != cpu_id_aa64mmfr1) {
 		printf("\n%s: mismatched ID_AA64MMFR1_EL1",
 		    ci->ci_dev->dv_xname);
 	}
@@ -1251,10 +1254,12 @@ cpu_identify_cleanup(void)
 	if (ID_AA64ISAR1_SB(cpu_id_aa64isar1) >= ID_AA64ISAR1_SB_IMPL)
 		hwcap |= HWCAP_SB;
 	if (ID_AA64ISAR1_APA(cpu_id_aa64isar1) >= ID_AA64ISAR1_APA_PAC ||
-	    ID_AA64ISAR1_API(cpu_id_aa64isar1) >= ID_AA64ISAR1_API_PAC)
+	    ID_AA64ISAR1_API(cpu_id_aa64isar1) >= ID_AA64ISAR1_API_PAC ||
+	    ID_AA64ISAR2_APA3(cpu_id_aa64isar2) >= ID_AA64ISAR2_APA3_PAC)
 		hwcap |= HWCAP_PACA;
 	if (ID_AA64ISAR1_GPA(cpu_id_aa64isar1) >= ID_AA64ISAR1_GPA_IMPL ||
-	    ID_AA64ISAR1_GPI(cpu_id_aa64isar1) >= ID_AA64ISAR1_GPI_IMPL)
+	    ID_AA64ISAR1_GPI(cpu_id_aa64isar1) >= ID_AA64ISAR1_GPI_IMPL ||
+	    ID_AA64ISAR2_GPA3(cpu_id_aa64isar2) >= ID_AA64ISAR2_GPA3_IMPL)
 		hwcap |= HWCAP_PACG;
 
 	/* HWCAP2 */
@@ -1431,6 +1436,14 @@ cpu_attach(struct device *parent, struct device *dev, void *aux)
 		cpu_id_aa64pfr1 = READ_SPECIALREG(id_aa64pfr1_el1);
 
 		/*
+		 * The SpecSEI "feature" isn't relevant for userland.
+		 * So it is fine if this field differs between CPU
+		 * cores.  Mask off this field to prevent exporting it
+		 * to userland.
+		 */
+		cpu_id_aa64mmfr1 &= ~ID_AA64MMFR1_SPECSEI_MASK;
+
+		/*
 		 * The CSV2/CSV3 "features" are handled on a
 		 * per-processor basis.  So it is fine if these fields
 		 * differ between CPU cores.  Mask off these fields to
@@ -1524,7 +1537,8 @@ cpu_init(void)
 
 	/* Enable PAuth. */
 	if (ID_AA64ISAR1_APA(cpu_id_aa64isar1) >= ID_AA64ISAR1_APA_PAC ||
-	    ID_AA64ISAR1_API(cpu_id_aa64isar1) >= ID_AA64ISAR1_API_PAC) {
+	    ID_AA64ISAR1_API(cpu_id_aa64isar1) >= ID_AA64ISAR1_API_PAC ||
+	    ID_AA64ISAR2_APA3(cpu_id_aa64isar2) >= ID_AA64ISAR2_APA3_PAC) {
 		sctlr = READ_SPECIALREG(sctlr_el1);
 		sctlr |= SCTLR_EnIA | SCTLR_EnDA;
 		sctlr |= SCTLR_EnIB | SCTLR_EnDB;
