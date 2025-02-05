@@ -2773,8 +2773,8 @@ install_sets() {
 	# Set default location to the first cdrom device if any are found.
 	[[ -n $_cddevs ]] && : ${_d:=cd0}
 
-	# In case none of the above applied, set HTTP as default location.
-	: ${_d:=http}
+	# In case none of the above applied, set disk as default location.
+	: ${_d:=disk}
 
 	# If the default location set so far is not one of the cdrom devices or
 	# is not in the list of valid locations, set a sane default.
