@@ -5119,8 +5119,9 @@ usRequestedPWMFreqInHz:           When it's set to 0x0 by SBIOS: the LCD BackLig
                                   2. SW uses other means to control BL (like DPCD),this non-zero frequency serves as a flag only indicating
                                   that BL control from GPU is expected.
                                   VBIOS will NOT set up PWM frequency but make ATOM_BIOS_INFO_BL_CONTROLLED_BY_GPU==1
-                                  Changing BL using VBIOS function could be functional in both driver and non-driver present environment, but
-                                  it's per platform and enabling VariBri under the driver environment from PP table is optional.
+                                  Changing BL using VBIOS function could be functional in both driver and non-driver present environment,but
+                                  it's per platform
+                                  and enabling VariBri under the driver environment from PP table is optional.
 
 ucHtcTmpLmt:                      Refer to D18F3x64 bit[22:16], HtcTmpLmt.
                                   Threshold on value to enter HTC_active state.
@@ -5319,8 +5320,9 @@ usRequestedPWMFreqInHz:           When it's set to 0x0 by SBIOS: the LCD BackLig
                                   2. SW uses other means to control BL (like DPCD),this non-zero frequency serves as a flag only indicating
                                   that BL control from GPU is expected.
                                   VBIOS will NOT set up PWM frequency but make ATOM_BIOS_INFO_BL_CONTROLLED_BY_GPU==1
-                                  Changing BL using VBIOS function could be functional in both driver and non-driver present environment, but
-                                  it's per platform and enabling VariBri under the driver environment from PP table is optional.
+                                  Changing BL using VBIOS function could be functional in both driver and non-driver present environment,but
+                                  it's per platform
+                                  and enabling VariBri under the driver environment from PP table is optional.
 
 ucHtcTmpLmt:                      Refer to D18F3x64 bit[22:16], HtcTmpLmt. Threshold on value to enter HTC_active state.
 ucHtcHystLmt:                     Refer to D18F3x64 bit[27:24], HtcHystLmt.
@@ -5391,7 +5393,7 @@ ucLVDSPwrOffVARY_BLtoDE_in4Ms:
                                   =0 mean use VBIOS default delay which is 8 ( 32ms ). The LVDS power down sequence is as following: BLON->VARY_BL->DE->DIGON
                                   This parameter is used by VBIOS only. VBIOS will patch LVDS_InfoTable.
 ucLVDSPwrOffDEtoDIGON_in4Ms:
-                                  LVDS power down sequence time in unit of 4ms, time delay from vary brightness enable signal( VARY_BL) off to data enable ( DE ) signal off.
+                                   LVDS power down sequence time in unit of 4ms, time delay from vary brightness enable signal( VARY_BL) off to data enable ( DE ) signal off.
                                   =0 mean use VBIOS default which is 90 ( 360ms ). The LVDS power down sequence is as following: BLON->VARY_BL->DE->DIGON
                                   This parameter is used by VBIOS only. VBIOS will patch LVDS_InfoTable.
 ucLVDSOffToOnDelay_in4Ms:
@@ -6394,7 +6396,7 @@ typedef struct _ATOM_VRAM_MODULE_V1
   USHORT                     usReserved;
   UCHAR                      ucExtMemoryID;     // An external indicator (by hardcode, callback or pin) to tell what is the current memory module
   UCHAR                      ucMemoryType;      // [7:4]=0x1:DDR1;=0x2:DDR2;=0x3:DDR3;=0x4:DDR4;[3:0] reserved;
-  UCHAR                      ucMemoryVenderID;  // Predefined, never change across designs or memory type/vender
+  UCHAR                      ucMemoryVenderID;  // Predefined,never change across designs or memory type/vender
   UCHAR                      ucMemoryDeviceCfg; // [7:4]=0x0:4M;=0x1:8M;=0x2:16M;0x3:32M....[3:0]=0x0:x4;=0x1:x8;=0x2:x16;=0x3:x32...
   UCHAR                      ucRow;             // Number of Row,in power of 2;
   UCHAR                      ucColumn;          // Number of Column,in power of 2;
@@ -7794,7 +7796,7 @@ typedef struct  _ATOM_POWERPLAY_INFO_V3
 
 #define ATOM_DEVICE_DFP1I_INDEX            ATOM_DEVICE_DFP1_INDEX
 #define ATOM_DEVICE_DFP1X_INDEX            ATOM_DEVICE_DFP2_INDEX
-
+ 
 #define ATOM_DEVICE_DFP2I_INDEX            0x00000009
 #define ATOM_DEVICE_DFP2I_SUPPORT          (0x1L << ATOM_DEVICE_DFP2I_INDEX)
 
